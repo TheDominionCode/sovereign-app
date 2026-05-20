@@ -53,7 +53,7 @@ export async function startCheckoutAction(formData: FormData) {
       metadata: { user_id: user.id },
     },
     payment_method_collection: "always",
-    success_url: `${site}/billing?status=success`,
+    success_url: `${site}/checkout/return?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${site}/pricing?status=cancelled`,
     allow_promotion_codes: false,
     client_reference_id: user.id,

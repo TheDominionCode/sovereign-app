@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import type Stripe from "stripe";
 import { stripe } from "@/lib/stripe/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { syncSubscriptionFromStripe } from "@/lib/billing/sync";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -81,7 +82,15 @@ export async function POST(req: NextRequest) {
       case "customer.subscription.updated":
       case "customer.subscription.deleted": {
         const sub = event.data.object as Stripe.Subscription;
-        await upsertSubscription(admin, sub, event.type === "customer.subscription.deleted");
+        const { userId } = await syncSubscriptionFromStripe(admin, sub, {
+          isDeletion: event.type === "customer.subscription.deleted",
+        });
+        if (!userId) {
+          console.warn(
+            "[stripe-webhook] could not resolve user_id for subscription",
+            sub.id
+          );
+        }
         break;
       }
 
@@ -102,65 +111,3 @@ export async function POST(req: NextRequest) {
   return NextResponse.json({ received: true });
 }
 
-async function upsertSubscription(
-  admin: ReturnType<typeof createAdminClient>,
-  sub: Stripe.Subscription,
-  isDeletion: boolean
-) {
-  const userId = await resolveUserId(admin, sub);
-  if (!userId) {
-    console.warn(
-      "[stripe-webhook] could not resolve user_id for subscription",
-      sub.id
-    );
-    return;
-  }
-
-  const priceId = sub.items.data[0]?.price?.id;
-  if (!priceId) {
-    console.warn("[stripe-webhook] subscription missing price_id", sub.id);
-    return;
-  }
-
-  const row = {
-    id: sub.id,
-    user_id: userId,
-    status: isDeletion ? "canceled" : (sub.status as string),
-    price_id: priceId,
-    current_period_start: new Date(sub.current_period_start * 1000).toISOString(),
-    current_period_end: new Date(sub.current_period_end * 1000).toISOString(),
-    cancel_at_period_end: sub.cancel_at_period_end,
-    trial_end: sub.trial_end ? new Date(sub.trial_end * 1000).toISOString() : null,
-    canceled_at: sub.canceled_at
-      ? new Date(sub.canceled_at * 1000).toISOString()
-      : isDeletion
-        ? new Date().toISOString()
-        : null,
-  };
-
-  const { error } = await admin
-    .from("subscriptions")
-    .upsert(row, { onConflict: "id" });
-  if (error) {
-    throw new Error(`upsert subscription failed: ${error.message}`);
-  }
-}
-
-async function resolveUserId(
-  admin: ReturnType<typeof createAdminClient>,
-  sub: Stripe.Subscription
-): Promise<string | null> {
-  const metaUserId = sub.metadata?.user_id;
-  if (metaUserId) return metaUserId;
-
-  const customerId =
-    typeof sub.customer === "string" ? sub.customer : sub.customer?.id;
-  if (!customerId) return null;
-
-  const { data } = await admin
-    .from("profiles")
-    .select("id")
-    .eq("stripe_customer_id", customerId)
-    .maybeSingle();
-  return data?.id ?? null;
-}
