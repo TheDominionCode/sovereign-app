@@ -619,10 +619,7 @@ export default function DominionOS() {
         };
         storage.set("dom_data_natalyg", buildEmptyData());
       }
-      if (!accounts["demo"]) {
-        accounts["demo"] = { password: "demo123", name: "Demo" };
-        storage.set("dom_data_demo", buildDemoData());
-      }
+      // Demo account seed removed — owner-only deployment.
       storage.set("dom_seeded_v3", true);
       changed = true;
     }
@@ -6175,432 +6172,157 @@ function addDaysISO(dateStr, n) {
 }
 
 function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+  // Date-based to-do list. Habits, water, journal, etc. live in the Habits
+  // module and `data.planners` — kept untouched so existing entries are not
+  // lost; this module reads/writes only `data.tasks` (date-keyed).
   const [date, setDate] = useState(todayISO());
-  const [newTaskTitle, setNewTaskTitle] = useState("");
-  const [focusedCell, setFocusedCell] = useState(null); // "iso|hour" key for the weekly grid
-  const [showHalfHours, setShowHalfHours] = useState(false);
-  const [habitDraft, setHabitDraft] = useState("");
-  const [habitEditingId, setHabitEditingId] = useState(null);
-  const [builtInEditing, setBuiltInEditing] = useState(null); // 'morning' | 'afternoon' | 'evening' | 'workout' | 'reading' | null
-  const [focusedField, setFocusedField] = useState(null); // 'priority-0', 'win-1', 'gratitude', 'journal', 'tomorrow'
+  const [newTitle, setNewTitle] = useState("");
+  const [editingId, setEditingId] = useState(null);
+  const [editingText, setEditingText] = useState("");
 
-  // Built-in routine labels (rename-able) and hidden flags
-  const BUILT_IN_DEFAULTS = {
-    morning: "Morning routine",
-    afternoon: "Afternoon routine",
-    evening: "Evening routine",
-    workout: "Workout",
-    reading: "Reading 30m",
-  };
-  const routineLabels = { ...BUILT_IN_DEFAULTS, ...(data.routineLabels || {}) };
-  const routineHidden = data.routineHidden || {};
-
-  const renameBuiltIn = (key, name) => {
-    setData({ ...data, routineLabels: { ...(data.routineLabels || {}), [key]: name } });
-  };
-  const hideBuiltIn = (key) => {
-    setData({ ...data, routineHidden: { ...(data.routineHidden || {}), [key]: true } });
-  };
-  const restoreBuiltIn = (key) => {
-    const next = { ...(data.routineHidden || {}) };
-    delete next[key];
-    setData({ ...data, routineHidden: next });
-  };
-  const hiddenList = Object.keys(routineHidden).filter(k => routineHidden[k] && BUILT_IN_DEFAULTS[k]);
-
-  // Each built-in chip's [done flag key, label key]
-  const builtIns = [
-    { key: "morning",   doneKey: "morningRoutineDone" },
-    { key: "afternoon", doneKey: "afternoonRoutineDone" },
-    { key: "evening",   doneKey: "eveningRoutineDone" },
-    { key: "workout",   doneKey: "workoutDone" },
-    { key: "reading",   doneKey: "readingDone" },
-  ];
-
-  const addCustomHabit = () => {
-    const name = (habitDraft || "").trim();
-    if (!name) return;
-    const list = Array.isArray(data.habitsCustom) ? data.habitsCustom : [];
-    const existingIds = list.map(h => Number(h && h.id)).filter(n => !isNaN(n));
-    const id = (existingIds.length ? Math.max(...existingIds) : 0) + 1;
-    setData({ ...data, habitsCustom: [...list, { id, name }] });
-    setHabitDraft("");
-  };
-  const renameCustomHabit = (id, name) => {
-    const list = Array.isArray(data.habitsCustom) ? data.habitsCustom : [];
-    setData({ ...data, habitsCustom: list.map(h => h.id === id ? { ...h, name } : h) });
-  };
-  const removeCustomHabit = (id) => {
-    const list = Array.isArray(data.habitsCustom) ? data.habitsCustom : [];
-    setData({ ...data, habitsCustom: list.filter(h => h.id !== id) });
-  };
-  const planners = data.planners || {};
-  const todayPlan = planners[date] || {
-    priorities: ["", "", ""],
-    blocks: {},
-    wins: ["", "", ""],
-    gratitude: "",
-    journal: "",
-    waterGlasses: 0,
-    workoutDone: false,
-    readingDone: false,
-    morningRoutineDone: false,
-    afternoonRoutineDone: false,
-    eveningRoutineDone: false,
-  };
-
-  const update = (patch) => {
-    const next = { ...todayPlan, ...patch };
-    setData({ ...data, planners: { ...planners, [date]: next } });
-  };
-
-  // To Do List for the selected date — uses top-level data.tasks
   const allTasks = Array.isArray(data.tasks) ? data.tasks : [];
-  const dayTasks = allTasks.filter(t => t.date === date);
+  const dayTasks = allTasks.filter(t => t && t.date === date);
+  const doneCount = dayTasks.filter(t => t.done).length;
+
+  const setTasks = (next) => setData({ ...data, tasks: next });
 
   const addTask = () => {
-    const title = (newTaskTitle || "").trim();
+    const title = (newTitle || "").trim();
     if (!title) return;
     const existingIds = allTasks.map(t => Number(t && t.id)).filter(n => !isNaN(n));
     const id = (existingIds.length ? Math.max(...existingIds) : 0) + 1;
-    setData({ ...data, tasks: [...allTasks, { id, title, date, done: false, time: "", priority: "normal" }] });
-    setNewTaskTitle("");
+    setTasks([...allTasks, { id, title, date, done: false, time: "", priority: "normal" }]);
+    setNewTitle("");
   };
   const toggleTask = (id) => {
-    const task = allTasks.find(t => t.id === id);
-    const wasUndone = task && !task.done;
-    const updated = allTasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
-    setData({ ...data, tasks: updated });
-    if (wasUndone) {
-      const dayList = updated.filter(t => t.date === date);
-      const dayDone = dayList.length > 0 && dayList.every(t => t.done);
-      if (dayDone) triggerConfetti("All done — champion day", true);
-    }
+    const t = allTasks.find(x => x && x.id === id);
+    const becomingDone = t && !t.done;
+    setTasks(allTasks.map(x => x.id === id ? { ...x, done: !x.done } : x));
+    if (becomingDone && triggerConfetti) triggerConfetti();
   };
-  const updateTaskTitle = (id, title) => setData({ ...data, tasks: allTasks.map(t => t.id === id ? { ...t, title } : t) });
-  const deleteTask = (id) => setData({ ...data, tasks: allTasks.filter(t => t.id !== id) });
-
-  const updatePriority = (i, v) => {
-    const arr = [...(todayPlan.priorities || ["", "", ""])];
-    arr[i] = v;
-    update({ priorities: arr });
+  const removeTask = (id) => setTasks(allTasks.filter(x => x.id !== id));
+  const startEdit = (t) => { setEditingId(t.id); setEditingText(t.title); };
+  const saveEdit = () => {
+    const text = (editingText || "").trim();
+    if (!text) { setEditingId(null); return; }
+    setTasks(allTasks.map(x => x.id === editingId ? { ...x, title: text } : x));
+    setEditingId(null);
   };
+  const clearCompleted = () =>
+    setTasks(allTasks.filter(t => !(t && t.date === date && t.done)));
 
-  const updateBlock = (hour, v) => {
-    update({ blocks: { ...(todayPlan.blocks || {}), [hour]: v } });
-  };
-
-  // Update a time block for ANY date in the week grid (not just today)
-  const updateBlockForDate = (isoDate, hour, v) => {
-    const existingPlan = planners[isoDate] || {
-      priorities: ["", "", ""],
-      blocks: {},
-      wins: ["", "", ""],
-      gratitude: "",
-      journal: "",
-      waterGlasses: 0,
-      workoutDone: false,
-      readingDone: false,
-      morningRoutineDone: false,
-      afternoonRoutineDone: false,
-      eveningRoutineDone: false,
-    };
-    const nextPlan = { ...existingPlan, blocks: { ...(existingPlan.blocks || {}), [hour]: v } };
-    setData({ ...data, planners: { ...planners, [isoDate]: nextPlan } });
-  };
-
-  // Build the 7-day Monday→Sunday window for the selected date
-  const weekStart = startOfWeekMonday(date);
-  const weekDates = WEEK_DAYS.map((_, i) => addDaysISO(weekStart, i));
-  const shiftWeek = (n) => setDate(addDaysISO(date, n * 7));
-
-  const updateWin = (i, v) => {
-    const arr = [...(todayPlan.wins || ["", "", ""])];
-    arr[i] = v;
-    update({ wins: arr });
-  };
-
-  const updatePriorityAndCheck = (i, v) => {
-    const arr = [...(todayPlan.priorities || ["", "", ""])];
-    arr[i] = v;
-    update({ priorities: arr });
-  };
-
-  const shiftDate = (n) => {
-    const d = new Date(date);
-    d.setDate(d.getDate() + n);
+  const shiftDate = (days) => {
+    const d = new Date(date + "T00:00:00");
+    d.setDate(d.getDate() + days);
     setDate(d.toISOString().slice(0, 10));
   };
 
-  const dateLabel = fmtDate(date);
-
-  const filledBlocks = Object.values(todayPlan.blocks || {}).filter(v => (v || "").trim()).length;
-  const filledPriorities = (todayPlan.priorities || []).filter(p => (p || "").trim()).length;
-  const filledWins = (todayPlan.wins || []).filter(w => (w || "").trim()).length;
-  const completionPct = Math.round(((filledPriorities * 10) + (filledBlocks * 2) + (filledWins * 8) + (todayPlan.workoutDone ? 5 : 0) + (todayPlan.readingDone ? 5 : 0) + (todayPlan.morningRoutineDone ? 5 : 0) + (todayPlan.afternoonRoutineDone ? 5 : 0) + (todayPlan.eveningRoutineDone ? 5 : 0) + ((todayPlan.gratitude || "").trim() ? 8 : 0) + ((todayPlan.journal || "").trim() ? 8 : 0)) / 1.5);
+  const isToday = date === todayISO();
+  const subtitle = isToday ? "Today — " + fmtDate(date) : fmtDate(date);
 
   return (
-    <div>
-      <div className="flex items-start justify-between mb-6 gap-4 flex-wrap">
-        <div>
-          <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Daily Planner</h1>
-          <p className={`text-sm mt-1 ${themeMuted}`}>{dateLabel}</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => shiftDate(-1)} className="p-2 rounded border border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"><ArrowRight className="w-4 h-4 rotate-180" /></button>
-          <input type="date" value={date} onChange={e => setDate(e.target.value)} className="px-3 py-2 rounded border border-stone-200 text-sm focus:border-[#7a9a6e] outline-none" />
-          <button onClick={() => shiftDate(1)} className="p-2 rounded border border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"><ArrowRight className="w-4 h-4" /></button>
-          <button onClick={() => setDate(todayISO())} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351]">Today</button>
-        </div>
-      </div>
+    <div className="p-6 lg:p-10 max-w-3xl mx-auto">
+      <PageHeader title="Daily Planner" subtitle={subtitle} dark={dark} />
 
-      {/* Daily completion ring + water glasses (top row) */}
-      <div className={`rounded-lg border ${themePanel} p-5 mb-5 flex flex-wrap items-center justify-between gap-6`}>
-        <div className="flex items-center gap-5">
-          <ProgressRing value={Math.min(100, completionPct)} size={90} stroke={8} dark={dark} label="filled" />
-          <div>
-            <div className="text-xs tracking-[0.2em] text-[#7a9a6e]">TODAY</div>
-            <div className="font-serif text-lg" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{dateLabel}</div>
-          </div>
-        </div>
-        <div className="flex flex-col items-center">
-          <div className="text-xs tracking-[0.2em] text-[#7a9a6e] mb-2">WATER (8 glasses)</div>
-          <div className="flex gap-1">
-            {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
-              <button key={n} onClick={() => update({ waterGlasses: n === todayPlan.waterGlasses ? n - 1 : n })} className={`w-5 h-7 rounded-b-md border-2 ${n <= (todayPlan.waterGlasses || 0) ? "bg-[#a8c090] border-[#7a9a6e]" : "border-stone-300 bg-white"}`} title={`Glass ${n}`} />
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* DAILY HABITS — card grid (built-ins + customs in one place) */}
-      <Panel title="Daily habits I'm tracking" dark={dark} className="mb-5" action={
-        <span className="text-[10px] text-stone-500">{builtIns.filter(b => !routineHidden[b.key]).length + (data.habitsCustom || []).length} habit{(builtIns.filter(b => !routineHidden[b.key]).length + (data.habitsCustom || []).length) === 1 ? "" : "s"}</span>
-      }>
-        <p className={`text-xs ${themeMuted} mb-3 italic`}>Tap the circle to mark a habit done today. Click any name to rename.</p>
-        <div className="grid sm:grid-cols-2 gap-2 mb-3">
-          {/* Built-in routines */}
-          {builtIns.filter(b => !routineHidden[b.key]).map(b => {
-            const done = !!todayPlan[b.doneKey];
-            return (
-              <div key={b.key} className={`flex items-center gap-2 p-3 rounded border group transition ${done ? "bg-[#f4f7ee] border-[#a8c090]" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`}>
-                <button
-                  onClick={() => update({ [b.doneKey]: !done })}
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
-                  title={done ? "Mark not done" : "Mark done today"}
-                >
-                  {done && <Check className="w-3.5 h-3.5" />}
-                </button>
-                <input
-                  value={routineLabels[b.key]}
-                  onChange={e => renameBuiltIn(b.key, e.target.value)}
-                  placeholder="Habit name…"
-                  className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "line-through text-stone-500" : ""}`}
-                />
-                <button onClick={() => hideBuiltIn(b.key)} className="p-1 text-stone-400 hover:text-rose-500 opacity-50 group-hover:opacity-100 transition" title="Remove from list"><Trash2 className="w-3.5 h-3.5" /></button>
-              </div>
-            );
-          })}
-          {/* Custom habits */}
-          {(data.habitsCustom || []).map(h => {
-            const done = !!(todayPlan.customHabits || {})[h.id];
-            return (
-              <div key={h.id} className={`flex items-center gap-2 p-3 rounded border group transition ${done ? "bg-[#f4f7ee] border-[#a8c090]" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`}>
-                <button
-                  onClick={() => update({ customHabits: { ...(todayPlan.customHabits || {}), [h.id]: !done } })}
-                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
-                  title={done ? "Mark not done" : "Mark done today"}
-                >
-                  {done && <Check className="w-3.5 h-3.5" />}
-                </button>
-                <input
-                  value={h.name}
-                  onChange={e => renameCustomHabit(h.id, e.target.value)}
-                  placeholder="Habit name…"
-                  className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "line-through text-stone-500" : ""}`}
-                />
-                <button onClick={() => removeCustomHabit(h.id)} className="p-1 text-stone-400 hover:text-rose-500 opacity-50 group-hover:opacity-100 transition" title="Delete habit"><Trash2 className="w-3.5 h-3.5" /></button>
-              </div>
-            );
-          })}
-        </div>
-        {/* Add new habit */}
-        <div className="flex gap-2">
-          <input value={habitDraft} onChange={e => setHabitDraft(e.target.value)} onKeyDown={e => { if (e.key === "Enter") addCustomHabit(); }} placeholder="e.g., Pilates 30 min, journaling, no sugar…" className="flex-1 px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white" />
-          <button onClick={addCustomHabit} className="px-4 py-2 bg-[#7a9a6e] text-white text-sm rounded font-medium hover:bg-[#5b7351] flex items-center gap-1"><Plus className="w-3.5 h-3.5" /> Add habit</button>
-        </div>
-        {hiddenList.length > 0 && (
-          <div className="mt-3 flex flex-wrap items-center gap-2 pt-3 border-t border-stone-100">
-            <span className="text-[10px] text-stone-400 tracking-[0.18em] uppercase">Removed:</span>
-            {hiddenList.map(k => (
-              <button
-                key={k}
-                onClick={() => restoreBuiltIn(k)}
-                className="text-[10px] px-2 py-0.5 rounded-full border border-dashed border-stone-300 text-stone-500 hover:border-[#7a9a6e] hover:text-[#5b7351] flex items-center gap-1"
-                title="Restore this habit"
-              ><RefreshCw className="w-3 h-3" /> {routineLabels[k]}</button>
-            ))}
-          </div>
-        )}
-      </Panel>
-
-      {/* TO DO LIST */}
-      <div className={`rounded-lg border ${themePanel} p-5 mb-5`}>
-        <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">TO DO LIST</h2>
-        <div className="flex items-center gap-2 mb-3">
-          <input
-            value={newTaskTitle}
-            onChange={e => setNewTaskTitle(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && addTask()}
-            placeholder="Add a task for this day…"
-            className="flex-1 px-3 py-2.5 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white"
-          />
-          <button onClick={addTask} className="px-4 py-2.5 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1">
-            <Plus className="w-4 h-4" /> Add
-          </button>
-        </div>
-        {dayTasks.length === 0 ? (
-          <div className={`py-6 text-center ${themeMuted} text-sm italic`}>No tasks yet for this day. Add one above.</div>
-        ) : (
-          <div className="space-y-1">
-            {dayTasks.map(t => (
-              <div key={t.id} className="flex items-center gap-3 p-2 rounded hover:bg-[#f4f7ee]/60 transition group">
-                <button onClick={() => toggleTask(t.id)} className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${t.done ? "bg-[#a8c090] border-[#a8c090]" : "border-[#a8c090]/40 hover:border-[#a8c090]"}`}>
-                  {t.done && <Check className="w-3 h-3 text-white" />}
-                </button>
-                <input
-                  value={t.title}
-                  onChange={e => updateTaskTitle(t.id, e.target.value)}
-                  className={`flex-1 bg-transparent border-0 outline-none text-sm ${t.done ? "line-through text-stone-400" : ""}`}
-                />
-                <button onClick={() => deleteTask(t.id)} className="opacity-0 group-hover:opacity-100 p-1 text-stone-400 hover:text-rose-500 transition">
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="grid lg:grid-cols-3 gap-5">
-        <Panel title="Top 3 Priorities" dark={dark}>
-          <div className="space-y-2">
-            {[0, 1, 2].map(i => {
-              const key = `priority-${i}`;
-              const isFocused = focusedField === key;
-              return (
-                <div key={i} className="flex items-start gap-2">
-                  <div className="font-serif text-2xl text-[#7a9a6e] leading-none w-6 pt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</div>
-                  <textarea
-                    value={todayPlan.priorities?.[i] || ""}
-                    onChange={e => updatePriorityAndCheck(i, e.target.value)}
-                    onFocus={() => setFocusedField(key)}
-                    onBlur={() => setFocusedField(prev => prev === key ? null : prev)}
-                    placeholder={`Priority ${i + 1}…`}
-                    rows={isFocused ? 5 : 1}
-                    title={todayPlan.priorities?.[i] || ""}
-                    className={`flex-1 px-2 py-1.5 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm resize-none bg-white transition-all overflow-hidden focus:overflow-auto focus:relative focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30`}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </Panel>
-
-        <Panel title="Daily Wins" dark={dark}>
-          <div className="space-y-2">
-            {[0, 1, 2].map(i => {
-              const key = `win-${i}`;
-              const isFocused = focusedField === key;
-              return (
-                <div key={i} className="flex items-start gap-2">
-                  <Trophy className="w-4 h-4 text-[#7a9a6e] flex-shrink-0 mt-1.5" />
-                  <textarea
-                    value={todayPlan.wins?.[i] || ""}
-                    onChange={e => updateWin(i, e.target.value)}
-                    onFocus={() => setFocusedField(key)}
-                    onBlur={() => setFocusedField(prev => prev === key ? null : prev)}
-                    placeholder={`Win ${i + 1}…`}
-                    rows={isFocused ? 4 : 1}
-                    title={todayPlan.wins?.[i] || ""}
-                    className={`flex-1 px-2 py-1.5 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm resize-none bg-white transition-all overflow-hidden focus:overflow-auto focus:relative focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30`}
-                  />
-                </div>
-              );
-            })}
-          </div>
-        </Panel>
-
-        <Panel title="Gratitude" dark={dark}>
-          {(() => {
-            const isFocused = focusedField === "gratitude";
-            return (
-              <textarea
-                value={todayPlan.gratitude || ""}
-                onChange={e => update({ gratitude: e.target.value })}
-                onFocus={() => setFocusedField("gratitude")}
-                onBlur={() => setFocusedField(prev => prev === "gratitude" ? null : prev)}
-                placeholder="What are you grateful for today?"
-                rows={isFocused ? 8 : 2}
-                title={todayPlan.gratitude || ""}
-                className={`w-full px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm resize-none bg-white transition-all overflow-hidden focus:overflow-auto focus:relative focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30`}
-              />
-            );
-          })()}
-        </Panel>
-      </div>
-
-      <div className="grid lg:grid-cols-2 gap-5 mt-5">
-        <Panel title="Journal / Notes" dark={dark}>
-          {(() => {
-            const isFocused = focusedField === "journal";
-            return (
-              <textarea
-                value={todayPlan.journal || ""}
-                onChange={e => update({ journal: e.target.value })}
-                onFocus={() => setFocusedField("journal")}
-                onBlur={() => setFocusedField(prev => prev === "journal" ? null : prev)}
-                placeholder="Free-form notes, thoughts, lessons from today…"
-                rows={isFocused ? 14 : 2}
-                title={todayPlan.journal || ""}
-                className={`w-full px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm resize-none bg-white leading-relaxed transition-all overflow-hidden focus:overflow-auto focus:relative focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30`}
-                style={{ fontFamily: "Georgia, serif" }}
-              />
-            );
-          })()}
-        </Panel>
-
-        <Panel title="Tomorrow's Setup" dark={dark}>
-          <div className={`text-xs ${themeMuted} mb-3`}>Set yourself up to win tomorrow before you close out today.</div>
-          {(() => {
-            const isFocused = focusedField === "tomorrow";
-            return (
-              <textarea
-                value={todayPlan.tomorrow || ""}
-                onChange={e => update({ tomorrow: e.target.value })}
-                onFocus={() => setFocusedField("tomorrow")}
-                onBlur={() => setFocusedField(prev => prev === "tomorrow" ? null : prev)}
-                placeholder="3 things I will do tomorrow before noon…"
-                rows={isFocused ? 14 : 2}
-                title={todayPlan.tomorrow || ""}
-                className={`w-full px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm resize-none bg-white leading-relaxed transition-all overflow-hidden focus:overflow-auto focus:relative focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30`}
-                style={{ fontFamily: "Georgia, serif" }}
-              />
-            );
-          })()}
-        </Panel>
-      </div>
-
-      <div className="mt-5 flex items-center justify-between flex-wrap gap-3">
-        <div className={`text-xs ${themeMuted}`}>Auto-saved as you type · {Object.keys(planners).length} {Object.keys(planners).length === 1 ? "day" : "days"} planned in your archive</div>
+      <div className={`rounded-2xl border ${themePanel} p-4 mb-6 flex items-center gap-2`}>
         <button
-          onClick={() => triggerConfetti("📔 Day complete! Rest. Tomorrow we run it back.", true)}
-          className="px-5 py-2.5 bg-gradient-to-br from-[#7a9a6e] to-[#5b7351] text-white text-sm font-bold rounded hover:from-[#5b7351] hover:to-[#4a5d3f] shadow-lg shadow-[#7a9a6e]/30 flex items-center gap-2"
-        >
-          <Check className="w-4 h-4" /> Close out the day
-        </button>
+          onClick={() => shiftDate(-1)}
+          className={`px-3 py-2 rounded text-sm ${themeMuted} hover:text-[#5b7351]`}
+          aria-label="Previous day"
+        >←</button>
+        <input
+          type="date"
+          value={date}
+          onChange={e => setDate(e.target.value || todayISO())}
+          className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none"
+        />
+        <button
+          onClick={() => shiftDate(1)}
+          className={`px-3 py-2 rounded text-sm ${themeMuted} hover:text-[#5b7351]`}
+          aria-label="Next day"
+        >→</button>
+        {!isToday && (
+          <button
+            onClick={() => setDate(todayISO())}
+            className="px-3 py-2 text-xs uppercase tracking-wider text-[#5b7351] border border-[#9cb88f] rounded hover:bg-[#f4f7ee]"
+          >Today</button>
+        )}
       </div>
 
+      <div className={`rounded-2xl border ${themePanel} p-4 mb-6`}>
+        <div className="flex gap-2">
+          <input
+            value={newTitle}
+            onChange={e => setNewTitle(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter") addTask(); }}
+            placeholder="Add a task for this day…"
+            className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none"
+          />
+          <button
+            onClick={addTask}
+            className="px-4 py-2 bg-[#5b7351] text-white text-sm tracking-wider uppercase font-medium rounded hover:bg-[#3d5c34] transition"
+          >Add</button>
+        </div>
+      </div>
+
+      <div className={`rounded-2xl border ${themePanel} p-4`}>
+        <div className="flex items-baseline justify-between mb-3 px-1">
+          <div className="text-xs uppercase tracking-[0.18em] text-stone-500">
+            {dayTasks.length === 0 ? "no tasks" : `${doneCount} of ${dayTasks.length} done`}
+          </div>
+          {doneCount > 0 && (
+            <button
+              onClick={clearCompleted}
+              className="text-xs italic text-stone-500 hover:text-[#5b7351]"
+            >clear completed</button>
+          )}
+        </div>
+
+        {dayTasks.length === 0 ? (
+          <div className={`py-10 text-center ${themeMuted} text-sm italic`}>
+            Nothing here yet — add the first thing above.
+          </div>
+        ) : (
+          <ul className="divide-y divide-stone-100">
+            {dayTasks.map(t => (
+              <li key={t.id} className="flex items-center gap-3 py-3 group">
+                <button
+                  onClick={() => toggleTask(t.id)}
+                  className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${t.done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
+                  aria-label={t.done ? "Mark not done" : "Mark done"}
+                >
+                  {t.done && <Check className="w-3 h-3" />}
+                </button>
+
+                {editingId === t.id ? (
+                  <input
+                    autoFocus
+                    value={editingText}
+                    onChange={e => setEditingText(e.target.value)}
+                    onBlur={saveEdit}
+                    onKeyDown={e => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") setEditingId(null); }}
+                    className="flex-1 px-2 py-1 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none"
+                  />
+                ) : (
+                  <button
+                    onClick={() => startEdit(t)}
+                    className={`flex-1 text-left text-sm truncate ${t.done ? "line-through text-stone-400" : "text-ink"}`}
+                    title="Click to edit"
+                  >
+                    {t.title}
+                  </button>
+                )}
+
+                <button
+                  onClick={() => removeTask(t.id)}
+                  className="opacity-0 group-hover:opacity-100 px-2 py-1 text-xs text-stone-400 hover:text-red-500 transition"
+                  aria-label="Delete task"
+                >✕</button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 }
