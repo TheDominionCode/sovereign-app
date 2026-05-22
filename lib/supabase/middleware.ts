@@ -35,7 +35,9 @@ export async function updateSession(request: NextRequest) {
 
   const path = request.nextUrl.pathname;
   const requiresAuth =
-    path.startsWith("/app") || path.startsWith("/billing");
+    path.startsWith("/app") ||
+    path.startsWith("/billing") ||
+    path.startsWith("/os.html");
 
   if (requiresAuth && !user) {
     const loginUrl = request.nextUrl.clone();
