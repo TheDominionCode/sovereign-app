@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 async function signOutAndRedirect(req: NextRequest) {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  return NextResponse.redirect(new URL("/", req.url));
+  // Land on the quiet "signed out" page, not the sales landing.
+  return NextResponse.redirect(new URL("/signed-out", req.url));
 }
 
 // Accept both verbs: forms POST, but the in-app "Sign out" button does a
