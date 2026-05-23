@@ -6191,14 +6191,22 @@ function addDaysISO(dateStr, n) {
 }
 
 function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
-  // Daily Planner — date-keyed; covers Top 3 priorities, To-do list, Weekly
-  // schedule, Wins, Gratitude, My Notes, and Tomorrow. Habit-owned fields
-  // (water, routines, customHabits) live on the same data.planners[date]
-  // shape but are read/written by the Habits module, not here.
+  // Daily Planner — date-keyed; covers Top 3 priorities, To-do list, the
+  // Weekly schedule (lifted exactly from the Calendar), Wins, Gratitude,
+  // My Notes, and Tomorrow. Habit-owned fields (water, routines,
+  // customHabits) live on the same data.planners[date] shape but are
+  // read/written by the Habits module, not here.
   const [date, setDate] = useState(todayISO());
   const [newTitle, setNewTitle] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
+
+  // Weekly schedule state (moved here from the Calendar — verbatim)
+  const [weekAnchor, setWeekAnchor] = useState(() => todayISO());
+  const [showHalfHours, setShowHalfHours] = useState(false);
+  const [focusedCell, setFocusedCell] = useState(null);
+  const showWeeklySchedule = data.showWeeklySchedule !== false; // default true
+  const toggleWeeklySchedule = () => setData({ ...data, showWeeklySchedule: !showWeeklySchedule });
 
   // ----- Per-day plan -----
   const planners = data.planners || {};
@@ -6215,6 +6223,16 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   };
   const setPriority = (i, v) => { const arr = [...priorities]; arr[i] = v; updatePlan({ priorities: arr }); };
   const setWin = (i, v) => { const arr = [...wins]; arr[i] = v; updatePlan({ wins: arr }); };
+
+  // ----- Weekly schedule helpers (verbatim from the Calendar) -----
+  const weekStart = startOfWeekMonday(weekAnchor);
+  const weekDates = WEEK_DAYS.map((_, i) => addDaysISO(weekStart, i));
+  const shiftWeek = (n) => setWeekAnchor(addDaysISO(weekAnchor, n * 7));
+  const updateBlockForDate = (isoDate, hour, v) => {
+    const existing = planners[isoDate] || { priorities: ["","",""], blocks: {}, wins: ["","",""], gratitude: "", journal: "", waterGlasses: 0 };
+    const next = { ...existing, blocks: { ...(existing.blocks || {}), [hour]: v } };
+    setData({ ...data, planners: { ...planners, [isoDate]: next } });
+  };
 
   // ----- To-do list (data.tasks, date-scoped) -----
   const allTasks = Array.isArray(data.tasks) ? data.tasks : [];
@@ -6253,33 +6271,6 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   };
   const isToday = date === todayISO();
   const subtitle = isToday ? "Today — " + fmtDate(date) : fmtDate(date);
-
-  // ----- Weekly schedule helpers (Mon–Sun of the selected week) -----
-  const weekDays = (() => {
-    const d = new Date(date + "T00:00:00");
-    const day = d.getDay();
-    const mondayOffset = day === 0 ? -6 : 1 - day;
-    const monday = new Date(d);
-    monday.setDate(d.getDate() + mondayOffset);
-    return Array.from({ length: 7 }, (_, i) => {
-      const x = new Date(monday);
-      x.setDate(monday.getDate() + i);
-      return x.toISOString().slice(0, 10);
-    });
-  })();
-  const dayShort = (iso) => ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date(iso + "T00:00:00").getDay()];
-  const dayNum = (iso) => Number(iso.slice(8, 10));
-  const fmtHour = (h) => {
-    const ampm = h < 12 ? "AM" : "PM";
-    const hh = h % 12 === 0 ? 12 : h % 12;
-    return hh + " " + ampm;
-  };
-  const HOURS = Array.from({ length: 19 }, (_, i) => 5 + i); // 5 AM – 11 PM
-  const setBlock = (iso, hour, text) => {
-    const dayP = planners[iso] || {};
-    const nextBlocks = { ...(dayP.blocks || {}), [String(hour)]: text };
-    setData({ ...data, planners: { ...planners, [iso]: { ...dayP, blocks: nextBlocks } } });
-  };
 
   return (
     <div className="p-6 lg:p-10 max-w-5xl mx-auto space-y-6">
@@ -6358,46 +6349,95 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         )}
       </div>
 
-      {/* Weekly schedule */}
-      <div className={`rounded-2xl border ${themePanel} p-5`}>
-        <div className="flex items-baseline justify-between mb-3">
-          <div className="text-xs uppercase tracking-[0.18em] text-stone-500">Weekly schedule</div>
-          <div className="text-[10px] italic text-stone-400">{weekDays[0]} → {weekDays[6]}</div>
+      {/* WEEKLY SCHEDULE — Mon→Sun · 5 AM → 11 PM (collapsible) — lifted verbatim from the Calendar */}
+      <div className={`rounded-lg border ${themePanel} ${showWeeklySchedule ? "p-5" : "p-3"}`}>
+        <div className={`flex items-center justify-between flex-wrap gap-2 ${showWeeklySchedule ? "mb-3" : "mb-0"}`}>
+          <button onClick={toggleWeeklySchedule} className="flex items-start gap-2 text-left group" title={showWeeklySchedule ? "Hide weekly schedule" : "Expand weekly schedule"}>
+            <ChevronRight className={`w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0 transition ${showWeeklySchedule ? "rotate-90" : ""}`} />
+            <div>
+              <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 group-hover:text-[#5b7351]">WEEKLY SCHEDULE</h2>
+              {showWeeklySchedule && (
+                <p className={`text-[11px] ${themeMuted} mt-0.5`}>
+                  Week of {fmtDate(weekStart)} — Mon → Sun · 5 AM → 11 PM · click any cell to expand
+                </p>
+              )}
+            </div>
+          </button>
+          {showWeeklySchedule && (
+            <div className="flex items-center gap-2 flex-wrap">
+              <button
+                onClick={() => setShowHalfHours(v => !v)}
+                className={`px-3 py-1.5 rounded text-xs font-medium border transition ${showHalfHours ? "bg-[#5b7351] text-white border-[#5b7351]" : "border-stone-200 text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
+                title="Toggle the half-hour rows (:30 slots)"
+              >{showHalfHours ? "Hide :30 marks" : "Show :30 marks"}</button>
+              <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded border border-stone-200 text-xs hover:border-[#7a9a6e] hover:bg-[#f4f7ee]">← Prev week</button>
+              <button onClick={() => setWeekAnchor(todayISO())} className="px-3 py-1.5 bg-[#7a9a6e] text-white text-xs font-medium rounded hover:bg-[#5b7351]">This week</button>
+              <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded border border-stone-200 text-xs hover:border-[#7a9a6e] hover:bg-[#f4f7ee]">Next week →</button>
+            </div>
+          )}
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-xs" style={{ minWidth: "720px" }}>
-            <thead>
-              <tr>
-                <th className="w-16 px-1 py-2 text-left text-[10px] font-normal uppercase tracking-wider text-stone-400">Time</th>
-                {weekDays.map(iso => (
-                  <th key={iso} className={`px-1 py-2 text-left text-[10px] font-normal uppercase tracking-wider ${iso === date ? "text-[#5b7351] font-semibold" : "text-stone-400"}`}>
-                    <button onClick={() => setDate(iso)} className="hover:text-[#5b7351] transition">
-                      {dayShort(iso)} {dayNum(iso)}
-                    </button>
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {HOURS.map(h => (
-                <tr key={h} className="align-top">
-                  <td className="px-1 py-1 text-[10px] text-stone-400 italic whitespace-nowrap">{fmtHour(h)}</td>
-                  {weekDays.map(iso => {
-                    const text = ((planners[iso] || {}).blocks || {})[String(h)] || "";
-                    return (
-                      <td key={iso + "|" + h} className="p-0.5">
-                        <input value={text}
-                          onChange={e => setBlock(iso, h, e.target.value)}
-                          placeholder="—"
-                          className={`w-full px-2 py-1 border rounded text-[11px] focus:border-[#7a9a6e] outline-none ${iso === date ? "border-[#9cb88f] bg-[#f4f7ee]" : "border-stone-100 bg-white"}`} />
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {showWeeklySchedule && <div className="overflow-x-auto">
+          <div className="min-w-[640px]">
+            <div className="grid border-b border-stone-200" style={{ gridTemplateColumns: "52px repeat(7, minmax(70px, 1fr))" }}>
+              <div className="text-[9px] tracking-[0.18em] text-stone-400 font-semibold py-1.5 flex items-center">TIME</div>
+              {WEEK_DAYS.map((label, i) => {
+                const iso = weekDates[i];
+                const isTodayHeader = iso === todayISO();
+                const dayNum = new Date(iso + "T00:00:00").getDate();
+                return (
+                  <button
+                    key={iso}
+                    onClick={() => setDate(iso)}
+                    className={`text-center py-1.5 px-0.5 rounded-t border-b-2 transition ${isTodayHeader ? "border-[#a8c090]" : "border-transparent hover:bg-[#f4f7ee]/60"} ${iso === date ? "bg-[#f4f7ee]" : ""}`}
+                    title={`Jump the planner to ${iso}`}
+                  >
+                    <div className="text-[9px] tracking-[0.14em] font-semibold text-stone-500">{label.toUpperCase()}</div>
+                    <div className={`font-serif text-sm leading-none mt-0.5 ${isTodayHeader ? "text-[#7a9a6e]" : "text-stone-700"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{dayNum}</div>
+                  </button>
+                );
+              })}
+            </div>
+            <div>
+              {PLANNER_HOURS.filter(hour => {
+                const isHalf = hour.includes(":30");
+                if (!isHalf) return true;
+                if (showHalfHours) return true;
+                return weekDates.some(iso => (((planners[iso] || {}).blocks || {})[hour] || "").trim());
+              }).map(hour => {
+                const isHalf = hour.includes(":30");
+                const isMeal = ["8:00 AM", "12:00 PM", "6:00 PM"].includes(hour);
+                return (
+                  <div
+                    key={hour}
+                    className={`grid border-t ${isHalf ? "border-stone-50" : "border-stone-100"} ${isMeal ? "bg-[#f4f7ee]/40" : ""}`}
+                    style={{ gridTemplateColumns: "52px repeat(7, minmax(70px, 1fr))" }}
+                  >
+                    <div className={`text-[10px] font-mono py-1 px-1 flex items-center ${isHalf ? "text-stone-400" : "text-[#5b7351] font-semibold"}`}>{isHalf ? hour.replace(":30", ":30").replace(" AM", "a").replace(" PM", "p") : hour.replace(":00", "")}</div>
+                    {weekDates.map(iso => {
+                      const cellKey = iso + "|" + hour;
+                      const cellValue = ((planners[iso] || {}).blocks || {})[hour] || "";
+                      const isFocused = focusedCell === cellKey;
+                      return (
+                        <textarea
+                          key={cellKey}
+                          value={cellValue}
+                          onChange={e => updateBlockForDate(iso, hour, e.target.value)}
+                          onFocus={() => setFocusedCell(cellKey)}
+                          onBlur={() => setFocusedCell(prev => prev === cellKey ? null : prev)}
+                          rows={isFocused ? 6 : 1}
+                          placeholder=""
+                          title={cellValue}
+                          className={`text-[10px] leading-tight px-1 py-0.5 border-l border-stone-100 outline-none resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:border-[#7a9a6e] focus:relative focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30 ${cellValue ? "bg-white text-stone-800" : "bg-transparent hover:bg-stone-50"}`}
+                          style={{ minHeight: isFocused ? "130px" : "24px", height: isFocused ? "auto" : "24px" }}
+                        />
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>}
       </div>
 
       {/* Wins */}
@@ -6489,28 +6529,13 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
   const [draftTitle, setDraftTitle] = useState("");
   const [draftTime, setDraftTime] = useState("");
   const [draftNotes, setDraftNotes] = useState("");
-  // Weekly schedule state (moved here from the Daily Planner)
-  const [weekAnchor, setWeekAnchor] = useState(() => todayISO());
-  const [showHalfHours, setShowHalfHours] = useState(false);
-  const [focusedCell, setFocusedCell] = useState(null);
   // Title rename + show/hide year view
   const calendarLabel = data.calendarLabel || "Calendar";
   const setCalendarLabel = (v) => setData({ ...data, calendarLabel: v });
   const [editingTitle, setEditingTitle] = useState(false);
   const showYearView = data.showYearView !== false; // default true
   const toggleYearView = () => setData({ ...data, showYearView: !showYearView });
-  const showWeeklySchedule = data.showWeeklySchedule !== false; // default true
-  const toggleWeeklySchedule = () => setData({ ...data, showWeeklySchedule: !showWeeklySchedule });
 
-  const planners = data.planners || {};
-  const weekStart = startOfWeekMonday(weekAnchor);
-  const weekDates = WEEK_DAYS.map((_, i) => addDaysISO(weekStart, i));
-  const shiftWeek = (n) => setWeekAnchor(addDaysISO(weekAnchor, n * 7));
-  const updateBlockForDate = (isoDate, hour, v) => {
-    const existing = planners[isoDate] || { priorities: ["","",""], blocks: {}, wins: ["","",""], gratitude: "", journal: "", waterGlasses: 0 };
-    const next = { ...existing, blocks: { ...(existing.blocks || {}), [hour]: v } };
-    setData({ ...data, planners: { ...planners, [isoDate]: next } });
-  };
 
   const events = data.calendarEvents || {};
   const connectedCalendar = data.connectedCalendar || null;
@@ -6582,97 +6607,6 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
             <Mail className="w-4 h-4" /> {connectedCalendar ? `✓ ${connectedCalendar}` : "Connect calendar"}
           </button>
         </div>
-      </div>
-
-      {/* WEEKLY SCHEDULE — Mon→Sun · 5 AM → 11 PM (collapsible) */}
-      <div className={`rounded-lg border ${themePanel} ${showWeeklySchedule ? "p-5" : "p-3"} mb-6`}>
-        <div className={`flex items-center justify-between flex-wrap gap-2 ${showWeeklySchedule ? "mb-3" : "mb-0"}`}>
-          <button onClick={toggleWeeklySchedule} className="flex items-start gap-2 text-left group" title={showWeeklySchedule ? "Hide weekly schedule" : "Expand weekly schedule"}>
-            <ChevronRight className={`w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0 transition ${showWeeklySchedule ? "rotate-90" : ""}`} />
-            <div>
-              <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 group-hover:text-[#5b7351]">WEEKLY SCHEDULE</h2>
-              {showWeeklySchedule && (
-                <p className={`text-[11px] ${themeMuted} mt-0.5`}>
-                  Week of {fmtDate(weekStart)} — Mon → Sun · 5 AM → 11 PM · click any cell to expand
-                </p>
-              )}
-            </div>
-          </button>
-          {showWeeklySchedule && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <button
-                onClick={() => setShowHalfHours(v => !v)}
-                className={`px-3 py-1.5 rounded text-xs font-medium border transition ${showHalfHours ? "bg-[#5b7351] text-white border-[#5b7351]" : "border-stone-200 text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
-                title="Toggle the half-hour rows (:30 slots)"
-              >{showHalfHours ? "Hide :30 marks" : "Show :30 marks"}</button>
-              <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded border border-stone-200 text-xs hover:border-[#7a9a6e] hover:bg-[#f4f7ee]">← Prev week</button>
-              <button onClick={() => setWeekAnchor(todayISO())} className="px-3 py-1.5 bg-[#7a9a6e] text-white text-xs font-medium rounded hover:bg-[#5b7351]">This week</button>
-              <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded border border-stone-200 text-xs hover:border-[#7a9a6e] hover:bg-[#f4f7ee]">Next week →</button>
-            </div>
-          )}
-        </div>
-        {showWeeklySchedule && <div className="overflow-x-auto">
-          <div className="min-w-[640px]">
-            <div className="grid border-b border-stone-200" style={{ gridTemplateColumns: "52px repeat(7, minmax(70px, 1fr))" }}>
-              <div className="text-[9px] tracking-[0.18em] text-stone-400 font-semibold py-1.5 flex items-center">TIME</div>
-              {WEEK_DAYS.map((label, i) => {
-                const iso = weekDates[i];
-                const isToday = iso === todayISO();
-                const dayNum = new Date(iso + "T00:00:00").getDate();
-                return (
-                  <button
-                    key={iso}
-                    onClick={() => setSelectedDate(iso)}
-                    className={`text-center py-1.5 px-0.5 rounded-t border-b-2 transition ${isToday ? "border-[#a8c090]" : "border-transparent hover:bg-[#f4f7ee]/60"}`}
-                    title={`Open events for ${iso}`}
-                  >
-                    <div className="text-[9px] tracking-[0.14em] font-semibold text-stone-500">{label.toUpperCase()}</div>
-                    <div className={`font-serif text-sm leading-none mt-0.5 ${isToday ? "text-[#7a9a6e]" : "text-stone-700"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{dayNum}</div>
-                  </button>
-                );
-              })}
-            </div>
-            <div>
-              {PLANNER_HOURS.filter(hour => {
-                const isHalf = hour.includes(":30");
-                if (!isHalf) return true;
-                if (showHalfHours) return true;
-                return weekDates.some(iso => (((planners[iso] || {}).blocks || {})[hour] || "").trim());
-              }).map(hour => {
-                const isHalf = hour.includes(":30");
-                const isMeal = ["8:00 AM", "12:00 PM", "6:00 PM"].includes(hour);
-                return (
-                  <div
-                    key={hour}
-                    className={`grid border-t ${isHalf ? "border-stone-50" : "border-stone-100"} ${isMeal ? "bg-[#f4f7ee]/40" : ""}`}
-                    style={{ gridTemplateColumns: "52px repeat(7, minmax(70px, 1fr))" }}
-                  >
-                    <div className={`text-[10px] font-mono py-1 px-1 flex items-center ${isHalf ? "text-stone-400" : "text-[#5b7351] font-semibold"}`}>{isHalf ? hour.replace(":30", ":30").replace(" AM", "a").replace(" PM", "p") : hour.replace(":00", "")}</div>
-                    {weekDates.map(iso => {
-                      const cellKey = iso + "|" + hour;
-                      const cellValue = ((planners[iso] || {}).blocks || {})[hour] || "";
-                      const isFocused = focusedCell === cellKey;
-                      return (
-                        <textarea
-                          key={cellKey}
-                          value={cellValue}
-                          onChange={e => updateBlockForDate(iso, hour, e.target.value)}
-                          onFocus={() => setFocusedCell(cellKey)}
-                          onBlur={() => setFocusedCell(prev => prev === cellKey ? null : prev)}
-                          rows={isFocused ? 6 : 1}
-                          placeholder=""
-                          title={cellValue}
-                          className={`text-[10px] leading-tight px-1 py-0.5 border-l border-stone-100 outline-none resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:border-[#7a9a6e] focus:relative focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30 ${cellValue ? "bg-white text-stone-800" : "bg-transparent hover:bg-stone-50"}`}
-                          style={{ minHeight: isFocused ? "130px" : "24px", height: isFocused ? "auto" : "24px" }}
-                        />
-                      );
-                    })}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>}
       </div>
 
       {/* YEAR VIEW HEADER — always visible, click to expand/hide */}
