@@ -3267,11 +3267,18 @@ function TextField({ label, value, onChange, type = "text", dark, placeholder })
 }
 
 function SelectField({ label, value, onChange, options, dark }) {
+  // Accepts either ["a","b"] or [{ value, label }, …] — translated labels
+  // need the latter so the dropdown shows Spanish without changing the
+  // stored value.
   return (
     <label className="block">
       <span className={`text-xs tracking-wide ${dark ? "text-stone-400" : "text-stone-600"}`}>{label}</span>
       <select value={value} onChange={e => onChange(e.target.value)} className={`mt-1 w-full px-3 py-2 rounded border outline-none focus:border-[#7a9a6e] text-sm capitalize ${dark ? "bg-white border-stone-200 text-stone-900" : "bg-white border-stone-300 text-stone-900"}`}>
-        {options.map(o => <option key={o} value={o}>{o}</option>)}
+        {options.map(o => {
+          const v = (o && typeof o === "object") ? o.value : o;
+          const l = (o && typeof o === "object") ? (o.label || o.value) : o;
+          return <option key={v} value={v}>{l}</option>;
+        })}
       </select>
     </label>
   );
