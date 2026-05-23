@@ -1,0 +1,16 @@
+{
+  "name": "Sovereign",
+  "short_name": "Sovereign",
+  "description": "Calm, centered, in charge. The personal operating system for the woman behind everything.",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f7ee",
+  "theme_color": "#5b7351",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

@@ -1,10 +1,32 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Sovereign — Build the Life",
   description:
     "An operating system for the woman behind everything. Goals, money, body, vision, language — all in one place.",
+  manifest: "/manifest.json",
+  applicationName: "Sovereign",
+  appleWebApp: {
+    capable: true,
+    title: "Sovereign",
+    statusBarStyle: "default",
+  },
+  icons: {
+    icon: [
+      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+};
+
+export const viewport: Viewport = {
+  // Sage — same forest-deep as the app's interior. Replaces the default gray
+  // that iOS/Android use when adding the site to the home screen.
+  themeColor: "#5b7351",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({

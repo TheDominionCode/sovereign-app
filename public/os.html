@@ -3,6 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#5b7351">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Sovereign">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <title>Sovereign — Build the Life</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
@@ -673,7 +681,7 @@ export default function DominionOS() {
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
           <Crown className="w-12 h-12 text-[#5b7351] mx-auto mb-3 animate-pulse" />
-          <div className="text-[#5b7351] tracking-[0.3em] text-xs">DOMINION OS</div>
+          <div className="text-[#5b7351] tracking-[0.3em] text-xs">SOVEREIGN</div>
         </div>
       </div>
     );
@@ -683,21 +691,24 @@ export default function DominionOS() {
   // user (which we no longer do — onLogout now signs out of Supabase). Keep
   // the fallback as a safety net.
   if (!user) return <AuthPage onLogin={(u) => setUser(u)} />;
-  return <AppShell
-    user={user}
-    setUser={setUser}
-    dark={dark}
-    setDark={setDark}
-    onLogout={() => {
-      // Inner logout = real logout. Bust the parent frame's session via the
-      // Next /logout route so the user lands on the marketing site, signed
-      // out everywhere.
-      try {
-        if (window.top && window.top !== window.self) window.top.location.href = "/logout";
-        else window.location.href = "/logout";
-      } catch (e) { window.location.href = "/logout"; }
-    }}
-  />;
+  return (<>
+    <AppShell
+      user={user}
+      setUser={setUser}
+      dark={dark}
+      setDark={setDark}
+      onLogout={() => {
+        // Inner logout = real logout. Bust the parent frame's session via
+        // the Next /logout route so the user lands on the marketing site,
+        // signed out everywhere.
+        try {
+          if (window.top && window.top !== window.self) window.top.location.href = "/logout";
+          else window.location.href = "/logout";
+        } catch (e) { window.location.href = "/logout"; }
+      }}
+    />
+    <InstallBanner />
+  </>);
 }
 
 // ============================================================
@@ -1203,44 +1214,48 @@ function LandingPage__OLD({ onStart, onSignIn }) {
 function Disclosures() {
   const sections = [
     {
+      title: "Ownership",
+      body: "Sovereign is a software product owned and operated by The Dominion Code LLC. © " + new Date().getFullYear() + " — all rights reserved.",
+    },
+    {
       title: "Copyright & Intellectual Property",
-      body: "DOMINION OS™ — including this software, its user interface, written content (scripts, objections, affirmations, vision-board templates, training materials, calculators, and module structures), graphics, code, layout, and the entire two-mode operating-system framework — is the proprietary property of the developer. © " + new Date().getFullYear() + " — All Rights Reserved. No part of this software may be copied, reproduced, distributed, modified, sold, sublicensed, reverse-engineered, decompiled, scraped, or used to create derivative or competing works in any form (digital, printed, or otherwise) without prior written permission from the developer. Unauthorized use will be pursued to the fullest extent of applicable law.",
+      body: "Sovereign — including this software, its user interface, written content (affirmations, vision-board templates, journaling prompts, planner structures, and any other in-app text), graphics, code, and module layout — is the proprietary property of The Dominion Code LLC. No part of this software may be copied, reproduced, distributed, modified, sold, sublicensed, reverse-engineered, decompiled, scraped, or used to create derivative or competing works in any form (digital, printed, or otherwise) without prior written permission from The Dominion Code LLC. Unauthorized use will be pursued to the fullest extent of applicable law.",
     },
     {
-      title: "Trademark",
-      body: "\"DOMINION OS\", the crown logo, and associated marks are unregistered trademarks of the developer. Use of these marks without express written permission is prohibited.",
+      title: "Free Trial & Billing",
+      body: "Every plan begins with a 3-day free trial. You may cancel any time before the end of day 3 and you will not be charged. If you do not cancel before day 4 begins, your selected plan will start automatically and your card on file will be charged for the full billing period. After day 3 you must select and pay for a plan to continue using Sovereign; until then access is paused.",
     },
     {
-      title: "Insurance, Financial, Legal & Tax Disclaimer",
-      body: "DOMINION OS is a productivity and tracking tool. It does not provide insurance, financial, investment, legal, tax, or accounting advice. Scripts, objection responses, calculator outputs, illustrative numbers, and example wording are educational starting points — they are not guarantees of any outcome and must be adapted by the licensed professional to their jurisdiction, carrier guidelines, and the specific facts of each client situation. The user is solely responsible for compliance with all applicable state and federal laws and regulations, including (without limitation) state insurance department rules, FINRA / SEC / NAIC requirements where applicable, anti-rebate and anti-replacement statutes, advertising and disclosure rules, do-not-call laws, CAN-SPAM, and HIPAA-equivalent privacy rules. DOMINION OS is not affiliated with, endorsed by, or representing any insurance carrier, broker-dealer, government agency, or regulatory body.",
+      title: "No Refunds",
+      body: "All sales are final. By starting a paid plan you agree that no refunds will be issued for any billing period — partial or full — for any reason, including unused time. Your responsibility is to cancel before day 4 of the free trial if you do not wish to continue. You may cancel a paid subscription at any time to prevent the next renewal; access remains through the end of the current paid period, but the current period is non-refundable.",
+    },
+    {
+      title: "Your Data — Preservation Across Subscriptions",
+      body: "Your entries inside Sovereign are saved to our servers and tied to your account. If your trial or subscription lapses, your data is not deleted — it remains preserved indefinitely and becomes available again the moment you start a new plan. You will never lose what you have entered by missing a renewal.",
     },
     {
       title: "Wellness & Health Disclaimer",
-      body: "The Cycle & Mood and Vitamins / Supplements features are personal self-tracking tools. They are not medical advice, diagnosis, or treatment. They are not a substitute for consultation with a qualified healthcare professional. Predictions (such as estimated next period) are informational only and may be inaccurate. Always consult a licensed medical provider for any health concerns or before starting, stopping, or changing supplements or medications.",
+      body: "The Cycle & Mood, Habits, Vitamins, and similar features inside Sovereign are personal self-tracking tools. They are not medical advice, diagnosis, or treatment, and are not a substitute for consultation with a qualified healthcare professional. Predictions (such as estimated next period) are informational only and may be inaccurate. Always consult a licensed medical provider for any health concerns or before starting, stopping, or changing supplements or medications.",
     },
     {
-      title: "Data, Privacy & Backups",
-      body: "Your data is stored locally on this device unless you explicitly choose to sync it. We do not sell, rent, or share your client data. Users are solely responsible for backing up their own data — use the Settings → Data → Export feature regularly. Do not store passwords, government identifiers, full payment-card numbers, protected health information, or other regulated sensitive data unless your organization's compliance program has approved it for an offline productivity context. Browser storage may be cleared by you, your operating system, or a browser update; we are not responsible for data loss.",
+      title: "Personal Finance Disclaimer",
+      body: "The Personal Finance, Goals, and related features inside Sovereign are organizational tools. They do not provide financial, investment, legal, tax, or accounting advice. Numbers you enter are informational only and are not a recommendation. Consult a qualified professional for any financial decisions.",
     },
     {
       title: "Acceptable Use",
-      body: "By using DOMINION OS you agree to use it lawfully and ethically. You will not use it to harass, defraud, mislead, or violate the rights of any third party; to engage in unlawful or deceptive sales practices; to impersonate another person or licensee; or to circumvent any applicable law or regulation. Violation may result in immediate termination of access.",
+      body: "By using Sovereign you agree to use it lawfully and ethically. You will not use it to harass, defraud, or violate the rights of any third party, to circumvent any applicable law or regulation, or to share your login credentials with anyone other than yourself. Violation may result in immediate termination of access without refund.",
     },
     {
       title: "No Warranty / \"As Is\"",
-      body: "DOMINION OS is provided \"AS IS\" and \"AS AVAILABLE\", without warranty of any kind, express or implied — including but not limited to implied warranties of merchantability, fitness for a particular purpose, accuracy, reliability, uninterrupted availability, and non-infringement. The developer makes no warranty that the software will be error-free, secure against intrusion, or compatible with all devices.",
+      body: "Sovereign is provided \"AS IS\" and \"AS AVAILABLE\", without warranty of any kind, express or implied — including but not limited to implied warranties of merchantability, fitness for a particular purpose, accuracy, reliability, uninterrupted availability, and non-infringement. The Dominion Code LLC makes no warranty that the software will be error-free, secure against intrusion, or compatible with all devices.",
     },
     {
       title: "Limitation of Liability",
-      body: "To the maximum extent permitted by law, in no event shall the developer or its licensors be liable for any direct, indirect, incidental, special, consequential, exemplary, or punitive damages — including but not limited to lost profits, lost data, lost business opportunities, regulatory fines, or carrier chargebacks — arising out of or in connection with the use of, or inability to use, this software, even if advised of the possibility of such damages.",
-    },
-    {
-      title: "Indemnification",
-      body: "The user agrees to indemnify and hold harmless the developer from any third-party claims, losses, damages, liabilities, and expenses (including reasonable attorneys' fees) arising out of the user's use of DOMINION OS, the user's violation of these terms, or the user's violation of any law or third-party right.",
+      body: "To the maximum extent permitted by law, in no event shall The Dominion Code LLC be liable for any direct, indirect, incidental, special, consequential, exemplary, or punitive damages — including but not limited to lost profits, lost data, or lost opportunities — arising out of or in connection with your use of, or inability to use, this software, even if advised of the possibility of such damages.",
     },
     {
       title: "Changes to These Terms",
-      body: "These disclosures may be updated from time to time. Continued use of DOMINION OS after updates constitutes acceptance of the revised terms.",
+      body: "These disclosures may be updated from time to time. Continued use of Sovereign after updates constitutes acceptance of the revised terms.",
     },
   ];
   return (
@@ -1251,11 +1266,57 @@ function Disclosures() {
           <p className="text-sm text-stone-600 leading-relaxed">{s.body}</p>
         </div>
       ))}
-      <p className="text-xs text-stone-400 italic text-center pt-4">By creating an account or continuing to use DOMINION OS, you acknowledge that you have read and agree to these disclosures.</p>
+      <p className="text-xs text-stone-400 italic text-center pt-4">By creating an account, starting your free trial, or paying for a Sovereign plan, you acknowledge that you have read and agree to these disclosures. Sovereign is a property of The Dominion Code LLC.</p>
     </div>
   );
 }
 
+// Mobile install hint — shows on iOS / Android browsers (not yet in standalone
+// mode) and walks the user through "Share → Add to Home Screen". Dismissed
+// dismissal persists in cloud-synced storage so it only shows once.
+function InstallBanner() {
+  const [dismissed, setDismissed] = useState(() => storage.get("install_banner_dismissed_v1", false));
+  const [show, setShow] = useState(false);
+  const [isIOS, setIsIOS] = useState(false);
+  useEffect(() => {
+    try {
+      const ua = navigator.userAgent || "";
+      const ios = /iPhone|iPad|iPod/i.test(ua);
+      const android = /Android/i.test(ua);
+      const standalone = window.navigator.standalone === true ||
+        (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+      setIsIOS(ios);
+      setShow((ios || android) && !standalone);
+    } catch (e) {}
+  }, []);
+  if (dismissed || !show) return null;
+  const dismiss = () => { storage.set("install_banner_dismissed_v1", true); setDismissed(true); };
+  return (
+    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md bg-white border border-[#9cb88f] rounded-2xl shadow-xl p-4">
+      <div className="flex items-start gap-3">
+        <div className="w-10 h-10 rounded-xl bg-[#5b7351] flex items-center justify-center flex-shrink-0">
+          <Crown className="w-5 h-5 text-white" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-semibold text-[#5b7351]">Install Sovereign on your phone</div>
+          {isIOS ? (
+            <ol className="text-xs text-stone-600 mt-1 space-y-0.5 list-decimal list-inside">
+              <li>Tap the <strong>Share</strong> icon in Safari (square with ↑)</li>
+              <li>Choose <strong>Add to Home Screen</strong></li>
+              <li>Tap <strong>Add</strong> in the top right</li>
+            </ol>
+          ) : (
+            <ol className="text-xs text-stone-600 mt-1 space-y-0.5 list-decimal list-inside">
+              <li>Tap the menu (<strong>⋮</strong>) in your browser</li>
+              <li>Choose <strong>Install app</strong> or <strong>Add to Home screen</strong></li>
+            </ol>
+          )}
+        </div>
+        <button onClick={dismiss} className="text-xs text-stone-400 hover:text-stone-600 p-1" aria-label="Dismiss">✕</button>
+      </div>
+    </div>
+  );
+}
 function FAQItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
@@ -6273,13 +6334,15 @@ function addDaysISO(dateStr, n) {
 }
 
 function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
-  // Daily Planner — i18n via t(), all single-line inputs are textareas that
-  // grow on focus (same pattern as the Weekly Schedule cells). Layout: two
-  // 3-square rows above the full-width Weekly Schedule.
+  // Daily Planner — explicit onFocus/onBlur tracking so inputs reliably grow
+  // when you click in and collapse when you click out (CSS :focus alone was
+  // flaky on touch). i18n via t(); layout is two 3-square rows above the
+  // full-width Weekly Schedule.
   const [date, setDate] = useState(todayISO());
   const [newTitle, setNewTitle] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
+  const [focusedField, setFocusedField] = useState(null);
 
   // Weekly schedule state (lifted from the Calendar — verbatim)
   const [weekAnchor, setWeekAnchor] = useState(() => todayISO());
@@ -6291,10 +6354,26 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const showPriorities = data.showPriorities !== false;
   const togglePriorities = () => setData({ ...data, showPriorities: !showPriorities });
 
-  // Shared classes — single-line textareas that expand on focus like the
-  // Weekly Schedule cells.
-  const growInput = "w-full px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none h-10 focus:h-28 transition-[height] duration-150 resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:shadow-md focus:ring-2 focus:ring-[#7a9a6e]/20";
-  const growArea = "w-full px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none h-24 focus:h-56 transition-[height] duration-150 resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:shadow-md focus:ring-2 focus:ring-[#7a9a6e]/20";
+  // grow(key, base, focus, rows) — returns props for a textarea that grows
+  // when focused and collapses back when blurred. Same UX as the Weekly
+  // Schedule cells, applied uniformly to every input on the page.
+  const grow = (key, base = 40, focus = 120, focusRows = 5) => {
+    const isFocused = focusedField === key;
+    return {
+      onFocus: () => setFocusedField(key),
+      onBlur: () => setFocusedField(prev => prev === key ? null : prev),
+      rows: isFocused ? focusRows : 1,
+      className:
+        "w-full px-3 py-2 border rounded text-sm outline-none resize-none transition-all duration-150 " +
+        (isFocused
+          ? "bg-[#f4f7ee] border-[#7a9a6e] shadow-md ring-2 ring-[#7a9a6e]/20 overflow-auto"
+          : "bg-white border-stone-200 overflow-hidden"),
+      style: {
+        minHeight: isFocused ? focus + "px" : base + "px",
+        height: isFocused ? "auto" : base + "px",
+      },
+    };
+  };
 
   // ----- Per-day plan -----
   const planners = data.planners || {};
@@ -6342,7 +6421,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (becoming && triggerConfetti) triggerConfetti();
   };
   const removeTask = (id) => setTasks(allTasks.filter(x => x && x.id !== id));
-  const startEdit = (t) => { setEditingId(t.id); setEditingText(t.title); };
+  const startEdit = (task) => { setEditingId(task.id); setEditingText(task.title); };
   const saveEdit = () => {
     const text = (editingText || "").trim();
     if (!text) { setEditingId(null); return; }
@@ -6351,7 +6430,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   };
   const clearCompleted = () => setTasks(allTasks.filter(t => !(t && t.date === date && t.done)));
 
-  // ----- Date controls (quiet, in PageHeader.action) -----
+  // ----- Date controls -----
   const shiftDate = (days) => {
     const d = new Date(date + "T00:00:00");
     d.setDate(d.getDate() + days);
@@ -6388,9 +6467,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
           {priorities.map((p, i) => (
             <div key={i} className="flex items-start gap-3">
               <span className="font-display text-xl text-[#5b7351] w-6 text-center pt-1.5 flex-shrink-0" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
-              <textarea rows={1} value={p} onChange={e => setPriority(i, e.target.value)}
-                placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)}
-                className={growInput} />
+              <textarea {...grow("priority-" + i)} value={p} onChange={e => setPriority(i, e.target.value)}
+                placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)} />
             </div>
           ))}
         </div>
@@ -6404,10 +6482,9 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO-DO LIST", lang)}</h2>
         <div className="text-[11px] text-stone-500">{dayTasks.length === 0 ? t("no tasks", lang) : `${doneCount} ${t("of", lang)} ${dayTasks.length} ${t("done", lang)}`}</div>
       </div>
-      <textarea rows={1} value={newTitle} onChange={e => setNewTitle(e.target.value)}
+      <textarea {...grow("todo-new")} value={newTitle} onChange={e => setNewTitle(e.target.value)}
         onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); addTask(); } }}
-        placeholder={t("Add a task…", lang)}
-        className={growInput} />
+        placeholder={t("Add a task…", lang)} />
       <div className="flex justify-between items-center mt-2 mb-3">
         {doneCount > 0 ? (
           <button onClick={clearCompleted} className="text-[11px] italic text-stone-500 hover:text-[#5b7351]">{t("clear completed", lang)}</button>
@@ -6430,11 +6507,10 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                   {task.done && <Check className="w-2.5 h-2.5" />}
                 </button>
                 {editingId === task.id ? (
-                  <textarea rows={1} autoFocus value={editingText}
+                  <textarea {...grow("todo-edit-" + task.id)} autoFocus value={editingText}
                     onChange={e => setEditingText(e.target.value)}
-                    onBlur={saveEdit}
-                    onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditingId(null); }}
-                    className={growInput} />
+                    onBlur={() => { setFocusedField(prev => prev === "todo-edit-" + task.id ? null : prev); saveEdit(); }}
+                    onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditingId(null); }} />
                 ) : (
                   <button onClick={() => startEdit(task)}
                     className={`flex-1 text-left text-xs ${task.done ? "line-through text-stone-400" : "text-ink"}`} title={t("Click to edit", lang)}>
@@ -6458,9 +6534,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         {wins.map((w, i) => (
           <div key={i} className="flex items-start gap-3">
             <span className="font-display text-xl text-[#5b7351] w-6 text-center pt-1.5 flex-shrink-0" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
-            <textarea rows={1} value={w} onChange={e => setWin(i, e.target.value)}
-              placeholder={i === 0 ? t("Anything you're proud of", lang) : i === 1 ? t("Win two", lang) : t("Win three", lang)}
-              className={growInput} />
+            <textarea {...grow("win-" + i)} value={w} onChange={e => setWin(i, e.target.value)}
+              placeholder={i === 0 ? t("Anything you're proud of", lang) : i === 1 ? t("Win two", lang) : t("Win three", lang)} />
           </div>
         ))}
       </div>
@@ -6482,21 +6557,18 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       <div className="grid gap-6 lg:grid-cols-3">
         <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("GRATITUDE", lang)}</h2>
-          <textarea value={gratitude} onChange={e => updatePlan({ gratitude: e.target.value })}
-            placeholder={t("What did you appreciate today?", lang)}
-            className={growArea} />
+          <textarea {...grow("gratitude", 80, 220, 8)} value={gratitude} onChange={e => updatePlan({ gratitude: e.target.value })}
+            placeholder={t("What did you appreciate today?", lang)} />
         </div>
         <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("MY NOTES", lang)}</h2>
-          <textarea value={journal} onChange={e => updatePlan({ journal: e.target.value })}
-            placeholder={t("Free-form journal for the day…", lang)}
-            className={growArea} />
+          <textarea {...grow("notes", 80, 220, 8)} value={journal} onChange={e => updatePlan({ journal: e.target.value })}
+            placeholder={t("Free-form journal for the day…", lang)} />
         </div>
         <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("TOMORROW", lang)}</h2>
-          <textarea value={tomorrow} onChange={e => updatePlan({ tomorrow: e.target.value })}
-            placeholder={t("What's the first thing tomorrow needs from you?", lang)}
-            className={growArea} />
+          <textarea {...grow("tomorrow", 80, 220, 8)} value={tomorrow} onChange={e => updatePlan({ tomorrow: e.target.value })}
+            placeholder={t("What's the first thing tomorrow needs from you?", lang)} />
         </div>
       </div>
 
