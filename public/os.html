@@ -1181,7 +1181,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
             <div className="text-[#5b7351] text-xs tracking-[0.3em] mb-3">DISCLOSURES &amp; LEGAL</div>
             <h2 className="font-serif text-4xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Read this carefully.</h2>
           </div>
-          <Disclosures />
+          <Disclosures lang={lang} />
         </div>
       </section>
 
@@ -1211,7 +1211,66 @@ function LandingPage__OLD({ onStart, onSignIn }) {
 }
 
 // Reusable Disclosures component — shown on the landing page and inside the app
-function Disclosures() {
+function Disclosures({ lang } = {}) {
+  if (lang === "es") {
+    const sections = [
+      {
+        title: "Propiedad",
+        body: "Sovereign es un producto de software propiedad y operado por The Dominion Code LLC. © " + new Date().getFullYear() + " — todos los derechos reservados.",
+      },
+      {
+        title: "Derechos de Autor y Propiedad Intelectual",
+        body: "Sovereign — incluyendo este software, su interfaz, su contenido escrito (afirmaciones, plantillas de tablero de visión, prompts de diario, estructura del planificador y cualquier otro texto dentro de la app), gráficos, código y diseño de módulos — es propiedad exclusiva de The Dominion Code LLC. Ninguna parte de este software puede copiarse, reproducirse, distribuirse, modificarse, venderse, sublicenciarse, someterse a ingeniería inversa, descompilarse, escrapearse, ni usarse para crear obras derivadas o competidoras en ninguna forma (digital, impresa o de otra clase) sin permiso previo por escrito de The Dominion Code LLC. El uso no autorizado se perseguirá hasta el máximo permitido por la ley.",
+      },
+      {
+        title: "Prueba Gratis y Facturación",
+        body: "Cada plan comienza con una prueba gratis de 3 días. Puedes cancelar en cualquier momento antes del final del día 3 y no se te cobrará. Si no cancelas antes de que empiece el día 4, tu plan seleccionado comenzará automáticamente y se cobrará a tu tarjeta el período de facturación completo. Después del día 3 debes elegir y pagar un plan para seguir usando Sovereign; hasta entonces el acceso queda pausado.",
+      },
+      {
+        title: "Sin Reembolsos",
+        body: "Todas las ventas son finales. Al iniciar un plan pagado aceptas que no se emitirán reembolsos por ningún período de facturación — ni parcial ni total — por ninguna razón, incluyendo tiempo no usado. Tu responsabilidad es cancelar antes del día 4 de la prueba gratis si no deseas continuar. Puedes cancelar una suscripción pagada en cualquier momento para evitar la siguiente renovación; el acceso permanece hasta el final del período pagado actual, pero ese período no es reembolsable.",
+      },
+      {
+        title: "Tus Datos — Preservación a Través de Suscripciones",
+        body: "Tus entradas dentro de Sovereign se guardan en nuestros servidores y están vinculadas a tu cuenta. Si tu prueba o suscripción expira, tus datos no se eliminan — permanecen guardados indefinidamente y vuelven a estar disponibles en el momento en que inicies un nuevo plan. Nunca perderás lo que has ingresado por dejar pasar una renovación.",
+      },
+      {
+        title: "Aviso de Salud y Bienestar",
+        body: "Las funciones de Ciclo y Ánimo, Hábitos, Vitaminas y similares dentro de Sovereign son herramientas personales de autoseguimiento. No son consejo médico, diagnóstico ni tratamiento, y no sustituyen la consulta con un profesional de salud calificado. Las predicciones (como la estimación del próximo período) son solo informativas y pueden ser inexactas. Consulta siempre a un proveedor médico licenciado ante cualquier preocupación de salud o antes de comenzar, suspender o cambiar suplementos o medicamentos.",
+      },
+      {
+        title: "Aviso de Finanzas Personales",
+        body: "Las funciones de Finanzas Personales, Metas y relacionadas dentro de Sovereign son herramientas organizacionales. No ofrecen asesoría financiera, de inversión, legal, fiscal ni contable. Los números que ingreses son solo informativos y no constituyen una recomendación. Consulta a un profesional calificado para cualquier decisión financiera.",
+      },
+      {
+        title: "Uso Aceptable",
+        body: "Al usar Sovereign aceptas usarlo de manera legal y ética. No lo usarás para acosar, defraudar ni violar los derechos de terceros, para evadir leyes o regulaciones aplicables, ni para compartir tus credenciales de acceso con nadie más que tú. La violación puede resultar en la terminación inmediata del acceso sin reembolso.",
+      },
+      {
+        title: 'Sin Garantía / "Tal Cual"',
+        body: 'Sovereign se proporciona "TAL CUAL" y "SEGÚN DISPONIBILIDAD", sin garantía de ningún tipo, expresa o implícita — incluyendo, sin limitación, garantías implícitas de comerciabilidad, idoneidad para un propósito particular, exactitud, confiabilidad, disponibilidad ininterrumpida y no infracción. The Dominion Code LLC no garantiza que el software esté libre de errores, sea seguro contra intrusiones o compatible con todos los dispositivos.',
+      },
+      {
+        title: "Limitación de Responsabilidad",
+        body: "Hasta el máximo permitido por la ley, en ningún caso The Dominion Code LLC será responsable por daños directos, indirectos, incidentales, especiales, consecuenciales, ejemplares o punitivos — incluyendo, sin limitación, lucro cesante, pérdida de datos o pérdida de oportunidades — derivados de o relacionados con tu uso, o imposibilidad de uso, de este software, incluso si se ha advertido de la posibilidad de tales daños.",
+      },
+      {
+        title: "Cambios a Estos Términos",
+        body: "Estos avisos pueden actualizarse de tiempo en tiempo. El uso continuado de Sovereign después de las actualizaciones constituye la aceptación de los términos revisados.",
+      },
+    ];
+    return (
+      <div className="space-y-4">
+        {sections.map((s, i) => (
+          <div key={i} className="bg-white rounded-lg border border-stone-200 p-5">
+            <h3 className="font-serif text-lg mb-2 text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.title}</h3>
+            <p className="text-sm text-stone-600 leading-relaxed">{s.body}</p>
+          </div>
+        ))}
+        <p className="text-xs text-stone-400 italic text-center pt-4">Al crear una cuenta, iniciar tu prueba gratis o pagar un plan de Sovereign, reconoces que has leído y aceptas estos avisos. Sovereign es una propiedad de The Dominion Code LLC.</p>
+      </div>
+    );
+  }
   const sections = [
     {
       title: "Ownership",
@@ -2855,7 +2914,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           {active === "disclosures" && (
             <div className="max-w-4xl">
               <PageHeader title={t("Disclosures & Legal", lang)} subtitle={t("Copyright, disclaimers, terms of use.", lang)} dark={dark} />
-              <Disclosures />
+              <Disclosures lang={lang} />
             </div>
           )}
         </div>
@@ -5420,10 +5479,105 @@ const ELEGANT_PHRASES = [
   { id: 64, cat: "Under Pressure", from: "You're impossible.", to: "I'm struggling to find a way through this with you.", why: "Owns your part, names the dynamic." },
 ];
 
+const ELEGANT_PHRASES_ES = [
+  // DECIR NO
+  { id: 1, cat: "Decir No", from: "No me importa.", to: "No es una prioridad para mí en este momento.", why: "Comunica un límite sin sonar desdeñosa." },
+  { id: 2, cat: "Decir No", from: "No quiero.", to: "Eso no se alinea con dónde estoy enfocada ahora.", why: "Asume la decisión. No se disculpa." },
+  { id: 3, cat: "Decir No", from: "Estoy muy ocupada.", to: "Mi agenda está llena esta semana — déjame volver a buscarte.", why: "Específica, profesional, deja la puerta abierta." },
+  { id: 4, cat: "Decir No", from: "Déjame en paz.", to: "Necesito tiempo sin interrupciones para concentrarme.", why: "Nombra la necesidad, no la irritación." },
+  { id: 5, cat: "Decir No", from: "Ni de broma.", to: "Eso no es algo a lo que pueda comprometerme.", why: "Definitivo sin ser brusco." },
+  { id: 6, cat: "Decir No", from: "No puedo.", to: "No estoy en posición de decir que sí a eso ahora mismo.", why: "Reemplaza la incapacidad con intención." },
+  { id: 7, cat: "Decir No", from: "Deja de preguntarme.", to: "Ya te di mi respuesta — agradecería que la respetes.", why: "Refuerza el límite con calma." },
+  { id: 8, cat: "Decir No", from: "Odio eso.", to: "Eso no resuena conmigo.", why: "Quita la hostilidad sin dejar de ser honesta." },
+  { id: 9, cat: "Decir No", from: "Como sea.", to: "Voy a confiar en tu criterio en esto.", why: "Convierte la desconexión en gracia." },
+
+  // ESTAR EN DESACUERDO
+  { id: 10, cat: "Estar en desacuerdo", from: "Estás equivocado.", to: "Lo veo distinto.", why: "Abre el diálogo en vez de cerrarlo." },
+  { id: 11, cat: "Estar en desacuerdo", from: "Eso es una estupidez.", to: "No estoy segura de que eso encaje con lo que estamos buscando.", why: "Critica la idea, no a la persona." },
+  { id: 12, cat: "Estar en desacuerdo", from: "¿En serio?", to: "Ayúdame a entender el razonamiento detrás de eso.", why: "Curiosidad en vez de desprecio." },
+  { id: 13, cat: "Estar en desacuerdo", from: "No, eso no está bien.", to: "Tengo una lectura diferente — ¿te la comparto?", why: "Pide permiso, después guía." },
+  { id: 14, cat: "Estar en desacuerdo", from: "No entiendes.", to: "Déjame decirlo de otra forma.", why: "Asume la responsabilidad del mensaje." },
+  { id: 15, cat: "Estar en desacuerdo", from: "No tiene sentido.", to: "Llévame por tu razonamiento — creo que me estoy perdiendo de algo.", why: "Asume buena fe." },
+
+  // LÍMITES
+  { id: 16, cat: "Límites", from: "Deja de molestarme.", to: "Necesito tiempo sin interrupciones para concentrarme.", why: "Nombra la necesidad, no la ofensa." },
+  { id: 17, cat: "Límites", from: "Estás siendo molesto.", to: "Estoy al límite — necesito un momento.", why: "Asume tu estado en vez de etiquetar el suyo." },
+  { id: 18, cat: "Límites", from: "No te metas.", to: "Esa es una decisión privada para mí.", why: "Define la línea sin insultar." },
+  { id: 19, cat: "Límites", from: "No me digas qué hacer.", to: "Aprecio la sugerencia — voy a decidir lo que es correcto para mí.", why: "Los reconoce y después reclama tu autoridad." },
+  { id: 20, cat: "Límites", from: "Deja de llamarme.", to: "El correo puede funcionar mejor para los dos de aquí en adelante.", why: "Redirige sin rechazar." },
+  { id: 21, cat: "Límites", from: "No te debo una explicación.", to: "Tomé mi decisión — y estoy en paz con ella.", why: "Sostiene la línea sin pelear." },
+
+  // DISCULPAR(SE) SIN MINIMIZARSE
+  { id: 22, cat: "Disculparse", from: "Perdón, perdón, perdón.", to: "Gracias por tu paciencia.", why: "La gratitud es más poderosa que la disculpa." },
+  { id: 23, cat: "Disculparse", from: "Perdón por molestarte.", to: "Cuando tengas un momento…", why: "Respeta su tiempo sin minimizar el tuyo." },
+  { id: 24, cat: "Disculparse", from: "Espero no estar molestando demasiado.", to: "Te agradezco que te tomes el tiempo.", why: "Confianza con calidez." },
+  { id: 25, cat: "Disculparse", from: "Perdón, esta es probablemente una pregunta tonta.", to: "Una pregunta rápida para ti…", why: "Nunca te disculpes anticipadamente por pensar." },
+  { id: 26, cat: "Disculparse", from: "Perdón por llegar tarde.", to: "Gracias por esperarme.", why: "Los honra en vez de quedarse en el error." },
+  { id: 27, cat: "Disculparse", from: "Lo siento mucho, lo olvidé.", to: "Gracias por el recordatorio.", why: "Asume el error sin pedirles que te consuelen." },
+
+  // CONFIANZA / CERTEZA
+  { id: 28, cat: "Confianza", from: "Creo que tal vez…", to: "Lo que estoy viendo es…", why: "Plantea tu observación como un hecho que estás lista para respaldar." },
+  { id: 29, cat: "Confianza", from: "No estoy segura pero…", to: "Esta es mi lectura…", why: "Elimina el lenguaje de duda. Confía en tu mirada." },
+  { id: 30, cat: "Confianza", from: "Solo mi opinión…", to: "Desde mi perspectiva…", why: "Reemplaza 'solo' (que minimiza) con un marco." },
+  { id: 31, cat: "Confianza", from: "¿Tiene sentido?", to: "¿Qué preguntas tienes?", why: "Invita al diálogo. No ruega aprobación." },
+  { id: 32, cat: "Confianza", from: "Ojalá pueda…", to: "Estoy planeando…", why: "La esperanza es pasiva. Planear es activo." },
+  { id: 33, cat: "Confianza", from: "Voy a intentar…", to: "Voy a…", why: "'Intentar' te da una salida antes de haber empezado." },
+  { id: 34, cat: "Confianza", from: "Solo te llamo por…", to: "Te llamo por…", why: "Quita el 'solo'. Tienes una razón real para estar ahí." },
+  { id: 35, cat: "Confianza", from: "Más o menos / como que…", to: "[Dilo directamente]", why: "Las dudas diluyen la verdad. Dila limpia." },
+
+  // RECIBIR RETROALIMENTACIÓN
+  { id: 36, cat: "Retroalimentación", from: "¡Ya lo sé!", to: "Gracias por señalarlo.", why: "'Ya lo sé' cierra la puerta. La gratitud la deja abierta." },
+  { id: 37, cat: "Retroalimentación", from: "¿Por qué me dices esto?", to: "Ayúdame a entender qué hay detrás de esto.", why: "Reemplaza la defensiva con curiosidad." },
+  { id: 38, cat: "Retroalimentación", from: "Eso no es justo.", to: "Llévame por cómo llegaste a esa conclusión.", why: "Te da información en vez de una discusión." },
+  { id: 39, cat: "Retroalimentación", from: "No estoy de acuerdo.", to: "Voy a darle un momento.", why: "No rechaza; toma la información y la procesa." },
+
+  // PEDIR AYUDA
+  { id: 40, cat: "Pedir ayuda", from: "Necesito ayuda.", to: "¿Podría tener tu perspectiva sobre algo?", why: "Los honra como expertos sin sonar desesperada." },
+  { id: 41, cat: "Pedir ayuda", from: "¿Puedes hacer esto por mí?", to: "¿Estarías dispuesto a…", why: "Cortesía sin sumisión." },
+  { id: 42, cat: "Pedir ayuda", from: "No tengo idea qué hacer.", to: "Me encantaría tu opinión sobre el enfoque correcto.", why: "Pide colaboración, no rescate." },
+  { id: 43, cat: "Pedir ayuda", from: "Estoy perdida.", to: "Quiero asegurarme de ir por buen camino — ¿podemos hablarlo?", why: "Asume el problema con elegancia." },
+
+  // CONVERSACIONES DIFÍCILES
+  { id: 44, cat: "Conversaciones difíciles", from: "Tenemos que hablar.", to: "Me gustaría pensar en voz alta contigo sobre algo.", why: "Quita el miedo. Invita a colaborar." },
+  { id: 45, cat: "Conversaciones difíciles", from: "Esto lo hiciste mal.", to: "Quiero repasar lo que pasó para que no se repita.", why: "Mira hacia adelante en vez de acusar." },
+  { id: 46, cat: "Conversaciones difíciles", from: "Siempre haces esto.", to: "Noté un patrón que me está afectando.", why: "Específico, observado, asumido." },
+  { id: 47, cat: "Conversaciones difíciles", from: "Estoy enojada contigo.", to: "Algo me está pesando y quiero compartirlo.", why: "Baja la temperatura; eleva la conversación." },
+  { id: 48, cat: "Conversaciones difíciles", from: "Me lastimaste.", to: "Lo que dijiste cayó más fuerte de lo que quizás pretendías.", why: "Les da el beneficio de la duda y lo nombra." },
+  { id: 49, cat: "Conversaciones difíciles", from: "No me entiendes.", to: "Déjame intentar compartir esto de una forma que te llegue.", why: "Asume la comunicación, no solo el malentendido." },
+
+  // HONESTIDAD EMOCIONAL
+  { id: 50, cat: "Honestidad emocional", from: "Estoy bien.", to: "Estoy procesando algo — gracias por preguntar.", why: "Honesta sin sobreexponerse." },
+  { id: 51, cat: "Honestidad emocional", from: "Estoy súper deprimida.", to: "No estoy en mi mejor momento ahora.", why: "Nombra la verdad sin actuarla." },
+  { id: 52, cat: "Honestidad emocional", from: "Estoy agotada.", to: "Estoy en reserva — necesito recargarme antes de comprometerme.", why: "Comunica capacidad, no solo estado." },
+  { id: 53, cat: "Honestidad emocional", from: "Estoy súper estresada.", to: "Hay mucho en mi plato ahora mismo.", why: "Reformula de víctima a operadora." },
+  { id: 54, cat: "Honestidad emocional", from: "Tengo miedo.", to: "Me están estirando en una dirección nueva — se siente incómodo.", why: "Nombra el crecimiento, no solo el miedo." },
+
+  // RECIBIR CUMPLIDOS
+  { id: 55, cat: "Cumplidos", from: "Ay, no es nada.", to: "Gracias, significa mucho.", why: "Recibe lo que te ofrecen. Es un regalo." },
+  { id: 56, cat: "Cumplidos", from: "Para, me da pena.", to: "Gracias — trabajé duro en eso.", why: "Asume el esfuerzo con gracia." },
+  { id: 57, cat: "Cumplidos", from: "Cualquiera lo habría hecho.", to: "Gracias. Estoy orgullosa de cómo quedó.", why: "Rechaza la falsa humildad." },
+
+  // DINERO
+  { id: 58, cat: "Dinero", from: "No me alcanza.", to: "No está dentro de mi presupuesto ahora.", why: "Elección, no carencia." },
+  { id: 59, cat: "Dinero", from: "Eso es muy caro.", to: "Eso queda fuera de lo que estoy invirtiendo en esta categoría.", why: "Encuadra el gasto como asignación intencional." },
+  { id: 60, cat: "Dinero", from: "No tengo dinero.", to: "Estoy siendo intencional con mi dinero esta temporada.", why: "La identidad importa. Habla la versión en la que te estás convirtiendo." },
+
+  // BAJO PRESIÓN
+  { id: 61, cat: "Bajo presión", from: "Estás siendo dramática.", to: "Quiero asegurarme de escuchar qué te está molestando de verdad.", why: "Sostiene tu lugar sin descartarlas." },
+  { id: 62, cat: "Bajo presión", from: "Estás exagerando.", to: "Ayúdame a ver lo que se me está pasando.", why: "La curiosidad desactiva la defensiva." },
+  { id: 63, cat: "Bajo presión", from: "Cálmate.", to: "Quiero escucharte — vamos a bajar el ritmo juntos.", why: "'Cálmate' escala. Bajar el ritmo juntos regula." },
+  { id: 64, cat: "Bajo presión", from: "Eres imposible.", to: "Me está costando encontrar el camino contigo en esto.", why: "Asume tu parte, nombra la dinámica." },
+];
+
+
 function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const customList = Array.isArray(data.elegantPhrasesCustom) ? data.elegantPhrasesCustom : [];
-  const allPhrases = [...ELEGANT_PHRASES, ...customList];
+  const phrasesBase = lang === "es" ? ELEGANT_PHRASES_ES : ELEGANT_PHRASES;
+  const allPhrases = [...phrasesBase, ...customList];
   const [filter, setFilter] = useState("All");
+  // Reset the category filter when the language toggles so we don't keep an
+  // English filter value that no longer matches any Spanish category.
+  useEffect(() => { setFilter("All"); }, [lang]);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ cat: "Saying No", from: "", to: "", why: "" });
@@ -5685,6 +5839,9 @@ function CredentialsModule({ data, setData, dark, themePanel, themeMuted, trigge
   const [editing, setEditing] = useState(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("All");
+  // Reset the category filter when the language toggles so we don't keep an
+  // English filter value that no longer matches any Spanish category.
+  useEffect(() => { setFilter("All"); }, [lang]);
   const [showId, setShowId] = useState(null); // which item's password is shown
   const blank = { site: "", url: "", username: "", password: "", category: "Personal", notes: "" };
   const [form, setForm] = useState(blank);
@@ -8995,6 +9152,9 @@ const SCRIPTS_DATA = [
 function ScriptsModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("All");
+  // Reset the category filter when the language toggles so we don't keep an
+  // English filter value that no longer matches any Spanish category.
+  useEffect(() => { setFilter("All"); }, [lang]);
   const [active, setActive] = useState(SCRIPTS_DATA[0]);
   const [form, setForm] = useState({ cat: "Cold Call", title: "", body: "" });
   const scripts = data.scripts || SCRIPTS_DATA;
@@ -9370,6 +9530,9 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("All");
+  // Reset the category filter when the language toggles so we don't keep an
+  // English filter value that no longer matches any Spanish category.
+  useEffect(() => { setFilter("All"); }, [lang]);
   const [routineMode, setRoutineMode] = useState(false);
   const [form, setForm] = useState({ text: "", category: "Confidence" });
   const [editingId, setEditingId] = useState(null);
