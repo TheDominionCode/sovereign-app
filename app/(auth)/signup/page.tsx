@@ -50,6 +50,23 @@ export default async function SignupPage({
         <input type="hidden" name="next" value={next} />
         <div>
           <label
+            htmlFor="full_name"
+            className="block text-sm font-medium text-ink mb-1.5"
+          >
+            Full name
+          </label>
+          <input
+            id="full_name"
+            name="full_name"
+            type="text"
+            required
+            autoComplete="name"
+            placeholder="Sovereign Woman"
+            className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
+          />
+        </div>
+        <div>
+          <label
             htmlFor="email"
             className="block text-sm font-medium text-ink mb-1.5"
           >
@@ -63,6 +80,26 @@ export default async function SignupPage({
             autoComplete="email"
             className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
           />
+        </div>
+        <div>
+          <label
+            htmlFor="phone"
+            className="block text-sm font-medium text-ink mb-1.5"
+          >
+            Phone
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            required
+            autoComplete="tel"
+            placeholder="+1 555 123 4567"
+            className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
+          />
+          <p className="mt-1 text-xs text-stone-light">
+            For trial reminders and account help. We don&apos;t share or sell it.
+          </p>
         </div>
         <div>
           <label

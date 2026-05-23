@@ -37,6 +37,7 @@ export async function updateSession(request: NextRequest) {
   const requiresAuth =
     path.startsWith("/app") ||
     path.startsWith("/billing") ||
+    path.startsWith("/admin") ||
     path.startsWith("/os.html");
 
   if (requiresAuth && !user) {

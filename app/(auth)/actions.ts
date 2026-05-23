@@ -34,6 +34,8 @@ export async function signInWithPasswordAction(formData: FormData) {
 export async function signUpWithPasswordAction(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const full_name = String(formData.get("full_name") ?? "").trim();
+  const phone = String(formData.get("phone") ?? "").trim();
   const next = sanitizeNext(formData.get("next") as string | null);
 
   const supabase = await createClient();
@@ -42,6 +44,9 @@ export async function signUpWithPasswordAction(formData: FormData) {
     email,
     password,
     options: {
+      // raw_user_meta_data — the on_auth_user_created trigger copies these
+      // into the profiles row on insert.
+      data: { full_name, phone },
       emailRedirectTo: `${site}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   });
