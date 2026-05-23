@@ -1536,6 +1536,47 @@ const TRANSLATIONS = {
     "Mark done": "Mark done",
     "Mark active": "Mark active",
     "Active": "Active",
+    // Daily Planner — sections, placeholders, copy
+    "TOP 3 PRIORITIES": "TOP 3 PRIORITIES",
+    "TO-DO LIST": "TO-DO LIST",
+    "TODAY'S WINS": "TODAY'S WINS",
+    "GRATITUDE": "GRATITUDE",
+    "MY NOTES": "MY NOTES",
+    "TOMORROW": "TOMORROW",
+    "WEEKLY SCHEDULE": "WEEKLY SCHEDULE",
+    "The thing that matters most…": "The thing that matters most…",
+    "Second priority": "Second priority",
+    "Third priority": "Third priority",
+    "Add a task…": "Add a task…",
+    "Press Enter to add": "Press Enter to add",
+    "Anything you're proud of": "Anything you're proud of",
+    "Win two": "Win two",
+    "Win three": "Win three",
+    "What did you appreciate today?": "What did you appreciate today?",
+    "Free-form journal for the day…": "Free-form journal for the day…",
+    "What's the first thing tomorrow needs from you?": "What's the first thing tomorrow needs from you?",
+    "no tasks": "no tasks",
+    "of": "of",
+    "done": "done",
+    "clear completed": "clear completed",
+    "Nothing here yet.": "Nothing here yet.",
+    "Click to edit": "Click to edit",
+    "Delete task": "Delete task",
+    "Previous day": "Previous day",
+    "Next day": "Next day",
+    "Hide priorities": "Hide priorities",
+    "Expand priorities": "Expand priorities",
+    "Hide weekly schedule": "Hide weekly schedule",
+    "Expand weekly schedule": "Expand weekly schedule",
+    "Hide :30 marks": "Hide :30 marks",
+    "Show :30 marks": "Show :30 marks",
+    "Prev week": "Prev week",
+    "This week": "This week",
+    "Next week": "Next week",
+    "TIME": "TIME",
+    "Week of": "Week of",
+    "Mon → Sun · 5 AM → 11 PM · click any cell to expand": "Mon → Sun · 5 AM → 11 PM · click any cell to expand",
+    "Mon": "Mon", "Tue": "Tue", "Wed": "Wed", "Thu": "Thu", "Fri": "Fri", "Sat": "Sat", "Sun": "Sun",
     "love": "love",
   },
   es: {
@@ -1595,6 +1636,47 @@ const TRANSLATIONS = {
     "Mark done": "Marcar hecho",
     "Mark active": "Marcar activo",
     "Active": "Activo",
+    // Daily Planner — sections, placeholders, copy
+    "TOP 3 PRIORITIES": "TOP 3 PRIORIDADES",
+    "TO-DO LIST": "LISTA DE TAREAS",
+    "TODAY'S WINS": "LOGROS DE HOY",
+    "GRATITUDE": "GRATITUD",
+    "MY NOTES": "MIS NOTAS",
+    "TOMORROW": "MAÑANA",
+    "WEEKLY SCHEDULE": "HORARIO SEMANAL",
+    "The thing that matters most…": "Lo que más importa…",
+    "Second priority": "Segunda prioridad",
+    "Third priority": "Tercera prioridad",
+    "Add a task…": "Añade una tarea…",
+    "Press Enter to add": "Enter para añadir",
+    "Anything you're proud of": "Algo de lo que estés orgullosa",
+    "Win two": "Logro dos",
+    "Win three": "Logro tres",
+    "What did you appreciate today?": "¿Qué agradeciste hoy?",
+    "Free-form journal for the day…": "Diario libre para el día…",
+    "What's the first thing tomorrow needs from you?": "¿Qué es lo primero que mañana necesita de ti?",
+    "no tasks": "sin tareas",
+    "of": "de",
+    "done": "hecho",
+    "clear completed": "borrar completadas",
+    "Nothing here yet.": "Nada todavía.",
+    "Click to edit": "Clic para editar",
+    "Delete task": "Eliminar tarea",
+    "Previous day": "Día anterior",
+    "Next day": "Día siguiente",
+    "Hide priorities": "Ocultar prioridades",
+    "Expand priorities": "Expandir prioridades",
+    "Hide weekly schedule": "Ocultar horario semanal",
+    "Expand weekly schedule": "Expandir horario semanal",
+    "Hide :30 marks": "Ocultar marcas :30",
+    "Show :30 marks": "Mostrar marcas :30",
+    "Prev week": "Semana anterior",
+    "This week": "Esta semana",
+    "Next week": "Próxima semana",
+    "TIME": "HORA",
+    "Week of": "Semana del",
+    "Mon → Sun · 5 AM → 11 PM · click any cell to expand": "Lun → Dom · 5 AM → 11 PM · clic en cualquier celda para expandir",
+    "Mon": "Lun", "Tue": "Mar", "Wed": "Mié", "Thu": "Jue", "Fri": "Vie", "Sat": "Sáb", "Sun": "Dom",
     "love": "amor",
   },
 };
@@ -6190,12 +6272,10 @@ function addDaysISO(dateStr, n) {
   return d.toISOString().slice(0, 10);
 }
 
-function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
-  // Daily Planner — layout: two 3-square rows above a full-width Weekly
-  // Schedule. Row 1: Top 3 priorities (collapsible, like the Weekly Schedule
-  // header) · To-do list · Today's wins. Row 2: Gratitude · My notes ·
-  // Tomorrow. Date controls are tucked into the page header so they aren't
-  // the loudest thing on the page.
+function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
+  // Daily Planner — i18n via t(), all single-line inputs are textareas that
+  // grow on focus (same pattern as the Weekly Schedule cells). Layout: two
+  // 3-square rows above the full-width Weekly Schedule.
   const [date, setDate] = useState(todayISO());
   const [newTitle, setNewTitle] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -6205,12 +6285,16 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const [weekAnchor, setWeekAnchor] = useState(() => todayISO());
   const [showHalfHours, setShowHalfHours] = useState(false);
   const [focusedCell, setFocusedCell] = useState(null);
-  const showWeeklySchedule = data.showWeeklySchedule !== false; // default true
+  const showWeeklySchedule = data.showWeeklySchedule !== false;
   const toggleWeeklySchedule = () => setData({ ...data, showWeeklySchedule: !showWeeklySchedule });
 
-  // Collapse state for the Top 3 priorities card (persisted)
-  const showPriorities = data.showPriorities !== false; // default true
+  const showPriorities = data.showPriorities !== false;
   const togglePriorities = () => setData({ ...data, showPriorities: !showPriorities });
+
+  // Shared classes — single-line textareas that expand on focus like the
+  // Weekly Schedule cells.
+  const growInput = "w-full px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none h-10 focus:h-28 transition-[height] duration-150 resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:shadow-md focus:ring-2 focus:ring-[#7a9a6e]/20";
+  const growArea = "w-full px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none h-24 focus:h-56 transition-[height] duration-150 resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:shadow-md focus:ring-2 focus:ring-[#7a9a6e]/20";
 
   // ----- Per-day plan -----
   const planners = data.planners || {};
@@ -6238,7 +6322,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     setData({ ...data, planners: { ...planners, [isoDate]: next } });
   };
 
-  // ----- To-do list (data.tasks, date-scoped) -----
+  // ----- To-do list -----
   const allTasks = Array.isArray(data.tasks) ? data.tasks : [];
   const dayTasks = allTasks.filter(t => t && t.date === date);
   const doneCount = dayTasks.filter(t => t.done).length;
@@ -6267,28 +6351,27 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   };
   const clearCompleted = () => setTasks(allTasks.filter(t => !(t && t.date === date && t.done)));
 
-  // ----- Date controls -----
+  // ----- Date controls (quiet, in PageHeader.action) -----
   const shiftDate = (days) => {
     const d = new Date(date + "T00:00:00");
     d.setDate(d.getDate() + days);
     setDate(d.toISOString().slice(0, 10));
   };
   const isToday = date === todayISO();
-  const subtitle = isToday ? fmtDate(date) : fmtDate(date);
+  const subtitle = fmtDate(date);
 
-  // Compact date picker tucked into PageHeader.action — quiet, not loud.
   const dateAction = (
     <div className="flex items-center gap-1 text-stone-500">
-      <button onClick={() => shiftDate(-1)} className="px-2 py-1 rounded hover:bg-[#f4f7ee] hover:text-[#5b7351] text-sm" aria-label="Previous day">←</button>
+      <button onClick={() => shiftDate(-1)} className="px-2 py-1 rounded hover:bg-[#f4f7ee] hover:text-[#5b7351] text-sm" aria-label={t("Previous day", lang)}>←</button>
       <input
         type="date"
         value={date}
         onChange={e => setDate(e.target.value || todayISO())}
         className="px-2 py-1 bg-transparent border border-transparent hover:border-stone-200 focus:border-[#7a9a6e] rounded text-xs text-stone-600 focus:outline-none"
       />
-      <button onClick={() => shiftDate(1)} className="px-2 py-1 rounded hover:bg-[#f4f7ee] hover:text-[#5b7351] text-sm" aria-label="Next day">→</button>
+      <button onClick={() => shiftDate(1)} className="px-2 py-1 rounded hover:bg-[#f4f7ee] hover:text-[#5b7351] text-sm" aria-label={t("Next day", lang)}>→</button>
       {!isToday && (
-        <button onClick={() => setDate(todayISO())} className="ml-1 px-2 py-1 text-[10px] uppercase tracking-wider text-[#5b7351] hover:underline">Today</button>
+        <button onClick={() => setDate(todayISO())} className="ml-1 px-2 py-1 text-[10px] uppercase tracking-wider text-[#5b7351] hover:underline">{t("Today", lang)}</button>
       )}
     </div>
   );
@@ -6296,18 +6379,18 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   // ----- Section pieces -----
   const PrioritiesCard = (
     <div className={`rounded-2xl border ${themePanel} ${showPriorities ? "p-5" : "p-3"} h-full flex flex-col`}>
-      <button onClick={togglePriorities} className="flex items-start gap-2 text-left group" title={showPriorities ? "Hide priorities" : "Expand priorities"}>
+      <button onClick={togglePriorities} className="flex items-start gap-2 text-left group" title={showPriorities ? t("Hide priorities", lang) : t("Expand priorities", lang)}>
         <ChevronRight className={`w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0 transition ${showPriorities ? "rotate-90" : ""}`} />
-        <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 group-hover:text-[#5b7351]">TOP 3 PRIORITIES</h2>
+        <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 group-hover:text-[#5b7351]">{t("TOP 3 PRIORITIES", lang)}</h2>
       </button>
       {showPriorities && (
         <div className="space-y-2 mt-4 flex-1">
           {priorities.map((p, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <span className="font-display text-xl text-[#5b7351] w-6 text-center" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
-              <input value={p} onChange={e => setPriority(i, e.target.value)}
-                placeholder={i === 0 ? "The thing that matters most…" : i === 1 ? "Second priority" : "Third priority"}
-                className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none" />
+            <div key={i} className="flex items-start gap-3">
+              <span className="font-display text-xl text-[#5b7351] w-6 text-center pt-1.5 flex-shrink-0" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
+              <textarea rows={1} value={p} onChange={e => setPriority(i, e.target.value)}
+                placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)}
+                className={growInput} />
             </div>
           ))}
         </div>
@@ -6317,46 +6400,49 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
 
   const TodoCard = (
     <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
-      <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">TO-DO LIST</h2>
-      <div className="flex gap-2 mb-3">
-        <input value={newTitle} onChange={e => setNewTitle(e.target.value)}
-          onKeyDown={e => { if (e.key === "Enter") addTask(); }}
-          placeholder="Add a task…"
-          className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none" />
-        <button onClick={addTask} className="px-3 py-2 bg-[#5b7351] text-white text-xs tracking-wider uppercase font-medium rounded hover:bg-[#3d5c34] transition">Add</button>
+      <div className="flex items-baseline justify-between mb-3">
+        <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO-DO LIST", lang)}</h2>
+        <div className="text-[11px] text-stone-500">{dayTasks.length === 0 ? t("no tasks", lang) : `${doneCount} ${t("of", lang)} ${dayTasks.length} ${t("done", lang)}`}</div>
       </div>
-      <div className="flex items-baseline justify-between mb-2 px-1">
-        <div className="text-[11px] text-stone-500">{dayTasks.length === 0 ? "no tasks" : `${doneCount} of ${dayTasks.length} done`}</div>
-        {doneCount > 0 && (
-          <button onClick={clearCompleted} className="text-[11px] italic text-stone-500 hover:text-[#5b7351]">clear completed</button>
-        )}
+      <textarea rows={1} value={newTitle} onChange={e => setNewTitle(e.target.value)}
+        onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); addTask(); } }}
+        placeholder={t("Add a task…", lang)}
+        className={growInput} />
+      <div className="flex justify-between items-center mt-2 mb-3">
+        {doneCount > 0 ? (
+          <button onClick={clearCompleted} className="text-[11px] italic text-stone-500 hover:text-[#5b7351]">{t("clear completed", lang)}</button>
+        ) : <span className="text-[11px] italic text-stone-400">{t("Press Enter to add", lang)}</span>}
+        <button onClick={addTask}
+          className="px-3 py-1 text-[11px] uppercase tracking-wider text-stone-600 border border-stone-200 rounded hover:bg-[#f4f7ee] hover:border-[#7a9a6e] hover:text-[#5b7351] transition">
+          + {t("Add", lang)}
+        </button>
       </div>
-      <div className="flex-1 overflow-y-auto" style={{ maxHeight: "240px" }}>
+      <div className="flex-1 overflow-y-auto" style={{ maxHeight: "260px" }}>
         {dayTasks.length === 0 ? (
-          <div className={`py-6 text-center ${themeMuted} text-xs italic`}>Nothing here yet.</div>
+          <div className={`py-6 text-center ${themeMuted} text-xs italic`}>{t("Nothing here yet.", lang)}</div>
         ) : (
           <ul className="divide-y divide-stone-100">
-            {dayTasks.map(t => (
-              <li key={t.id} className="flex items-center gap-3 py-2 group">
-                <button onClick={() => toggleTask(t.id)}
-                  className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${t.done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
-                  aria-label={t.done ? "Mark not done" : "Mark done"}>
-                  {t.done && <Check className="w-2.5 h-2.5" />}
+            {dayTasks.map(task => (
+              <li key={task.id} className="flex items-start gap-3 py-2 group">
+                <button onClick={() => toggleTask(task.id)}
+                  className={`w-5 h-5 mt-0.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${task.done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
+                  aria-label={task.done ? t("Mark not done", lang) : t("Mark done", lang)}>
+                  {task.done && <Check className="w-2.5 h-2.5" />}
                 </button>
-                {editingId === t.id ? (
-                  <input autoFocus value={editingText}
+                {editingId === task.id ? (
+                  <textarea rows={1} autoFocus value={editingText}
                     onChange={e => setEditingText(e.target.value)}
                     onBlur={saveEdit}
-                    onKeyDown={e => { if (e.key === "Enter") saveEdit(); if (e.key === "Escape") setEditingId(null); }}
-                    className="flex-1 px-2 py-1 bg-white border border-stone-200 rounded text-xs focus:border-[#7a9a6e] outline-none" />
+                    onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditingId(null); }}
+                    className={growInput} />
                 ) : (
-                  <button onClick={() => startEdit(t)}
-                    className={`flex-1 text-left text-xs truncate ${t.done ? "line-through text-stone-400" : "text-ink"}`} title="Click to edit">
-                    {t.title}
+                  <button onClick={() => startEdit(task)}
+                    className={`flex-1 text-left text-xs ${task.done ? "line-through text-stone-400" : "text-ink"}`} title={t("Click to edit", lang)}>
+                    {task.title}
                   </button>
                 )}
-                <button onClick={() => removeTask(t.id)}
-                  className="opacity-0 group-hover:opacity-100 px-1.5 py-0.5 text-[10px] text-stone-400 hover:text-red-500 transition" aria-label="Delete task">✕</button>
+                <button onClick={() => removeTask(task.id)}
+                  className="opacity-0 group-hover:opacity-100 px-1.5 py-0.5 text-[10px] text-stone-400 hover:text-red-500 transition flex-shrink-0" aria-label={t("Delete task", lang)}>✕</button>
               </li>
             ))}
           </ul>
@@ -6367,33 +6453,23 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
 
   const WinsCard = (
     <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
-      <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-4">TODAY'S WINS</h2>
+      <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-4">{t("TODAY'S WINS", lang)}</h2>
       <div className="space-y-2 flex-1">
         {wins.map((w, i) => (
-          <div key={i} className="flex items-center gap-3">
-            <span className="font-display text-xl text-[#5b7351] w-6 text-center" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
-            <input value={w} onChange={e => setWin(i, e.target.value)}
-              placeholder={["Anything you're proud of", "Win two", "Win three"][i]}
-              className="flex-1 px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none" />
+          <div key={i} className="flex items-start gap-3">
+            <span className="font-display text-xl text-[#5b7351] w-6 text-center pt-1.5 flex-shrink-0" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
+            <textarea rows={1} value={w} onChange={e => setWin(i, e.target.value)}
+              placeholder={i === 0 ? t("Anything you're proud of", lang) : i === 1 ? t("Win two", lang) : t("Win three", lang)}
+              className={growInput} />
           </div>
         ))}
       </div>
     </div>
   );
 
-  const TextCard = ({ label, value, onChange, placeholder, rows = 6 }) => (
-    <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
-      <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{label}</h2>
-      <textarea value={value} onChange={onChange}
-        placeholder={placeholder}
-        rows={rows}
-        className="w-full flex-1 px-3 py-2 bg-white border border-stone-200 rounded text-sm focus:border-[#7a9a6e] outline-none resize-none" />
-    </div>
-  );
-
   return (
     <div className="p-6 lg:p-10 max-w-6xl mx-auto space-y-6">
-      <PageHeader title="Daily Planner" subtitle={subtitle} action={dateAction} dark={dark} />
+      <PageHeader title={t("Daily Planner", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
       {/* Row 1: Priorities · To-do · Wins */}
       <div className="grid gap-6 lg:grid-cols-3">
@@ -6404,21 +6480,36 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
 
       {/* Row 2: Gratitude · My notes · Tomorrow */}
       <div className="grid gap-6 lg:grid-cols-3">
-        <TextCard label="GRATITUDE" value={gratitude} onChange={e => updatePlan({ gratitude: e.target.value })} placeholder="What did you appreciate today?" rows={6} />
-        <TextCard label="MY NOTES" value={journal} onChange={e => updatePlan({ journal: e.target.value })} placeholder="Free-form journal for the day…" rows={6} />
-        <TextCard label="TOMORROW" value={tomorrow} onChange={e => updatePlan({ tomorrow: e.target.value })} placeholder="What's the first thing tomorrow needs from you?" rows={6} />
+        <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("GRATITUDE", lang)}</h2>
+          <textarea value={gratitude} onChange={e => updatePlan({ gratitude: e.target.value })}
+            placeholder={t("What did you appreciate today?", lang)}
+            className={growArea} />
+        </div>
+        <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("MY NOTES", lang)}</h2>
+          <textarea value={journal} onChange={e => updatePlan({ journal: e.target.value })}
+            placeholder={t("Free-form journal for the day…", lang)}
+            className={growArea} />
+        </div>
+        <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("TOMORROW", lang)}</h2>
+          <textarea value={tomorrow} onChange={e => updatePlan({ tomorrow: e.target.value })}
+            placeholder={t("What's the first thing tomorrow needs from you?", lang)}
+            className={growArea} />
+        </div>
       </div>
 
       {/* WEEKLY SCHEDULE — Mon→Sun · 5 AM → 11 PM (collapsible) — lifted verbatim from the Calendar */}
       <div className={`rounded-lg border ${themePanel} ${showWeeklySchedule ? "p-5" : "p-3"}`}>
         <div className={`flex items-center justify-between flex-wrap gap-2 ${showWeeklySchedule ? "mb-3" : "mb-0"}`}>
-          <button onClick={toggleWeeklySchedule} className="flex items-start gap-2 text-left group" title={showWeeklySchedule ? "Hide weekly schedule" : "Expand weekly schedule"}>
+          <button onClick={toggleWeeklySchedule} className="flex items-start gap-2 text-left group" title={showWeeklySchedule ? t("Hide weekly schedule", lang) : t("Expand weekly schedule", lang)}>
             <ChevronRight className={`w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0 transition ${showWeeklySchedule ? "rotate-90" : ""}`} />
             <div>
-              <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 group-hover:text-[#5b7351]">WEEKLY SCHEDULE</h2>
+              <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 group-hover:text-[#5b7351]">{t("WEEKLY SCHEDULE", lang)}</h2>
               {showWeeklySchedule && (
                 <p className={`text-[11px] ${themeMuted} mt-0.5`}>
-                  Week of {fmtDate(weekStart)} — Mon → Sun · 5 AM → 11 PM · click any cell to expand
+                  {t("Week of", lang)} {fmtDate(weekStart)} — {t("Mon → Sun · 5 AM → 11 PM · click any cell to expand", lang)}
                 </p>
               )}
             </div>
@@ -6428,18 +6519,17 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
               <button
                 onClick={() => setShowHalfHours(v => !v)}
                 className={`px-3 py-1.5 rounded text-xs font-medium border transition ${showHalfHours ? "bg-[#5b7351] text-white border-[#5b7351]" : "border-stone-200 text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
-                title="Toggle the half-hour rows (:30 slots)"
-              >{showHalfHours ? "Hide :30 marks" : "Show :30 marks"}</button>
-              <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded border border-stone-200 text-xs hover:border-[#7a9a6e] hover:bg-[#f4f7ee]">← Prev week</button>
-              <button onClick={() => setWeekAnchor(todayISO())} className="px-3 py-1.5 bg-[#7a9a6e] text-white text-xs font-medium rounded hover:bg-[#5b7351]">This week</button>
-              <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded border border-stone-200 text-xs hover:border-[#7a9a6e] hover:bg-[#f4f7ee]">Next week →</button>
+              >{showHalfHours ? t("Hide :30 marks", lang) : t("Show :30 marks", lang)}</button>
+              <button onClick={() => shiftWeek(-1)} className="px-3 py-1.5 rounded border border-stone-200 text-xs hover:border-[#7a9a6e] hover:bg-[#f4f7ee]">← {t("Prev week", lang)}</button>
+              <button onClick={() => setWeekAnchor(todayISO())} className="px-3 py-1.5 bg-[#7a9a6e] text-white text-xs font-medium rounded hover:bg-[#5b7351]">{t("This week", lang)}</button>
+              <button onClick={() => shiftWeek(1)} className="px-3 py-1.5 rounded border border-stone-200 text-xs hover:border-[#7a9a6e] hover:bg-[#f4f7ee]">{t("Next week", lang)} →</button>
             </div>
           )}
         </div>
         {showWeeklySchedule && <div className="overflow-x-auto">
           <div className="min-w-[640px]">
             <div className="grid border-b border-stone-200" style={{ gridTemplateColumns: "52px repeat(7, minmax(70px, 1fr))" }}>
-              <div className="text-[9px] tracking-[0.18em] text-stone-400 font-semibold py-1.5 flex items-center">TIME</div>
+              <div className="text-[9px] tracking-[0.18em] text-stone-400 font-semibold py-1.5 flex items-center">{t("TIME", lang)}</div>
               {WEEK_DAYS.map((label, i) => {
                 const iso = weekDates[i];
                 const isTodayHeader = iso === todayISO();
@@ -6449,9 +6539,9 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                     key={iso}
                     onClick={() => setDate(iso)}
                     className={`text-center py-1.5 px-0.5 rounded-t border-b-2 transition ${isTodayHeader ? "border-[#a8c090]" : "border-transparent hover:bg-[#f4f7ee]/60"} ${iso === date ? "bg-[#f4f7ee]" : ""}`}
-                    title={`Jump the planner to ${iso}`}
+                    title={`${iso}`}
                   >
-                    <div className="text-[9px] tracking-[0.14em] font-semibold text-stone-500">{label.toUpperCase()}</div>
+                    <div className="text-[9px] tracking-[0.14em] font-semibold text-stone-500">{t(label, lang).toUpperCase()}</div>
                     <div className={`font-serif text-sm leading-none mt-0.5 ${isTodayHeader ? "text-[#7a9a6e]" : "text-stone-700"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{dayNum}</div>
                   </button>
                 );
