@@ -6068,6 +6068,12 @@ function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang }) {
   const [open, setOpen] = useState(false);
   const fileRef = useRef(null);
 
+  // The parent /app page injects ?admin=1 into the iframe src when the
+  // signed-in user is on the admins allow-list. We use that flag to
+  // conditionally show the back-office link inside this dropdown.
+  const isAdmin = typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("admin") === "1";
+
   const onPick = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -6132,6 +6138,19 @@ function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang }) {
                 <button onClick={removeAvatar} className="w-full px-3 py-2 text-left text-sm rounded hover:bg-rose-50 hover:text-rose-600 flex items-center gap-2">
                   <Trash2 className="w-4 h-4" /> Remove picture
                 </button>
+              )}
+              {isAdmin && (
+                <>
+                  <div className="border-t border-stone-100 my-1" />
+                  <a
+                    href="/admin"
+                    target="_top"
+                    onClick={() => setOpen(false)}
+                    className="w-full px-3 py-2 text-left text-sm rounded hover:bg-[#f4f7ee] flex items-center gap-2 text-[#5b7351] font-medium"
+                  >
+                    <Crown className="w-4 h-4" /> Admin dashboard
+                  </a>
+                </>
               )}
               {onLogout && (
                 <>
@@ -7314,10 +7333,11 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const showPriorities = data.showPriorities !== false;
   const togglePriorities = () => setData({ ...data, showPriorities: !showPriorities });
 
-  // grow(key, base, focus, rows) — returns props for a textarea that grows
-  // when focused and collapses back when blurred. Same UX as the Weekly
-  // Schedule cells, applied uniformly to every input on the page.
-  const grow = (key, base = 40, focus = 120, focusRows = 5) => {
+  // grow(key, base, focus, rows, extraClass) — returns props for a textarea
+  // that grows when focused and collapses back when blurred. Same UX as the
+  // Weekly Schedule cells. extraClass lets a caller layer on done-state
+  // styles (line-through, muted color) without breaking the focus rings.
+  const grow = (key, base = 40, focus = 120, focusRows = 5, extraClass = "") => {
     const isFocused = focusedField === key;
     return {
       onFocus: () => setFocusedField(key),
@@ -7327,7 +7347,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         "w-full px-3 py-2 border rounded text-sm outline-none resize-none transition-all duration-150 " +
         (isFocused
           ? "bg-[#f4f7ee] border-[#7a9a6e] shadow-md ring-2 ring-[#7a9a6e]/20 overflow-auto"
-          : "bg-white border-stone-200 overflow-hidden"),
+          : "bg-white border-stone-200 overflow-hidden") +
+        (extraClass ? " " + extraClass : ""),
       style: {
         minHeight: isFocused ? focus + "px" : base + "px",
         height: isFocused ? "auto" : base + "px",
@@ -7335,11 +7356,30 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     };
   };
 
+  // Small "Done" pill that appears at the top-right of any focused field —
+  // gives users an explicit way to collapse the textarea without hunting for
+  // somewhere to click outside (reliable on mobile, where tap-outside is
+  // flaky). Clicking it lets the natural blur fire, which collapses via the
+  // grow() onBlur handler.
+  const CollapseBtn = ({ shown }) => shown ? (
+    <button
+      type="button"
+      tabIndex={-1}
+      aria-label="Done editing"
+      title="Done"
+      className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-[#7a9a6e] text-white flex items-center justify-center shadow-sm hover:bg-[#5b7351] transition-colors"
+    >
+      <Check className="w-3 h-3" />
+    </button>
+  ) : null;
+
   // ----- Per-day plan -----
   const planners = data.planners || {};
   const todayPlan = planners[date] || {};
   const priorities = Array.isArray(todayPlan.priorities) && todayPlan.priorities.length === 3 ? todayPlan.priorities : ["", "", ""];
   const wins = Array.isArray(todayPlan.wins) && todayPlan.wins.length === 3 ? todayPlan.wins : ["", "", ""];
+  const prioritiesDone = Array.isArray(todayPlan.prioritiesDone) && todayPlan.prioritiesDone.length === 3 ? todayPlan.prioritiesDone : [false, false, false];
+  const winsDone = Array.isArray(todayPlan.winsDone) && todayPlan.winsDone.length === 3 ? todayPlan.winsDone : [false, false, false];
   const gratitude = todayPlan.gratitude || "";
   const journal = todayPlan.journal || "";
   const tomorrow = todayPlan.tomorrow || "";
@@ -7350,6 +7390,16 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   };
   const setPriority = (i, v) => { const arr = [...priorities]; arr[i] = v; updatePlan({ priorities: arr }); };
   const setWin = (i, v) => { const arr = [...wins]; arr[i] = v; updatePlan({ wins: arr }); };
+  const togglePriorityDone = (i) => {
+    const arr = [...prioritiesDone]; arr[i] = !arr[i];
+    updatePlan({ prioritiesDone: arr });
+    if (arr[i] && triggerConfetti) triggerConfetti();
+  };
+  const toggleWinDone = (i) => {
+    const arr = [...winsDone]; arr[i] = !arr[i];
+    updatePlan({ winsDone: arr });
+    if (arr[i] && triggerConfetti) triggerConfetti();
+  };
 
   // ----- Weekly schedule helpers (verbatim from the Calendar) -----
   const weekStart = startOfWeekMonday(weekAnchor);
@@ -7424,13 +7474,28 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       </button>
       {showPriorities && (
         <div className="space-y-2 mt-4 flex-1">
-          {priorities.map((p, i) => (
-            <div key={i} className="flex items-start gap-3">
-              <span className="font-display text-xl text-[#5b7351] w-6 text-center pt-1.5 flex-shrink-0" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
-              <textarea {...grow("priority-" + i)} value={p} onChange={e => setPriority(i, e.target.value)}
-                placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)} />
-            </div>
-          ))}
+          {priorities.map((p, i) => {
+            const done = !!prioritiesDone[i];
+            const key = "priority-" + i;
+            return (
+              <div key={i} className="flex items-start gap-2">
+                <button
+                  type="button"
+                  onClick={() => togglePriorityDone(i)}
+                  aria-label={done ? t("Mark not done", lang) : t("Mark done", lang)}
+                  className={`w-5 h-5 mt-2 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
+                >
+                  {done && <Check className="w-3 h-3" />}
+                </button>
+                <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-stone-300" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
+                <div className="relative flex-1">
+                  <textarea {...grow(key, 40, 120, 5, done ? "line-through text-stone-400" : "")} value={p} onChange={e => setPriority(i, e.target.value)}
+                    placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)} />
+                  <CollapseBtn shown={focusedField === key} />
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
@@ -7491,13 +7556,28 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
       <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-4">{t("TODAY'S WINS", lang)}</h2>
       <div className="space-y-2 flex-1">
-        {wins.map((w, i) => (
-          <div key={i} className="flex items-start gap-3">
-            <span className="font-display text-xl text-[#5b7351] w-6 text-center pt-1.5 flex-shrink-0" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
-            <textarea {...grow("win-" + i)} value={w} onChange={e => setWin(i, e.target.value)}
-              placeholder={i === 0 ? t("Anything you're proud of", lang) : i === 1 ? t("Win two", lang) : t("Win three", lang)} />
-          </div>
-        ))}
+        {wins.map((w, i) => {
+          const done = !!winsDone[i];
+          const key = "win-" + i;
+          return (
+            <div key={i} className="flex items-start gap-2">
+              <button
+                type="button"
+                onClick={() => toggleWinDone(i)}
+                aria-label={done ? t("Mark not done", lang) : t("Mark done", lang)}
+                className={`w-5 h-5 mt-2 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
+              >
+                {done && <Check className="w-3 h-3" />}
+              </button>
+              <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-stone-300" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
+              <div className="relative flex-1">
+                <textarea {...grow(key, 40, 120, 5, done ? "line-through text-stone-400" : "")} value={w} onChange={e => setWin(i, e.target.value)}
+                  placeholder={i === 0 ? t("Anything you're proud of", lang) : i === 1 ? t("Win two", lang) : t("Win three", lang)} />
+                <CollapseBtn shown={focusedField === key} />
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
