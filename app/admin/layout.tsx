@@ -11,17 +11,25 @@ export default async function AdminLayout({
     <div className="min-h-screen bg-cream-bg">
       <header className="border-b border-stone-200 bg-white px-6 pt-4 pb-0">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-baseline justify-between gap-4 mb-3">
+          <div className="flex items-start justify-between gap-4 mb-3 flex-wrap">
             <div>
               <div className="text-[10px] tracking-[0.3em] uppercase text-sage">Admin</div>
               <h1 className="font-display text-2xl text-forest-deep">Sovereign — Customers</h1>
             </div>
-            <div className="text-xs text-stone">
-              Signed in as <span className="text-forest font-medium">{me.email}</span>
-              <span className="ml-2 px-2 py-0.5 rounded bg-sage-pale/50 text-forest text-[10px] uppercase tracking-wider">
-                {me.role}
-              </span>
-              <a href="/app" className="ml-4 text-stone hover:text-forest underline">← Back to app</a>
+            <div className="flex flex-col items-end gap-2">
+              <a
+                href="/app"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-sage-pale/60 text-forest-deep text-xs font-medium hover:bg-sage-pale transition-colors"
+                title="Switch to your own Sovereign workspace"
+              >
+                Open my Sovereign app →
+              </a>
+              <div className="text-[11px] text-stone">
+                Signed in as <span className="text-forest font-medium">{me.email}</span>
+                <span className="ml-1.5 px-2 py-0.5 rounded bg-sage-pale/50 text-forest text-[10px] uppercase tracking-wider">
+                  {me.role}
+                </span>
+              </div>
             </div>
           </div>
           <div className="max-w-7xl mx-auto">
