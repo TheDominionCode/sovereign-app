@@ -1638,6 +1638,20 @@ const TRANSLATIONS = {
     "Week of": "Week of",
     "Mon → Sun · 5 AM → 11 PM · click any cell to expand": "Mon → Sun · 5 AM → 11 PM · click any cell to expand",
     "Mon": "Mon", "Tue": "Tue", "Wed": "Wed", "Thu": "Thu", "Fri": "Fri", "Sat": "Sat", "Sun": "Sun",
+    // Module page subtitles + extra headings
+    "Profile, security, preferences, data": "Profile, security, preferences, data",
+    "Disclosures & Legal": "Disclosures & Legal",
+    "Copyright, disclaimers, terms of use.": "Copyright, disclaimers, terms of use.",
+    "your rhythm for today": "your rhythm for today",
+    "Know your strengths. Own your growth. Manage habits on the Daily Planner.": "Know your strengths. Own your growth. Manage habits on the Daily Planner.",
+    "Track your flow. Honor how you feel. Notice the patterns.": "Track your flow. Honor how you feel. Notice the patterns.",
+    "Refine your language. Grow your authority. The way you speak becomes the woman you are.": "Refine your language. Grow your authority. The way you speak becomes the woman you are.",
+    "What you accept. What you don't. The line you don't cross.": "What you accept. What you don't. The line you don't cross.",
+    "A private vault for the credentials you actually use": "A private vault for the credentials you actually use",
+    "Brain dump. Tag. Pin. Find later.": "Brain dump. Tag. Pin. Find later.",
+    "Personal Goals": "Personal Goals",
+    "What did you do today toward your goals?": "What did you do today toward your goals?",
+    "Words become beliefs. Beliefs become reality.": "Words become beliefs. Beliefs become reality.",
     "love": "love",
   },
   es: {
@@ -1738,6 +1752,20 @@ const TRANSLATIONS = {
     "Week of": "Semana del",
     "Mon → Sun · 5 AM → 11 PM · click any cell to expand": "Lun → Dom · 5 AM → 11 PM · clic en cualquier celda para expandir",
     "Mon": "Lun", "Tue": "Mar", "Wed": "Mié", "Thu": "Jue", "Fri": "Vie", "Sat": "Sáb", "Sun": "Dom",
+    // Module page subtitles + extra headings — native Spanish
+    "Profile, security, preferences, data": "Perfil, seguridad, preferencias, datos",
+    "Disclosures & Legal": "Avisos legales",
+    "Copyright, disclaimers, terms of use.": "Derechos de autor, descargos y términos de uso.",
+    "your rhythm for today": "tu ritmo de hoy",
+    "Know your strengths. Own your growth. Manage habits on the Daily Planner.": "Conoce tus fortalezas. Apropia tu crecimiento. Gestiona los hábitos desde el Planificador Diario.",
+    "Track your flow. Honor how you feel. Notice the patterns.": "Sigue tu ciclo. Honra cómo te sientes. Observa los patrones.",
+    "Refine your language. Grow your authority. The way you speak becomes the woman you are.": "Refina tu lenguaje. Cultiva tu autoridad. Cómo hablas se convierte en quien eres.",
+    "What you accept. What you don't. The line you don't cross.": "Lo que aceptas. Lo que no. La línea que no cruzas.",
+    "A private vault for the credentials you actually use": "Una bóveda privada para las credenciales que de verdad usas",
+    "Brain dump. Tag. Pin. Find later.": "Vacía la mente. Etiqueta. Fija. Encuéntralo después.",
+    "Personal Goals": "Metas Personales",
+    "What did you do today toward your goals?": "¿Qué hiciste hoy por tus metas?",
+    "Words become beliefs. Beliefs become reality.": "Las palabras se vuelven creencias. Las creencias se vuelven realidad.",
     "love": "amor",
   },
 };
@@ -2058,7 +2086,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           {active === "settings" && <SettingsModule {...moduleProps} setUser={setUser} onLogout={onLogout} dataKey={dataKey} />}
           {active === "disclosures" && (
             <div className="max-w-4xl">
-              <PageHeader title="Disclosures &amp; Legal" subtitle="Copyright, disclaimers, terms of use." dark={dark} />
+              <PageHeader title={t("Disclosures & Legal", lang)} subtitle={t("Copyright, disclaimers, terms of use.", lang)} dark={dark} />
               <Disclosures />
             </div>
           )}
@@ -2510,7 +2538,7 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
 
   return (
     <div className="max-w-3xl">
-      <PageHeader title="Settings" subtitle="Profile, security, preferences, data" dark={dark} />
+      <PageHeader title={t("Settings", lang)} subtitle={t("Profile, security, preferences, data", lang)} dark={dark} />
 
       {/* PROFILE */}
       <Panel title="Profile" dark={dark} className="mb-5">
@@ -3853,7 +3881,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
 // ============================================================
 // HABITS VIEW — focused daily habits page (companion to Daily Planner)
 // ============================================================
-function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const today = todayISO();
   const planners = data.planners || {};
   const todayPlan = planners[today] || {
@@ -3904,7 +3932,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
 
   return (
     <div>
-      <PageHeader title="Habits" subtitle={fmtDate(today) + " — your rhythm for today"} dark={dark} />
+      <PageHeader title={t("Habits", lang)} subtitle={fmtDate(today) + " — " + t("your rhythm for today", lang)} dark={dark} />
 
       {/* Top row: completion ring + water */}
       <div className={`rounded-lg border ${themePanel} p-5 mb-5 flex flex-wrap items-center justify-between gap-6`}>
@@ -3982,7 +4010,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
   );
 }
 
-function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const habitsList = Array.isArray(data.habitsCustom) ? data.habitsCustom : [];
   const reflection = data.selfReflection || { strengths: [], weaknesses: [], improvements: [] };
   const customPanels = Array.isArray(data.customReflections) ? data.customReflections : [];
@@ -4067,7 +4095,7 @@ function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, trigger
 
   return (
     <div>
-      <PageHeader title="Growth & Self" subtitle="Know your strengths. Own your growth. Manage habits on the Daily Planner." dark={dark}
+      <PageHeader title={t("Growth & Self", lang)} subtitle={t("Know your strengths. Own your growth. Manage habits on the Daily Planner.", lang)} dark={dark}
         action={
           <button onClick={addCustomPanel} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> New section
@@ -4148,7 +4176,7 @@ const MOOD_OPTIONS = [
 ];
 const SYMPTOM_OPTIONS = ["Cramps", "Headache", "Bloating", "Tender breasts", "Back pain", "Acne", "Cravings", "Fatigue", "Nausea", "Insomnia", "High energy", "Focused"];
 
-function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const cycle = data.cycle || { entries: [] };
   const entries = Array.isArray(cycle.entries) ? cycle.entries : [];
   const today = todayISO();
@@ -4288,7 +4316,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 
   return (
     <div>
-      <PageHeader title="Cycle & Mood" subtitle="Track your flow. Honor how you feel. Notice the patterns." dark={dark}
+      <PageHeader title={t("Cycle & Mood", lang)} subtitle={t("Track your flow. Honor how you feel. Notice the patterns.", lang)} dark={dark}
         action={
           <button onClick={clearAll} className="px-3 py-2 border border-stone-300 hover:border-rose-400 hover:text-rose-600 hover:bg-rose-50 text-sm rounded flex items-center gap-1.5"><RefreshCw className="w-4 h-4" /> Clear all</button>
         } />
@@ -4624,7 +4652,7 @@ const ELEGANT_PHRASES = [
   { id: 64, cat: "Under Pressure", from: "You're impossible.", to: "I'm struggling to find a way through this with you.", why: "Owns your part, names the dynamic." },
 ];
 
-function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const customList = Array.isArray(data.elegantPhrasesCustom) ? data.elegantPhrasesCustom : [];
   const allPhrases = [...ELEGANT_PHRASES, ...customList];
   const [filter, setFilter] = useState("All");
@@ -4655,7 +4683,7 @@ function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, tri
 
   return (
     <div>
-      <PageHeader title="Speak Eloquently" subtitle="Refine your language. Grow your authority. The way you speak becomes the woman you are." dark={dark}
+      <PageHeader title={t("Speak Eloquently", lang)} subtitle={t("Refine your language. Grow your authority. The way you speak becomes the woman you are.", lang)} dark={dark}
         action={<button onClick={() => setOpen(true)} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5"><Plus className="w-4 h-4" /> Add phrase</button>} />
 
       <div className="mb-5">
@@ -4723,7 +4751,7 @@ function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, tri
 // ============================================================
 // BOUNDARIES MODULE — expectations, deal breakers, non-negotiables
 // ============================================================
-function BoundariesModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+function BoundariesModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const b = data.boundaries || { expectations: [], dealBreakers: [], nonNegotiables: [] };
   const customBoundaries = Array.isArray(data.customBoundaries) ? data.customBoundaries : [];
 
@@ -4815,7 +4843,7 @@ function BoundariesModule({ data, setData, dark, themePanel, themeMuted, trigger
 
   return (
     <div>
-      <PageHeader title="Boundaries" subtitle="What you accept. What you don't. The line you don't cross." dark={dark}
+      <PageHeader title={t("Boundaries", lang)} subtitle={t("What you accept. What you don't. The line you don't cross.", lang)} dark={dark}
         action={
           <button onClick={addCustomBoundary} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> New section
@@ -4883,7 +4911,7 @@ function BoundariesModule({ data, setData, dark, themePanel, themeMuted, trigger
 // ============================================================
 const CRED_CATEGORIES = ["Personal", "Banking", "Social", "Work", "Shopping", "Streaming", "Insurance", "Other"];
 
-function CredentialsModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+function CredentialsModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const creds = data.credentials || [];
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState(null);
@@ -4924,7 +4952,7 @@ function CredentialsModule({ data, setData, dark, themePanel, themeMuted, trigge
 
   return (
     <div>
-      <PageHeader title="Logins & Passwords" subtitle="A private vault for the credentials you actually use" dark={dark}
+      <PageHeader title={t("Logins & Passwords", lang)} subtitle={t("A private vault for the credentials you actually use", lang)} dark={dark}
         action={<AddButton onClick={() => { setForm(blank); setEditing(null); setOpen(true); }} label="Add login" dark={dark} />} />
 
       {/* Privacy notice */}
@@ -7927,7 +7955,7 @@ function ObjectionsModule({ data, setData, dark, themePanel, themeMuted, trigger
 // ============================================================
 // NOTES MODULE
 // ============================================================
-function NotesModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+function NotesModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
   const [editing, setEditing] = useState(null);
@@ -7949,7 +7977,7 @@ function NotesModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 
   return (
     <div>
-      <PageHeader title="Notes" subtitle="Brain dump. Tag. Pin. Find later." dark={dark}
+      <PageHeader title={t("Notes", lang)} subtitle={t("Brain dump. Tag. Pin. Find later.", lang)} dark={dark}
         action={<AddButton onClick={() => { setForm(blank); setEditing(null); setOpen(true); }} label="Add Note" dark={dark} />} />
 
       <div className={`flex items-center gap-2 px-3 py-2 rounded border ${dark ? "bg-white border-stone-200" : "bg-white border-stone-300"} mb-4`}>
@@ -8264,7 +8292,7 @@ const GOAL_CATEGORY_STYLE = {
   "Personal":        { bg: "bg-stone-100",  text: "text-stone-700",   border: "border-stone-300",   dot: "bg-stone-500" },
 };
 const categoryStyle = (cat) => GOAL_CATEGORY_STYLE[cat] || GOAL_CATEGORY_STYLE["Personal"];
-function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const [open, setOpen] = useState(false);
   const [tab, setTab] = useState("active");
   const [editing, setEditing] = useState(null);
@@ -8344,7 +8372,7 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 
   return (
     <div>
-      <PageHeader title="Personal Goals" subtitle={"What did you do today toward your goals?"} dark={dark}
+      <PageHeader title={t("Personal Goals", lang)} subtitle={t("What did you do today toward your goals?", lang)} dark={dark}
         action={<AddButton onClick={openNewModal} label="Add Goal" dark={dark} />} />
 
       {/* Stat strip */}
@@ -8571,7 +8599,7 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 // ============================================================
 // AFFIRMATIONS MODULE
 // ============================================================
-function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti }) {
+function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState("All");
   const [routineMode, setRoutineMode] = useState(false);
@@ -8608,7 +8636,7 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
 
   return (
     <div>
-      <PageHeader title="Affirmations" subtitle="Words become beliefs. Beliefs become reality." dark={dark}
+      <PageHeader title={t("Affirmations", lang)} subtitle={t("Words become beliefs. Beliefs become reality.", lang)} dark={dark}
         action={<AddButton onClick={() => setOpen(true)} label="Add" dark={dark} />} />
 
       {/* Daily affirmation hero — mobile friendly */}
