@@ -1,5 +1,6 @@
 import { getCustomerRows } from "../_data";
 import CustomerTable from "../_components/CustomerTable";
+import StatCircle from "../_components/StatCircle";
 
 export default async function AdminCanceledPage() {
   const all = await getCustomerRows();
@@ -16,19 +17,9 @@ export default async function AdminCanceledPage() {
   return (
     <div>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-        <div className="rounded-lg border border-stone-200 bg-white p-4">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500">Fully canceled</div>
-          <div className="font-display text-2xl text-stone-700 mt-1">{fullyCanceled}</div>
-        </div>
-        <div className="rounded-lg border border-stone-200 bg-white p-4">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500">Canceling at period end</div>
-          <div className="font-display text-2xl text-rose-600 mt-1">{cancelingSoon}</div>
-          <div className="text-[10px] italic text-stone-400 mt-0.5">still active, won't renew</div>
-        </div>
-        <div className="rounded-lg border border-stone-200 bg-white p-4">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500">Total at risk</div>
-          <div className="font-display text-2xl text-forest-deep mt-1">{rows.length}</div>
-        </div>
+        <StatCircle label="Fully canceled" value={String(fullyCanceled)} tone="stone" />
+        <StatCircle label="Canceling at period end" value={String(cancelingSoon)} hint="still active, won't renew" tone="rose" />
+        <StatCircle label="Total at risk" value={String(rows.length)} tone="forest" />
       </div>
 
       <CustomerTable rows={rows} variant="canceled" emptyMessage="No cancellations yet — keep going." />

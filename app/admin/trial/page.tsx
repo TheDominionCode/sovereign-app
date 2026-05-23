@@ -1,6 +1,7 @@
 import { formatPrice } from "@/lib/stripe/plans";
 import { getCustomerRows, daysFromNow } from "../_data";
 import CustomerTable from "../_components/CustomerTable";
+import StatCircle from "../_components/StatCircle";
 
 export default async function AdminTrialPage() {
   const all = (await getCustomerRows()).filter((r) => r.status === "trialing");
@@ -19,19 +20,9 @@ export default async function AdminTrialPage() {
   return (
     <div>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-        <div className="rounded-lg border border-stone-200 bg-white p-4">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500">On trial right now</div>
-          <div className="font-display text-2xl text-forest-deep mt-1">{rows.length}</div>
-        </div>
-        <div className="rounded-lg border border-stone-200 bg-white p-4">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500">Pipeline</div>
-          <div className="font-display text-2xl text-forest-deep mt-1">{formatPrice(pipeline)}</div>
-          <div className="text-[10px] italic text-stone-400 mt-0.5">if everyone converts at their selected plan</div>
-        </div>
-        <div className="rounded-lg border border-stone-200 bg-white p-4">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500">Ending in ≤ 1 day</div>
-          <div className="font-display text-2xl text-rose-600 mt-1">{endingSoon}</div>
-        </div>
+        <StatCircle label="On trial right now" value={String(rows.length)} tone="amber" />
+        <StatCircle label="Pipeline" value={formatPrice(pipeline)} hint="if everyone converts" tone="forest" />
+        <StatCircle label="Ending in ≤ 1 day" value={String(endingSoon)} tone="rose" />
       </div>
 
       <CustomerTable rows={rows} variant="trial" emptyMessage="No active trials right now." />
