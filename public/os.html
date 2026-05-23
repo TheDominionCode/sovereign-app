@@ -596,7 +596,12 @@ const RECRUIT_STAGES = ["non-licensed", "licensed", "active", "inactive"];
 const CLIENT_STATUSES = ["lead", "quoted", "active", "lapsed"];
 
 export default function DominionOS() {
-  const [user, setUser] = useState(() => storage.get("dom_user", null));
+  // Inner sign-in collapsed into the outer Supabase login: when no inner
+  // user is stored, default to the master account so the app opens straight
+  // into the dashboard after Supabase auth (the real security gate).
+  const [user, setUser] = useState(() =>
+    storage.get("dom_user", null) || { username: "natalyg", name: "Nataly" }
+  );
   const [dark, setDark] = useState(false); // Force light mode
   const [loading, setLoading] = useState(true);
 
@@ -674,8 +679,25 @@ export default function DominionOS() {
     );
   }
 
+  // The inner AuthPage is only reachable if something explicitly clears the
+  // user (which we no longer do — onLogout now signs out of Supabase). Keep
+  // the fallback as a safety net.
   if (!user) return <AuthPage onLogin={(u) => setUser(u)} />;
-  return <AppShell user={user} setUser={setUser} dark={dark} setDark={setDark} onLogout={() => setUser(null)} />;
+  return <AppShell
+    user={user}
+    setUser={setUser}
+    dark={dark}
+    setDark={setDark}
+    onLogout={() => {
+      // Inner logout = real logout. Bust the parent frame's session via the
+      // Next /logout route so the user lands on the marketing site, signed
+      // out everywhere.
+      try {
+        if (window.top && window.top !== window.self) window.top.location.href = "/logout";
+        else window.location.href = "/logout";
+      } catch (e) { window.location.href = "/logout"; }
+    }}
+  />;
 }
 
 // ============================================================
