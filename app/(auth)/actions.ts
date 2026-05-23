@@ -3,7 +3,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
 
 function originFromHeaders(h: Headers): string {
   // Prefer the deployed origin (works regardless of NEXT_PUBLIC_SITE_URL).
@@ -19,26 +18,6 @@ function sanitizeNext(next: string | null | undefined): string {
   return next;
 }
 
-// If this email is on the admin allow-list, send them to /admin instead of
-// the default /app. (The middleware-gated /admin page still re-checks the
-// session, so it's safe even if someone forges the email here.)
-async function destinationFor(email: string, fallbackNext: string): Promise<string> {
-  if (fallbackNext !== "/app") return fallbackNext; // honor explicit ?next=
-  try {
-    const admin = createAdminClient();
-    const { data } = await admin
-      .from("admins")
-      .select("email")
-      .eq("email", email.toLowerCase())
-      .maybeSingle();
-    if (data) return "/admin";
-  } catch {
-    // If the admin lookup fails, fall back to /app — better to send them
-    // somewhere than to error out the login flow.
-  }
-  return fallbackNext;
-}
-
 export async function signInWithPasswordAction(formData: FormData) {
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
@@ -49,7 +28,10 @@ export async function signInWithPasswordAction(formData: FormData) {
   if (error) {
     redirect(`/login?error=${encodeURIComponent(error.message)}&next=${encodeURIComponent(next)}`);
   }
-  redirect(await destinationFor(email, next));
+  // Everyone — including admins — lands in their personal Sovereign app first.
+  // Admins reach the back office via the "← ADMIN" pill that only shows on
+  // /app for users on the admins allow-list.
+  redirect(next);
 }
 
 export async function signUpWithPasswordAction(formData: FormData) {
