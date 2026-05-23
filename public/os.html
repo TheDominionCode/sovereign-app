@@ -1723,10 +1723,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
       });
       d.visionBoardImagesV3 = true;
     }
-    // Seed the "my why" inspiration photo with a home-with-horses placeholder if user hasn't uploaded one
-    if (!d.inspirationImg) {
-      d.inspirationImg = "https://images.unsplash.com/photo-1568207233834-2b8df8a51b59?w=1000&h=1400&fit=crop&q=80";
-    }
+    // "My Why" photo starts empty — users upload their own from the dashboard.
     return d;
   });
   const [confetti, setConfetti] = useState(false);
