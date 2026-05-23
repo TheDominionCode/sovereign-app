@@ -1,0 +1,153 @@
+// Shared data fetchers + formatters for /admin sub-pages.
+// All run server-side with the service-role client so they bypass RLS;
+// the layout's requireAdmin() guard already gates the visitor.
+
+import { createAdminClient } from "@/lib/supabase/admin";
+import { priceIdToPlan, type Plan } from "@/lib/stripe/plans";
+
+export type ProfileRow = {
+  id: string;
+  email: string;
+  full_name: string | null;
+  phone: string | null;
+  stripe_customer_id: string | null;
+  created_at: string;
+};
+
+export type SubscriptionRow = {
+  user_id: string;
+  status: string;
+  price_id: string;
+  current_period_start: string;
+  current_period_end: string;
+  cancel_at_period_end: boolean;
+  trial_end: string | null;
+  canceled_at: string | null;
+};
+
+export type AdminRow = {
+  email: string;
+  role: string;
+  added_at: string;
+  added_by: string | null;
+};
+
+export type CustomerRow = {
+  id: string;
+  email: string;
+  name: string | null;
+  phone: string | null;
+  stripeCustomerId: string | null;
+  plan: Plan | null;
+  status: string;
+  trialEnd: string | null;
+  periodStart: string | null;
+  periodEnd: string | null;
+  cancelAtPeriodEnd: boolean;
+  canceled: boolean;
+  canceledAt: string | null;
+  createdAt: string;
+  lastSignIn: string | null;
+};
+
+export const MAX_ADMINS = 5;
+
+export async function getCustomerRows(): Promise<CustomerRow[]> {
+  const admin = createAdminClient();
+  const [profilesRes, subsRes, usersRes] = await Promise.all([
+    admin.from("profiles").select("id,email,full_name,phone,stripe_customer_id,created_at"),
+    admin.from("subscriptions").select("user_id,status,price_id,current_period_start,current_period_end,cancel_at_period_end,trial_end,canceled_at"),
+    admin.auth.admin.listUsers({ perPage: 200 }),
+  ]);
+  const profiles = (profilesRes.data ?? []) as ProfileRow[];
+  const subs = (subsRes.data ?? []) as SubscriptionRow[];
+  const authUsers = usersRes.data?.users ?? [];
+
+  // Pick the "best" subscription per user — prefer trialing/active over older canceled.
+  const subByUser = new Map<string, SubscriptionRow>();
+  for (const s of subs) {
+    const prev = subByUser.get(s.user_id);
+    if (!prev || ((prev.status !== "trialing" && prev.status !== "active") &&
+                  (s.status === "trialing" || s.status === "active"))) {
+      subByUser.set(s.user_id, s);
+    }
+  }
+  const profileById = new Map(profiles.map((p) => [p.id, p]));
+
+  const rows: CustomerRow[] = authUsers.map((u) => {
+    const p = profileById.get(u.id);
+    const s = subByUser.get(u.id);
+    return {
+      id: u.id,
+      email: u.email ?? p?.email ?? "—",
+      name: p?.full_name ?? null,
+      phone: p?.phone ?? null,
+      stripeCustomerId: p?.stripe_customer_id ?? null,
+      plan: s ? priceIdToPlan(s.price_id) ?? null : null,
+      status: s?.status ?? "—",
+      trialEnd: s?.trial_end ?? null,
+      periodStart: s?.current_period_start ?? null,
+      periodEnd: s?.current_period_end ?? null,
+      cancelAtPeriodEnd: !!s?.cancel_at_period_end,
+      canceled: !!s?.canceled_at || s?.status === "canceled",
+      canceledAt: s?.canceled_at ?? null,
+      createdAt: u.created_at,
+      lastSignIn: u.last_sign_in_at ?? null,
+    };
+  });
+
+  // Newest first.
+  rows.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return rows;
+}
+
+export async function getAdmins(): Promise<AdminRow[]> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("admins")
+    .select("email,role,added_at,added_by")
+    .order("added_at");
+  return (data ?? []) as AdminRow[];
+}
+
+export type AdminStats = {
+  total: number;
+  trialing: number;
+  active: number;
+  canceled: number;
+  mrrCents: number;
+  trialPipelineCents: number;
+};
+
+export function computeStats(rows: CustomerRow[]): AdminStats {
+  const total = rows.length;
+  const trialing = rows.filter((r) => r.status === "trialing").length;
+  const active = rows.filter((r) => r.status === "active").length;
+  const canceled = rows.filter((r) => r.canceled).length;
+  const mrrCents = rows.reduce((sum, r) =>
+    (r.status === "active" && r.plan ? sum + r.plan.monthlyEquivalentCents : sum), 0);
+  const trialPipelineCents = rows.reduce((sum, r) =>
+    (r.status === "trialing" && r.plan ? sum + r.plan.amountCents : sum), 0);
+  return { total, trialing, active, canceled, mrrCents, trialPipelineCents };
+}
+
+export function fmtDate(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
+
+export function fmtDateTime(iso: string | null | undefined): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString(undefined, { year: "numeric", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+export function daysFromNow(iso: string | null | undefined): number | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return Math.round((d.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+}
