@@ -36,18 +36,25 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Beta invite capture — if the URL includes ?beta=<code> and it matches
-  // BETA_INVITE_CODE, drop a 30-day cookie so the signup flow can read it
-  // even if the visitor lands on the marketing page first and clicks around.
+  // BETA_INVITE_CODE, drop a 30-day cookie AND redirect the visitor straight
+  // to /signup (or /app if already signed in) so they never have to hunt for
+  // the right button on the marketing page.
   const betaParam = request.nextUrl.searchParams.get("beta");
   const expected = process.env.BETA_INVITE_CODE;
   if (betaParam && expected && betaParam === expected) {
-    supabaseResponse.cookies.set("beta_invite", expected, {
+    const dest = request.nextUrl.clone();
+    dest.search = "";
+    dest.pathname = user ? "/app" : "/signup";
+    if (!user) dest.searchParams.set("next", "/app");
+    const res = NextResponse.redirect(dest);
+    res.cookies.set("beta_invite", expected, {
       httpOnly: true,
       sameSite: "lax",
       secure: !request.nextUrl.hostname.startsWith("localhost"),
       path: "/",
       maxAge: 60 * 60 * 24 * 30,
     });
+    return res;
   }
 
   const requiresAuth =
