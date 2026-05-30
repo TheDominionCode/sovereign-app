@@ -60,10 +60,25 @@ export const hasActiveSubscription = cache(
 );
 
 // Server-component guard. Redirects to /login if signed out, /pricing if no
-// active subscription. Returns the user on success.
+// active subscription. Beta testers (profile.beta_until > now) pass through
+// without a Stripe subscription. Returns the user on success.
 export async function requireActiveSubscription() {
   const user = await getCurrentUser();
   if (!user) redirect("/login?next=/app");
+
+  const supabase = await createClient();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("beta_until")
+    .eq("id", user.id)
+    .maybeSingle();
+  if (
+    profile?.beta_until &&
+    new Date(profile.beta_until as string).getTime() > Date.now()
+  ) {
+    return user;
+  }
+
   const ok = await hasActiveSubscription(user.id);
   if (!ok) redirect("/pricing");
   return user;

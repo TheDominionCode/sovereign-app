@@ -1,8 +1,11 @@
 "use server";
 
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+
+// Beta window — invited testers get this many days of /app access without paying.
+const BETA_WINDOW_DAYS = 5;
 
 function originFromHeaders(h: Headers): string {
   // Prefer the deployed origin (works regardless of NEXT_PUBLIC_SITE_URL).
@@ -39,7 +42,25 @@ export async function signUpWithPasswordAction(formData: FormData) {
   const password = String(formData.get("password") ?? "");
   const full_name = String(formData.get("full_name") ?? "").trim();
   const phone = String(formData.get("phone") ?? "").trim();
-  const next = sanitizeNext(formData.get("next") as string | null);
+  let next = sanitizeNext(formData.get("next") as string | null);
+
+  // Beta invite check — if the visitor has the beta_invite cookie set by
+  // middleware AND it matches BETA_INVITE_CODE, stamp beta_until on the
+  // profile and bypass the /pricing checkout entirely.
+  const cookieStore = await cookies();
+  const beta = cookieStore.get("beta_invite")?.value;
+  const expected = process.env.BETA_INVITE_CODE;
+  const isBeta = Boolean(beta && expected && beta === expected);
+  const meta: { full_name: string; phone: string; beta_until?: string } = {
+    full_name,
+    phone,
+  };
+  if (isBeta) {
+    const until = new Date(Date.now() + BETA_WINDOW_DAYS * 24 * 60 * 60 * 1000);
+    meta.beta_until = until.toISOString();
+    // Beta testers skip /pricing and land straight in the app.
+    next = "/app";
+  }
 
   const supabase = await createClient();
   const site = process.env.NEXT_PUBLIC_SITE_URL!;
@@ -49,7 +70,7 @@ export async function signUpWithPasswordAction(formData: FormData) {
     options: {
       // raw_user_meta_data — the on_auth_user_created trigger copies these
       // into the profiles row on insert.
-      data: { full_name, phone },
+      data: meta,
       emailRedirectTo: `${site}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   });

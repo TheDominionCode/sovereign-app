@@ -215,7 +215,6 @@ const landingCss = `
   }
 
   .landing-root .pillars{background:var(--cream)}
-  .landing-root .pillar-grid{
     display:grid;grid-template-columns:repeat(3,1fr);gap:48px;
   }
   .landing-root .pillar{
@@ -350,6 +349,123 @@ const landingCss = `
     font-family:'Cormorant Garamond',serif;
   }
 
+  .landing-root .gallery{padding:80px 0;background:var(--ivory)}
+  .landing-root .gallery-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+    max-width: 1400px; margin: 0 auto; padding: 0 24px;
+  }
+  .landing-root .gallery-img{
+    width:100%;aspect-ratio:1/1;object-fit:cover;
+  }
+
+  /* ─── SHOWCASE (phone + floating review cards) ─── */
+  .landing-root .showcase{padding:120px 0 140px;background:#e7e2d6}
+  .landing-root .showcase h2.center,
+  .landing-root .showcase .section-sub.center,
+  .landing-root .showcase .section-eyebrow.center{text-align:center}
+  .landing-root .showcase .section-sub.center{max-width:560px;margin:0 auto}
+  .landing-root .showcase-stage{
+    position:relative;
+    max-width:1100px;margin:64px auto 0;
+    min-height:560px;
+    display:flex;align-items:center;justify-content:center;
+    padding:0 40px;
+  }
+  /* Laptop + phone composition */
+  .landing-root .show-devices{
+    position:relative;
+    width:100%;max-width:700px;
+    display:flex;align-items:center;justify-content:center;
+  }
+
+  /* Laptop */
+  .landing-root .show-laptop{
+    width:100%;
+    filter:drop-shadow(0 30px 50px rgba(26,24,22,0.25));
+  }
+  .landing-root .show-laptop-screen{
+    background:#1a1816;
+    border-radius:14px 14px 4px 4px;
+    padding:18px 16px 16px;
+  }
+  .landing-root .show-laptop-img{
+    display:block;width:100%;
+    aspect-ratio:16/10;object-fit:cover;object-position:top;
+    background:var(--ivory);border-radius:4px;
+  }
+  .landing-root .show-laptop-base{
+    height:14px;
+    background:linear-gradient(180deg,#3a3531,#1a1816);
+    border-radius:0 0 18px 18px;
+    margin:0 -22px;position:relative;
+  }
+  .landing-root .show-laptop-base::before{
+    content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
+    width:90px;height:5px;background:rgba(0,0,0,0.4);
+    border-radius:0 0 8px 8px;
+  }
+
+  /* Phone — overlaps bottom-right of laptop */
+  .landing-root .show-phone{
+    position:absolute;
+    right:-30px;bottom:-50px;z-index:5;
+    width:200px;height:412px;
+    background:#1a1816;border-radius:32px;
+    padding:6px;
+    box-shadow:0 30px 50px -16px rgba(26,24,22,0.45), 0 14px 24px -8px rgba(26,24,22,0.25);
+  }
+  .landing-root .show-phone-notch{
+    position:absolute;top:14px;left:50%;transform:translateX(-50%);
+    width:62px;height:18px;background:#1a1816;
+    border-radius:12px;z-index:3;
+  }
+  .landing-root .show-phone-screen{
+    width:100%;height:100%;display:block;
+    border-radius:26px;
+    object-fit:cover;object-position:top;
+    background:var(--ivory);
+  }
+
+  /* Floating review cards */
+  .landing-root .review-card{
+    position:absolute;z-index:4;
+    width:280px;background:#fff;
+    padding:20px 22px;border-radius:14px;
+    box-shadow:0 16px 30px -10px rgba(26,24,22,0.18), 0 6px 12px -4px rgba(26,24,22,0.08);
+    font-family:'Inter',sans-serif;
+  }
+  .landing-root .review-stars{color:#f5b04a;font-size:14px;letter-spacing:2px;margin-bottom:6px}
+  .landing-root .review-meta{font-size:11px;color:var(--muted);margin-bottom:10px}
+  .landing-root .review-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px}
+  .landing-root .review-body{font-size:13px;line-height:1.55;color:var(--char)}
+  .landing-root .card-1{top:-20px;left:-30px;transform:rotate(-2deg)}
+  .landing-root .card-2{top:42%;right:-80px;transform:rotate(1.5deg)}
+  .landing-root .card-3{bottom:-30px;left:0;transform:rotate(-1.2deg)}
+
+  /* ─── FOUNDER ─── */
+  .landing-root .founder{padding:120px 0;background:var(--ivory)}
+  .landing-root .founder-container{max-width:780px;text-align:center}
+  .landing-root .founder-title{
+    font-size:clamp(40px,5.5vw,72px);
+    margin-bottom:36px;letter-spacing:-0.01em;
+  }
+  .landing-root .founder-body{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;line-height:1.7;color:var(--char);
+    max-width:680px;margin:0 auto 28px;
+  }
+  .landing-root .founder-signoff{
+    font-family:'Cormorant Garamond',serif;
+    font-style:italic;font-size:18px;color:var(--gold-deep);
+    letter-spacing:0.04em;
+  }
+  .landing-root .founder-coffee{
+    display:block;width:180px;height:180px;
+    object-fit:cover;border-radius:50%;
+    margin:0 auto 36px;
+    box-shadow:0 16px 30px -10px rgba(26,24,22,0.18);
+  }
+
   .landing-root .testimonials{background:var(--cream)}
   .landing-root .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:20px}
   .landing-root .quote{
@@ -423,6 +539,15 @@ const landingCss = `
   .landing-root .foot-grid p{font-size:14px;line-height:1.7;max-width:340px}
   .landing-root .foot-grid .logo{color:var(--ivory);margin-bottom:18px;font-size:22px}
   .landing-root .foot-grid .logo span{color:var(--gold)}
+  .landing-root .foot-disclaimer{
+    border-top:1px solid rgba(245,239,230,0.12);
+    padding:24px 0;
+    font-size:12px;line-height:1.7;
+    color:rgba(245,239,230,0.55);
+    max-width:980px;
+    font-style:italic;
+    font-family:'Cormorant Garamond',serif;
+  }
   .landing-root .foot-bottom{
     border-top:1px solid rgba(245,239,230,0.12);
     padding-top:28px;
@@ -437,7 +562,14 @@ const landingCss = `
   @media (max-width:960px){
     .landing-root .hero-grid{grid-template-columns:1fr;gap:48px}
     .landing-root .pillar-grid,
+    .landing-root .gallery-grid,
     .landing-root .quote-grid{grid-template-columns:1fr;gap:20px}
+    .landing-root .showcase-stage{min-height:auto;flex-direction:column;gap:32px;padding:0 12px}
+    .landing-root .show-devices{max-width:420px}
+    .landing-root .show-phone{position:static;width:180px;height:370px;margin:0 auto}
+    .landing-root .review-card{position:static;width:100%;max-width:340px;transform:none}
+    .landing-root .card-1,.landing-root .card-2,.landing-root .card-3{transform:none}
+    .landing-root .founder-body{font-size:19px}
     .landing-root .price-grid{grid-template-columns:1fr 1fr;gap:18px}
     .landing-root .price-card.featured{transform:none}
     .landing-root .price-card.featured:hover{transform:translateY(-4px)}
@@ -469,7 +601,7 @@ const PLAN_BASE: PlanBase[] = [
   { planId: "1mo", dollars: "$14", cents: ".99" },
   { planId: "3mo", dollars: "$39", cents: ".99" },
   { planId: "6mo", dollars: "$74", cents: ".99", featured: true },
-  { planId: "12mo", dollars: "$99", cents: ".99" },
+  { planId: "12mo", dollars: "$129", cents: ".99" },
 ];
 
 // A headline part: a plain string (where "\n" becomes a line break) or
@@ -525,6 +657,13 @@ type Copy = {
     sub: string;
     items: { num: string; title: string; desc: string }[];
   };
+  showcase: {
+    eyebrow: string;
+    title: Part[];
+    sub: string;
+    reviews: { author: string; date: string; title: string; body: string }[];
+  };
+  founder: { eyebrow: string; title: Part[]; name: string; body: string; signoff: string };
   trial: { eyebrow: string; title: Part[]; body: string; cta: string; meta: string };
   pricing: { eyebrow: string; title: Part[]; sub: string; fine: string; cardBtn: string };
   plans: Record<PlanId, PlanCopy>;
@@ -542,6 +681,7 @@ type Copy = {
     legal: { label: string; href: string }[];
     copyright: string;
     madeWith: string;
+    disclaimer: string;
   };
 };
 
@@ -580,6 +720,38 @@ const COPY: Record<Lang, Copy> = {
         },
       ],
     },
+    showcase: {
+      eyebrow: "Inside Sovereign",
+      title: ["A quiet ", { i: "home" }, " on your phone"],
+      sub: "Open Sovereign and the day softens. Your rituals, your word, your stats — gathered into one calm screen.",
+      reviews: [
+        {
+          author: "Maya R.",
+          date: "03/15/2026",
+          title: "Life-changing",
+          body: "I'm a busy mom with so much on my plate. Having every ritual in one place finally made my mornings feel intentional again.",
+        },
+        {
+          author: "Sienna L.",
+          date: "03/22/2026",
+          title: "Truly an all-in-one",
+          body: "Sovereign was so thought-out — finally a space for the modern woman to come home to herself. Obsessed.",
+        },
+        {
+          author: "Jules K.",
+          date: "04/01/2026",
+          title: "Spectacular",
+          body: "I'm loving it so much. Honestly the best tool to plan my days and return to my own pace. Highly recommend.",
+        },
+      ],
+    },
+    founder: {
+      eyebrow: "Behind Sovereign",
+      title: ["About ", { i: "the" }, " Founder"],
+      name: "Nataly",
+      body: "Meet Nataly — the visionary behind Sovereign. A creative, a mother, and an entrepreneur who believes the modern woman can hold both strength and stillness in the same day. After years of building, becoming, and finding her way back to herself, she designed Sovereign as the practice she wished she'd had: daily rituals, mindset work, and intentional design — gathered into one quiet, beautiful space. Her mission is simple: to help women everywhere stop shrinking, return to their own pace, and live in their sovereign power.",
+      signoff: "— Nataly, founder of Sovereign",
+    },
     trial: {
       eyebrow: "An invitation",
       title: ["Three days,\non ", { i: "us" }],
@@ -599,26 +771,46 @@ const COPY: Record<Lang, Copy> = {
         tier: "Monthly",
         period: "Billed every month",
         savings: "",
-        features: ["Full library access", "Daily rituals & audios", "Weekly intention drops", "Cancel anytime"],
+        features: [
+          "Every section of your planner",
+          "Summary, Planner, Goals & Habits",
+          "Cycle, Vision Board, Boundaries",
+          "6 themes · EN / ES · Cancel anytime",
+        ],
       },
       "3mo": {
         tier: "3 Months",
         period: "Billed quarterly",
         savings: "save 11% · $13.33/mo",
-        features: ["Everything in Monthly", "Quarterly seasonal guide", "Private community access", "Cancel anytime"],
+        features: [
+          "Everything in Monthly",
+          "Save 11% — rate locked",
+          "Sneak peek at what's coming next",
+          "Cancel anytime",
+        ],
       },
       "6mo": {
         tier: "6 Months",
         period: "Billed every 6 months",
         savings: "save 17% · $12.50/mo",
-        features: ["Everything in 3 Months", "Bonus embodiment series", "Quarterly live sessions", "Founder Q&A access"],
+        features: [
+          "Everything in 3 Months",
+          "Save 17% — rate locked",
+          "Personal welcome from the founder",
+          "Early access to new features",
+        ],
         badge: "Most Loved",
       },
       "12mo": {
         tier: "1 Year",
         period: "Billed annually",
-        savings: "save 44% · $8.33/mo",
-        features: ["Everything in 6 Months", "Full year of seasonal guides", "The Sovereign Annual Retreat", "Lock in this rate for life"],
+        savings: "save 28% · $10.83/mo",
+        features: [
+          "Everything in 6 Months",
+          "Save 28% — best value",
+          "Affiliate program — 30% commission",
+          "Lock in this rate for life",
+        ],
       },
     },
     reviews: {
@@ -657,7 +849,7 @@ const COPY: Record<Lang, Copy> = {
         },
         {
           q: "What's actually inside Sovereign?",
-          a: "A growing library of guided rituals, mindset audios, breathwork sessions, journaling prompts, embodiment practices, weekly intentions, and seasonal guides — all designed to be done in small, sustainable pockets of your day.",
+          a: "Your whole life, gathered into one calm dashboard. A Summary view (tasks, top priorities, habits, water, vitamins, mood), Daily Planner & Calendar, Goals, Growth & Self, Cycle & Mood, Affirmations, Boundaries, Vision Board, Speak Eloquently, Personal Finance, Notes, and a private Logins & Passwords vault. Six aesthetic themes (Sage, Rose, Lavender, Honey, Ocean, Noir) and full English / Spanish — included in every plan.",
         },
         {
           q: "Which plan should I choose?",
@@ -687,19 +879,21 @@ const COPY: Record<Lang, Copy> = {
       ],
       supportHead: "Support",
       support: [
-        { label: "Contact", href: "#" },
-        { label: "Help Center", href: "#" },
+        { label: "Contact", href: "mailto:hello@sovereignplanner.com" },
+        { label: "Help Center", href: "mailto:hello@sovereignplanner.com" },
         { label: "Manage Plan", href: "/billing" },
-        { label: "Affiliate", href: "#" },
+        { label: "Affiliate", href: "/affiliate" },
       ],
       legalHead: "Legal",
       legal: [
-        { label: "Terms", href: "#" },
-        { label: "Privacy", href: "#" },
-        { label: "Refund Policy", href: "#" },
+        { label: "Terms", href: "/terms" },
+        { label: "Privacy", href: "/privacy" },
+        { label: "Refund Policy", href: "/refund" },
       ],
       copyright: "© 2026 Sovereign — owned & operated by The Dominion Code LLC. All rights reserved.",
       madeWith: "Made with intention ✦",
+      disclaimer:
+        "All Sovereign subscriptions are non-refundable. Your 3-day free trial is your window to decide — your card is not charged until day four. You may cancel anytime to stop future billing; access continues through the end of your current paid period. See our Refund Policy, Terms, and Privacy Policy.",
     },
   },
   es: {
@@ -736,6 +930,38 @@ const COPY: Record<Lang, Copy> = {
         },
       ],
     },
+    showcase: {
+      eyebrow: "Por dentro de Sovereign",
+      title: ["Un ", { i: "hogar" }, " sereno en tu teléfono"],
+      sub: "Abre Sovereign y el día se suaviza. Tus rituales, tu palabra, tus estadísticas — reunidos en una sola pantalla en calma.",
+      reviews: [
+        {
+          author: "Maya R.",
+          date: "15/03/2026",
+          title: "Me cambió la vida",
+          body: "Soy mamá ocupada con muchísimo encima. Tener cada ritual en un solo lugar finalmente hizo que mis mañanas se sintieran intencionales otra vez.",
+        },
+        {
+          author: "Sienna L.",
+          date: "22/03/2026",
+          title: "Realmente todo en uno",
+          body: "Sovereign está tan bien pensado — por fin un espacio para que la mujer moderna vuelva a sí misma. Obsesionada.",
+        },
+        {
+          author: "Jules K.",
+          date: "01/04/2026",
+          title: "Espectacular",
+          body: "Me encanta tanto. Honestamente la mejor herramienta para planear mis días y volver a mi propio ritmo. Súper recomendado.",
+        },
+      ],
+    },
+    founder: {
+      eyebrow: "Detrás de Sovereign",
+      title: ["Sobre ", { i: "la" }, " Fundadora"],
+      name: "Nataly",
+      body: "Conoce a Nataly — la visionaria detrás de Sovereign. Creativa, madre y emprendedora que cree que la mujer moderna puede sostener fuerza y quietud en un mismo día. Después de años construyendo, transformándose y encontrando el camino de regreso a sí misma, diseñó Sovereign como la práctica que hubiera querido tener: rituales diarios, trabajo mental y diseño intencional — reunidos en un espacio sereno y hermoso. Su misión es simple: ayudar a mujeres en todo el mundo a dejar de encogerse, volver a su propio ritmo y vivir en su poder soberano.",
+      signoff: "— Nataly, fundadora de Sovereign",
+    },
     trial: {
       eyebrow: "Una invitación",
       title: ["Tres días,\npor nuestra ", { i: "cuenta" }],
@@ -755,26 +981,46 @@ const COPY: Record<Lang, Copy> = {
         tier: "Mensual",
         period: "Facturado cada mes",
         savings: "",
-        features: ["Acceso completo a la biblioteca", "Rituales y audios diarios", "Intenciones semanales", "Cancela cuando quieras"],
+        features: [
+          "Cada sección de tu planificador",
+          "Resumen, Planeador, Metas y Hábitos",
+          "Ciclo, Tablero de Visión, Límites",
+          "6 temas · EN / ES · Cancela cuando quieras",
+        ],
       },
       "3mo": {
         tier: "3 meses",
         period: "Facturado trimestralmente",
         savings: "ahorra 11% · $13.33/mes",
-        features: ["Todo lo del plan Mensual", "Guía estacional trimestral", "Acceso a la comunidad privada", "Cancela cuando quieras"],
+        features: [
+          "Todo lo del plan Mensual",
+          "Ahorra 11% — tarifa asegurada",
+          "Vista previa de lo que viene",
+          "Cancela cuando quieras",
+        ],
       },
       "6mo": {
         tier: "6 meses",
         period: "Facturado cada 6 meses",
         savings: "ahorra 17% · $12.50/mes",
-        features: ["Todo lo del plan de 3 meses", "Serie extra de encarnación", "Sesiones en vivo trimestrales", "Acceso a Q&A con la fundadora"],
+        features: [
+          "Todo lo del plan de 3 meses",
+          "Ahorra 17% — tarifa asegurada",
+          "Bienvenida personal de la fundadora",
+          "Acceso anticipado a nuevas funciones",
+        ],
         badge: "La favorita",
       },
       "12mo": {
         tier: "1 año",
         period: "Facturado anualmente",
-        savings: "ahorra 44% · $8.33/mes",
-        features: ["Todo lo del plan de 6 meses", "Un año completo de guías estacionales", "El Retiro Anual Sovereign", "Asegura esta tarifa de por vida"],
+        savings: "ahorra 28% · $10.83/mes",
+        features: [
+          "Todo lo del plan de 6 meses",
+          "Ahorra 28% — el mejor valor",
+          "Programa de afiliadas — 30% de comisión",
+          "Asegura esta tarifa de por vida",
+        ],
       },
     },
     reviews: {
@@ -813,7 +1059,7 @@ const COPY: Record<Lang, Copy> = {
         },
         {
           q: "¿Qué hay realmente dentro de Sovereign?",
-          a: "Una biblioteca en crecimiento de rituales guiados, audios de mentalidad, sesiones de respiración, ejercicios de escritura, prácticas de encarnación, intenciones semanales y guías estacionales — todo diseñado para hacerse en pequeños momentos sostenibles de tu día.",
+          a: "Toda tu vida, reunida en un solo panel en calma. Un Resumen (tareas, prioridades, hábitos, agua, vitaminas, ánimo), Planeador y Calendario, Metas, Crecimiento Personal, Ciclo y Ánimo, Afirmaciones, Límites, Tablero de Visión, Habla con Elocuencia, Finanzas Personales, Notas y una bóveda privada de Contraseñas. Seis temas estéticos (Sage, Rose, Lavender, Honey, Ocean, Noir) y bilingüe completo inglés / español — incluido en todos los planes.",
         },
         {
           q: "¿Qué plan debería elegir?",
@@ -843,19 +1089,21 @@ const COPY: Record<Lang, Copy> = {
       ],
       supportHead: "Soporte",
       support: [
-        { label: "Contacto", href: "#" },
-        { label: "Centro de ayuda", href: "#" },
+        { label: "Contacto", href: "mailto:hello@sovereignplanner.com" },
+        { label: "Centro de ayuda", href: "mailto:hello@sovereignplanner.com" },
         { label: "Gestionar plan", href: "/billing" },
-        { label: "Afiliados", href: "#" },
+        { label: "Afiliados", href: "/affiliate" },
       ],
       legalHead: "Legal",
       legal: [
-        { label: "Términos", href: "#" },
-        { label: "Privacidad", href: "#" },
-        { label: "Política de reembolso", href: "#" },
+        { label: "Términos", href: "/terms" },
+        { label: "Privacidad", href: "/privacy" },
+        { label: "Política de reembolso", href: "/refund" },
       ],
       copyright: "© 2026 Sovereign — propiedad y operado por The Dominion Code LLC. Todos los derechos reservados.",
       madeWith: "Hecho con intención ✦",
+      disclaimer:
+        "Todas las suscripciones de Sovereign son no reembolsables. Tu prueba gratuita de 3 días es tu ventana para decidir — tu tarjeta no se cobra hasta el cuarto día. Puedes cancelar en cualquier momento para detener la facturación futura; el acceso continúa hasta el final de tu período pagado. Consulta nuestra Política de reembolso, Términos y Política de privacidad.",
     },
   },
 };
@@ -902,7 +1150,7 @@ export default function Home() {
               <a href="#pricing" className="nav-price">
                 <span className="nav-price-label">{c.nav.from}</span>
                 <span className="nav-price-amt">
-                  $8.33<span className="nav-price-suffix">/mo</span>
+                  $10.83<span className="nav-price-suffix">/mo</span>
                 </span>
               </a>
               <a href="#pricing" className="nav-cta">
@@ -964,6 +1212,83 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="showcase">
+        <div className="container">
+          <div className="section-eyebrow center">{c.showcase.eyebrow}</div>
+          <h2 className="center">{renderParts(c.showcase.title)}</h2>
+          <p className="section-sub center">{c.showcase.sub}</p>
+
+          <div className="showcase-stage">
+            {/* Floating review card — top left */}
+            <div className="review-card card-1">
+              <div className="review-stars">★★★★★</div>
+              <div className="review-meta">
+                {c.showcase.reviews[0].author}, {c.showcase.reviews[0].date}
+              </div>
+              <div className="review-title">{c.showcase.reviews[0].title}</div>
+              <div className="review-body">{c.showcase.reviews[0].body}</div>
+            </div>
+
+            {/* Laptop (back), Phone (overlapping front) */}
+            <div className="show-devices">
+              <div className="show-laptop">
+                <div className="show-laptop-screen">
+                  <img
+                    src="/images/sovereign-app-desktop.png?v=3"
+                    alt="Sovereign on desktop"
+                    className="show-laptop-img"
+                  />
+                </div>
+                <div className="show-laptop-base"></div>
+              </div>
+
+              <div className="show-phone">
+                <div className="show-phone-notch"></div>
+                <img
+                  src="/images/sovereign-app-screen.png?v=3"
+                  alt="Sovereign app summary view"
+                  className="show-phone-screen"
+                />
+              </div>
+            </div>
+
+            {/* Floating review card — middle right */}
+            <div className="review-card card-2">
+              <div className="review-stars">★★★★★</div>
+              <div className="review-meta">
+                {c.showcase.reviews[1].author}, {c.showcase.reviews[1].date}
+              </div>
+              <div className="review-title">{c.showcase.reviews[1].title}</div>
+              <div className="review-body">{c.showcase.reviews[1].body}</div>
+            </div>
+
+            {/* Floating review card — bottom left */}
+            <div className="review-card card-3">
+              <div className="review-stars">★★★★★</div>
+              <div className="review-meta">
+                {c.showcase.reviews[2].author}, {c.showcase.reviews[2].date}
+              </div>
+              <div className="review-title">{c.showcase.reviews[2].title}</div>
+              <div className="review-body">{c.showcase.reviews[2].body}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="founder">
+        <div className="container founder-container">
+          <img
+            src="/images/sovereign-coffee.png?v=3"
+            alt="Sovereign cup"
+            className="founder-coffee"
+          />
+          <div className="section-eyebrow center">{c.founder.eyebrow}</div>
+          <h2 className="founder-title center">{renderParts(c.founder.title)}</h2>
+          <p className="founder-body">{c.founder.body}</p>
+          <div className="founder-signoff">{c.founder.signoff}</div>
         </div>
       </section>
 
@@ -1115,6 +1440,7 @@ export default function Home() {
               ))}
             </div>
           </div>
+          <div className="foot-disclaimer">{c.footer.disclaimer}</div>
           <div className="foot-bottom">
             <div>{c.footer.copyright}</div>
             <div>{c.footer.madeWith}</div>

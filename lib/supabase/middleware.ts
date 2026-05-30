@@ -34,6 +34,22 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const path = request.nextUrl.pathname;
+
+  // Beta invite capture — if the URL includes ?beta=<code> and it matches
+  // BETA_INVITE_CODE, drop a 30-day cookie so the signup flow can read it
+  // even if the visitor lands on the marketing page first and clicks around.
+  const betaParam = request.nextUrl.searchParams.get("beta");
+  const expected = process.env.BETA_INVITE_CODE;
+  if (betaParam && expected && betaParam === expected) {
+    supabaseResponse.cookies.set("beta_invite", expected, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: !request.nextUrl.hostname.startsWith("localhost"),
+      path: "/",
+      maxAge: 60 * 60 * 24 * 30,
+    });
+  }
+
   const requiresAuth =
     path.startsWith("/app") ||
     path.startsWith("/billing") ||
