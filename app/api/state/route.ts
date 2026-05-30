@@ -33,6 +33,37 @@ export async function GET() {
   for (const row of data ?? []) {
     state[row.key as string] = (row.value as string) ?? "";
   }
+
+  // First-load identity seed — the standalone Sovereign app inside the iframe
+  // has a hardcoded fallback user ("Nataly / natalyg") it uses when `dom_user`
+  // isn't in storage. For every new signed-in user, the cloud state starts
+  // empty, so the fallback would show — meaning Chanel would see "Nataly" as
+  // her name. To prevent that, seed `dom_user` from the profile on first GET
+  // and persist it so subsequent loads (and future devices) see the right
+  // name immediately.
+  if (!state.dom_user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name, email")
+      .eq("id", user.id)
+      .maybeSingle();
+    const emailLocal = (profile?.email || user.email || "user").split("@")[0];
+    const displayName =
+      (profile?.full_name && String(profile.full_name).trim()) ||
+      emailLocal;
+    const userObj = JSON.stringify({
+      username: emailLocal.toLowerCase().replace(/[^a-z0-9]/g, ""),
+      name: displayName,
+    });
+    state.dom_user = userObj;
+    // Persist so the next reload (or another device) finds it without
+    // re-running this seeding step.
+    await supabase.from("app_state").upsert(
+      { user_id: user.id, key: "dom_user", value: userObj },
+      { onConflict: "user_id,key" }
+    );
+  }
+
   return NextResponse.json({ state });
 }
 
