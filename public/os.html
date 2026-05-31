@@ -2881,7 +2881,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
             )}
           </div>
           <div className="ml-auto flex items-center gap-3">
-            <NotificationsBell data={data} setActive={setActive} open={bellOpen} setOpen={setBellOpen} />
+            <NotificationsBell data={data} setData={setData} setActive={setActive} open={bellOpen} setOpen={setBellOpen} />
             <ProfileAvatar user={user} setUser={setUser} themeMuted={themeMuted} onLogout={onLogout} lang={lang} />
           </div>
         </header>
@@ -2942,9 +2942,25 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
 // ============================================================
 // NOTIFICATIONS BELL — pulls actionable reminders from app data
 // ============================================================
-function NotificationsBell({ data, setActive, open, setOpen }) {
+function NotificationsBell({ data, setData, setActive, open, setOpen }) {
   const today = todayISO();
   const now = new Date();
+
+  // USER-ADDED CUSTOM REMINDERS — anything she wants on her radar that
+  // isn't auto-derived from clients/goals/etc. Stored as { id, text }.
+  const customReminders = Array.isArray(data.reminders) ? data.reminders : [];
+  const [draft, setDraft] = useState("");
+  const addReminder = () => {
+    const text = (draft || "").trim();
+    if (!text) return;
+    const ids = customReminders.map((r) => Number(r && r.id)).filter((n) => !isNaN(n));
+    const id = (ids.length ? Math.max(...ids) : 0) + 1;
+    setData({ ...data, reminders: [...customReminders, { id, text }] });
+    setDraft("");
+  };
+  const removeReminder = (id) => {
+    setData({ ...data, reminders: customReminders.filter((r) => r.id !== id) });
+  };
 
   // 1. TODAY'S PENDING TASKS
   const tasksToday = (data.tasks || []).filter(t => t.date === today && !t.done);
@@ -2997,7 +3013,7 @@ function NotificationsBell({ data, setActive, open, setOpen }) {
     return days >= 60;
   }).slice(0, 3);
 
-  const totalCount = tasksToday.length + birthdaysUpcoming.length + stale.length + goalsDue.length + vitaminsMissed.length + recruitsStalled.length;
+  const totalCount = customReminders.length + tasksToday.length + birthdaysUpcoming.length + stale.length + goalsDue.length + vitaminsMissed.length + recruitsStalled.length;
   const hasAlerts = totalCount > 0;
 
   const Section = ({ icon: Icon, label, items, render, route, color = "#7a9a6e" }) => {
@@ -3038,8 +3054,46 @@ function NotificationsBell({ data, setActive, open, setOpen }) {
               </div>
               <Bell className="w-4 h-4 text-[#7a9a6e]" />
             </div>
+            {/* USER-ADDED REMINDERS — anything you want on your radar */}
+            <div className="px-4 py-3 border-b border-stone-100 bg-[#f4f7ee]/30">
+              <div className="text-[10px] tracking-[0.18em] text-[#5b7351] mb-2 font-medium">YOUR REMINDERS</div>
+              <div className="flex gap-1.5 mb-2">
+                <input
+                  value={draft}
+                  onChange={(e) => setDraft(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addReminder(); } }}
+                  placeholder="Add a reminder…"
+                  className="flex-1 px-2.5 py-1.5 text-xs bg-white border border-stone-200 rounded focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20 outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={addReminder}
+                  className="px-3 py-1.5 text-[11px] uppercase tracking-wider bg-[#7a9a6e] text-white rounded font-medium hover:bg-[#5b7351] transition"
+                >
+                  + Add
+                </button>
+              </div>
+              {customReminders.length === 0 ? (
+                <div className="text-[11px] text-stone-400 italic py-1">Nothing yet. Add anything you want to remember.</div>
+              ) : (
+                <ul className="space-y-1">
+                  {customReminders.map((r) => (
+                    <li key={r.id} className="flex items-start gap-2 text-xs text-stone-700 group py-1">
+                      <span className="mt-0.5 text-[#7a9a6e]">•</span>
+                      <span className="flex-1 leading-snug break-words">{r.text}</span>
+                      <button
+                        onClick={() => removeReminder(r.id)}
+                        className="opacity-40 group-hover:opacity-100 text-stone-400 hover:text-rose-500 transition px-1"
+                        aria-label="Remove reminder"
+                      >✕</button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
             {!hasAlerts && (
-              <div className="px-4 py-10 text-center text-sm text-stone-400 italic">You're all clear. Take a breath.</div>
+              <div className="px-4 py-10 text-center text-sm text-stone-400 italic">You&apos;re all clear. Take a breath.</div>
             )}
             <Section
               icon={CheckSquare}
