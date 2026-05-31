@@ -2732,9 +2732,26 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   const [accent, setAccent] = useState(() => (storage.get(`dom_prefs_${user.username}`, {}).accent) || "sage");
   const [lang, setLang] = useState(() => (storage.get(`dom_prefs_${user.username}`, {}).lang) || "en");
 
-  // Apply accent color globally by injecting a runtime stylesheet that re-maps the sage hex codes
+  // Apply accent color globally. Two-layer fix:
+  //   1) Set --accent-* CSS variables on :root so SVG fill/stroke and any
+  //      inline style={{ color: 'var(--accent-mid)' }} pick up the theme.
+  //   2) Inject a runtime stylesheet that re-maps the hardcoded sage hex
+  //      Tailwind arbitrary classes to the current palette (covers all the
+  //      .bg-[#7a9a6e] / .text-[#5b7351] etc. usages).
   useEffect(() => {
     const p = (typeof ACCENT_PALETTES !== "undefined" && ACCENT_PALETTES[accent]) || null;
+
+    // Always set CSS variables — even for sage, so SVG attributes that
+    // reference var(--accent-*) work in every theme.
+    if (p) {
+      const root = document.documentElement.style;
+      root.setProperty("--accent-primary", p.primary);
+      root.setProperty("--accent-mid", p.mid);
+      root.setProperty("--accent-light", p.light);
+      root.setProperty("--accent-pale", p.pale);
+      root.setProperty("--accent-bg", p.bg);
+    }
+
     let style = document.getElementById("sovereign-accent-style");
     if (!style) {
       style = document.createElement("style");
@@ -3350,7 +3367,7 @@ function ProgressRing({ value = 0, size = 100, stroke = 8, label, dark }) {
     <div className="relative inline-flex items-center justify-center">
       <svg width={size} height={size} className="-rotate-90">
         <circle cx={size / 2} cy={size / 2} r={r} stroke={dark ? "#292524" : "#e7e5e4"} strokeWidth={stroke} fill="none" />
-        <circle cx={size / 2} cy={size / 2} r={r} stroke="#7a9a6e" strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "stroke-dashoffset 0.8s ease" }} />
+        <circle cx={size / 2} cy={size / 2} r={r} stroke="var(--accent-mid)" strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "stroke-dashoffset 0.8s ease" }} />
       </svg>
       <div className="absolute text-center">
         <div className="font-serif text-xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{value}%</div>
@@ -4606,7 +4623,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
             <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
               <svg width={size} height={size} className="-rotate-90">
                 <circle cx={size / 2} cy={size / 2} r={r} stroke="#e7e5e4" strokeWidth={stroke} fill="none" />
-                <circle cx={size / 2} cy={size / 2} r={r} stroke="#7a9a6e" strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "stroke-dashoffset 0.6s ease" }} />
+                <circle cx={size / 2} cy={size / 2} r={r} stroke="var(--accent-mid)" strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "stroke-dashoffset 0.6s ease" }} />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
                 <span className="font-serif text-xl text-[#5b7351]" style={serifStyle}>{pct === 1 && total > 0 ? (doneIcon || "✓") : valueLabel}</span>
@@ -5297,7 +5314,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
               <input value={vitForm.name} onChange={e => setVitForm({ ...vitForm, name: e.target.value })} onKeyDown={e => e.key === "Enter" && addVitamin()} placeholder="Vitamin / supplement" className="px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white" />
               <input value={vitForm.dose} onChange={e => setVitForm({ ...vitForm, dose: e.target.value })} onKeyDown={e => e.key === "Enter" && addVitamin()} placeholder="Dose (e.g., 1000mg)" className="px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white" />
               <input value={vitForm.time} onChange={e => setVitForm({ ...vitForm, time: e.target.value })} onKeyDown={e => e.key === "Enter" && addVitamin()} placeholder="When (e.g., AM)" className="px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white" />
-              <button onClick={addVitamin} className="px-4 py-2 rounded text-white text-sm font-medium" style={{ background: "#3d5c34" }} title="Add"><Plus className="w-4 h-4" /></button>
+              <button onClick={addVitamin} className="px-4 py-2 rounded text-white text-sm font-medium" style={{ background: "var(--accent-primary)" }} title="Add"><Plus className="w-4 h-4" /></button>
             </div>
             {vitamins.length === 0 ? (
               <div className={`p-6 text-center italic ${themeMuted} text-sm`}>No vitamins added yet. Add one above.</div>
@@ -6688,7 +6705,7 @@ function HomeModule({ data, setData, user, dark, triggerConfetti, themePanel, th
                 <XAxis dataKey="day" stroke={dark ? "#57534e" : "#a8a29e"} fontSize={10} />
                 <YAxis stroke={dark ? "#57534e" : "#a8a29e"} fontSize={10} />
                 <Tooltip contentStyle={{ background: dark ? "#1c1917" : "#fff", border: "1px solid #57534e", fontSize: 12 }} />
-                <Area type="monotone" dataKey="points" stroke="#7a9a6e" fill="url(#g1)" strokeWidth={2} />
+                <Area type="monotone" dataKey="points" stroke="var(--accent-mid)" fill="url(#g1)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </Panel>
@@ -7168,7 +7185,7 @@ function FinancialsModule({ data, setData, dark, themePanel, themeMuted, trigger
                   <YAxis stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
                   <Tooltip contentStyle={{ background: dark ? "#1c1917" : "#fff", border: "1px solid #57534e", fontSize: 12 }} />
                   <Legend wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="revenue" fill="#7a9a6e" />
+                  <Bar dataKey="revenue" fill="var(--accent-mid)" />
                   <Bar dataKey="expenses" fill="#78716c" />
                 </BarChart>
               </ResponsiveContainer>
@@ -7192,7 +7209,7 @@ function FinancialsModule({ data, setData, dark, themePanel, themeMuted, trigger
                 <XAxis dataKey="month" stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
                 <YAxis stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
                 <Tooltip contentStyle={{ background: dark ? "#1c1917" : "#fff", border: "1px solid #57534e", fontSize: 12 }} />
-                <Line type="monotone" dataKey="revenue" stroke="#7a9a6e" strokeWidth={2.5} dot={{ fill: "#7a9a6e" }} />
+                <Line type="monotone" dataKey="revenue" stroke="var(--accent-mid)" strokeWidth={2.5} dot={{ fill: "var(--accent-mid)" }} />
               </LineChart>
             </ResponsiveContainer>
           </Panel>
@@ -8519,7 +8536,7 @@ function SocialModule({ data, setData, dark, themePanel, themeMuted, triggerConf
               <XAxis dataKey="week" stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
               <YAxis stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
               <Tooltip contentStyle={{ background: dark ? "#1c1917" : "#fff", border: "1px solid #57534e", fontSize: 12 }} />
-              <Line type="monotone" dataKey="followers" stroke="#7a9a6e" strokeWidth={2.5} />
+              <Line type="monotone" dataKey="followers" stroke="var(--accent-mid)" strokeWidth={2.5} />
             </LineChart>
           </ResponsiveContainer>
         </Panel>
@@ -8544,7 +8561,7 @@ function SocialModule({ data, setData, dark, themePanel, themeMuted, triggerConf
               <XAxis dataKey="name" stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
               <YAxis stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
               <Tooltip contentStyle={{ background: dark ? "#1c1917" : "#fff", border: "1px solid #57534e", fontSize: 12 }} />
-              <Bar dataKey="engagement" fill="#7a9a6e" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="engagement" fill="var(--accent-mid)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </Panel>
@@ -8759,7 +8776,7 @@ function TeamModule({ data, setData, user, dark, themePanel, themeMuted, trigger
                 <XAxis type="number" stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
                 <YAxis type="category" dataKey="name" stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} width={70} />
                 <Tooltip contentStyle={{ background: dark ? "#1c1917" : "#fff", border: "1px solid #57534e", fontSize: 12 }} />
-                <Bar dataKey="MTD" stackId="a" fill="#7a9a6e" />
+                <Bar dataKey="MTD" stackId="a" fill="var(--accent-mid)" />
               </BarChart>
             </ResponsiveContainer>
           </Panel>
@@ -9011,7 +9028,7 @@ function ObjectionsModule({ data, setData, dark, themePanel, themeMuted, trigger
                   <XAxis dataKey="idx" stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
                   <YAxis domain={[0, 100]} stroke={dark ? "#57534e" : "#a8a29e"} fontSize={11} />
                   <Tooltip contentStyle={{ background: dark ? "#1c1917" : "#fff", border: "1px solid #57534e", fontSize: 12 }} />
-                  <Line type="monotone" dataKey="score" stroke="#7a9a6e" strokeWidth={2.5} dot={{ fill: "#7a9a6e" }} />
+                  <Line type="monotone" dataKey="score" stroke="var(--accent-mid)" strokeWidth={2.5} dot={{ fill: "var(--accent-mid)" }} />
                 </LineChart>
               </ResponsiveContainer>
             </Panel>
