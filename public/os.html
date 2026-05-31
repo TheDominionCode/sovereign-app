@@ -1673,6 +1673,11 @@ const TRANSLATIONS = {
     "Second priority": "Second priority",
     "Third priority": "Third priority",
     "Add a task…": "Add a task…",
+    "Add a win…": "Add a win…",
+    "no wins yet": "no wins yet",
+    "Drag to reorder": "Drag to reorder",
+    "Move up": "Move up",
+    "Move down": "Move down",
     "Press Enter to add": "Press Enter to add",
     "Anything you're proud of": "Anything you're proud of",
     "Win two": "Win two",
@@ -2187,6 +2192,11 @@ const TRANSLATIONS = {
     "Second priority": "Segunda prioridad",
     "Third priority": "Tercera prioridad",
     "Add a task…": "Añade una tarea…",
+    "Add a win…": "Añade un logro…",
+    "no wins yet": "aún sin logros",
+    "Drag to reorder": "Arrastra para reordenar",
+    "Move up": "Mover arriba",
+    "Move down": "Mover abajo",
     "Press Enter to add": "Enter para añadir",
     "Anything you're proud of": "Algo de lo que estés orgullosa",
     "Win two": "Logro dos",
@@ -4865,6 +4875,9 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
   const hiddenList = Object.keys(routineHidden).filter(k => routineHidden[k] && BUILT_IN_DEFAULTS[k]);
   const habitsCustom = Array.isArray(data.habitsCustom) ? data.habitsCustom : [];
   const [habitDraft, setHabitDraft] = useState("");
+  // Drag-to-reorder state for custom habits (HTML5 drag for desktop;
+  // the ▲▼ buttons next to each row cover mobile/touch).
+  const [draggedHabitId, setDraggedHabitId] = useState(null);
 
   const addCustomHabit = () => {
     const name = (habitDraft || "").trim();
@@ -4876,6 +4889,25 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
   };
   const renameCustomHabit = (id, name) => setData({ ...data, habitsCustom: habitsCustom.map(h => h.id === id ? { ...h, name } : h) });
   const removeCustomHabit = (id) => setData({ ...data, habitsCustom: habitsCustom.filter(h => h.id !== id) });
+  const reorderHabits = (fromId, toId) => {
+    if (!fromId || fromId === toId) return;
+    const fromIdx = habitsCustom.findIndex(h => h && h.id === fromId);
+    const toIdx = habitsCustom.findIndex(h => h && h.id === toId);
+    if (fromIdx < 0 || toIdx < 0) return;
+    const next = [...habitsCustom];
+    const [moved] = next.splice(fromIdx, 1);
+    next.splice(toIdx, 0, moved);
+    setData({ ...data, habitsCustom: next });
+  };
+  const moveHabit = (id, dir) => {
+    const idx = habitsCustom.findIndex(h => h && h.id === id);
+    if (idx < 0) return;
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= habitsCustom.length) return;
+    const next = [...habitsCustom];
+    [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
+    setData({ ...data, habitsCustom: next });
+  };
 
   const totalCount = builtIns.filter(b => !routineHidden[b.key]).length + habitsCustom.length;
   const doneCount = builtIns.filter(b => !routineHidden[b.key] && todayPlan[b.doneKey]).length
@@ -4926,10 +4958,24 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
               </div>
             );
           })}
-          {habitsCustom.map(h => {
+          {habitsCustom.map((h, idx) => {
             const done = !!(todayPlan.customHabits || {})[h.id];
+            const isDragging = draggedHabitId === h.id;
             return (
-              <div key={h.id} className={`flex items-center gap-2 p-3 rounded border group transition ${done ? "bg-[#f4f7ee] border-[#a8c090]" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`}>
+              <div
+                key={h.id}
+                draggable
+                onDragStart={() => setDraggedHabitId(h.id)}
+                onDragOver={e => e.preventDefault()}
+                onDrop={e => { e.preventDefault(); reorderHabits(draggedHabitId, h.id); setDraggedHabitId(null); }}
+                onDragEnd={() => setDraggedHabitId(null)}
+                className={`flex items-center gap-2 p-3 rounded border group transition ${isDragging ? "opacity-40" : ""} ${done ? "bg-[#f4f7ee] border-[#a8c090]" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`}
+              >
+                <span
+                  className="text-stone-300 hover:text-stone-500 cursor-grab active:cursor-grabbing select-none px-1 flex-shrink-0"
+                  title={t("Drag to reorder", lang)}
+                  aria-label={t("Drag to reorder", lang)}
+                >⋮⋮</span>
                 <button onClick={() => update({ customHabits: { ...(todayPlan.customHabits || {}), [h.id]: !done } })} className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}>
                   {done && <Check className="w-3.5 h-3.5" />}
                 </button>
@@ -4938,6 +4984,25 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                   onChange={e => renameCustomHabit(h.id, e.target.value)}
                   className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
                 />
+                {/* Up/Down buttons — covers touch where HTML5 drag is unreliable */}
+                <div className="flex flex-col gap-0 flex-shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => moveHabit(h.id, -1)}
+                    disabled={idx === 0}
+                    className="text-stone-400 hover:text-[#5b7351] disabled:opacity-20 text-[10px] leading-none px-1"
+                    title={t("Move up", lang)}
+                    aria-label={t("Move up", lang)}
+                  >▲</button>
+                  <button
+                    type="button"
+                    onClick={() => moveHabit(h.id, 1)}
+                    disabled={idx === habitsCustom.length - 1}
+                    className="text-stone-400 hover:text-[#5b7351] disabled:opacity-20 text-[10px] leading-none px-1"
+                    title={t("Move down", lang)}
+                    aria-label={t("Move down", lang)}
+                  >▼</button>
+                </div>
                 <button onClick={() => removeCustomHabit(h.id)} className="p-1 text-stone-400 hover:text-rose-500 opacity-50 group-hover:opacity-100 transition" title={t("Delete", lang)}><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
             );
@@ -7504,9 +7569,21 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const planners = data.planners || {};
   const todayPlan = planners[date] || {};
   const priorities = Array.isArray(todayPlan.priorities) && todayPlan.priorities.length === 3 ? todayPlan.priorities : ["", "", ""];
-  const wins = Array.isArray(todayPlan.wins) && todayPlan.wins.length === 3 ? todayPlan.wins : ["", "", ""];
   const prioritiesDone = Array.isArray(todayPlan.prioritiesDone) && todayPlan.prioritiesDone.length === 3 ? todayPlan.prioritiesDone : [false, false, false];
-  const winsDone = Array.isArray(todayPlan.winsDone) && todayPlan.winsDone.length === 3 ? todayPlan.winsDone : [false, false, false];
+  // Wins: dynamic list of {id, text, done} — same shape as to-dos.
+  // Migrate the old fixed 3-string format on the fly when we see it.
+  const wins = (() => {
+    const raw = todayPlan.wins;
+    const doneRaw = todayPlan.winsDone || [];
+    if (!Array.isArray(raw)) return [];
+    if (raw.length > 0 && typeof raw[0] === "string") {
+      return raw
+        .map((text, i) => ({ id: i + 1, text: (text || "").trim(), done: !!doneRaw[i] }))
+        .filter(w => w.text);
+    }
+    return raw.filter(w => w && typeof w === "object");
+  })();
+  const [newWin, setNewWin] = useState("");
   const gratitude = todayPlan.gratitude || "";
   const journal = todayPlan.journal || "";
   const tomorrow = todayPlan.tomorrow || "";
@@ -7516,17 +7593,27 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     setData({ ...data, planners: { ...planners, [date]: next } });
   };
   const setPriority = (i, v) => { const arr = [...priorities]; arr[i] = v; updatePlan({ priorities: arr }); };
-  const setWin = (i, v) => { const arr = [...wins]; arr[i] = v; updatePlan({ wins: arr }); };
   const togglePriorityDone = (i) => {
     const arr = [...prioritiesDone]; arr[i] = !arr[i];
     updatePlan({ prioritiesDone: arr });
     if (arr[i] && triggerConfetti) triggerConfetti();
   };
-  const toggleWinDone = (i) => {
-    const arr = [...winsDone]; arr[i] = !arr[i];
-    updatePlan({ winsDone: arr });
-    if (arr[i] && triggerConfetti) triggerConfetti();
+  // Wins (dynamic list, to-do-style)
+  const addWin = () => {
+    const text = (newWin || "").trim();
+    if (!text) return;
+    const ids = wins.map(w => Number(w && w.id)).filter(n => !isNaN(n));
+    const id = (ids.length ? Math.max(...ids) : 0) + 1;
+    updatePlan({ wins: [...wins, { id, text, done: false }] });
+    setNewWin("");
   };
+  const toggleWinDone = (id) => {
+    const becoming = wins.find(w => w && w.id === id);
+    const wasUndone = becoming && !becoming.done;
+    updatePlan({ wins: wins.map(w => (w && w.id === id ? { ...w, done: !w.done } : w)) });
+    if (wasUndone && triggerConfetti) triggerConfetti();
+  };
+  const removeWin = (id) => updatePlan({ wins: wins.filter(w => w && w.id !== id) });
 
   // ----- Weekly schedule helpers (verbatim from the Calendar) -----
   const weekStart = startOfWeekMonday(weekAnchor);
@@ -7638,8 +7725,27 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                 </button>
                 <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-[#5b7351]" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
                 <div className="relative flex-1">
-                  <textarea {...grow(key, 64, 110, 4, done ? "text-stone-500" : "")} value={p} onChange={e => setPriority(i, e.target.value)}
-                    placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)} />
+                  <textarea
+                    {...grow(key, 64, 64, 1, done ? "text-stone-500" : "")}
+                    value={p}
+                    ref={el => {
+                      // When focused, size the textarea to fit ALL content
+                      // (so a long priority displays the whole sentence).
+                      // When unfocused, grow's inline style of 64px takes over.
+                      if (el && focusedField === key) {
+                        el.style.height = "auto";
+                        el.style.height = el.scrollHeight + "px";
+                      }
+                    }}
+                    onInput={e => {
+                      if (focusedField === key) {
+                        e.target.style.height = "auto";
+                        e.target.style.height = e.target.scrollHeight + "px";
+                      }
+                    }}
+                    onChange={e => setPriority(i, e.target.value)}
+                    placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)}
+                  />
                   <CollapseBtn shown={focusedField === key} />
                 </div>
               </div>
@@ -7787,32 +7893,51 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   // visibleTasks so React's render pass sees the same numbers.
   // (Defined as a const earlier alongside visibleTasks; see TodoCard scope.)
 
+  const winsDoneCount = wins.filter(w => w && w.done).length;
   const WinsCard = (
     <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
-      <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-4">{t("TODAY'S WINS", lang)}</h2>
-      <div className="space-y-2 flex-1">
-        {wins.map((w, i) => {
-          const done = !!winsDone[i];
-          const key = "win-" + i;
-          return (
-            <div key={i} className={`flex items-start gap-2 p-2 rounded-md transition ${done ? "bg-[#d3e0c5]/40 border border-[#a8c090]/50" : "border border-transparent"}`}>
-              <button
-                type="button"
-                onClick={() => toggleWinDone(i)}
-                aria-label={done ? t("Mark not done", lang) : t("Mark done", lang)}
-                className={`w-5 h-5 mt-2 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
-              >
-                {done && <Check className="w-3 h-3" />}
-              </button>
-              <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 text-[#5b7351]`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
-              <div className="relative flex-1">
-                <textarea {...grow(key, 64, 110, 4, done ? "text-stone-500" : "")} value={w} onChange={e => setWin(i, e.target.value)}
-                  placeholder={i === 0 ? t("Anything you're proud of", lang) : i === 1 ? t("Win two", lang) : t("Win three", lang)} />
-                <CollapseBtn shown={focusedField === key} />
-              </div>
-            </div>
-          );
-        })}
+      <div className="flex items-baseline justify-between mb-3">
+        <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S WINS", lang)}</h2>
+        <div className="text-[11px] text-stone-500">
+          {wins.length === 0 ? t("no wins yet", lang) : `${winsDoneCount} ${t("of", lang)} ${wins.length}`}
+        </div>
+      </div>
+      <textarea
+        {...grow("win-new", 40, 40, 1)}
+        value={newWin}
+        onChange={e => setNewWin(e.target.value)}
+        onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); addWin(); } }}
+        placeholder={t("Add a win…", lang)}
+      />
+      <div className="flex justify-between items-center mt-2 mb-3">
+        <span className="text-[11px] italic text-stone-400">{t("Press Enter to add", lang)}</span>
+        <button onClick={addWin}
+          className="px-3 py-1 text-[11px] uppercase tracking-wider text-stone-600 border border-stone-200 rounded hover:bg-[#f4f7ee] hover:border-[#7a9a6e] hover:text-[#5b7351] transition">
+          + {t("Add", lang)}
+        </button>
+      </div>
+      <div className="flex-1 overflow-y-auto" style={{ maxHeight: "260px" }}>
+        {wins.length === 0 ? (
+          <div className={`py-6 text-center ${themeMuted} text-xs italic`}>{t("Nothing here yet.", lang)}</div>
+        ) : (
+          <ul className="divide-y divide-stone-100">
+            {wins.map(w => (
+              <li key={w.id} className="flex items-start gap-3 py-2 group">
+                <button onClick={() => toggleWinDone(w.id)}
+                  className={`w-5 h-5 mt-0.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${w.done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
+                  aria-label={w.done ? t("Mark not done", lang) : t("Mark done", lang)}>
+                  {w.done && <Check className="w-2.5 h-2.5" />}
+                </button>
+                <span className={`flex-1 text-xs sm:text-sm font-medium ${w.done ? "line-through text-stone-400" : "text-stone-900"}`}>
+                  {w.text}
+                </span>
+                <button onClick={() => removeWin(w.id)}
+                  className="opacity-0 group-hover:opacity-100 px-1.5 py-0.5 text-[10px] text-stone-400 hover:text-red-500 transition flex-shrink-0"
+                  aria-label={t("Delete", lang)}>✕</button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );
