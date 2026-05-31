@@ -5005,23 +5005,23 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                     onChange={e => renameBuiltIn(b.key, e.target.value)}
                     className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
                   />
-                  <div className="flex flex-col gap-0 flex-shrink-0">
+                  <div className="flex gap-0.5 flex-shrink-0">
                     <button
                       type="button"
                       onClick={() => moveBuiltIn(b.key, -1)}
                       disabled={idx === 0}
-                      className="text-stone-400 hover:text-[#5b7351] disabled:opacity-20 text-[10px] leading-none px-1"
+                      className="w-8 h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
                       title={t("Move up", lang)}
                       aria-label={t("Move up", lang)}
-                    >▲</button>
+                    ><ChevronUp className="w-4 h-4" /></button>
                     <button
                       type="button"
                       onClick={() => moveBuiltIn(b.key, 1)}
                       disabled={idx === visible.length - 1}
-                      className="text-stone-400 hover:text-[#5b7351] disabled:opacity-20 text-[10px] leading-none px-1"
+                      className="w-8 h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
                       title={t("Move down", lang)}
                       aria-label={t("Move down", lang)}
-                    >▼</button>
+                    ><ChevronDown className="w-4 h-4" /></button>
                   </div>
                   <button onClick={() => hideBuiltIn(b.key)} className="p-1 text-stone-400 hover:text-rose-500 opacity-50 group-hover:opacity-100 transition" title={t("Remove", lang)}><Trash2 className="w-3.5 h-3.5" /></button>
                 </div>
@@ -5055,23 +5055,23 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                   className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
                 />
                 {/* Up/Down buttons — covers touch where HTML5 drag is unreliable */}
-                <div className="flex flex-col gap-0 flex-shrink-0">
+                <div className="flex gap-0.5 flex-shrink-0">
                   <button
                     type="button"
                     onClick={() => moveHabit(h.id, -1)}
                     disabled={idx === 0}
-                    className="text-stone-400 hover:text-[#5b7351] disabled:opacity-20 text-[10px] leading-none px-1"
+                    className="w-8 h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
                     title={t("Move up", lang)}
                     aria-label={t("Move up", lang)}
-                  >▲</button>
+                  ><ChevronUp className="w-4 h-4" /></button>
                   <button
                     type="button"
                     onClick={() => moveHabit(h.id, 1)}
                     disabled={idx === habitsCustom.length - 1}
-                    className="text-stone-400 hover:text-[#5b7351] disabled:opacity-20 text-[10px] leading-none px-1"
+                    className="w-8 h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
                     title={t("Move down", lang)}
                     aria-label={t("Move down", lang)}
-                  >▼</button>
+                  ><ChevronDown className="w-4 h-4" /></button>
                 </div>
                 <button onClick={() => removeCustomHabit(h.id)} className="p-1 text-stone-400 hover:text-rose-500 opacity-50 group-hover:opacity-100 transition" title={t("Delete", lang)}><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
