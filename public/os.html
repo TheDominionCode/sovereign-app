@@ -280,7 +280,11 @@ const DEFAULT_AFFIRMATION_CATEGORIES = ["Confidence", "Self-Worth", "Peace", "Bo
 // ============================================================
 // DEMO DATA
 // ============================================================
-const todayISO = () => new Date().toISOString().slice(0, 10);
+// Format a Date object as YYYY-MM-DD in the user's LOCAL timezone.
+// toISOString() returns UTC, which silently produced "tomorrow" for any user
+// in a timezone west of UTC when checking date in the evening.
+const toLocalISO = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const todayISO = () => toLocalISO(new Date());
 
 // Format an ISO date (YYYY-MM-DD) for display as MM-DD-YYYY
 const fmtDate = (iso) => {
@@ -289,7 +293,7 @@ const fmtDate = (iso) => {
   if (!m) return iso;
   return `${m[2]}-${m[3]}-${m[1]}`;
 };
-const daysAgo = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return d.toISOString().slice(0, 10); };
+const daysAgo = (n) => { const d = new Date(); d.setDate(d.getDate() - n); return toLocalISO(d); };
 
 const buildDemoData = () => ({
   clients: [
@@ -474,14 +478,14 @@ const STARTER_EXAMPLES = {
   },
   personalFinance: {
     income: [
-      { id: 1, source: "Main income",   amount: 0, type: "recurring", frequency: "monthly", date: new Date().toISOString().slice(0,10), notes: "" },
-      { id: 2, source: "Side income",   amount: 0, type: "recurring", frequency: "monthly", date: new Date().toISOString().slice(0,10), notes: "" },
+      { id: 1, source: "Main income",   amount: 0, type: "recurring", frequency: "monthly", date: todayISO(), notes: "" },
+      { id: 2, source: "Side income",   amount: 0, type: "recurring", frequency: "monthly", date: todayISO(), notes: "" },
     ],
     expenses: [
-      { id: 1, name: "Rent / mortgage", amount: 0, category: "Housing",            type: "recurring", frequency: "monthly", date: new Date().toISOString().slice(0,10), notes: "" },
-      { id: 2, name: "Groceries",       amount: 0, category: "Food & Groceries",   type: "recurring", frequency: "monthly", date: new Date().toISOString().slice(0,10), notes: "" },
-      { id: 3, name: "Phone bill",      amount: 0, category: "Bills",              type: "recurring", frequency: "monthly", date: new Date().toISOString().slice(0,10), notes: "" },
-      { id: 4, name: "Subscriptions",   amount: 0, category: "Subscriptions",      type: "recurring", frequency: "monthly", date: new Date().toISOString().slice(0,10), notes: "" },
+      { id: 1, name: "Rent / mortgage", amount: 0, category: "Housing",            type: "recurring", frequency: "monthly", date: todayISO(), notes: "" },
+      { id: 2, name: "Groceries",       amount: 0, category: "Food & Groceries",   type: "recurring", frequency: "monthly", date: todayISO(), notes: "" },
+      { id: 3, name: "Phone bill",      amount: 0, category: "Bills",              type: "recurring", frequency: "monthly", date: todayISO(), notes: "" },
+      { id: 4, name: "Subscriptions",   amount: 0, category: "Subscriptions",      type: "recurring", frequency: "monthly", date: todayISO(), notes: "" },
     ],
     savingsGoals: [
       { id: 1, name: "Emergency fund (3 months)", target: 0, saved: 0, deadline: "", why: "Peace of mind." },
@@ -507,7 +511,7 @@ const STARTER_EXAMPLES = {
     { id: 7, caption: "The Ritual",    img: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&h=1000&fit=crop&q=80", why: "Stone, steam, candlelight. Rest as worship.",       letter: "", date: "", achieved: false },
   ],
   notes: [
-    { id: 1, title: "Welcome to your private space", body: "This is yours. Use it for the thoughts you don't want anywhere else — half-finished ideas, mantras, love notes to yourself, the things you don't want to forget. Replace this one when you're ready.", tags: ["personal"], pinned: true, date: new Date().toISOString().slice(0,10), clientId: null },
+    { id: 1, title: "Welcome to your private space", body: "This is yours. Use it for the thoughts you don't want anywhere else — half-finished ideas, mantras, love notes to yourself, the things you don't want to forget. Replace this one when you're ready.", tags: ["personal"], pinned: true, date: todayISO(), clientId: null },
   ],
   credentials: [
     { id: 1, name: "Example — bank login", username: "your.email@bank.com", password: "your-password-here", url: "https://", notes: "This is an example. Sovereign keeps these on your device only. Replace with a real entry or delete." },
@@ -5070,7 +5074,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
     const set = new Set(taken || []);
     let streak = 0;
     const d = new Date();
-    while (set.has(d.toISOString().slice(0, 10))) {
+    while (set.has(toLocalISO(d))) {
       streak++;
       d.setDate(d.getDate() - 1);
     }
@@ -5130,7 +5134,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
   }
   const avgCycle = cycleLengths.length ? Math.round(cycleLengths.reduce((s, n) => s + n, 0) / cycleLengths.length) : null;
   const lastPeriod = periodStarts.at(-1);
-  const nextEstimate = lastPeriod && avgCycle ? (() => { const d = new Date(lastPeriod); d.setDate(d.getDate() + avgCycle); return d.toISOString().slice(0, 10); })() : null;
+  const nextEstimate = lastPeriod && avgCycle ? (() => { const d = new Date(lastPeriod); d.setDate(d.getDate() + avgCycle); return toLocalISO(d); })() : null;
 
   const clearAll = () => {
     if (!confirm(t("Clear all cycle and mood entries?", lang))) return;
@@ -6194,7 +6198,7 @@ function LeaderboardModule({ data, setData, dark, themePanel, themeMuted, trigge
   const today = todayISO();
   const now = new Date();
   // Start of current ISO week (Monday)
-  const weekStart = (() => { const d = new Date(); const dow = (d.getDay() + 6) % 7; d.setDate(d.getDate() - dow); return d.toISOString().slice(0, 10); })();
+  const weekStart = (() => { const d = new Date(); const dow = (d.getDay() + 6) % 7; d.setDate(d.getDate() - dow); return toLocalISO(d); })();
   const monthStart = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-01`;
   const yearStart = `${now.getFullYear()}-01-01`;
 
@@ -6457,8 +6461,8 @@ function HomeModule({ data, setData, user, dark, triggerConfetti, themePanel, th
   );
 
   const today = todayISO();
-  const week = (() => { const d = new Date(); d.setDate(d.getDate() - 7); return d.toISOString().slice(0, 10); })();
-  const month = (() => { const d = new Date(); d.setDate(d.getDate() - 30); return d.toISOString().slice(0, 10); })();
+  const week = (() => { const d = new Date(); d.setDate(d.getDate() - 7); return toLocalISO(d); })();
+  const month = (() => { const d = new Date(); d.setDate(d.getDate() - 30); return toLocalISO(d); })();
 
   const acts = data.activities || [];
   const todayActs = acts.filter(a => a.date === today);
@@ -6471,7 +6475,7 @@ function HomeModule({ data, setData, user, dark, triggerConfetti, themePanel, th
   const streak = (() => {
     const dates = new Set(acts.map(a => a.date));
     let s = 0; const d = new Date();
-    while (dates.has(d.toISOString().slice(0, 10))) { s++; d.setDate(d.getDate() - 1); }
+    while (dates.has(toLocalISO(d))) { s++; d.setDate(d.getDate() - 1); }
     return s;
   })();
 
@@ -6486,7 +6490,7 @@ function HomeModule({ data, setData, user, dark, triggerConfetti, themePanel, th
   const weeklyData = (() => {
     const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
     return days.map((d, i) => {
-      const date = (() => { const x = new Date(); x.setDate(x.getDate() - (6 - i)); return x.toISOString().slice(0, 10); })();
+      const date = (() => { const x = new Date(); x.setDate(x.getDate() - (6 - i)); return toLocalISO(x); })();
       const pts = acts.filter(a => a.date === date).reduce((s, a) => s + a.points * a.count, 0);
       return { day: d, points: pts };
     });
@@ -7303,13 +7307,13 @@ function startOfWeekMonday(dateStr) {
   const day = d.getDay(); // 0 Sun … 6 Sat
   const diff = (day === 0 ? -6 : 1 - day); // shift to Monday
   d.setDate(d.getDate() + diff);
-  return d.toISOString().slice(0, 10);
+  return toLocalISO(d);
 }
 
 function addDaysISO(dateStr, n) {
   const d = new Date(dateStr + "T00:00:00");
   d.setDate(d.getDate() + n);
-  return d.toISOString().slice(0, 10);
+  return toLocalISO(d);
 }
 
 function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
@@ -7444,7 +7448,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const shiftDate = (days) => {
     const d = new Date(date + "T00:00:00");
     d.setDate(d.getDate() + days);
-    setDate(d.toISOString().slice(0, 10));
+    setDate(toLocalISO(d));
   };
   const isToday = date === todayISO();
   const subtitle = fmtDate(date);
@@ -8074,7 +8078,7 @@ function TasksModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
   const [form, setForm] = useState({ title: "", priority: "normal", date: todayISO(), recurring: false, category: "client" });
 
   const today = todayISO();
-  const weekStart = (() => { const d = new Date(); d.setDate(d.getDate() - 7); return d.toISOString().slice(0, 10); })();
+  const weekStart = (() => { const d = new Date(); d.setDate(d.getDate() - 7); return toLocalISO(d); })();
 
   const filtered = data.tasks.filter(t => {
     if (view === "today") return t.date === today;
