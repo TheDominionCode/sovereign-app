@@ -96,10 +96,10 @@ export default function AffiliatePage() {
             Share what brought you <span className="italic">back to yourself</span>
           </h1>
           <p className="lead">
-            Earn <strong>30% commission</strong> on every annual Sovereign plan you refer — paid every
-            year your woman renews.
+            Earn <strong>40% commission</strong> on every annual Sovereign plan you refer —
+            $51.99 per sale, paid as a one-time commission.
           </p>
-          <div className="meta">Annual subscribers · Recurring commission · Monthly payouts</div>
+          <div className="meta">Annual subscribers · One-time commission · Monthly payouts</div>
         </div>
       </section>
 
@@ -117,9 +117,9 @@ export default function AffiliatePage() {
             introduction you&apos;d make anyway.
           </p>
           <p>
-            We pay <strong>30% on every annual subscription you refer</strong>, every year she
-            renews. That&apos;s $39 the first year, $39 the next, $39 every year after — quiet,
-            recurring income from one quiet introduction.
+            We pay <strong>40% on every annual subscription you refer</strong> — $51.99 per sale,
+            paid as a one-time commission the month after her free trial converts.
+            Refer 10 in a month and you&apos;ve put $519.90 in your pocket.
           </p>
         </div>
       </section>
@@ -127,21 +127,21 @@ export default function AffiliatePage() {
       <section className="numbers">
         <div className="container">
           <div className="eyebrow">The numbers</div>
-          <h2>Honest, generous, recurring</h2>
+          <h2>Honest, generous, simple</h2>
           <div className="num-grid">
             <div className="num-card">
               <div className="big">
-                30<small>%</small>
+                40<small>%</small>
               </div>
               <div className="label">Commission</div>
               <p>On every annual Sovereign plan you refer</p>
             </div>
             <div className="num-card">
               <div className="big">
-                $39<small>/yr</small>
+                $51<small>.99</small>
               </div>
               <div className="label">Per referral</div>
-              <p>Paid every year she renews — as long as she stays</p>
+              <p>One-time, paid the month after her trial converts</p>
             </div>
             <div className="num-card">
               <div className="big">
@@ -179,7 +179,7 @@ export default function AffiliatePage() {
             <div className="step">
               <div className="num">iv.</div>
               <h3>Get paid</h3>
-              <p>Commissions land on the first of every month — for as long as your women stay.</p>
+              <p>One-time commission lands on the first of the month after her trial converts.</p>
             </div>
           </div>
         </div>
@@ -226,7 +226,8 @@ export default function AffiliatePage() {
           <h3>The honest fine print</h3>
           <p>
             Commissions are paid only on referrals to the $129.99 / year Sovereign Annual plan.
-            Monthly, 3-month, and 6-month plan referrals do not earn commission.
+            Monthly, 3-month, and 6-month plan referrals do not earn commission. Commission is a
+            one-time payment of $51.99 per qualified referral — not recurring on renewals.
           </p>
           <p>
             Self-referrals are not eligible. Commission is contingent on the referred customer
@@ -234,9 +235,8 @@ export default function AffiliatePage() {
             cancels or charges back, the corresponding commission is reversed.
           </p>
           <p>
-            Commissions accrue while your own Annual plan is active. If you cancel your Sovereign
-            subscription, future renewal commissions stop, though any commissions already earned
-            and not yet paid will be honored.
+            You must be on the Annual plan to earn commission. Any commissions already earned
+            and not yet paid will be honored if you cancel your own subscription.
           </p>
           <p>
             We reserve the right to terminate affiliate participation for any reason, including

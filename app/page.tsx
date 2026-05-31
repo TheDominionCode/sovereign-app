@@ -459,6 +459,121 @@ const landingCss = `
     font-style:italic;font-size:18px;color:var(--gold-deep);
     letter-spacing:0.04em;
   }
+  /* ─── AFFILIATE TRIGGER + MODAL ─── */
+  .landing-root .aff-trigger{
+    display:inline-block;margin-left:8px;
+    background:none;border:none;padding:0;cursor:pointer;
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:13px;color:var(--gold-deep);
+    text-decoration:underline;text-underline-offset:2px;
+    transition:color .2s;
+  }
+  .landing-root .aff-trigger:hover{color:var(--ink)}
+  .landing-root .price-card.featured .aff-trigger{color:var(--gold)}
+  .landing-root .price-card.featured .aff-trigger:hover{color:var(--ivory)}
+
+  .landing-root .aff-modal-backdrop{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(26,24,22,0.7);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;
+    animation:affFade .2s ease-out;
+  }
+  @keyframes affFade { from { opacity:0 } to { opacity:1 } }
+  .landing-root .aff-modal{
+    background:var(--ivory);
+    border-radius:6px;
+    max-width:560px;width:100%;
+    max-height:90vh;overflow-y:auto;
+    padding:56px 48px 44px;
+    position:relative;
+    box-shadow:0 40px 80px -20px rgba(0,0,0,0.5);
+    animation:affSlide .25s ease-out;
+  }
+  @keyframes affSlide { from { transform:translateY(20px); opacity:0 } to { transform:translateY(0); opacity:1 } }
+  .landing-root .aff-modal-close{
+    position:absolute;top:14px;right:18px;
+    background:none;border:none;cursor:pointer;
+    font-size:32px;font-weight:300;line-height:1;
+    color:var(--muted);transition:color .2s;
+    padding:4px 10px;
+  }
+  .landing-root .aff-modal-close:hover{color:var(--ink)}
+  .landing-root .aff-modal .section-eyebrow.center{
+    text-align:center;margin-bottom:14px;
+  }
+  .landing-root .aff-modal-title{
+    font-family:'Cormorant Garamond',serif;
+    font-size:40px;font-weight:400;line-height:1.1;
+    text-align:center;margin-bottom:20px;
+    color:var(--ink);letter-spacing:-0.01em;
+  }
+  .landing-root .aff-modal-intro{
+    font-family:'Cormorant Garamond',serif;
+    font-size:18px;line-height:1.65;color:var(--char);
+    text-align:center;margin-bottom:32px;font-style:italic;
+  }
+  .landing-root .aff-modal-steps{
+    list-style:none;padding:0;margin:0 0 32px;
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .landing-root .aff-modal-steps li{
+    display:flex;gap:14px;align-items:baseline;
+    font-size:15px;line-height:1.55;color:var(--char);
+    padding-bottom:14px;border-bottom:1px solid var(--line);
+  }
+  .landing-root .aff-modal-steps li:last-child{border-bottom:none}
+  .landing-root .aff-step-num{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:18px;color:var(--gold-deep);
+    flex-shrink:0;min-width:28px;
+  }
+  .landing-root .aff-modal-math{
+    background:var(--cream);
+    border-radius:4px;padding:24px;
+    margin-bottom:24px;
+  }
+  .landing-root .aff-math-header{
+    font-size:11px;letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--gold-deep);margin-bottom:14px;text-align:center;
+  }
+  .landing-root .aff-modal-math table{
+    width:100%;border-collapse:collapse;
+  }
+  .landing-root .aff-modal-math td{
+    padding:10px 0;font-size:15px;color:var(--char);
+    border-bottom:1px solid var(--line);
+  }
+  .landing-root .aff-modal-math tr:last-child td{border-bottom:none}
+  .landing-root .aff-modal-math td:last-child{
+    text-align:right;font-family:'Cormorant Garamond',serif;
+    font-size:20px;color:var(--gold-deep);font-weight:500;
+  }
+  .landing-root .aff-modal-onetime{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:15px;line-height:1.6;color:var(--char);
+    margin-bottom:14px;text-align:center;
+    padding:14px 18px;background:rgba(168,137,90,0.08);
+    border-left:3px solid var(--gold);border-radius:0 3px 3px 0;
+  }
+  .landing-root .aff-modal-fine{
+    font-size:12px;line-height:1.65;color:var(--muted);
+    margin-bottom:28px;text-align:center;
+  }
+  .landing-root .aff-modal-cta{
+    display:block;text-align:center;
+    padding:16px 32px;background:var(--ink);color:var(--ivory);
+    border-radius:999px;
+    font-size:12px;letter-spacing:0.22em;text-transform:uppercase;
+    font-weight:500;text-decoration:none;
+    transition:background .2s;
+  }
+  .landing-root .aff-modal-cta:hover{background:var(--gold-deep)}
+  @media (max-width:560px){
+    .landing-root .aff-modal{padding:48px 24px 32px}
+    .landing-root .aff-modal-title{font-size:32px}
+  }
+
   .landing-root .founder-coffee{
     display:block;width:180px;height:180px;
     object-fit:cover;border-radius:50%;
@@ -664,6 +779,20 @@ type Copy = {
     reviews: { author: string; date: string; title: string; body: string }[];
   };
   founder: { eyebrow: string; title: Part[]; name: string; body: string; signoff: string };
+  affiliateModal: {
+    eyebrow: string;
+    title: Part[];
+    intro: string;
+    steps: string[];
+    mathHeader: string;
+    mathRows: { label: string; amount: string }[];
+    oneTimeNote: string;
+    fine: string;
+    cta: string;
+    ctaHref: string;
+    close: string;
+    trigger: string;
+  };
   trial: { eyebrow: string; title: Part[]; body: string; cta: string; meta: string };
   pricing: { eyebrow: string; title: Part[]; sub: string; fine: string; cardBtn: string };
   plans: Record<PlanId, PlanCopy>;
@@ -752,6 +881,32 @@ const COPY: Record<Lang, Copy> = {
       body: "Meet Nataly — the visionary behind Sovereign. A creative, a mother, and an entrepreneur who believes the modern woman can hold both strength and stillness in the same day. After years of building, becoming, and finding her way back to herself, she designed Sovereign as the practice she wished she'd had: daily rituals, mindset work, and intentional design — gathered into one quiet, beautiful space. Her mission is simple: to help women everywhere stop shrinking, return to their own pace, and live in their sovereign power.",
       signoff: "— Nataly, founder of Sovereign",
     },
+    affiliateModal: {
+      eyebrow: "Affiliate Program",
+      title: ["The math, ", { i: "honestly" }],
+      intro:
+        "When you're on the $129.99 Sovereign Annual plan, you get a unique referral link. Every woman who buys the Annual plan through your link earns you 40% — paid as a one-time commission when her free trial converts.",
+      steps: [
+        "Apply by email and tell us why you love Sovereign",
+        "We send your unique referral link within 24 hours of approval",
+        "Share it — Instagram, text, voice note, however feels true to you",
+        "Get paid on the 1st of the month after your referral's trial converts",
+      ],
+      mathHeader: "If you sell in one month…",
+      mathRows: [
+        { label: "1 annual sale", amount: "$51.99" },
+        { label: "5 annual sales", amount: "$259.95" },
+        { label: "10 annual sales", amount: "$519.90" },
+        { label: "20 annual sales", amount: "$1,039.80" },
+      ],
+      oneTimeNote:
+        "Commission is a one-time payment per referral — not recurring. Paid the month after her trial converts to a paid Annual subscription.",
+      fine: "You must be on the Annual plan to earn commission. Monthly, 3-month, and 6-month referrals don't count. Self-referrals don't count.",
+      cta: "Read full program details →",
+      ctaHref: "/affiliate",
+      close: "Close",
+      trigger: "see how it works →",
+    },
     trial: {
       eyebrow: "An invitation",
       title: ["Three days,\non ", { i: "us" }],
@@ -808,7 +963,7 @@ const COPY: Record<Lang, Copy> = {
         features: [
           "Everything in 6 Months",
           "Save 28% — best value",
-          "Access to affiliate program — earn 30% commission",
+          "Access to affiliate program — earn 40% commission",
           "Lock in this rate for life",
         ],
       },
@@ -962,6 +1117,32 @@ const COPY: Record<Lang, Copy> = {
       body: "Conoce a Nataly — la visionaria detrás de Sovereign. Creativa, madre y emprendedora que cree que la mujer moderna puede sostener fuerza y quietud en un mismo día. Después de años construyendo, transformándose y encontrando el camino de regreso a sí misma, diseñó Sovereign como la práctica que hubiera querido tener: rituales diarios, trabajo mental y diseño intencional — reunidos en un espacio sereno y hermoso. Su misión es simple: ayudar a mujeres en todo el mundo a dejar de encogerse, volver a su propio ritmo y vivir en su poder soberano.",
       signoff: "— Nataly, fundadora de Sovereign",
     },
+    affiliateModal: {
+      eyebrow: "Programa de Afiliadas",
+      title: ["Las cuentas, ", { i: "honestamente" }],
+      intro:
+        "Cuando estás en el plan Anual de Sovereign de $129.99, recibes un enlace único de referido. Cada mujer que compre el plan Anual a través de tu enlace te genera 40% — pagado como comisión única cuando su prueba gratuita se convierte.",
+      steps: [
+        "Aplica por correo y cuéntanos por qué amas Sovereign",
+        "Te enviamos tu enlace único en menos de 24 horas tras la aprobación",
+        "Compártelo — Instagram, mensaje, nota de voz, como se sienta real para ti",
+        "Recibe el pago el día 1 del mes después de que tu referida convierta su prueba",
+      ],
+      mathHeader: "Si vendes en un mes…",
+      mathRows: [
+        { label: "1 venta anual", amount: "$51.99" },
+        { label: "5 ventas anuales", amount: "$259.95" },
+        { label: "10 ventas anuales", amount: "$519.90" },
+        { label: "20 ventas anuales", amount: "$1,039.80" },
+      ],
+      oneTimeNote:
+        "La comisión es un pago único por cada referida — no es recurrente. Pagado el mes después de que su prueba se convierta en suscripción Anual paga.",
+      fine: "Debes estar en el plan Anual para ganar comisión. Las referencias a planes Mensual, 3 meses y 6 meses no cuentan. Las auto-referencias no cuentan.",
+      cta: "Ver detalles completos del programa →",
+      ctaHref: "/affiliate",
+      close: "Cerrar",
+      trigger: "ver cómo funciona →",
+    },
     trial: {
       eyebrow: "Una invitación",
       title: ["Tres días,\npor nuestra ", { i: "cuenta" }],
@@ -1018,7 +1199,7 @@ const COPY: Record<Lang, Copy> = {
         features: [
           "Todo lo del plan de 6 meses",
           "Ahorra 28% — el mejor valor",
-          "Acceso al programa de afiliadas — gana 30% de comisión",
+          "Acceso al programa de afiliadas — gana 40% de comisión",
           "Asegura esta tarifa de por vida",
         ],
       },
@@ -1110,6 +1291,7 @@ const COPY: Record<Lang, Copy> = {
 
 export default function Home() {
   const [lang, setLang] = useState<Lang>("en");
+  const [affModalOpen, setAffModalOpen] = useState(false);
   const c = COPY[lang];
 
   return (
@@ -1332,9 +1514,25 @@ export default function Home() {
                   </div>
                   <div className="price-savings">{pc.savings || " "}</div>
                   <ul className="price-features">
-                    {pc.features.map((f) => (
-                      <li key={f}>{f}</li>
-                    ))}
+                    {pc.features.map((f) => {
+                      const isAffiliate =
+                        plan.planId === "12mo" &&
+                        /affiliate|afiliad/i.test(f);
+                      return (
+                        <li key={f}>
+                          {f}
+                          {isAffiliate && (
+                            <button
+                              type="button"
+                              className="aff-trigger"
+                              onClick={() => setAffModalOpen(true)}
+                            >
+                              {c.affiliateModal.trigger}
+                            </button>
+                          )}
+                        </li>
+                      );
+                    })}
                   </ul>
                   <form action={startCheckoutAction} className="price-form">
                     <input type="hidden" name="planId" value={plan.planId} />
@@ -1447,6 +1645,74 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {affModalOpen && (
+        <div
+          className="aff-modal-backdrop"
+          onClick={() => setAffModalOpen(false)}
+        >
+          <div
+            className="aff-modal"
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="aff-modal-close"
+              onClick={() => setAffModalOpen(false)}
+              aria-label={c.affiliateModal.close}
+            >
+              ×
+            </button>
+            <div className="section-eyebrow center">
+              {c.affiliateModal.eyebrow}
+            </div>
+            <h3 className="aff-modal-title">
+              {renderParts(c.affiliateModal.title)}
+            </h3>
+            <p className="aff-modal-intro">{c.affiliateModal.intro}</p>
+
+            <ol className="aff-modal-steps">
+              {c.affiliateModal.steps.map((s, i) => (
+                <li key={i}>
+                  <span className="aff-step-num">
+                    {["i.", "ii.", "iii.", "iv."][i] ?? `${i + 1}.`}
+                  </span>
+                  <span>{s}</span>
+                </li>
+              ))}
+            </ol>
+
+            <div className="aff-modal-math">
+              <div className="aff-math-header">
+                {c.affiliateModal.mathHeader}
+              </div>
+              <table>
+                <tbody>
+                  {c.affiliateModal.mathRows.map((r) => (
+                    <tr key={r.label}>
+                      <td>{r.label}</td>
+                      <td>{r.amount}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <p className="aff-modal-onetime">{c.affiliateModal.oneTimeNote}</p>
+            <p className="aff-modal-fine">{c.affiliateModal.fine}</p>
+
+            <a
+              href={c.affiliateModal.ctaHref}
+              className="aff-modal-cta"
+              onClick={() => setAffModalOpen(false)}
+            >
+              {c.affiliateModal.cta}
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
