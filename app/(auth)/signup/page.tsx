@@ -1,8 +1,5 @@
 import Link from "next/link";
-import {
-  signUpWithPasswordAction,
-  signInWithGoogleAction,
-} from "../actions";
+import { signUpWithPasswordAction } from "../actions";
 
 type SearchParams = Promise<{ next?: string; error?: string }>;
 
@@ -27,24 +24,6 @@ export default async function SignupPage({
           {error}
         </div>
       )}
-
-      <form action={signInWithGoogleAction} className="mb-6">
-        <input type="hidden" name="next" value={next} />
-        <button
-          type="submit"
-          className="w-full rounded-md border border-stone-200 bg-white px-4 py-2.5 text-sm font-medium text-ink hover:bg-cream transition-colors"
-        >
-          Continue with Google
-        </button>
-      </form>
-
-      <div className="flex items-center gap-3 mb-6">
-        <div className="h-px flex-1 bg-stone-200" />
-        <span className="text-xs uppercase tracking-wider text-stone-light">
-          or
-        </span>
-        <div className="h-px flex-1 bg-stone-200" />
-      </div>
 
       <form action={signUpWithPasswordAction} className="space-y-4">
         <input type="hidden" name="next" value={next} />
