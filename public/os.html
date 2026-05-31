@@ -1686,6 +1686,7 @@ const TRANSLATIONS = {
     "Nothing here yet.": "Nothing here yet.",
     "Click to edit": "Click to edit",
     "Delete task": "Delete task",
+    "Edit task": "Edit task",
     "Previous day": "Previous day",
     "Next day": "Next day",
     "Hide priorities": "Hide priorities",
@@ -2181,6 +2182,7 @@ const TRANSLATIONS = {
     "Nothing here yet.": "Nada todavía.",
     "Click to edit": "Clic para editar",
     "Delete task": "Eliminar tarea",
+    "Edit task": "Editar tarea",
     "Previous day": "Día anterior",
     "Next day": "Día siguiente",
     "Hide priorities": "Ocultar prioridades",
@@ -7553,7 +7555,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
             const done = !!prioritiesDone[i];
             const key = "priority-" + i;
             return (
-              <div key={i} className="flex items-start gap-2">
+              <div key={i} className={`flex items-start gap-2 p-2 rounded-md transition ${done ? "bg-[#d3e0c5]/40 border border-[#a8c090]/50" : "border border-transparent"}`}>
                 <button
                   type="button"
                   onClick={() => togglePriorityDone(i)}
@@ -7562,9 +7564,9 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                 >
                   {done && <Check className="w-3 h-3" />}
                 </button>
-                <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-stone-300" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
+                <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-[#5b7351]" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
                 <div className="relative flex-1">
-                  <textarea {...grow(key, 64, 180, 6, done ? "text-stone-400" : "")} value={p} onChange={e => setPriority(i, e.target.value)}
+                  <textarea {...grow(key, 64, 180, 6, done ? "text-stone-500" : "")} value={p} onChange={e => setPriority(i, e.target.value)}
                     placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)} />
                   <CollapseBtn shown={focusedField === key} />
                 </div>
@@ -7613,12 +7615,14 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                     onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditingId(null); }} />
                 ) : (
                   <button onClick={() => startEdit(task)}
-                    className={`flex-1 text-left text-xs ${task.done ? "text-stone-400" : "text-ink"}`} title={t("Click to edit", lang)}>
+                    className={`flex-1 text-left text-xs px-1.5 py-0.5 rounded transition hover:bg-[#f4f7ee] ${task.done ? "text-stone-400" : "text-ink"}`} title={t("Click to edit", lang)}>
                     {task.title}
                   </button>
                 )}
+                <button onClick={() => startEdit(task)}
+                  className="opacity-40 hover:opacity-100 px-1 py-0.5 text-stone-400 hover:text-[#5b7351] transition flex-shrink-0" aria-label={t("Edit task", lang)} title={t("Edit", lang)}><Edit2 className="w-3 h-3" /></button>
                 <button onClick={() => removeTask(task.id)}
-                  className="opacity-40 group-hover:opacity-100 px-1.5 py-0.5 text-xs text-stone-400 hover:text-red-500 transition flex-shrink-0" aria-label={t("Delete task", lang)}>✕</button>
+                  className="opacity-40 hover:opacity-100 px-1.5 py-0.5 text-xs text-stone-400 hover:text-red-500 transition flex-shrink-0" aria-label={t("Delete task", lang)} title={t("Delete", lang)}>✕</button>
               </li>
             ))}
           </ul>
@@ -7635,7 +7639,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
           const done = !!winsDone[i];
           const key = "win-" + i;
           return (
-            <div key={i} className="flex items-start gap-2">
+            <div key={i} className={`flex items-start gap-2 p-2 rounded-md transition ${done ? "bg-[#d3e0c5]/40 border border-[#a8c090]/50" : "border border-transparent"}`}>
               <button
                 type="button"
                 onClick={() => toggleWinDone(i)}
@@ -7644,9 +7648,9 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
               >
                 {done && <Check className="w-3 h-3" />}
               </button>
-              <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-stone-300" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
+              <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 text-[#5b7351]`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
               <div className="relative flex-1">
-                <textarea {...grow(key, 64, 180, 6, done ? "text-stone-400" : "")} value={w} onChange={e => setWin(i, e.target.value)}
+                <textarea {...grow(key, 64, 180, 6, done ? "text-stone-500" : "")} value={w} onChange={e => setWin(i, e.target.value)}
                   placeholder={i === 0 ? t("Anything you're proud of", lang) : i === 1 ? t("Win two", lang) : t("Win three", lang)} />
                 <CollapseBtn shown={focusedField === key} />
               </div>
