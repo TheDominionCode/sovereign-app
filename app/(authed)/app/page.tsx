@@ -1,15 +1,21 @@
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// The Sovereign app itself is the exact self-contained build shipped at
-// sovereignincharge.netlify.app, served as a static asset from /os.html.
-// Access is gated upstream by app/(authed)/layout.tsx, which enforces login
-// and an active subscription before this page ever renders.
+// Top-level redirect to the standalone Sovereign app at /os.html.
 //
-// When the signed-in user is on the admins allow-list we pass ?admin=1 to
-// the iframe — os.html's ProfileAvatar dropdown reads that flag and adds an
-// "Admin dashboard" entry below the profile picture options. Non-admin
-// customers don't see the option.
+// We used to iframe /os.html here, but iOS Safari's Intelligent Tracking
+// Prevention treats iframes as third-party contexts and silently blocks
+// session cookies — which left iPhone users staring at a blank screen while
+// the app inside the iframe waited forever on auth'd API calls.
+//
+// Top-level navigation keeps cookies first-party and works in every browser.
+// Auth is still enforced upstream by app/(authed)/layout.tsx
+// (requireActiveSubscription) before this redirect runs, and the middleware
+// requires auth for any GET on /os.html.
+//
+// The admin allow-list flag (?admin=1) is preserved so the in-app
+// ProfileAvatar dropdown can show the Admin dashboard link for staff.
 export default async function AppHome() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -27,18 +33,5 @@ export default async function AppHome() {
       isAdmin = false;
     }
   }
-
-  return (
-    <iframe
-      src={isAdmin ? "/os.html?admin=1" : "/os.html"}
-      title="Sovereign"
-      style={{
-        position: "fixed",
-        inset: 0,
-        width: "100%",
-        height: "100%",
-        border: 0,
-      }}
-    />
-  );
+  redirect(isAdmin ? "/os.html?admin=1" : "/os.html");
 }
