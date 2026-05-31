@@ -7638,7 +7638,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                 </button>
                 <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-[#5b7351]" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
                 <div className="relative flex-1">
-                  <textarea {...grow(key, 64, 180, 6, done ? "text-stone-500" : "")} value={p} onChange={e => setPriority(i, e.target.value)}
+                  <textarea {...grow(key, 64, 110, 4, done ? "text-stone-500" : "")} value={p} onChange={e => setPriority(i, e.target.value)}
                     placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)} />
                   <CollapseBtn shown={focusedField === key} />
                 </div>
@@ -7711,7 +7711,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
             {visibleTasks.map((task, idx) => {
               const isPri = !!task.priority;
               const meta = isPri
-                ? `${t("PRIORITY", lang)} ${task.priorityOrder || ""}`.trim()
+                ? t("PRIORITY", lang)
                 : (task.time ? task.time.toUpperCase() : null);
               const isLast = idx === visibleTasks.length - 1;
               const starDisabled = !isPri && priorityCount >= 3;
@@ -7806,7 +7806,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
               </button>
               <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 text-[#5b7351]`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
               <div className="relative flex-1">
-                <textarea {...grow(key, 64, 180, 6, done ? "text-stone-500" : "")} value={w} onChange={e => setWin(i, e.target.value)}
+                <textarea {...grow(key, 64, 110, 4, done ? "text-stone-500" : "")} value={w} onChange={e => setWin(i, e.target.value)}
                   placeholder={i === 0 ? t("Anything you're proud of", lang) : i === 1 ? t("Win two", lang) : t("Win three", lang)} />
                 <CollapseBtn shown={focusedField === key} />
               </div>
@@ -7859,8 +7859,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       {AddTaskModal}
       <PageHeader title={t("Daily Planner", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
-      {/* Row 1: To-do (with built-in priority stars) · Wins */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      {/* Row 1: To-do on its own line, Wins underneath (stacked at every width) */}
+      <div className="grid gap-6">
         {TodoCard}
         {WinsCard}
       </div>
