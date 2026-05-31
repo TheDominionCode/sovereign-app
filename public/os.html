@@ -1674,7 +1674,12 @@ const TRANSLATIONS = {
     "Third priority": "Third priority",
     "Add a task…": "Add a task…",
     "Add a win…": "Add a win…",
+    "Add a win": "Add a win",
     "no wins yet": "no wins yet",
+    "Tap + to add a win.": "Tap + to add a win.",
+    "Win…": "Win…",
+    "Anything you're proud of today.": "Anything you're proud of today.",
+    "Priority": "Priority",
     "Drag to reorder": "Drag to reorder",
     "Move up": "Move up",
     "Move down": "Move down",
@@ -2193,7 +2198,12 @@ const TRANSLATIONS = {
     "Third priority": "Tercera prioridad",
     "Add a task…": "Añade una tarea…",
     "Add a win…": "Añade un logro…",
+    "Add a win": "Añadir logro",
     "no wins yet": "aún sin logros",
+    "Tap + to add a win.": "Toca + para añadir un logro.",
+    "Win…": "Logro…",
+    "Anything you're proud of today.": "Algo de lo que estés orgullosa hoy.",
+    "Priority": "Prioridad",
     "Drag to reorder": "Arrastra para reordenar",
     "Move up": "Mover arriba",
     "Move down": "Mover abajo",
@@ -4687,8 +4697,8 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         const items = [
           { onClick: () => setActive("planner"), label: "tasks left",    sub: todayTotal > 0 ? (tasksLeft > 0 ? t("of {n} today", lang, { n: todayTotal }) : t("all done — well done", lang)) : t("no tasks yet", lang),                       done: todayDone,                  total: todayTotal,            valueLabel: `${tasksLeft || 0}` },
           { onClick: () => setActive("planner"), label: "top 3",         sub: prioritiesSet === 3 ? t("you know your why", lang) : t("set today's priorities", lang),                                                          done: prioritiesSet,              total: 3,                     valueLabel: `${prioritiesSet}/3` },
-          { onClick: () => setActive("habits"),  label: "habits",        sub: habitTotal > 0 ? (habitsLeft > 0 ? t("{n} of {m} left", lang, { n: habitsLeft, m: habitTotal }) : t("rhythm kept", lang)) : t("add habits to begin", lang),            done: habitDone,                  total: habitTotal,            valueLabel: `${habitDone}/${habitTotal}` },
-          { onClick: () => setActive("planner"), label: "water",         sub: waterLeft > 0 ? t(waterLeft === 1 ? "{n} glass to go" : "{n} glasses to go", lang, { n: waterLeft }) : t("hydrated · 8/8", lang),                                  done: water,                      total: 8,                     valueLabel: `${water}/8` },
+          { onClick: () => setActive("habitsView"),  label: "habits",        sub: habitTotal > 0 ? (habitsLeft > 0 ? t("{n} of {m} left", lang, { n: habitsLeft, m: habitTotal }) : t("rhythm kept", lang)) : t("add habits to begin", lang),            done: habitDone,                  total: habitTotal,            valueLabel: `${habitDone}/${habitTotal}` },
+          { onClick: () => setActive("habitsView"), label: "water",         sub: waterLeft > 0 ? t(waterLeft === 1 ? "{n} glass to go" : "{n} glasses to go", lang, { n: waterLeft }) : t("hydrated · 8/8", lang),                                  done: water,                      total: 8,                     valueLabel: `${water}/8` },
           { onClick: () => setActive("cycle"),   label: "vitamins",      sub: vitaminsList.length > 0 ? (vitaminsLeft > 0 ? t("left to take", lang) : t("{n}/{m} taken", lang, { n: vitaminsList.length, m: vitaminsList.length })) : t("add vitamins to begin", lang), done: vitaminsTakenToday, total: vitaminsList.length, valueLabel: vitaminsList.length > 0 ? `${vitaminsTakenToday}/${vitaminsList.length}` : "—" },
           { onClick: () => setActive("cycle"),   label: "mood",          sub: moodLogged ? t("feeling {mood}", lang, { mood: t(todayMoodLabel || "okay", lang) }) : t("how am I today?", lang),                                                                   done: moodLogged ? 1 : 0,         total: 1,                     valueLabel: moodLogged ? todayMoodEmoji : "?", doneIcon: todayMoodEmoji },
         ];
@@ -7576,6 +7586,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const [editingText, setEditingText] = useState("");
   const [focusedField, setFocusedField] = useState(null);
   const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
+  const [addWinModalOpen, setAddWinModalOpen] = useState(false);
   const [showAllTasks, setShowAllTasks] = useState(false);
   const TASK_PREVIEW_LIMIT = 5;
 
@@ -7799,18 +7810,20 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                     {...grow(key, 64, 64, 1, done ? "text-stone-500" : "")}
                     value={p}
                     ref={el => {
-                      // When focused, size the textarea to fit ALL content
-                      // (so a long priority displays the whole sentence).
-                      // When unfocused, grow's inline style of 64px takes over.
+                      // When focused, size to fit content but CAP at 160px so
+                      // a long priority doesn't push the whole screen down on
+                      // a phone. Beyond the cap, the textarea scrolls.
                       if (el && focusedField === key) {
                         el.style.height = "auto";
-                        el.style.height = el.scrollHeight + "px";
+                        const MAX = 160;
+                        el.style.height = Math.min(el.scrollHeight, MAX) + "px";
                       }
                     }}
                     onInput={e => {
                       if (focusedField === key) {
                         e.target.style.height = "auto";
-                        e.target.style.height = e.target.scrollHeight + "px";
+                        const MAX = 160;
+                        e.target.style.height = Math.min(e.target.scrollHeight, MAX) + "px";
                       }
                     }}
                     onChange={e => setPriority(i, e.target.value)}
@@ -7923,13 +7936,17 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                     </button>
                   )}
 
-                  {/* Star — toggle priority (max 3) */}
+                  {/* Priority toggle — plain text pill (no star icon) */}
                   <button onClick={() => togglePriority(task.id)}
                     disabled={starDisabled}
-                    className={`p-0.5 sm:p-1 transition flex-shrink-0 ${starDisabled ? "opacity-20 cursor-not-allowed" : "hover:text-amber-500"}`}
+                    className={`px-2 py-0.5 text-[9px] sm:text-[10px] tracking-wider uppercase rounded font-medium transition flex-shrink-0 ${
+                      isPri
+                        ? "bg-[#5b7351] text-white"
+                        : "border border-stone-200 text-stone-400 hover:border-[#7a9a6e] hover:text-[#5b7351]"
+                    } ${starDisabled ? "opacity-30 cursor-not-allowed hover:border-stone-200 hover:text-stone-400" : ""}`}
                     aria-label={isPri ? t("Remove priority", lang) : t("Mark as priority", lang)}
                     title={isPri ? t("Remove priority", lang) : (starDisabled ? t("Max 3 priorities", lang) : t("Mark as priority", lang))}>
-                    <Star className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPri ? "fill-amber-400 text-amber-400" : "text-stone-300"}`} />
+                    {isPri ? t("Priority", lang) : "+ " + t("Priority", lang)}
                   </button>
 
                   {/* Edit arrow */}
@@ -7964,31 +7981,62 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   // (Defined as a const earlier alongside visibleTasks; see TodoCard scope.)
 
   const winsDoneCount = wins.filter(w => w && w.done).length;
+  const submitNewWin = () => {
+    if (!newWin.trim()) { setAddWinModalOpen(false); return; }
+    addWin();
+    setAddWinModalOpen(false);
+  };
+  const cancelNewWin = () => { setNewWin(""); setAddWinModalOpen(false); };
+  const AddWinModal = addWinModalOpen ? (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={cancelNewWin}>
+      <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
+        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Add a win", lang)}</h3>
+        <p className="text-xs text-stone-500 mb-4 italic">{t("Anything you're proud of today.", lang)}</p>
+        <textarea
+          autoFocus
+          rows={3}
+          cols={1}
+          value={newWin}
+          onChange={(e) => setNewWin(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submitNewWin(); } if (e.key === "Escape") cancelNewWin(); }}
+          placeholder={t("Win…", lang)}
+          className="block w-full max-w-full px-3 py-2 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20"
+          style={{ maxWidth: "100%", boxSizing: "border-box", minHeight: "80px" }}
+        />
+        <div className="flex justify-end gap-2 mt-4">
+          <button onClick={cancelNewWin} className="px-4 py-2 text-xs uppercase tracking-wider text-stone-500 hover:text-stone-800 transition">
+            {t("Cancel", lang)}
+          </button>
+          <button onClick={submitNewWin}
+            className="px-4 py-2 text-xs uppercase tracking-wider text-white rounded font-medium transition hover:opacity-90"
+            style={{ background: "var(--accent-mid)" }}>
+            + {t("Add", lang)}
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   const WinsCard = (
     <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
-      <div className="flex items-baseline justify-between mb-3">
-        <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S WINS", lang)}</h2>
-        <div className="text-[11px] text-stone-500">
+      {/* Header — title + (+) add button, matching the TO-DO layout */}
+      <div className="flex items-center justify-between mb-2 gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S WINS", lang)}</h2>
+          <button onClick={() => setAddWinModalOpen(true)}
+            className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
+            style={{ background: "var(--accent-mid)" }}
+            aria-label={t("Add a win", lang)} title={t("Add a win", lang)}>
+            <Plus className="w-3.5 h-3.5" />
+          </button>
+        </div>
+        <div className="text-[11px] text-stone-500 flex-shrink-0">
           {wins.length === 0 ? t("no wins yet", lang) : `${winsDoneCount} ${t("of", lang)} ${wins.length}`}
         </div>
       </div>
-      <textarea
-        {...grow("win-new", 40, 40, 1)}
-        value={newWin}
-        onChange={e => setNewWin(e.target.value)}
-        onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); addWin(); } }}
-        placeholder={t("Add a win…", lang)}
-      />
-      <div className="flex justify-between items-center mt-2 mb-3">
-        <span className="text-[11px] italic text-stone-400">{t("Press Enter to add", lang)}</span>
-        <button onClick={addWin}
-          className="px-3 py-1 text-[11px] uppercase tracking-wider text-stone-600 border border-stone-200 rounded hover:bg-[#f4f7ee] hover:border-[#7a9a6e] hover:text-[#5b7351] transition">
-          + {t("Add", lang)}
-        </button>
-      </div>
       <div className="flex-1 overflow-y-auto" style={{ maxHeight: "260px" }}>
         {wins.length === 0 ? (
-          <div className={`py-6 text-center ${themeMuted} text-xs italic`}>{t("Nothing here yet.", lang)}</div>
+          <div className={`py-6 text-center ${themeMuted} text-xs italic`}>{t("Tap + to add a win.", lang)}</div>
         ) : (
           <ul className="divide-y divide-stone-100">
             {wins.map(w => (
@@ -8002,7 +8050,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                   {w.text}
                 </span>
                 <button onClick={() => removeWin(w.id)}
-                  className="opacity-0 group-hover:opacity-100 px-1.5 py-0.5 text-[10px] text-stone-400 hover:text-red-500 transition flex-shrink-0"
+                  className="opacity-40 sm:opacity-0 group-hover:opacity-100 hover:!opacity-100 px-1 text-xs text-stone-400 hover:text-rose-500 transition flex-shrink-0"
                   aria-label={t("Delete", lang)}>✕</button>
               </li>
             ))}
@@ -8052,6 +8100,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   return (
     <div className="p-3 sm:p-6 lg:p-10 max-w-6xl mx-auto space-y-4 sm:space-y-6 overflow-x-hidden">
       {AddTaskModal}
+      {AddWinModal}
       <PageHeader title={t("Daily Planner", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
       {/* Row 1: To-do on its own line, Wins underneath (stacked at every width) */}
