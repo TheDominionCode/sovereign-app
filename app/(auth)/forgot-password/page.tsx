@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CheckCircle2, Mail } from "lucide-react";
 import { forgotPasswordAction } from "../actions";
+import SubmitButton from "../_components/SubmitButton";
 
 type SearchParams = Promise<{ error?: string; sent?: string }>;
 
@@ -96,12 +97,7 @@ export default async function ForgotPasswordPage({
             className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
           />
         </div>
-        <button
-          type="submit"
-          className="w-full rounded-md bg-forest px-4 py-2.5 text-sm font-medium text-white hover:bg-forest-deep transition-colors"
-        >
-          Send reset link
-        </button>
+        <SubmitButton label="Send reset link" pendingLabel="Sending…" />
       </form>
 
       <p className="mt-8 text-sm text-stone text-center">

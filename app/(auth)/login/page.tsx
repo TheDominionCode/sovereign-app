@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { signInWithPasswordAction } from "../actions";
+import PasswordField from "../_components/PasswordField";
+import SubmitButton from "../_components/SubmitButton";
 
 type SearchParams = Promise<{ next?: string; error?: string }>;
 
@@ -56,21 +58,9 @@ export default async function LoginPage({
               Forgot email or password?
             </Link>
           </div>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            autoComplete="current-password"
-            className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
-          />
+          <PasswordField id="password" name="password" autoComplete="current-password" />
         </div>
-        <button
-          type="submit"
-          className="w-full rounded-md bg-forest px-4 py-2.5 text-sm font-medium text-white hover:bg-forest-deep transition-colors"
-        >
-          Sign in
-        </button>
+        <SubmitButton label="Sign in" pendingLabel="Signing in…" />
       </form>
 
       <p className="mt-8 text-sm text-stone text-center">

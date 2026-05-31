@@ -1,4 +1,6 @@
 import { updatePasswordAction } from "../actions";
+import PasswordField from "../_components/PasswordField";
+import SubmitButton from "../_components/SubmitButton";
 
 type SearchParams = Promise<{ error?: string }>;
 
@@ -32,15 +34,7 @@ export default async function ResetPasswordPage({
           >
             New password
           </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            minLength={6}
-            autoComplete="new-password"
-            className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
-          />
+          <PasswordField id="password" name="password" autoComplete="new-password" minLength={6} />
         </div>
         <div>
           <label
@@ -49,22 +43,9 @@ export default async function ResetPasswordPage({
           >
             Confirm new password
           </label>
-          <input
-            id="confirm"
-            name="confirm"
-            type="password"
-            required
-            minLength={6}
-            autoComplete="new-password"
-            className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
-          />
+          <PasswordField id="confirm" name="confirm" autoComplete="new-password" minLength={6} />
         </div>
-        <button
-          type="submit"
-          className="w-full rounded-md bg-forest px-4 py-2.5 text-sm font-medium text-white hover:bg-forest-deep transition-colors"
-        >
-          Update password
-        </button>
+        <SubmitButton label="Update password" pendingLabel="Updating…" />
       </form>
     </div>
   );

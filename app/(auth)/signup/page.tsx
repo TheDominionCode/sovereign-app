@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { signUpWithPasswordAction } from "../actions";
+import PasswordField from "../_components/PasswordField";
+import SubmitButton from "../_components/SubmitButton";
 
 type SearchParams = Promise<{ next?: string; error?: string }>;
 
@@ -87,23 +89,10 @@ export default async function SignupPage({
           >
             Password
           </label>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            required
-            minLength={8}
-            autoComplete="new-password"
-            className="w-full rounded-md border border-stone-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-sage focus:border-transparent"
-          />
+          <PasswordField id="password" name="password" autoComplete="new-password" minLength={8} />
           <p className="mt-1 text-xs text-stone-light">At least 8 characters.</p>
         </div>
-        <button
-          type="submit"
-          className="w-full rounded-md bg-forest px-4 py-2.5 text-sm font-medium text-white hover:bg-forest-deep transition-colors"
-        >
-          Create account
-        </button>
+        <SubmitButton label="Create account" pendingLabel="Creating account…" />
       </form>
 
       <p className="mt-8 text-sm text-stone text-center">
