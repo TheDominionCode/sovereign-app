@@ -1692,6 +1692,10 @@ const TRANSLATIONS = {
     "clear done": "clear done",
     "Clear completed": "Clear completed",
     "today": "today",
+    "priorities": "priorities",
+    "Remove priority": "Remove priority",
+    "Mark as priority": "Mark as priority",
+    "Max 3 priorities": "Max 3 priorities (remove one first)",
     "Previous day": "Previous day",
     "Next day": "Next day",
     "Hide priorities": "Hide priorities",
@@ -2193,6 +2197,10 @@ const TRANSLATIONS = {
     "clear done": "limpiar hechas",
     "Clear completed": "Limpiar completadas",
     "today": "hoy",
+    "priorities": "prioridades",
+    "Remove priority": "Quitar prioridad",
+    "Mark as priority": "Marcar como prioridad",
+    "Max 3 priorities": "Máximo 3 prioridades (quita una primero)",
     "Previous day": "Día anterior",
     "Next day": "Día siguiente",
     "Hide priorities": "Ocultar prioridades",
@@ -4620,7 +4628,11 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
       {/* TODAY CHECKLIST — circles, not boxes */}
       {(() => {
         const tasksLeft = todayTotal - todayDone;
-        const prioritiesSet = todayPriorities.length;
+        // Priority tasks = anything in today's tasks marked with .priority
+        // (replaces the old standalone Top 3 array, which has been folded
+        // into the unified To-Do list with star toggles).
+        const todayPriorityTasks = todaysTasks.filter(t => t && t.priority);
+        const prioritiesSet = todayPriorityTasks.length;
         const habitsLeft = habitTotal - habitDone;
         const vitaminsLeft = vitaminsList.length - vitaminsTakenToday;
         const waterLeft = Math.max(0, 8 - water);
@@ -7511,6 +7523,28 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     setTasks([...allTasks, { id, title, date, done: false }]);
     setNewTitle("");
   };
+
+  // ----- Priority handling (max 3 per day, bumps to top) -----
+  const priorityCount = dayTasks.filter(t => t.priority).length;
+  const togglePriority = (id) => {
+    const task = allTasks.find(t => t && t.id === id);
+    if (!task) return;
+    if (task.priority) {
+      setTasks(allTasks.map(t => t && t.id === id ? { ...t, priority: null, priorityOrder: null } : t));
+      return;
+    }
+    if (priorityCount >= 3) return; // silently no-op when cap reached
+    const usedOrders = dayTasks.filter(t => t.priority).map(t => t.priorityOrder || 0);
+    const order = [1, 2, 3].find(n => !usedOrders.includes(n)) || 1;
+    setTasks(allTasks.map(t => t && t.id === id ? { ...t, priority: "high", priorityOrder: order } : t));
+  };
+  // Render-order: priorities first by their order slot, then the rest by id
+  const sortedDayTasks = [...dayTasks].sort((a, b) => {
+    const ap = a.priority ? (a.priorityOrder || 99) : 1000;
+    const bp = b.priority ? (b.priorityOrder || 99) : 1000;
+    if (ap !== bp) return ap - bp;
+    return (a.id || 0) - (b.id || 0);
+  });
   const toggleTask = (id) => {
     const t = allTasks.find(x => x && x.id === id);
     const becoming = t && !t.done;
@@ -7630,18 +7664,28 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         </button>
       </div>
 
-      {/* Task list — two-line rows with right-arrow */}
-      <div className="flex-1 overflow-y-auto -mx-1" style={{ maxHeight: "320px" }}>
-        {dayTasks.length === 0 ? (
+      {/* Priority counter */}
+      {priorityCount > 0 && (
+        <div className="text-[10px] tracking-[0.18em] uppercase text-amber-600 mb-2">
+          {priorityCount}/3 {t("priorities", lang)}
+        </div>
+      )}
+
+      {/* Task list — two-line rows with star priority + arrow */}
+      <div className="flex-1 overflow-y-auto -mx-1" style={{ maxHeight: "360px" }}>
+        {sortedDayTasks.length === 0 ? (
           <div className={`py-8 text-center ${themeMuted} text-xs italic`}>{t("Nothing here yet.", lang)}</div>
         ) : (
           <ul>
-            {dayTasks.map((task, idx) => {
-              const isHighPri = task.priority === "high" || task.priority === "critical";
-              const meta = isHighPri ? t("PRIORITY", lang) : (task.time ? task.time.toUpperCase() : null);
-              const isLast = idx === dayTasks.length - 1;
+            {sortedDayTasks.map((task, idx) => {
+              const isPri = !!task.priority;
+              const meta = isPri
+                ? `${t("PRIORITY", lang)} ${task.priorityOrder || ""}`.trim()
+                : (task.time ? task.time.toUpperCase() : null);
+              const isLast = idx === sortedDayTasks.length - 1;
+              const starDisabled = !isPri && priorityCount >= 3;
               return (
-                <li key={task.id} className={`flex items-center gap-3 px-1 py-3 group ${isLast ? "" : "border-b border-stone-100"}`}>
+                <li key={task.id} className={`flex items-center gap-2 px-1 py-3 group ${isLast ? "" : "border-b border-stone-100"} ${isPri ? "bg-amber-50/40 rounded-md" : ""}`}>
                   {/* Done circle */}
                   <button onClick={() => toggleTask(task.id)}
                     className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border-2 hover:bg-stone-50"}`}
@@ -7652,7 +7696,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                     {task.done && <Check className="w-3.5 h-3.5" />}
                   </button>
 
-                  {/* Title + meta line OR edit textarea */}
+                  {/* Title + meta */}
                   {editingId === task.id ? (
                     <div className="flex-1 min-w-0">
                       <textarea {...grow("todo-edit-" + task.id)} autoFocus value={editingText}
@@ -7667,12 +7711,21 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                         {task.title}
                       </div>
                       {meta && (
-                        <div className="text-[10px] tracking-[0.18em] uppercase text-stone-400 mt-0.5">{meta}</div>
+                        <div className={`text-[10px] tracking-[0.18em] uppercase mt-0.5 ${isPri ? "text-amber-600 font-semibold" : "text-stone-400"}`}>{meta}</div>
                       )}
                     </button>
                   )}
 
-                  {/* Right-arrow → opens edit */}
+                  {/* Star — toggle priority (max 3) */}
+                  <button onClick={() => togglePriority(task.id)}
+                    disabled={starDisabled}
+                    className={`p-1 transition flex-shrink-0 ${starDisabled ? "opacity-20 cursor-not-allowed" : "hover:text-amber-500"}`}
+                    aria-label={isPri ? t("Remove priority", lang) : t("Mark as priority", lang)}
+                    title={isPri ? t("Remove priority", lang) : (starDisabled ? t("Max 3 priorities", lang) : t("Mark as priority", lang))}>
+                    <Star className={`w-4 h-4 ${isPri ? "fill-amber-400 text-amber-400" : "text-stone-300"}`} />
+                  </button>
+
+                  {/* Edit arrow */}
                   <button onClick={() => startEdit(task)}
                     className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white transition hover:opacity-90"
                     style={{ background: "var(--accent-mid)" }}
@@ -7680,7 +7733,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
 
-                  {/* Faint delete X (hover or touch reveals) */}
+                  {/* Faint delete */}
                   <button onClick={() => removeTask(task.id)}
                     className="opacity-0 group-hover:opacity-60 hover:!opacity-100 px-1 text-xs text-stone-400 hover:text-rose-500 transition flex-shrink-0"
                     aria-label={t("Delete task", lang)} title={t("Delete", lang)}>✕</button>
@@ -7727,9 +7780,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     <div className="p-6 lg:p-10 max-w-6xl mx-auto space-y-6">
       <PageHeader title={t("Daily Planner", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
-      {/* Row 1: Priorities · To-do · Wins */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        {PrioritiesCard}
+      {/* Row 1: To-do (with built-in priority stars) · Wins */}
+      <div className="grid gap-6 lg:grid-cols-2">
         {TodoCard}
         {WinsCard}
       </div>
