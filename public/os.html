@@ -1697,6 +1697,15 @@ const TRANSLATIONS = {
     "Remove priority": "Remove priority",
     "Mark as priority": "Mark as priority",
     "Max 3 priorities": "Max 3 priorities (remove one first)",
+    "see more": "see more",
+    "see less": "see less",
+    "more task": "more task",
+    "more tasks": "more tasks",
+    "Add a task": "Add a task",
+    "What's the next small thing?": "What's the next small thing?",
+    "Task name…": "Task name…",
+    "Cancel": "Cancel",
+    "Nothing here yet. Tap + to add one.": "Nothing here yet. Tap + to add one.",
     "Previous day": "Previous day",
     "Next day": "Next day",
     "Hide priorities": "Hide priorities",
@@ -2202,6 +2211,15 @@ const TRANSLATIONS = {
     "Remove priority": "Quitar prioridad",
     "Mark as priority": "Marcar como prioridad",
     "Max 3 priorities": "Máximo 3 prioridades (quita una primero)",
+    "see more": "ver más",
+    "see less": "ver menos",
+    "more task": "tarea más",
+    "more tasks": "tareas más",
+    "Add a task": "Añadir tarea",
+    "What's the next small thing?": "¿Cuál es la próxima cosita?",
+    "Task name…": "Nombre de la tarea…",
+    "Cancel": "Cancelar",
+    "Nothing here yet. Tap + to add one.": "Nada todavía. Toca + para añadir una.",
     "Previous day": "Día anterior",
     "Next day": "Día siguiente",
     "Hide priorities": "Ocultar prioridades",
@@ -7422,6 +7440,9 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
   const [focusedField, setFocusedField] = useState(null);
+  const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
+  const [showAllTasks, setShowAllTasks] = useState(false);
+  const TASK_PREVIEW_LIMIT = 5;
 
   // Weekly schedule state (lifted from the Calendar — verbatim)
   const [weekAnchor, setWeekAnchor] = useState(() => todayISO());
@@ -7629,18 +7650,35 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     </div>
   );
 
+  const visibleTasks = showAllTasks ? sortedDayTasks : sortedDayTasks.slice(0, TASK_PREVIEW_LIMIT);
+  const hiddenCount = sortedDayTasks.length - visibleTasks.length;
+
   const TodoCard = (
     <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
-      {/* Header */}
-      <div className="flex items-baseline justify-between mb-2">
-        <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO DO LIST", lang)}</h2>
-        {doneCount > 0 ? (
-          <button onClick={clearCompleted} className="text-[10px] tracking-[0.18em] uppercase text-stone-400 hover:text-[#5b7351] transition" title={t("Clear completed", lang)}>
-            {t("clear done", lang)}
+      {/* Header — title + (+) add button on the left, SEE MORE on the right */}
+      <div className="flex items-center justify-between mb-2 gap-3">
+        <div className="flex items-center gap-2 min-w-0">
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO DO LIST", lang)}</h2>
+          <button onClick={() => setAddTaskModalOpen(true)}
+            className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
+            style={{ background: "var(--accent-mid)" }}
+            aria-label={t("Add a task", lang)} title={t("Add a task", lang)}>
+            <Plus className="w-3.5 h-3.5" />
           </button>
-        ) : (
-          <span className="text-[10px] tracking-[0.18em] uppercase text-stone-300">{t("today", lang)}</span>
-        )}
+        </div>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          {sortedDayTasks.length > TASK_PREVIEW_LIMIT && (
+            <button onClick={() => setShowAllTasks(v => !v)}
+              className="text-[10px] tracking-[0.18em] uppercase text-stone-500 hover:text-[#5b7351] transition">
+              {showAllTasks ? t("see less", lang) : t("see more", lang)}
+            </button>
+          )}
+          {doneCount > 0 && (
+            <button onClick={clearCompleted} className="text-[10px] tracking-[0.18em] uppercase text-stone-400 hover:text-[#5b7351] transition" title={t("Clear completed", lang)}>
+              {t("clear done", lang)}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Progress bar + count */}
@@ -7657,42 +7695,28 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         <span className="text-[10px] text-stone-400 font-mono flex-shrink-0">{doneCount}/{dayTasks.length}</span>
       </div>
 
-      {/* Add task input */}
-      <div className="flex gap-2 items-start mb-4">
-        <div className="flex-1">
-          <textarea {...grow("todo-new")} value={newTitle} onChange={e => setNewTitle(e.target.value)}
-            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); addTask(); } }}
-            placeholder={t("Add a task…", lang)} />
-        </div>
-        <button onClick={addTask}
-          className="px-3 py-1.5 mt-0.5 text-[10px] uppercase tracking-wider text-white rounded transition flex-shrink-0"
-          style={{ background: "var(--accent-mid)" }}>
-          + {t("Add", lang)}
-        </button>
-      </div>
-
-      {/* Priority counter */}
+      {/* Priority counter — neutral, not amber */}
       {priorityCount > 0 && (
-        <div className="text-[10px] tracking-[0.18em] uppercase text-amber-600 mb-2">
+        <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 mb-2">
           {priorityCount}/3 {t("priorities", lang)}
         </div>
       )}
 
       {/* Task list — two-line rows with star priority + arrow */}
-      <div className="flex-1 overflow-y-auto -mx-1" style={{ maxHeight: "360px" }}>
+      <div className="flex-1 overflow-y-auto -mx-1" style={{ maxHeight: showAllTasks ? "560px" : "360px" }}>
         {sortedDayTasks.length === 0 ? (
-          <div className={`py-8 text-center ${themeMuted} text-xs italic`}>{t("Nothing here yet.", lang)}</div>
+          <div className={`py-8 text-center ${themeMuted} text-xs italic`}>{t("Nothing here yet. Tap + to add one.", lang)}</div>
         ) : (
           <ul>
-            {sortedDayTasks.map((task, idx) => {
+            {visibleTasks.map((task, idx) => {
               const isPri = !!task.priority;
               const meta = isPri
                 ? `${t("PRIORITY", lang)} ${task.priorityOrder || ""}`.trim()
                 : (task.time ? task.time.toUpperCase() : null);
-              const isLast = idx === sortedDayTasks.length - 1;
+              const isLast = idx === visibleTasks.length - 1;
               const starDisabled = !isPri && priorityCount >= 3;
               return (
-                <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-2.5 sm:py-3 group ${isLast ? "" : "border-b border-stone-100"} ${isPri ? "bg-amber-50/40 rounded-md" : ""}`}>
+                <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-2.5 sm:py-3 group ${isLast ? "" : "border-b border-stone-100"}`}>
                   {/* Done circle */}
                   <button onClick={() => toggleTask(task.id)}
                     className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border-2 hover:bg-stone-50"}`}
@@ -7718,7 +7742,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                         {task.title}
                       </div>
                       {meta && (
-                        <div className={`text-[9px] sm:text-[10px] tracking-[0.18em] uppercase mt-0.5 truncate ${isPri ? "text-amber-600 font-semibold" : "text-stone-400"}`}>{meta}</div>
+                        <div className={`text-[9px] sm:text-[10px] tracking-[0.18em] uppercase mt-0.5 truncate ${isPri ? "text-stone-600 font-semibold" : "text-stone-400"}`}>{meta}</div>
                       )}
                     </button>
                   )}
@@ -7749,9 +7773,19 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
             })}
           </ul>
         )}
+        {!showAllTasks && hiddenCount > 0 && (
+          <button onClick={() => setShowAllTasks(true)}
+            className="w-full mt-2 py-2 text-[11px] tracking-wider uppercase text-stone-500 hover:text-[#5b7351] transition border-t border-stone-100">
+            + {hiddenCount} {hiddenCount === 1 ? t("more task", lang) : t("more tasks", lang)}
+          </button>
+        )}
       </div>
     </div>
   );
+
+  // hiddenCount needs to be in scope for the more-link above; derive after
+  // visibleTasks so React's render pass sees the same numbers.
+  // (Defined as a const earlier alongside visibleTasks; see TodoCard scope.)
 
   const WinsCard = (
     <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
@@ -7783,8 +7817,46 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     </div>
   );
 
+  const submitNewTask = () => {
+    if (!newTitle.trim()) { setAddTaskModalOpen(false); return; }
+    addTask();
+    setAddTaskModalOpen(false);
+  };
+  const cancelNewTask = () => { setNewTitle(""); setAddTaskModalOpen(false); };
+
+  const AddTaskModal = addTaskModalOpen ? (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={cancelNewTask}>
+      <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
+        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Add a task", lang)}</h3>
+        <p className="text-xs text-stone-500 mb-4 italic">{t("What's the next small thing?", lang)}</p>
+        <textarea
+          autoFocus
+          rows={3}
+          cols={1}
+          value={newTitle}
+          onChange={(e) => setNewTitle(e.target.value)}
+          onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submitNewTask(); } if (e.key === "Escape") cancelNewTask(); }}
+          placeholder={t("Task name…", lang)}
+          className="block w-full max-w-full px-3 py-2 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20"
+          style={{ maxWidth: "100%", boxSizing: "border-box", minHeight: "80px" }}
+        />
+        <div className="flex justify-end gap-2 mt-4">
+          <button onClick={cancelNewTask} className="px-4 py-2 text-xs uppercase tracking-wider text-stone-500 hover:text-stone-800 transition">
+            {t("Cancel", lang)}
+          </button>
+          <button onClick={submitNewTask}
+            className="px-4 py-2 text-xs uppercase tracking-wider text-white rounded font-medium transition hover:opacity-90"
+            style={{ background: "var(--accent-mid)" }}>
+            + {t("Add", lang)}
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <div className="p-3 sm:p-6 lg:p-10 max-w-6xl mx-auto space-y-4 sm:space-y-6 overflow-x-hidden">
+      {AddTaskModal}
       <PageHeader title={t("Daily Planner", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
       {/* Row 1: To-do (with built-in priority stars) · Wins */}
