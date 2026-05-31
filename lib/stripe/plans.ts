@@ -46,11 +46,11 @@ export const PLANS: readonly Plan[] = [
     id: "12mo",
     priceId: process.env.STRIPE_PRICE_12MO ?? "",
     label: "12 months",
-    amountCents: 9999,
+    amountCents: 12999,
     interval: "year",
     intervalCount: 1,
-    monthlyEquivalentCents: 833,
-    savingsPercent: 44,
+    monthlyEquivalentCents: 1083,
+    savingsPercent: 28,
   },
 ] as const;
 
