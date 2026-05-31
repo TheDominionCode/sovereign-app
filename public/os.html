@@ -7685,15 +7685,15 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
               const isLast = idx === sortedDayTasks.length - 1;
               const starDisabled = !isPri && priorityCount >= 3;
               return (
-                <li key={task.id} className={`flex items-center gap-2 px-1 py-3 group ${isLast ? "" : "border-b border-stone-100"} ${isPri ? "bg-amber-50/40 rounded-md" : ""}`}>
+                <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-2.5 sm:py-3 group ${isLast ? "" : "border-b border-stone-100"} ${isPri ? "bg-amber-50/40 rounded-md" : ""}`}>
                   {/* Done circle */}
                   <button onClick={() => toggleTask(task.id)}
-                    className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border-2 hover:bg-stone-50"}`}
+                    className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border-2 hover:bg-stone-50"}`}
                     style={task.done
                       ? { background: "var(--accent-mid)" }
                       : { borderColor: "var(--accent-mid)", opacity: 0.45 }}
                     aria-label={task.done ? t("Mark not done", lang) : t("Mark done", lang)}>
-                    {task.done && <Check className="w-3.5 h-3.5" />}
+                    {task.done && <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
                   </button>
 
                   {/* Title + meta */}
@@ -7707,11 +7707,11 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                   ) : (
                     <button onClick={() => startEdit(task)}
                       className="flex-1 min-w-0 text-left" title={t("Click to edit", lang)}>
-                      <div className={`text-sm font-medium truncate ${task.done ? "text-stone-400" : "text-stone-900"}`}>
+                      <div className={`text-xs sm:text-sm font-medium truncate ${task.done ? "text-stone-400" : "text-stone-900"}`}>
                         {task.title}
                       </div>
                       {meta && (
-                        <div className={`text-[10px] tracking-[0.18em] uppercase mt-0.5 ${isPri ? "text-amber-600 font-semibold" : "text-stone-400"}`}>{meta}</div>
+                        <div className={`text-[9px] sm:text-[10px] tracking-[0.18em] uppercase mt-0.5 truncate ${isPri ? "text-amber-600 font-semibold" : "text-stone-400"}`}>{meta}</div>
                       )}
                     </button>
                   )}
@@ -7719,23 +7719,23 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                   {/* Star — toggle priority (max 3) */}
                   <button onClick={() => togglePriority(task.id)}
                     disabled={starDisabled}
-                    className={`p-1 transition flex-shrink-0 ${starDisabled ? "opacity-20 cursor-not-allowed" : "hover:text-amber-500"}`}
+                    className={`p-0.5 sm:p-1 transition flex-shrink-0 ${starDisabled ? "opacity-20 cursor-not-allowed" : "hover:text-amber-500"}`}
                     aria-label={isPri ? t("Remove priority", lang) : t("Mark as priority", lang)}
                     title={isPri ? t("Remove priority", lang) : (starDisabled ? t("Max 3 priorities", lang) : t("Mark as priority", lang))}>
-                    <Star className={`w-4 h-4 ${isPri ? "fill-amber-400 text-amber-400" : "text-stone-300"}`} />
+                    <Star className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isPri ? "fill-amber-400 text-amber-400" : "text-stone-300"}`} />
                   </button>
 
                   {/* Edit arrow */}
                   <button onClick={() => startEdit(task)}
-                    className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white transition hover:opacity-90"
+                    className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white transition hover:opacity-90"
                     style={{ background: "var(--accent-mid)" }}
                     aria-label={t("Edit task", lang)} title={t("Edit", lang)}>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <ArrowRight className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                   </button>
 
-                  {/* Faint delete */}
+                  {/* Delete X — always faintly visible on touch, full on hover */}
                   <button onClick={() => removeTask(task.id)}
-                    className="opacity-0 group-hover:opacity-60 hover:!opacity-100 px-1 text-xs text-stone-400 hover:text-rose-500 transition flex-shrink-0"
+                    className="opacity-40 sm:opacity-0 group-hover:opacity-100 hover:!opacity-100 px-1 text-xs text-stone-400 hover:text-rose-500 transition flex-shrink-0"
                     aria-label={t("Delete task", lang)} title={t("Delete", lang)}>✕</button>
                 </li>
               );
