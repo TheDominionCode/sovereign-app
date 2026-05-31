@@ -4875,9 +4875,44 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
   const hiddenList = Object.keys(routineHidden).filter(k => routineHidden[k] && BUILT_IN_DEFAULTS[k]);
   const habitsCustom = Array.isArray(data.habitsCustom) ? data.habitsCustom : [];
   const [habitDraft, setHabitDraft] = useState("");
-  // Drag-to-reorder state for custom habits (HTML5 drag for desktop;
-  // the ▲▼ buttons next to each row cover mobile/touch).
+  // Drag-to-reorder state for habits (HTML5 drag for desktop; the ▲▼
+  // buttons next to each row cover mobile/touch). Custom and built-in
+  // routines each have their own ordering.
   const [draggedHabitId, setDraggedHabitId] = useState(null);
+  const [draggedBuiltInKey, setDraggedBuiltInKey] = useState(null);
+
+  // Ordered list of built-in routines. Falls back to the hardcoded order
+  // when data.routineOrder isn't set; new built-ins not yet ordered get
+  // appended at the end so they're never silently dropped.
+  const DEFAULT_BUILTIN_ORDER = ["morning", "afternoon", "evening", "workout", "reading"];
+  const orderedBuiltIns = (() => {
+    const saved = Array.isArray(data.routineOrder) ? data.routineOrder : DEFAULT_BUILTIN_ORDER;
+    const seen = new Set(saved);
+    const full = [...saved, ...DEFAULT_BUILTIN_ORDER.filter(k => !seen.has(k))];
+    return full.map(k => builtIns.find(b => b.key === k)).filter(Boolean);
+  })();
+
+  const reorderBuiltIns = (fromKey, toKey) => {
+    if (!fromKey || fromKey === toKey) return;
+    const current = orderedBuiltIns.map(b => b.key);
+    const fromIdx = current.indexOf(fromKey);
+    const toIdx = current.indexOf(toKey);
+    if (fromIdx < 0 || toIdx < 0) return;
+    const next = [...current];
+    const [moved] = next.splice(fromIdx, 1);
+    next.splice(toIdx, 0, moved);
+    setData({ ...data, routineOrder: next });
+  };
+  const moveBuiltIn = (key, dir) => {
+    const current = orderedBuiltIns.map(b => b.key);
+    const idx = current.indexOf(key);
+    if (idx < 0) return;
+    const newIdx = idx + dir;
+    if (newIdx < 0 || newIdx >= current.length) return;
+    const next = [...current];
+    [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
+    setData({ ...data, routineOrder: next });
+  };
 
   const addCustomHabit = () => {
     const name = (habitDraft || "").trim();
@@ -4942,22 +4977,57 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
       }>
         <p className={`text-xs ${themeMuted} mb-3 italic`}>{t("Tap the circle to mark a habit done today. Click any name to rename.", lang)}</p>
         <div className="grid sm:grid-cols-2 gap-2 mb-3">
-          {builtIns.filter(b => !routineHidden[b.key]).map(b => {
-            const done = !!todayPlan[b.doneKey];
-            return (
-              <div key={b.key} className={`flex items-center gap-2 p-3 rounded border group transition ${done ? "bg-[#f4f7ee] border-[#a8c090]" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`}>
-                <button onClick={() => update({ [b.doneKey]: !done })} className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}>
-                  {done && <Check className="w-3.5 h-3.5" />}
-                </button>
-                <input
-                  value={routineLabels[b.key]}
-                  onChange={e => renameBuiltIn(b.key, e.target.value)}
-                  className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
-                />
-                <button onClick={() => hideBuiltIn(b.key)} className="p-1 text-stone-400 hover:text-rose-500 opacity-50 group-hover:opacity-100 transition" title={t("Remove", lang)}><Trash2 className="w-3.5 h-3.5" /></button>
-              </div>
-            );
-          })}
+          {(() => {
+            const visible = orderedBuiltIns.filter(b => !routineHidden[b.key]);
+            return visible.map((b, idx) => {
+              const done = !!todayPlan[b.doneKey];
+              const isDragging = draggedBuiltInKey === b.key;
+              return (
+                <div
+                  key={b.key}
+                  draggable
+                  onDragStart={() => setDraggedBuiltInKey(b.key)}
+                  onDragOver={e => e.preventDefault()}
+                  onDrop={e => { e.preventDefault(); reorderBuiltIns(draggedBuiltInKey, b.key); setDraggedBuiltInKey(null); }}
+                  onDragEnd={() => setDraggedBuiltInKey(null)}
+                  className={`flex items-center gap-2 p-3 rounded border group transition ${isDragging ? "opacity-40" : ""} ${done ? "bg-[#f4f7ee] border-[#a8c090]" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`}
+                >
+                  <span
+                    className="text-stone-300 hover:text-stone-500 cursor-grab active:cursor-grabbing select-none px-1 flex-shrink-0"
+                    title={t("Drag to reorder", lang)}
+                    aria-label={t("Drag to reorder", lang)}
+                  >⋮⋮</span>
+                  <button onClick={() => update({ [b.doneKey]: !done })} className={`w-6 h-6 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}>
+                    {done && <Check className="w-3.5 h-3.5" />}
+                  </button>
+                  <input
+                    value={routineLabels[b.key]}
+                    onChange={e => renameBuiltIn(b.key, e.target.value)}
+                    className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
+                  />
+                  <div className="flex flex-col gap-0 flex-shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => moveBuiltIn(b.key, -1)}
+                      disabled={idx === 0}
+                      className="text-stone-400 hover:text-[#5b7351] disabled:opacity-20 text-[10px] leading-none px-1"
+                      title={t("Move up", lang)}
+                      aria-label={t("Move up", lang)}
+                    >▲</button>
+                    <button
+                      type="button"
+                      onClick={() => moveBuiltIn(b.key, 1)}
+                      disabled={idx === visible.length - 1}
+                      className="text-stone-400 hover:text-[#5b7351] disabled:opacity-20 text-[10px] leading-none px-1"
+                      title={t("Move down", lang)}
+                      aria-label={t("Move down", lang)}
+                    >▼</button>
+                  </div>
+                  <button onClick={() => hideBuiltIn(b.key)} className="p-1 text-stone-400 hover:text-rose-500 opacity-50 group-hover:opacity-100 transition" title={t("Remove", lang)}><Trash2 className="w-3.5 h-3.5" /></button>
+                </div>
+              );
+            });
+          })()}
           {habitsCustom.map((h, idx) => {
             const done = !!(todayPlan.customHabits || {})[h.id];
             const isDragging = draggedHabitId === h.id;
