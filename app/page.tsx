@@ -808,7 +808,7 @@ const COPY: Record<Lang, Copy> = {
         features: [
           "Everything in 6 Months",
           "Save 28% — best value",
-          "Affiliate program — 30% commission",
+          "Access to affiliate program — earn 30% commission",
           "Lock in this rate for life",
         ],
       },
@@ -1018,7 +1018,7 @@ const COPY: Record<Lang, Copy> = {
         features: [
           "Todo lo del plan de 6 meses",
           "Ahorra 28% — el mejor valor",
-          "Programa de afiliadas — 30% de comisión",
+          "Acceso al programa de afiliadas — gana 30% de comisión",
           "Asegura esta tarifa de por vida",
         ],
       },
