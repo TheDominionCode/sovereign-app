@@ -4608,7 +4608,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                     {task.done && <Check className="w-3.5 h-3.5 text-white" />}
                   </button>
                   <div className="flex-1 min-w-0">
-                    <div className={`text-base ${task.done ? "line-through text-stone-400" : "text-stone-900"} truncate`}>{task.title}</div>
+                    <div className={`text-base ${task.done ? "text-stone-400" : "text-stone-900"} truncate`}>{task.title}</div>
                     {(task.time || task.priority === "critical" || task.priority === "high") && (
                       <div className="text-xs italic text-stone-400 mt-0.5" style={serifStyle}>
                         {task.time && <span>{task.time}</span>}
@@ -4806,7 +4806,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                 <input
                   value={routineLabels[b.key]}
                   onChange={e => renameBuiltIn(b.key, e.target.value)}
-                  className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "line-through text-stone-500" : ""}`}
+                  className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
                 />
                 <button onClick={() => hideBuiltIn(b.key)} className="p-1 text-stone-400 hover:text-rose-500 opacity-50 group-hover:opacity-100 transition" title={t("Remove", lang)}><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
@@ -4822,7 +4822,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                 <input
                   value={h.name}
                   onChange={e => renameCustomHabit(h.id, e.target.value)}
-                  className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "line-through text-stone-500" : ""}`}
+                  className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
                 />
                 <button onClick={() => removeCustomHabit(h.id)} className="p-1 text-stone-400 hover:text-rose-500 opacity-50 group-hover:opacity-100 transition" title={t("Delete", lang)}><Trash2 className="w-3.5 h-3.5" /></button>
               </div>
@@ -7493,7 +7493,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                 </button>
                 <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-stone-300" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
                 <div className="relative flex-1">
-                  <textarea {...grow(key, 40, 120, 5, done ? "line-through text-stone-400" : "")} value={p} onChange={e => setPriority(i, e.target.value)}
+                  <textarea {...grow(key, 64, 180, 6, done ? "text-stone-400" : "")} value={p} onChange={e => setPriority(i, e.target.value)}
                     placeholder={i === 0 ? t("The thing that matters most…", lang) : i === 1 ? t("Second priority", lang) : t("Third priority", lang)} />
                   <CollapseBtn shown={focusedField === key} />
                 </div>
@@ -7519,7 +7519,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
           <button onClick={clearCompleted} className="text-[11px] italic text-stone-500 hover:text-[#5b7351]">{t("clear completed", lang)}</button>
         ) : <span className="text-[11px] italic text-stone-400">{t("Press Enter to add", lang)}</span>}
         <button onClick={addTask}
-          className="px-3 py-1 text-[11px] uppercase tracking-wider text-stone-600 border border-stone-200 rounded hover:bg-[#f4f7ee] hover:border-[#7a9a6e] hover:text-[#5b7351] transition">
+          className="px-4 py-1.5 text-xs uppercase tracking-wider bg-[#7a9a6e] text-white border border-[#7a9a6e] rounded font-medium hover:bg-[#5b7351] transition shadow-sm">
           + {t("Add", lang)}
         </button>
       </div>
@@ -7542,12 +7542,12 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                     onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditingId(null); }} />
                 ) : (
                   <button onClick={() => startEdit(task)}
-                    className={`flex-1 text-left text-xs ${task.done ? "line-through text-stone-400" : "text-ink"}`} title={t("Click to edit", lang)}>
+                    className={`flex-1 text-left text-xs ${task.done ? "text-stone-400" : "text-ink"}`} title={t("Click to edit", lang)}>
                     {task.title}
                   </button>
                 )}
                 <button onClick={() => removeTask(task.id)}
-                  className="opacity-0 group-hover:opacity-100 px-1.5 py-0.5 text-[10px] text-stone-400 hover:text-red-500 transition flex-shrink-0" aria-label={t("Delete task", lang)}>✕</button>
+                  className="opacity-40 group-hover:opacity-100 px-1.5 py-0.5 text-xs text-stone-400 hover:text-red-500 transition flex-shrink-0" aria-label={t("Delete task", lang)}>✕</button>
               </li>
             ))}
           </ul>
@@ -7575,7 +7575,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
               </button>
               <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-stone-300" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
               <div className="relative flex-1">
-                <textarea {...grow(key, 40, 120, 5, done ? "line-through text-stone-400" : "")} value={w} onChange={e => setWin(i, e.target.value)}
+                <textarea {...grow(key, 64, 180, 6, done ? "text-stone-400" : "")} value={w} onChange={e => setWin(i, e.target.value)}
                   placeholder={i === 0 ? t("Anything you're proud of", lang) : i === 1 ? t("Win two", lang) : t("Win three", lang)} />
                 <CollapseBtn shown={focusedField === key} />
               </div>
