@@ -29,6 +29,7 @@
 }
 </script>
 <style>
+  html, body { overflow-x: hidden; max-width: 100%; }
   body { font-family: 'Inter', system-ui, sans-serif; margin: 0; background: #ffffff; }
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
@@ -7442,8 +7443,12 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       onFocus: () => setFocusedField(key),
       onBlur: () => setFocusedField(prev => prev === key ? null : prev),
       rows: isFocused ? focusRows : 1,
+      // cols=1 + maxWidth:100% prevents the textarea's intrinsic
+      // browser-default width from pushing its parent past the viewport
+      // (Safari especially honors cols even when CSS width is set).
+      cols: 1,
       className:
-        "w-full px-3 py-2 border rounded text-sm outline-none resize-none transition-all duration-150 " +
+        "block w-full max-w-full px-3 py-2 border rounded text-sm outline-none resize-none transition-all duration-150 " +
         (isFocused
           ? "bg-[#f4f7ee] border-[#7a9a6e] shadow-md ring-2 ring-[#7a9a6e]/20 overflow-auto"
           : "bg-white border-stone-200 overflow-hidden") +
@@ -7451,6 +7456,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       style: {
         minHeight: isFocused ? focus + "px" : base + "px",
         height: isFocused ? "auto" : base + "px",
+        maxWidth: "100%",
+        boxSizing: "border-box",
       },
     };
   };
