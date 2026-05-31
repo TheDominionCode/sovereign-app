@@ -1687,6 +1687,11 @@ const TRANSLATIONS = {
     "Click to edit": "Click to edit",
     "Delete task": "Delete task",
     "Edit task": "Edit task",
+    "TO DO LIST": "TO DO LIST",
+    "PRIORITY": "PRIORITY",
+    "clear done": "clear done",
+    "Clear completed": "Clear completed",
+    "today": "today",
     "Previous day": "Previous day",
     "Next day": "Next day",
     "Hide priorities": "Hide priorities",
@@ -2183,6 +2188,11 @@ const TRANSLATIONS = {
     "Click to edit": "Clic para editar",
     "Delete task": "Eliminar tarea",
     "Edit task": "Editar tarea",
+    "TO DO LIST": "LISTA DE TAREAS",
+    "PRIORITY": "PRIORIDAD",
+    "clear done": "limpiar hechas",
+    "Clear completed": "Limpiar completadas",
+    "today": "hoy",
     "Previous day": "Día anterior",
     "Next day": "Día siguiente",
     "Hide priorities": "Ocultar prioridades",
@@ -7580,51 +7590,103 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
 
   const TodoCard = (
     <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
-      <div className="flex items-baseline justify-between mb-3">
-        <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO-DO LIST", lang)}</h2>
-        <div className="text-[11px] text-stone-500">{dayTasks.length === 0 ? t("no tasks", lang) : `${doneCount} ${t("of", lang)} ${dayTasks.length} ${t("done", lang)}`}</div>
-      </div>
-      <textarea {...grow("todo-new")} value={newTitle} onChange={e => setNewTitle(e.target.value)}
-        onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); addTask(); } }}
-        placeholder={t("Add a task…", lang)} />
-      <div className="flex justify-between items-center mt-2 mb-3">
+      {/* Header */}
+      <div className="flex items-baseline justify-between mb-2">
+        <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO DO LIST", lang)}</h2>
         {doneCount > 0 ? (
-          <button onClick={clearCompleted} className="text-[11px] italic text-stone-500 hover:text-[#5b7351]">{t("clear completed", lang)}</button>
-        ) : <span className="text-[11px] italic text-stone-400">{t("Press Enter to add", lang)}</span>}
+          <button onClick={clearCompleted} className="text-[10px] tracking-[0.18em] uppercase text-stone-400 hover:text-[#5b7351] transition" title={t("Clear completed", lang)}>
+            {t("clear done", lang)}
+          </button>
+        ) : (
+          <span className="text-[10px] tracking-[0.18em] uppercase text-stone-300">{t("today", lang)}</span>
+        )}
+      </div>
+
+      {/* Progress bar + count */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="flex-1 h-1 rounded-full bg-stone-100 overflow-hidden">
+          <div
+            className="h-full transition-all duration-500"
+            style={{
+              width: dayTasks.length > 0 ? `${(doneCount / dayTasks.length) * 100}%` : "0%",
+              background: "var(--accent-mid)",
+            }}
+          />
+        </div>
+        <span className="text-[10px] text-stone-400 font-mono flex-shrink-0">{doneCount}/{dayTasks.length}</span>
+      </div>
+
+      {/* Add task input */}
+      <div className="flex gap-2 items-start mb-4">
+        <div className="flex-1">
+          <textarea {...grow("todo-new")} value={newTitle} onChange={e => setNewTitle(e.target.value)}
+            onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); addTask(); } }}
+            placeholder={t("Add a task…", lang)} />
+        </div>
         <button onClick={addTask}
-          className="px-2.5 py-0.5 text-[10px] uppercase tracking-wider bg-[#7a9a6e] text-white rounded hover:bg-[#5b7351] transition">
+          className="px-3 py-1.5 mt-0.5 text-[10px] uppercase tracking-wider text-white rounded transition flex-shrink-0"
+          style={{ background: "var(--accent-mid)" }}>
           + {t("Add", lang)}
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto" style={{ maxHeight: "260px" }}>
+
+      {/* Task list — two-line rows with right-arrow */}
+      <div className="flex-1 overflow-y-auto -mx-1" style={{ maxHeight: "320px" }}>
         {dayTasks.length === 0 ? (
-          <div className={`py-6 text-center ${themeMuted} text-xs italic`}>{t("Nothing here yet.", lang)}</div>
+          <div className={`py-8 text-center ${themeMuted} text-xs italic`}>{t("Nothing here yet.", lang)}</div>
         ) : (
-          <ul className="divide-y divide-stone-100">
-            {dayTasks.map(task => (
-              <li key={task.id} className="flex items-start gap-3 py-2 group">
-                <button onClick={() => toggleTask(task.id)}
-                  className={`w-5 h-5 mt-0.5 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${task.done ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "border-[#9cb88f] hover:bg-[#f4f7ee]"}`}
-                  aria-label={task.done ? t("Mark not done", lang) : t("Mark done", lang)}>
-                  {task.done && <Check className="w-2.5 h-2.5" />}
-                </button>
-                {editingId === task.id ? (
-                  <textarea {...grow("todo-edit-" + task.id)} autoFocus value={editingText}
-                    onChange={e => setEditingText(e.target.value)}
-                    onBlur={() => { setFocusedField(prev => prev === "todo-edit-" + task.id ? null : prev); saveEdit(); }}
-                    onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditingId(null); }} />
-                ) : (
-                  <button onClick={() => startEdit(task)}
-                    className={`flex-1 text-left text-xs px-1.5 py-0.5 rounded transition hover:bg-[#f4f7ee] ${task.done ? "text-stone-400" : "text-ink"}`} title={t("Click to edit", lang)}>
-                    {task.title}
+          <ul>
+            {dayTasks.map((task, idx) => {
+              const isHighPri = task.priority === "high" || task.priority === "critical";
+              const meta = isHighPri ? t("PRIORITY", lang) : (task.time ? task.time.toUpperCase() : null);
+              const isLast = idx === dayTasks.length - 1;
+              return (
+                <li key={task.id} className={`flex items-center gap-3 px-1 py-3 group ${isLast ? "" : "border-b border-stone-100"}`}>
+                  {/* Done circle */}
+                  <button onClick={() => toggleTask(task.id)}
+                    className={`w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border-2 hover:bg-stone-50"}`}
+                    style={task.done
+                      ? { background: "var(--accent-mid)" }
+                      : { borderColor: "var(--accent-mid)", opacity: 0.45 }}
+                    aria-label={task.done ? t("Mark not done", lang) : t("Mark done", lang)}>
+                    {task.done && <Check className="w-3.5 h-3.5" />}
                   </button>
-                )}
-                <button onClick={() => startEdit(task)}
-                  className="opacity-40 hover:opacity-100 px-1 py-0.5 text-stone-400 hover:text-[#5b7351] transition flex-shrink-0" aria-label={t("Edit task", lang)} title={t("Edit", lang)}><Edit2 className="w-3 h-3" /></button>
-                <button onClick={() => removeTask(task.id)}
-                  className="opacity-40 hover:opacity-100 px-1.5 py-0.5 text-xs text-stone-400 hover:text-red-500 transition flex-shrink-0" aria-label={t("Delete task", lang)} title={t("Delete", lang)}>✕</button>
-              </li>
-            ))}
+
+                  {/* Title + meta line OR edit textarea */}
+                  {editingId === task.id ? (
+                    <div className="flex-1 min-w-0">
+                      <textarea {...grow("todo-edit-" + task.id)} autoFocus value={editingText}
+                        onChange={e => setEditingText(e.target.value)}
+                        onBlur={() => { setFocusedField(prev => prev === "todo-edit-" + task.id ? null : prev); saveEdit(); }}
+                        onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditingId(null); }} />
+                    </div>
+                  ) : (
+                    <button onClick={() => startEdit(task)}
+                      className="flex-1 min-w-0 text-left" title={t("Click to edit", lang)}>
+                      <div className={`text-sm font-medium truncate ${task.done ? "text-stone-400" : "text-stone-900"}`}>
+                        {task.title}
+                      </div>
+                      {meta && (
+                        <div className="text-[10px] tracking-[0.18em] uppercase text-stone-400 mt-0.5">{meta}</div>
+                      )}
+                    </button>
+                  )}
+
+                  {/* Right-arrow → opens edit */}
+                  <button onClick={() => startEdit(task)}
+                    className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white transition hover:opacity-90"
+                    style={{ background: "var(--accent-mid)" }}
+                    aria-label={t("Edit task", lang)} title={t("Edit", lang)}>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+
+                  {/* Faint delete X (hover or touch reveals) */}
+                  <button onClick={() => removeTask(task.id)}
+                    className="opacity-0 group-hover:opacity-60 hover:!opacity-100 px-1 text-xs text-stone-400 hover:text-rose-500 transition flex-shrink-0"
+                    aria-label={t("Delete task", lang)} title={t("Delete", lang)}>✕</button>
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
