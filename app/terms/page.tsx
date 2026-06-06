@@ -78,8 +78,8 @@ export default function TermsPage() {
         <h2>8. Contact</h2>
         <p>
           Questions about these Terms? Email{" "}
-          <a href="mailto:hello@sovereignplanner.com" style={{ color: "#856a3f", textDecoration: "underline" }}>
-            hello@sovereignplanner.com
+          <a href="mailto:admin@dominioncodeacademy.com" style={{ color: "#856a3f", textDecoration: "underline" }}>
+            admin@dominioncodeacademy.com
           </a>.
         </p>
 

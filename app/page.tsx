@@ -1,18 +1,23 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
+import LeaveTestimonialModal from "./_components/LeaveTestimonialModal";
+import {
+  listApprovedTestimonials,
+  type ApprovedTestimonial,
+} from "@/lib/actions/testimonial";
 import { startCheckoutAction } from "./pricing/actions";
 
 const landingCss = `
   :root{
     --ivory:#f5efe6;
     --cream:#ece3d3;
-    --sand:#dccdb4;
+    --sand:#e8dcc6;
     --ink:#1a1816;
     --char:#2c2926;
     --muted:#6b6258;
-    --gold:#a8895a;
-    --gold-deep:#856a3f;
+    --gold:#b09869;
+    --gold-deep:#9a7a4a;
     --line:#d9cdb8;
     --soft:#ffffff;
   }
@@ -82,7 +87,11 @@ const landingCss = `
     font-family:'Inter',sans-serif;font-style:normal;color:var(--muted);margin-left:2px;
   }
   .landing-root .nav-right{display:flex;align-items:center;gap:14px}
-  .landing-root .burger{display:none;font-size:22px;cursor:pointer}
+  .landing-root .burger{
+    display:none;font-size:22px;cursor:pointer;
+    background:transparent;border:none;color:var(--ink);
+    padding:6px 10px;line-height:1;
+  }
   .landing-root .lang-toggle{
     display:inline-flex;align-items:center;
     border:1px solid var(--gold-deep);border-radius:999px;padding:2px;
@@ -177,10 +186,10 @@ const landingCss = `
   }
 
   .landing-root .strip{
-    background:var(--gold-deep);color:var(--ivory);
+    background:var(--sand);color:var(--gold-deep);
     padding:22px 0;overflow:hidden;
-    border-top:1px solid var(--gold);
-    border-bottom:1px solid var(--gold);
+    border-top:1px solid var(--line);
+    border-bottom:1px solid var(--line);
   }
   .landing-root .strip-inner{
     display:flex;gap:60px;white-space:nowrap;
@@ -189,7 +198,7 @@ const landingCss = `
     font-style:italic;font-size:20px;letter-spacing:0.05em;
   }
   .landing-root .strip-inner span{display:inline-flex;align-items:center;gap:60px}
-  .landing-root .strip-inner span::after{content:"✦";color:var(--ivory)}
+  .landing-root .strip-inner span::after{content:"✦";color:var(--gold-deep)}
   @keyframes landingScroll{
     0%{transform:translateX(0)}
     100%{transform:translateX(-50%)}
@@ -214,9 +223,43 @@ const landingCss = `
     max-width:640px;margin:0 auto 70px;line-height:1.7;
   }
 
-  .landing-root .pillars{background:var(--cream)}
-    display:grid;grid-template-columns:repeat(3,1fr);gap:48px;
+  .landing-root .pillars{background:var(--cream);padding:120px 0}
+  .landing-root .pillar-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:36px;margin-top:56px;
   }
+
+  /* Hero — typography-led, centered, with the device mockups beneath the CTA. */
+  .landing-root .hero-center{padding:120px 0 60px;text-align:center}
+  .landing-root .hero-center .container{max-width:780px}
+  .landing-root .hero-center .eyebrow{justify-content:center}
+  .landing-root .hero-center .hero-sub{
+    margin-left:auto;margin-right:auto;
+  }
+  .landing-root .hero-center .cta-row{justify-content:center}
+  .landing-root .hero-center .trust-row{justify-content:center}
+  .landing-root .hero-devices{
+    margin-top:60px;display:flex;justify-content:center;
+  }
+  .landing-root .hero-devices .show-devices{
+    position:relative;width:100%;max-width:640px;
+    /* Reserve room for the phone overlap so it doesn't get clipped */
+    padding-bottom:40px;
+  }
+  /* Inherit the slim global show-laptop / show-phone styles — only nudge size */
+  .landing-root .hero-devices .show-laptop{width:100%;margin:0 auto}
+
+  /* Reviews — approved photos + empty state */
+  .landing-root .quote-photo{
+    width:56px;height:56px;border-radius:50%;
+    object-fit:cover;display:block;margin-bottom:14px;
+    border:1px solid var(--line);
+  }
+  .landing-root .quote-empty{
+    margin:32px auto 0;max-width:520px;text-align:center;
+    color:var(--muted);font-style:italic;
+    font-family:'Cormorant Garamond',serif;font-size:18px;
+  }
+
   .landing-root .pillar{
     background:var(--ivory);
     padding:48px 36px;border-radius:4px;
@@ -378,46 +421,46 @@ const landingCss = `
     display:flex;align-items:center;justify-content:center;
   }
 
-  /* Laptop */
+  /* Laptop — slim Apple-MacBook-style bezels */
   .landing-root .show-laptop{
     width:100%;
-    filter:drop-shadow(0 30px 50px rgba(26,24,22,0.25));
+    filter:drop-shadow(0 24px 40px rgba(26,24,22,0.18));
   }
   .landing-root .show-laptop-screen{
     background:#1a1816;
-    border-radius:14px 14px 4px 4px;
-    padding:18px 16px 16px;
+    border-radius:11px 11px 3px 3px;
+    padding:9px 9px 7px;
   }
   .landing-root .show-laptop-img{
     display:block;width:100%;
     aspect-ratio:16/10;object-fit:cover;object-position:top;
-    background:var(--ivory);border-radius:4px;
+    background:var(--ivory);border-radius:3px;
   }
   .landing-root .show-laptop-base{
-    height:14px;
-    background:linear-gradient(180deg,#3a3531,#1a1816);
-    border-radius:0 0 18px 18px;
-    margin:0 -22px;position:relative;
+    height:6px;
+    background:linear-gradient(180deg,#4a4540,#2a2521);
+    border-radius:0 0 14px 14px;
+    margin:0 -14px;position:relative;
   }
   .landing-root .show-laptop-base::before{
     content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);
-    width:90px;height:5px;background:rgba(0,0,0,0.4);
-    border-radius:0 0 8px 8px;
+    width:60px;height:3px;background:rgba(0,0,0,0.4);
+    border-radius:0 0 6px 6px;
   }
 
-  /* Phone — overlaps bottom-right of laptop */
+  /* Phone — slimmer bezel, full screenshot visible (top of the app shows) */
   .landing-root .show-phone{
     position:absolute;
-    right:-30px;bottom:-50px;z-index:5;
-    width:200px;height:412px;
-    background:#1a1816;border-radius:32px;
-    padding:6px;
-    box-shadow:0 30px 50px -16px rgba(26,24,22,0.45), 0 14px 24px -8px rgba(26,24,22,0.25);
+    right:-24px;bottom:-50px;z-index:5;
+    width:180px;aspect-ratio:9/19.5;
+    background:#1a1816;border-radius:30px;
+    padding:4px;
+    box-shadow:0 24px 40px -12px rgba(26,24,22,0.38), 0 10px 18px -6px rgba(26,24,22,0.2);
   }
   .landing-root .show-phone-notch{
-    position:absolute;top:14px;left:50%;transform:translateX(-50%);
-    width:62px;height:18px;background:#1a1816;
-    border-radius:12px;z-index:3;
+    position:absolute;top:10px;left:50%;transform:translateX(-50%);
+    width:52px;height:14px;background:#1a1816;
+    border-radius:10px;z-index:3;
   }
   .landing-root .show-phone-screen{
     width:100%;height:100%;display:block;
@@ -445,6 +488,7 @@ const landingCss = `
   /* ─── FOUNDER ─── */
   .landing-root .founder{padding:120px 0;background:var(--ivory)}
   .landing-root .founder-container{max-width:780px;text-align:center}
+  .landing-root .founder-text{text-align:center}
   .landing-root .founder-title{
     font-size:clamp(40px,5.5vw,72px);
     margin-bottom:36px;letter-spacing:-0.01em;
@@ -459,18 +503,32 @@ const landingCss = `
     font-style:italic;font-size:18px;color:var(--gold-deep);
     letter-spacing:0.04em;
   }
-  /* ─── AFFILIATE TRIGGER + MODAL ─── */
-  .landing-root .aff-trigger{
-    display:inline-block;margin-left:8px;
-    background:none;border:none;padding:0;cursor:pointer;
-    font-family:'Cormorant Garamond',serif;font-style:italic;
-    font-size:13px;color:var(--gold-deep);
-    text-decoration:underline;text-underline-offset:2px;
-    transition:color .2s;
+  /* ─── AFFILIATE CARD BUTTON + MODAL ─── */
+  /* Bordered "box" link sitting at the bottom of the 1 Year plan card,
+     just below the primary "Begin Free Trial" CTA. Visually distinct so
+     the user can't miss it, but secondary in weight so it doesn't
+     compete with the checkout button. Routes straight to /affiliate. */
+  .landing-root .aff-card-btn{
+    display:block;width:100%;
+    margin-top:14px;margin-bottom:14px;padding:14px 16px;
+    border:1px solid var(--gold-deep);border-radius:4px;
+    background:transparent;color:var(--gold-deep);
+    text-align:center;text-decoration:none;
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:11px;font-weight:600;letter-spacing:0.22em;
+    text-transform:uppercase;
+    transition:all .25s;
   }
-  .landing-root .aff-trigger:hover{color:var(--ink)}
-  .landing-root .price-card.featured .aff-trigger{color:var(--gold)}
-  .landing-root .price-card.featured .aff-trigger:hover{color:var(--ivory)}
+  .landing-root .aff-card-btn:hover{
+    background:var(--gold-deep);color:var(--ivory);
+    transform:translateY(-1px);
+  }
+  .landing-root .price-card.featured .aff-card-btn{
+    border-color:var(--gold);color:var(--gold);
+  }
+  .landing-root .price-card.featured .aff-card-btn:hover{
+    background:var(--gold);color:var(--ink);
+  }
 
   .landing-root .aff-modal-backdrop{
     position:fixed;inset:0;z-index:100;
@@ -569,16 +627,533 @@ const landingCss = `
     transition:background .2s;
   }
   .landing-root .aff-modal-cta:hover{background:var(--gold-deep)}
+
+  /* ─── LEAVE-A-TESTIMONIAL MODAL ─── */
+  .landing-root .testi-cta-row{
+    display:flex;justify-content:center;margin-top:48px;
+  }
+  .landing-root .testi-cta{
+    background:transparent;border:1px solid var(--gold-deep);
+    color:var(--gold-deep);padding:14px 28px;border-radius:999px;
+    font-family:'Inter',system-ui,sans-serif;
+    font-size:11px;font-weight:600;letter-spacing:0.22em;
+    text-transform:uppercase;cursor:pointer;
+    transition:all .25s;
+  }
+  .landing-root .testi-cta:hover{
+    background:var(--gold-deep);color:var(--ivory);
+    transform:translateY(-1px);
+  }
+  .landing-root .testi-backdrop{
+    position:fixed;inset:0;z-index:100;
+    background:rgba(26,24,22,0.7);
+    display:flex;align-items:center;justify-content:center;
+    padding:20px;overflow-y:auto;
+  }
+  .landing-root .testi-modal{
+    background:var(--ivory);max-width:520px;width:100%;
+    border-radius:8px;padding:32px;
+    box-shadow:0 30px 80px rgba(0,0,0,0.4);
+  }
+  .landing-root .testi-title{
+    font-family:'Cormorant Garamond',serif;
+    font-size:32px;line-height:1.1;margin-bottom:8px;
+    text-transform:uppercase;letter-spacing:0.02em;
+  }
+  .landing-root .testi-sub{
+    color:var(--muted);font-size:14px;line-height:1.6;
+    margin-bottom:24px;
+  }
+  .landing-root .testi-label{
+    display:block;font-size:11px;letter-spacing:0.18em;
+    text-transform:uppercase;color:var(--gold-deep);
+    margin-bottom:8px;margin-top:18px;font-weight:500;
+  }
+  .landing-root .testi-input,
+  .landing-root .testi-textarea{
+    width:100%;padding:12px 14px;border:1px solid var(--line);
+    border-radius:4px;background:var(--soft);color:var(--ink);
+    font-family:'Inter',system-ui,sans-serif;font-size:15px;
+    outline:none;transition:border-color .2s;
+    box-sizing:border-box;
+  }
+  .landing-root .testi-textarea{
+    resize:vertical;min-height:110px;font-family:inherit;line-height:1.5;
+  }
+  .landing-root .testi-input:focus,
+  .landing-root .testi-textarea:focus{border-color:var(--gold-deep)}
+  .landing-root .testi-file{
+    width:100%;font-size:13px;color:var(--muted);
+  }
+  .landing-root .testi-hint{
+    font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;
+  }
+  .landing-root .testi-error{
+    margin-top:14px;padding:10px 12px;border-radius:4px;
+    background:#f6e9e2;color:#7a3a1a;font-size:13px;
+    border:1px solid #e2c5b5;
+  }
+  .landing-root .testi-actions{
+    display:flex;justify-content:flex-end;gap:12px;margin-top:24px;
+  }
+  .landing-root .testi-btn-ghost{
+    background:transparent;border:none;
+    color:var(--muted);padding:12px 18px;cursor:pointer;
+    font-family:'Inter',system-ui,sans-serif;font-size:12px;
+    letter-spacing:0.18em;text-transform:uppercase;font-weight:500;
+    transition:color .2s;
+  }
+  .landing-root .testi-btn-ghost:hover{color:var(--ink)}
+  .landing-root .testi-btn-primary{
+    background:var(--gold-deep);color:var(--ivory);
+    border:none;padding:12px 28px;border-radius:999px;cursor:pointer;
+    font-family:'Inter',system-ui,sans-serif;font-size:12px;
+    letter-spacing:0.18em;text-transform:uppercase;font-weight:500;
+    transition:all .25s;
+  }
+  .landing-root .testi-btn-primary:hover{background:var(--char)}
+  .landing-root .testi-btn-primary:disabled{opacity:0.6;cursor:wait}
   @media (max-width:560px){
     .landing-root .aff-modal{padding:48px 24px 32px}
     .landing-root .aff-modal-title{font-size:32px}
   }
 
-  .landing-root .founder-coffee{
-    display:block;width:180px;height:180px;
-    object-fit:cover;border-radius:50%;
-    margin:0 auto 36px;
-    box-shadow:0 16px 30px -10px rgba(26,24,22,0.18);
+  .landing-root .founder-portrait{
+    display:block;width:100%;aspect-ratio:1/1;
+    object-fit:cover;border-radius:6px;
+    box-shadow:0 24px 50px -16px rgba(26,24,22,0.22);
+  }
+  @media (max-width:768px){
+    .landing-root .founder-portrait{max-width:360px;margin:0 auto}
+  }
+
+  /* ─── INSIDE SOVEREIGN — lifestyle compositions (setthepace-style) ─── */
+  .landing-root .features{background:var(--soft);padding:120px 0}
+  .landing-root .feat-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:28px;
+    margin-top:56px;
+  }
+  .landing-root .feat-card{
+    display:flex;flex-direction:column;
+    background:transparent;border:none;border-radius:8px;overflow:hidden;
+    transition:transform .25s;
+  }
+  .landing-root .feat-card:hover{transform:translateY(-3px)}
+
+  /* Stage = the "photo composition" container. Soft neutral gradient stands
+     in for a real lifestyle backdrop. Caption sits at top in white serif. */
+  .landing-root .feat-stage{
+    position:relative;
+    width:100%;aspect-ratio:1/1;
+    border-radius:8px;overflow:hidden;
+    display:flex;align-items:flex-end;justify-content:center;
+    padding:0 0 18px;
+    background:
+      radial-gradient(ellipse at top, rgba(255,255,255,0.6), transparent 60%),
+      linear-gradient(155deg, #d9cdb8 0%, #ece3d3 35%, #f5efe6 70%, #e8dcc6 100%);
+    box-shadow:0 24px 50px -25px rgba(26,24,22,0.22);
+  }
+  .landing-root .feat-caption{
+    position:absolute;top:18px;left:24px;right:24px;
+    margin:0;text-align:center;
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:16px;line-height:1.35;
+    color:#fff;
+    text-shadow:0 1px 6px rgba(26,24,22,0.4);
+  }
+
+  /* Smaller phone, sitting inside the stage (not overlapping the caption). */
+  .landing-root .feat-phone-sm{
+    position:relative;width:62%;aspect-ratio:9/18;
+    background:#1a1816;border-radius:26px;padding:5px;
+    box-shadow:0 22px 40px -12px rgba(26,24,22,0.4),
+               0 10px 18px -6px rgba(26,24,22,0.18);
+  }
+  .landing-root .feat-phone-sm-notch{
+    position:absolute;top:8px;left:50%;transform:translateX(-50%);
+    width:42px;height:11px;background:#1a1816;
+    border-radius:8px;z-index:5;
+  }
+  .landing-root .feat-screen{
+    position:relative;background:#fbfaf6;
+    width:100%;height:100%;border-radius:20px;
+    overflow:hidden;padding:14px 10px 10px;
+  }
+  .landing-root .feat-screen-img{
+    width:100%;height:100%;display:block;
+    object-fit:cover;object-position:top;
+    background:var(--ivory);
+  }
+
+  /* ── Mockup phone-screen content (sage palette = the inner app) ── */
+  .landing-root .ph-stack{
+    display:flex;flex-direction:column;height:100%;
+    font-family:'Inter',system-ui,sans-serif;color:#1a1816;
+  }
+  .landing-root .ph-stack.center{align-items:center;text-align:center}
+  .landing-root .ph-status{
+    font-size:10px;font-weight:600;letter-spacing:0.05em;
+    text-align:center;color:#1a1816;margin-bottom:10px;
+  }
+  .landing-root .ph-h1{
+    font-family:'Cormorant Garamond',serif;
+    font-size:20px;line-height:1.1;font-weight:500;
+    color:#3d5c34;margin-bottom:2px;
+  }
+  .landing-root .ph-stack.center .ph-h1{color:#3d5c34}
+  .landing-root .ph-meta{
+    font-size:10px;color:#6b6258;margin-bottom:12px;
+  }
+  .landing-root .ph-meta.italic{font-style:italic}
+  .landing-root .ph-section-title{
+    font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+    color:#7a9a6e;font-weight:600;margin-bottom:6px;
+  }
+  .landing-root .ph-section-title.mt{margin-top:10px}
+
+  /* planner */
+  .landing-root .ph-pri{
+    display:flex;align-items:center;gap:8px;
+    font-size:11px;color:#1a1816;line-height:1.4;margin-bottom:4px;
+  }
+  .landing-root .ph-pri-n{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:14px;color:#7a9a6e;width:12px;line-height:1;flex-shrink:0;
+  }
+  .landing-root .ph-time-row{
+    display:flex;gap:8px;font-size:10px;color:#2c2926;line-height:1.5;margin-bottom:3px;
+  }
+  .landing-root .ph-time{
+    font-family:'Courier New',monospace;font-size:9px;font-weight:600;
+    color:#5b7351;min-width:60px;flex-shrink:0;
+  }
+
+  /* speak */
+  .landing-root .ph-pills{
+    display:flex;gap:5px;margin-bottom:10px;flex-wrap:wrap;
+  }
+  .landing-root .ph-pill{
+    font-size:9px;padding:3px 8px;border-radius:999px;
+    background:#f4f7ee;color:#5b7351;font-weight:500;
+  }
+  .landing-root .ph-pill.on{background:#7a9a6e;color:#fff}
+  .landing-root .ph-phrase{
+    background:#fff;border-radius:6px;padding:8px 10px;
+    margin-bottom:7px;border:1px solid #e7e2d6;
+  }
+  .landing-root .ph-phrase-cat{
+    font-size:8px;letter-spacing:0.14em;text-transform:uppercase;
+    color:#7a9a6e;font-weight:600;margin-bottom:3px;
+  }
+  .landing-root .ph-phrase-from{
+    font-size:10px;font-style:italic;color:#9a9189;
+    text-decoration:line-through;text-decoration-color:rgba(154,145,137,0.4);
+    line-height:1.3;margin-bottom:3px;
+  }
+  .landing-root .ph-phrase-to{
+    font-size:10px;color:#1a1816;line-height:1.4;font-weight:500;
+  }
+
+  /* affirmation */
+  .landing-root .ph-aff-card{
+    background:linear-gradient(135deg,#f4f7ee,#fff);
+    border:1px solid #d3e0c5;border-radius:8px;
+    padding:18px 14px;width:100%;
+    margin:8px 0 10px;display:flex;flex-direction:column;align-items:center;
+    flex:1;justify-content:center;
+  }
+  .landing-root .ph-aff-mark{
+    font-size:12px;color:#7a9a6e;letter-spacing:0.3em;margin-bottom:8px;
+  }
+  .landing-root .ph-aff-quote{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:15px;line-height:1.4;color:#1a1816;text-align:center;
+  }
+  .landing-root .ph-aff-quote em{color:#5b7351;font-style:italic}
+  .landing-root .ph-aff-cat{
+    font-size:9px;color:#7a9a6e;font-style:italic;margin-top:8px;
+  }
+  .landing-root .ph-aff-meta{
+    font-size:9px;color:#5b7351;font-style:italic;
+  }
+
+  /* habits */
+  .landing-root .ph-habit{
+    display:flex;align-items:center;gap:8px;
+    font-size:11px;color:#1a1816;margin-bottom:4px;
+  }
+  .landing-root .ph-check{
+    width:14px;height:14px;border-radius:50%;
+    border:1.5px solid #d3e0c5;background:#fff;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:8px;color:#9a9189;flex-shrink:0;
+  }
+  .landing-root .ph-check.on{background:#7a9a6e;border-color:#7a9a6e;color:#fff}
+  .landing-root .ph-water{display:flex;gap:3px;margin-bottom:4px}
+  .landing-root .ph-glass{
+    width:10px;height:14px;border-radius:2px 2px 4px 4px;
+    border:1px solid #d3e0c5;background:transparent;
+  }
+  .landing-root .ph-glass.on{background:#7a9a6e;border-color:#7a9a6e}
+  .landing-root .ph-water-count{
+    font-size:9px;color:#5b7351;font-family:'Courier New',monospace;font-weight:600;
+  }
+
+  /* growth + finance */
+  .landing-root .ph-bullet{
+    font-size:11px;color:#1a1816;line-height:1.5;margin-bottom:3px;
+  }
+  .landing-root .ph-bullet.muted{color:#6b6258}
+
+  /* finance */
+  .landing-root .ph-money-row{
+    display:flex;gap:6px;margin:6px 0 4px;
+  }
+  .landing-root .ph-money-cell{
+    flex:1;text-align:center;background:#fff;
+    border-radius:6px;padding:8px 4px;border:1px solid #e7e2d6;
+  }
+  .landing-root .ph-money-lbl{
+    font-size:8px;letter-spacing:0.18em;text-transform:uppercase;
+    color:#7a9a6e;font-weight:600;margin-bottom:2px;
+  }
+  .landing-root .ph-money-val{
+    font-family:'Cormorant Garamond',serif;font-size:13px;
+    color:#1a1816;font-weight:500;
+  }
+  .landing-root .ph-money-val.pos{color:#5b7351}
+  .landing-root .ph-money-val.neg{color:#9c6470}
+  .landing-root .ph-progress{
+    background:#e7e2d6;height:4px;border-radius:999px;overflow:hidden;
+    margin-bottom:4px;
+  }
+  .landing-root .ph-progress-fill{
+    height:100%;background:#7a9a6e;border-radius:999px;
+  }
+  .landing-root .ph-progress-meta{
+    font-size:9px;color:#5b7351;font-family:'Courier New',monospace;
+    margin-bottom:6px;
+  }
+
+  /* Extras for fuller phone screens */
+  .landing-root .ph-search{
+    font-size:10px;color:#9a9189;background:#fff;
+    padding:6px 10px;border-radius:6px;border:1px solid #e7e2d6;
+    margin-bottom:8px;
+  }
+  .landing-root .ph-section-title.center{text-align:center}
+  .landing-root .ph-aff-mini{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:11px;color:#1a1816;line-height:1.4;text-align:center;
+    margin-bottom:4px;
+  }
+  .landing-root .ph-streak{
+    display:flex;align-items:baseline;gap:8px;
+  }
+  .landing-root .ph-streak-num{
+    font-family:'Cormorant Garamond',serif;font-size:22px;
+    color:#5b7351;font-weight:500;line-height:1;
+  }
+  .landing-root .ph-streak-lbl{
+    font-size:10px;color:#7a9a6e;font-style:italic;
+  }
+  .landing-root .ph-reflect{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:12px;color:#3d5c34;line-height:1.45;
+    background:#f4f7ee;padding:10px 12px;border-radius:6px;
+    border-left:2px solid #7a9a6e;margin:0;
+  }
+  .landing-root .feat-screen-eyebrow{
+    font-size:9px;letter-spacing:0.22em;text-transform:uppercase;
+    color:var(--gold-deep);margin-bottom:14px;font-weight:500;
+  }
+  .landing-root .feat-screen-eyebrow.center{text-align:center}
+  .landing-root .feat-screen-divider{
+    height:1px;background:var(--line);margin:14px 0;
+  }
+  .landing-root .feat-label{padding:18px 4px 0;text-align:center;max-width:280px;margin:0 auto}
+
+  /* Content inside the smaller phone needs to scale down to fit the tighter
+     viewport — shrink the typography across the board for ph-* elements
+     when they live in the small phone. */
+  .landing-root .feat-phone-sm .ph-h1{font-size:14px}
+  .landing-root .feat-phone-sm .ph-meta{font-size:8px;margin-bottom:8px}
+  .landing-root .feat-phone-sm .ph-status{font-size:7px;margin-bottom:6px}
+  .landing-root .feat-phone-sm .ph-section-title{font-size:6.5px;margin-bottom:4px}
+  .landing-root .feat-phone-sm .ph-section-title.mt{margin-top:6px}
+  .landing-root .feat-phone-sm .ph-pri,
+  .landing-root .feat-phone-sm .ph-habit,
+  .landing-root .feat-phone-sm .ph-bullet{font-size:8px;margin-bottom:2.5px;gap:5px}
+  .landing-root .feat-phone-sm .ph-pri-n{font-size:11px;width:9px}
+  .landing-root .feat-phone-sm .ph-check{width:10px;height:10px;font-size:6px}
+  .landing-root .feat-phone-sm .ph-time-row{font-size:7px;gap:5px;margin-bottom:2px}
+  .landing-root .feat-phone-sm .ph-time{font-size:6.5px;min-width:42px}
+  .landing-root .feat-phone-sm .ph-pills{gap:3px;margin-bottom:6px}
+  .landing-root .feat-phone-sm .ph-pill{font-size:6.5px;padding:2px 5px}
+  .landing-root .feat-phone-sm .ph-search{font-size:7px;padding:4px 6px;margin-bottom:5px}
+  .landing-root .feat-phone-sm .ph-phrase{padding:5px 6px;margin-bottom:4px;border-radius:4px}
+  .landing-root .feat-phone-sm .ph-phrase-cat{font-size:6px;margin-bottom:2px}
+  .landing-root .feat-phone-sm .ph-phrase-from,
+  .landing-root .feat-phone-sm .ph-phrase-to{font-size:7px;line-height:1.3;margin-bottom:2px}
+  .landing-root .feat-phone-sm .ph-aff-card{padding:10px 8px;margin:4px 0 6px}
+  .landing-root .feat-phone-sm .ph-aff-mark{font-size:9px;margin-bottom:5px}
+  .landing-root .feat-phone-sm .ph-aff-quote{font-size:10px;line-height:1.35}
+  .landing-root .feat-phone-sm .ph-aff-cat,
+  .landing-root .feat-phone-sm .ph-aff-meta{font-size:7px;margin-top:4px}
+  .landing-root .feat-phone-sm .ph-aff-mini{font-size:8px;margin-bottom:2px}
+  .landing-root .feat-phone-sm .ph-water{gap:2px;margin-bottom:2px}
+  .landing-root .feat-phone-sm .ph-glass{width:6px;height:9px;border-radius:1px 1px 2px 2px}
+  .landing-root .feat-phone-sm .ph-water-count{font-size:6.5px}
+  .landing-root .feat-phone-sm .ph-streak-num{font-size:15px}
+  .landing-root .feat-phone-sm .ph-streak-lbl{font-size:7px}
+  .landing-root .feat-phone-sm .ph-reflect{font-size:8px;padding:6px 7px;border-left-width:1.5px}
+  .landing-root .feat-phone-sm .ph-money-row{gap:3px;margin:3px 0 2px}
+  .landing-root .feat-phone-sm .ph-money-cell{padding:4px 2px;border-radius:3px}
+  .landing-root .feat-phone-sm .ph-money-lbl{font-size:5.5px;margin-bottom:1px}
+  .landing-root .feat-phone-sm .ph-money-val{font-size:9px}
+  .landing-root .feat-phone-sm .ph-progress{height:3px;margin-bottom:2px}
+  .landing-root .feat-phone-sm .ph-progress-meta{font-size:6px;margin-bottom:3px}
+  .landing-root .feat-name{
+    font-family:'Cormorant Garamond',serif;
+    font-size:22px;font-weight:500;
+    text-transform:uppercase;letter-spacing:0.04em;
+    color:var(--ink);margin-bottom:6px;
+  }
+  .landing-root .feat-desc{
+    font-size:13px;color:var(--muted);line-height:1.55;
+  }
+
+  /* — planner card content — */
+  .landing-root .feat-priorities{
+    list-style:none;padding:0;margin:0 0 8px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .landing-root .feat-priorities li{
+    display:flex;align-items:flex-start;gap:10px;
+    font-size:13px;color:var(--ink);line-height:1.4;
+  }
+  .landing-root .feat-num{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:18px;color:var(--gold-deep);
+    line-height:1;flex-shrink:0;width:14px;
+  }
+  .landing-root .feat-block{
+    display:flex;gap:10px;font-size:11px;color:var(--char);
+    margin-top:6px;line-height:1.5;
+  }
+  .landing-root .feat-block-time{
+    font-family:'Courier New',monospace;font-size:10px;
+    color:var(--gold-deep);font-weight:600;flex-shrink:0;
+    min-width:64px;
+  }
+
+  /* — speak card — */
+  .landing-root .feat-from{
+    font-style:italic;font-size:13px;color:var(--muted);
+    text-decoration:line-through;text-decoration-color:rgba(107,98,88,0.4);
+    margin:0 0 6px;line-height:1.4;
+  }
+  .landing-root .feat-to{
+    font-size:13px;color:var(--ink);line-height:1.5;
+    margin:0;font-weight:500;
+  }
+
+  /* — affirmation card — */
+  .landing-root .feat-affirmation{
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:18px;line-height:1.4;color:var(--ink);
+    text-align:center;flex:1;display:flex;align-items:center;
+    justify-content:center;margin:0;
+  }
+  .landing-root .feat-affirmation-meta{
+    text-align:center;font-size:10px;font-style:italic;
+    color:var(--gold-deep);margin-top:10px;
+  }
+
+  /* — calendar card — */
+  .landing-root .feat-cal-head{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:2px;
+    font-size:9px;color:var(--muted);
+    text-align:center;margin-bottom:6px;
+  }
+  .landing-root .feat-cal-grid{
+    display:grid;grid-template-columns:repeat(7,1fr);gap:2px;
+    flex:1;
+  }
+  .landing-root .feat-cal-day{
+    position:relative;font-size:11px;color:var(--ink);
+    aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+  }
+  .landing-root .feat-cal-day.today{
+    background:var(--gold-deep);color:var(--ivory);
+    border-radius:4px;font-weight:600;
+  }
+  .landing-root .feat-cal-dot{
+    position:absolute;bottom:3px;left:50%;transform:translateX(-50%);
+    width:3px;height:3px;border-radius:50%;background:var(--gold);
+  }
+  .landing-root .feat-cal-day.today .feat-cal-dot{background:var(--ivory)}
+
+  /* — habits card — */
+  .landing-root .feat-habits{
+    list-style:none;padding:0;margin:0 0 14px;
+    display:flex;flex-direction:column;gap:8px;
+  }
+  .landing-root .feat-habits li{
+    display:flex;align-items:center;gap:10px;
+    font-size:13px;color:var(--ink);
+  }
+  .landing-root .feat-check{
+    width:18px;height:18px;border-radius:50%;
+    border:1.5px solid var(--line);
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:10px;color:var(--muted);flex-shrink:0;
+  }
+  .landing-root .feat-check.on{
+    background:var(--gold-deep);border-color:var(--gold-deep);
+    color:var(--ivory);
+  }
+  .landing-root .feat-water{
+    margin-top:auto;display:flex;align-items:center;gap:10px;
+    font-size:11px;color:var(--muted);
+  }
+  .landing-root .feat-water-label{font-style:italic}
+  .landing-root .feat-water-row{display:flex;gap:3px;flex:1}
+  .landing-root .feat-water-glass{
+    width:10px;height:14px;border-radius:2px 2px 4px 4px;
+    border:1px solid var(--line);background:transparent;
+  }
+  .landing-root .feat-water-glass.on{
+    background:var(--gold);border-color:var(--gold);
+  }
+  .landing-root .feat-water-count{
+    font-family:'Courier New',monospace;font-size:10px;
+    color:var(--gold-deep);font-weight:600;
+  }
+
+  /* — vision card — */
+  .landing-root .feat-vision-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:8px;flex:1;
+  }
+  .landing-root .feat-vision-tile{
+    background:linear-gradient(135deg,var(--cream),var(--sand));
+    border-radius:4px;aspect-ratio:1/1;
+    display:flex;align-items:center;justify-content:center;
+    padding:8px;text-align:center;
+    font-family:'Cormorant Garamond',serif;font-style:italic;
+    font-size:13px;color:var(--gold-deep);
+  }
+  .landing-root .feat-vision-tile.alt{
+    background:linear-gradient(135deg,var(--sand),var(--cream));
+    color:var(--char);
+  }
+
+  /* responsive */
+  @media (max-width:900px){
+    .landing-root .feat-grid{grid-template-columns:1fr 1fr;gap:20px}
+  }
+  @media (max-width:560px){
+    .landing-root .feat-grid{grid-template-columns:1fr;max-width:380px;margin-left:auto;margin-right:auto}
   }
 
   .landing-root .testimonials{background:var(--cream)}
@@ -690,6 +1265,21 @@ const landingCss = `
     .landing-root .price-card.featured:hover{transform:translateY(-4px)}
     .landing-root section{padding:80px 0}
     .landing-root .nav-links{display:none}
+    /* Mobile drawer — nav-links + nav-right collapse into a vertical panel
+       below the top bar when the hamburger is tapped. */
+    .landing-root .nav-links.open{
+      display:flex;flex-direction:column;align-items:flex-start;
+      gap:18px;position:absolute;top:64px;left:0;right:0;
+      background:var(--ivory);border-top:1px solid var(--line);
+      padding:20px 24px;z-index:50;
+      box-shadow:0 16px 40px rgba(26,24,22,0.08);
+    }
+    .landing-root .nav-links.open .nav-right{
+      display:flex;flex-direction:column;align-items:flex-start;
+      gap:14px;width:100%;
+    }
+    .landing-root .nav-links.open .nav-cta,
+    .landing-root .nav-links.open .nav-price{width:100%;text-align:center;justify-content:center}
     .landing-root .burger{display:block}
     .landing-root .foot-grid{grid-template-columns:1fr 1fr;gap:32px}
   }
@@ -715,8 +1305,8 @@ type PlanBase = {
 const PLAN_BASE: PlanBase[] = [
   { planId: "1mo", dollars: "$14", cents: ".99" },
   { planId: "3mo", dollars: "$39", cents: ".99" },
-  { planId: "6mo", dollars: "$74", cents: ".99", featured: true },
-  { planId: "12mo", dollars: "$129", cents: ".99" },
+  { planId: "6mo", dollars: "$74", cents: ".99" },
+  { planId: "12mo", dollars: "$129", cents: ".99", featured: true },
 ];
 
 // A headline part: a plain string (where "\n" becomes a line break) or
@@ -771,6 +1361,12 @@ type Copy = {
     title: Part[];
     sub: string;
     items: { num: string; title: string; desc: string }[];
+  };
+  features: {
+    eyebrow: string;
+    title: Part[];
+    sub: string;
+    items: { key: string; name: string; desc: string; caption: string; src?: string }[];
   };
   showcase: {
     eyebrow: string;
@@ -849,6 +1445,19 @@ const COPY: Record<Lang, Copy> = {
         },
       ],
     },
+    features: {
+      eyebrow: "What's inside",
+      title: ["A peek ", { i: "inside" }, " Sovereign"],
+      sub: "Twelve modules, gathered into one quiet space — here's a small glimpse.",
+      items: [
+        { key: "planner",      name: "Daily Planner",     desc: "Top 3 priorities, time blocks, wins",                caption: "Wake up knowing the three things that actually matter today.",                                       src: "/images/screen-planner.png" },
+        { key: "speak",        name: "Speak Eloquently",  desc: "130 phrases · saying no, boundaries, hard talks",    caption: "130 ways to say what you mean — without losing yourself.",                                           src: "/images/screen-speak.png" },
+        { key: "affirmations", name: "Affirmations",      desc: "A word for today — pick or let it find you",         caption: "A word for today. Pick the one your soul needs, or let it find you.",                                src: "/images/screen-affirmations.png" },
+        { key: "habits",       name: "Habits & Water",    desc: "Gentle daily rhythm tracking",                       caption: "The rhythm of a life lived on purpose — your routines, your water, your gentle daily wins.",         src: "/images/screen-habits.png" },
+        { key: "growth",       name: "Growth & Self",     desc: "Strengths, weak spots, what to nurture",             caption: "Name your strengths. Notice what you're nurturing. Reflect on who you're becoming.",                src: "/images/screen-growth.png" },
+        { key: "finance",      name: "Personal Finance",  desc: "In, out, savings goals, investments",                caption: "Money this month, savings goals, investments — all in one quiet space.",                            src: "/images/screen-finance.png" },
+      ],
+    },
     showcase: {
       eyebrow: "Inside Sovereign",
       title: ["A quiet ", { i: "home" }, " on your phone"],
@@ -892,20 +1501,20 @@ const COPY: Record<Lang, Copy> = {
         "Share it — Instagram, text, voice note, however feels true to you",
         "Get paid on the 1st of the month after your referral's trial converts",
       ],
-      mathHeader: "If you sell in one month…",
+      mathHeader: "You earn $51.99 every time a referral buys the Year plan. So if in one month…",
       mathRows: [
-        { label: "1 annual sale", amount: "$51.99" },
-        { label: "5 annual sales", amount: "$259.95" },
-        { label: "10 annual sales", amount: "$519.90" },
-        { label: "20 annual sales", amount: "$1,039.80" },
+        { label: "1 Year subscription sold", amount: "$51.99" },
+        { label: "5 Year subscriptions sold", amount: "$259.95" },
+        { label: "10 Year subscriptions sold", amount: "$519.90" },
+        { label: "20 Year subscriptions sold", amount: "$1,039.80" },
       ],
       oneTimeNote:
         "Commission is a one-time payment per referral — not recurring. Paid the month after her trial converts to a paid Annual subscription.",
-      fine: "You must be on the Annual plan to earn commission. Monthly, 3-month, and 6-month referrals don't count. Self-referrals don't count.",
+      fine: "You must keep an active Year subscription to earn commission. If you cancel your own subscription, your referral link is deactivated and any signups after your cancellation don't credit you — even if they fall inside the 60-day cookie window. Monthly, 3-month, and 6-month referrals don't count. Self-referrals don't count.",
       cta: "Read full program details →",
       ctaHref: "/affiliate",
       close: "Close",
-      trigger: "see how it works →",
+      trigger: "Affiliate program · See details →",
     },
     trial: {
       eyebrow: "An invitation",
@@ -954,7 +1563,6 @@ const COPY: Record<Lang, Copy> = {
           "Personal welcome from the founder",
           "Early access to new features",
         ],
-        badge: "Most Loved",
       },
       "12mo": {
         tier: "1 Year",
@@ -966,6 +1574,7 @@ const COPY: Record<Lang, Copy> = {
           "Access to affiliate program — earn 40% commission",
           "Lock in this rate for life",
         ],
+        badge: "✦ Most Loved",
       },
     },
     reviews: {
@@ -1034,8 +1643,8 @@ const COPY: Record<Lang, Copy> = {
       ],
       supportHead: "Support",
       support: [
-        { label: "Contact", href: "mailto:hello@sovereignplanner.com" },
-        { label: "Help Center", href: "mailto:hello@sovereignplanner.com" },
+        { label: "Contact", href: "mailto:admin@dominioncodeacademy.com" },
+        { label: "Help Center", href: "mailto:admin@dominioncodeacademy.com" },
         { label: "Manage Plan", href: "/billing" },
         { label: "Affiliate", href: "/affiliate" },
       ],
@@ -1085,6 +1694,19 @@ const COPY: Record<Lang, Copy> = {
         },
       ],
     },
+    features: {
+      eyebrow: "Lo que hay dentro",
+      title: ["Un vistazo ", { i: "por dentro" }, " de Sovereign"],
+      sub: "Doce módulos, reunidos en un espacio sereno — aquí una pequeña muestra.",
+      items: [
+        { key: "planner",      name: "Planificador diario",  desc: "Top 3 prioridades, bloques de tiempo, logros",            caption: "Despierta sabiendo las tres cosas que de verdad importan hoy.",                                  src: "/images/screen-planner.png" },
+        { key: "speak",        name: "Hablar con elocuencia", desc: "130 frases · decir no, límites, conversaciones difíciles", caption: "130 maneras de decir lo que piensas — sin perderte a ti misma.",                                src: "/images/screen-speak.png" },
+        { key: "affirmations", name: "Afirmaciones",          desc: "Una palabra para hoy — eliges o se elige sola",            caption: "Una palabra para hoy. Elige la que tu alma necesita, o deja que te encuentre.",                  src: "/images/screen-affirmations.png" },
+        { key: "habits",       name: "Hábitos y agua",        desc: "Ritmo diario gentil",                                       caption: "El ritmo de una vida con propósito — tus rutinas, tu agua, tus pequeños logros diarios.",         src: "/images/screen-habits.png" },
+        { key: "growth",       name: "Crecimiento personal", desc: "Fortalezas, puntos débiles, qué nutrir",                    caption: "Nombra tus fortalezas. Observa lo que cultivas. Reflexiona sobre quién te estás convirtiendo.",   src: "/images/screen-growth.png" },
+        { key: "finance",      name: "Finanzas personales",  desc: "Entradas, salidas, metas de ahorro, inversiones",          caption: "Dinero del mes, metas de ahorro, inversiones — todo en un espacio sereno.",                       src: "/images/screen-finance.png" },
+      ],
+    },
     showcase: {
       eyebrow: "Por dentro de Sovereign",
       title: ["Un ", { i: "hogar" }, " sereno en tu teléfono"],
@@ -1128,20 +1750,20 @@ const COPY: Record<Lang, Copy> = {
         "Compártelo — Instagram, mensaje, nota de voz, como se sienta real para ti",
         "Recibe el pago el día 1 del mes después de que tu referida convierta su prueba",
       ],
-      mathHeader: "Si vendes en un mes…",
+      mathHeader: "Ganas $51.99 cada vez que una referida compra el plan Anual. Entonces si en un mes…",
       mathRows: [
-        { label: "1 venta anual", amount: "$51.99" },
-        { label: "5 ventas anuales", amount: "$259.95" },
-        { label: "10 ventas anuales", amount: "$519.90" },
-        { label: "20 ventas anuales", amount: "$1,039.80" },
+        { label: "1 plan Anual vendido", amount: "$51.99" },
+        { label: "5 planes Anuales vendidos", amount: "$259.95" },
+        { label: "10 planes Anuales vendidos", amount: "$519.90" },
+        { label: "20 planes Anuales vendidos", amount: "$1,039.80" },
       ],
       oneTimeNote:
         "La comisión es un pago único por cada referida — no es recurrente. Pagado el mes después de que su prueba se convierta en suscripción Anual paga.",
-      fine: "Debes estar en el plan Anual para ganar comisión. Las referencias a planes Mensual, 3 meses y 6 meses no cuentan. Las auto-referencias no cuentan.",
+      fine: "Debes mantener una suscripción Anual activa para ganar comisión. Si cancelas tu propia suscripción, tu enlace de referida se desactiva y cualquier inscripción posterior a tu cancelación no se te acredita — aun si ocurre dentro de la ventana de 60 días. Las referencias a planes Mensual, 3 meses y 6 meses no cuentan. Las auto-referencias no cuentan.",
       cta: "Ver detalles completos del programa →",
       ctaHref: "/affiliate",
       close: "Cerrar",
-      trigger: "ver cómo funciona →",
+      trigger: "Programa de afiliadas · Ver detalles →",
     },
     trial: {
       eyebrow: "Una invitación",
@@ -1190,7 +1812,6 @@ const COPY: Record<Lang, Copy> = {
           "Bienvenida personal de la fundadora",
           "Acceso anticipado a nuevas funciones",
         ],
-        badge: "La favorita",
       },
       "12mo": {
         tier: "1 año",
@@ -1202,6 +1823,7 @@ const COPY: Record<Lang, Copy> = {
           "Acceso al programa de afiliadas — gana 40% de comisión",
           "Asegura esta tarifa de por vida",
         ],
+        badge: "✦ La favorita",
       },
     },
     reviews: {
@@ -1270,8 +1892,8 @@ const COPY: Record<Lang, Copy> = {
       ],
       supportHead: "Soporte",
       support: [
-        { label: "Contacto", href: "mailto:hello@sovereignplanner.com" },
-        { label: "Centro de ayuda", href: "mailto:hello@sovereignplanner.com" },
+        { label: "Contacto", href: "mailto:admin@dominioncodeacademy.com" },
+        { label: "Centro de ayuda", href: "mailto:admin@dominioncodeacademy.com" },
         { label: "Gestionar plan", href: "/billing" },
         { label: "Afiliados", href: "/affiliate" },
       ],
@@ -1292,7 +1914,32 @@ const COPY: Record<Lang, Copy> = {
 export default function Home() {
   const [lang, setLang] = useState<Lang>("en");
   const [affModalOpen, setAffModalOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  // Approved testimonials are pulled live from the storage bucket and rendered
+  // in the reviews section. Hardcoded Maya/Sienna/Jules quotes have been
+  // removed — only real, approved submissions appear here now.
+  const [approvedReviews, setApprovedReviews] = useState<ApprovedTestimonial[]>([]);
+  const [reviewsLoaded, setReviewsLoaded] = useState(false);
   const c = COPY[lang];
+
+  useEffect(() => {
+    let cancelled = false;
+    listApprovedTestimonials()
+      .then((list) => {
+        if (!cancelled) {
+          setApprovedReviews(list);
+          setReviewsLoaded(true);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setReviewsLoaded(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const closeMobileNav = () => setMobileNavOpen(false);
 
   return (
     <div className="landing-root">
@@ -1303,12 +1950,12 @@ export default function Home() {
           <a href="#" className="logo">
             Sovereign
           </a>
-          <div className="nav-links">
-            <a href="#pillars">{c.nav.method}</a>
-            <a href="#reviews">{c.nav.reviews}</a>
-            <a href="#faq">{c.nav.faq}</a>
+          <div className={`nav-links${mobileNavOpen ? " open" : ""}`}>
+            <a href="#pillars" onClick={closeMobileNav}>{c.nav.method}</a>
+            <a href="#reviews" onClick={closeMobileNav}>{c.nav.reviews}</a>
+            <a href="#faq" onClick={closeMobileNav}>{c.nav.faq}</a>
             <div className="nav-right">
-              <a href="/login" className="nav-login">
+              <a href="/login" className="nav-login" onClick={closeMobileNav}>
                 {c.nav.login}
               </a>
               <div className="lang-toggle" role="group" aria-label="Language">
@@ -1340,33 +1987,59 @@ export default function Home() {
               </a>
             </div>
           </div>
-          <div className="burger">☰</div>
+          <button
+            type="button"
+            className="burger"
+            aria-label="Menu"
+            aria-expanded={mobileNavOpen}
+            onClick={() => setMobileNavOpen((v) => !v)}
+          >
+            {mobileNavOpen ? "✕" : "☰"}
+          </button>
         </div>
       </nav>
 
-      <header className="hero">
-        <div className="container hero-grid">
-          <div>
-            <div className="eyebrow">{c.hero.eyebrow}</div>
-            <h1>{renderParts(c.hero.title)}</h1>
-            <p className="hero-sub">{c.hero.sub}</p>
-            <div className="cta-row">
-              <a href="#pricing" className="btn btn-primary">
-                {c.hero.ctaPrimary}
-              </a>
-              <a href="#pillars" className="btn btn-ghost">
-                {c.hero.ctaGhost}
-              </a>
-            </div>
-            <div className="trust-row">
-              <span className="dot"></span>
-              <span>{c.hero.trust}</span>
-            </div>
+      <header className="hero hero-center">
+        <div className="container">
+          <div className="eyebrow">{c.hero.eyebrow}</div>
+          <h1>{renderParts(c.hero.title)}</h1>
+          <p className="hero-sub">{c.hero.sub}</p>
+          <div className="cta-row">
+            <a href="#pricing" className="btn btn-primary">
+              {c.hero.ctaPrimary}
+            </a>
+            <a href="#pillars" className="btn btn-ghost">
+              {c.hero.ctaGhost}
+            </a>
+          </div>
+          <div className="trust-row">
+            <span className="dot"></span>
+            <span>{c.hero.trust}</span>
           </div>
 
-          <div className="hero-visual">
-            <img src="/hero.jpg?v=1" alt="Sovereign — strength in stillness" />
-            <div className="hero-quote">{renderParts(c.hero.quote)}</div>
+          {/* Device mockups moved up from the old showcase section — give
+              the visitor an immediate visual of the app right under the CTA. */}
+          <div className="hero-devices">
+            <div className="show-devices">
+              <div className="show-laptop">
+                <div className="show-laptop-screen">
+                  <img
+                    src="/images/sovereign-app-desktop.png?v=3"
+                    alt="Sovereign on desktop"
+                    className="show-laptop-img"
+                  />
+                </div>
+                <div className="show-laptop-base"></div>
+              </div>
+              <div className="show-phone">
+                <div className="show-phone-notch"></div>
+                <img
+                  src="/images/sovereign-app-screen.png?v=3"
+                  alt="Sovereign app summary view"
+                  className="show-phone-screen"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </header>
@@ -1381,9 +2054,9 @@ export default function Home() {
 
       <section id="pillars" className="pillars">
         <div className="container">
-          <div className="section-eyebrow">{c.pillars.eyebrow}</div>
-          <h2>{renderParts(c.pillars.title)}</h2>
-          <p className="section-sub">{c.pillars.sub}</p>
+          <div className="section-eyebrow center">{c.pillars.eyebrow}</div>
+          <h2 className="center">{renderParts(c.pillars.title)}</h2>
+          <p className="section-sub center">{c.pillars.sub}</p>
 
           <div className="pillar-grid">
             {c.pillars.items.map((item) => (
@@ -1397,80 +2070,14 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="showcase">
-        <div className="container">
-          <div className="section-eyebrow center">{c.showcase.eyebrow}</div>
-          <h2 className="center">{renderParts(c.showcase.title)}</h2>
-          <p className="section-sub center">{c.showcase.sub}</p>
-
-          <div className="showcase-stage">
-            {/* Floating review card — top left */}
-            <div className="review-card card-1">
-              <div className="review-stars">★★★★★</div>
-              <div className="review-meta">
-                {c.showcase.reviews[0].author}, {c.showcase.reviews[0].date}
-              </div>
-              <div className="review-title">{c.showcase.reviews[0].title}</div>
-              <div className="review-body">{c.showcase.reviews[0].body}</div>
-            </div>
-
-            {/* Laptop (back), Phone (overlapping front) */}
-            <div className="show-devices">
-              <div className="show-laptop">
-                <div className="show-laptop-screen">
-                  <img
-                    src="/images/sovereign-app-desktop.png?v=3"
-                    alt="Sovereign on desktop"
-                    className="show-laptop-img"
-                  />
-                </div>
-                <div className="show-laptop-base"></div>
-              </div>
-
-              <div className="show-phone">
-                <div className="show-phone-notch"></div>
-                <img
-                  src="/images/sovereign-app-screen.png?v=3"
-                  alt="Sovereign app summary view"
-                  className="show-phone-screen"
-                />
-              </div>
-            </div>
-
-            {/* Floating review card — middle right */}
-            <div className="review-card card-2">
-              <div className="review-stars">★★★★★</div>
-              <div className="review-meta">
-                {c.showcase.reviews[1].author}, {c.showcase.reviews[1].date}
-              </div>
-              <div className="review-title">{c.showcase.reviews[1].title}</div>
-              <div className="review-body">{c.showcase.reviews[1].body}</div>
-            </div>
-
-            {/* Floating review card — bottom left */}
-            <div className="review-card card-3">
-              <div className="review-stars">★★★★★</div>
-              <div className="review-meta">
-                {c.showcase.reviews[2].author}, {c.showcase.reviews[2].date}
-              </div>
-              <div className="review-title">{c.showcase.reviews[2].title}</div>
-              <div className="review-body">{c.showcase.reviews[2].body}</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="founder">
         <div className="container founder-container">
-          <img
-            src="/images/sovereign-coffee.png?v=3"
-            alt="Sovereign cup"
-            className="founder-coffee"
-          />
-          <div className="section-eyebrow center">{c.founder.eyebrow}</div>
-          <h2 className="founder-title center">{renderParts(c.founder.title)}</h2>
-          <p className="founder-body">{c.founder.body}</p>
-          <div className="founder-signoff">{c.founder.signoff}</div>
+          <div className="founder-text">
+            <div className="section-eyebrow center">{c.founder.eyebrow}</div>
+            <h2 className="founder-title center">{renderParts(c.founder.title)}</h2>
+            <p className="founder-body">{c.founder.body}</p>
+            <div className="founder-signoff">{c.founder.signoff}</div>
+          </div>
         </div>
       </section>
 
@@ -1514,26 +2121,18 @@ export default function Home() {
                   </div>
                   <div className="price-savings">{pc.savings || " "}</div>
                   <ul className="price-features">
-                    {pc.features.map((f) => {
-                      const isAffiliate =
-                        plan.planId === "12mo" &&
-                        /affiliate|afiliad/i.test(f);
-                      return (
-                        <li key={f}>
-                          {f}
-                          {isAffiliate && (
-                            <button
-                              type="button"
-                              className="aff-trigger"
-                              onClick={() => setAffModalOpen(true)}
-                            >
-                              {c.affiliateModal.trigger}
-                            </button>
-                          )}
-                        </li>
-                      );
-                    })}
+                    {pc.features.map((f) => (
+                      <li key={f}>{f}</li>
+                    ))}
                   </ul>
+                  {/* Affiliate-program box sits ABOVE the primary CTA so the
+                      "Begin Free Trial" button stays at the bottom of every
+                      card — uniform across the row. Only shown for 1 Year. */}
+                  {plan.planId === "12mo" && (
+                    <a href="/affiliate" className="aff-card-btn">
+                      {c.affiliateModal.trigger}
+                    </a>
+                  )}
                   <form action={startCheckoutAction} className="price-form">
                     <input type="hidden" name="planId" value={plan.planId} />
                     <button type="submit" className="price-btn">
@@ -1554,14 +2153,33 @@ export default function Home() {
           <div className="section-eyebrow">{c.reviews.eyebrow}</div>
           <h2>{renderParts(c.reviews.title)}</h2>
 
-          <div className="quote-grid">
-            {c.reviews.quotes.map((q) => (
-              <div className="quote" key={q.author}>
-                <div className="stars">✦ ✦ ✦ ✦ ✦</div>
-                <p>&ldquo;{q.text}&rdquo;</p>
-                <div className="quote-author">{q.author}</div>
-              </div>
-            ))}
+          {reviewsLoaded && approvedReviews.length === 0 ? (
+            <p className="quote-empty">
+              {lang === "es"
+                ? "Aún no hay testimonios — sé la primera en compartir tu palabra."
+                : "No testimonials yet — be the first to share yours."}
+            </p>
+          ) : (
+            <div className="quote-grid">
+              {approvedReviews.map((q) => (
+                <div className="quote" key={q.id}>
+                  {q.photoUrl && (
+                    <img
+                      src={q.photoUrl}
+                      alt={q.name}
+                      className="quote-photo"
+                    />
+                  )}
+                  <div className="stars">✦ ✦ ✦ ✦ ✦</div>
+                  <p>&ldquo;{q.quote}&rdquo;</p>
+                  <div className="quote-author">— {q.name}</div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="testi-cta-row">
+            <LeaveTestimonialModal lang={lang} />
           </div>
         </div>
       </section>

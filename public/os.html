@@ -3,6 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- iOS Safari and Cloudflare cache os.html aggressively. These tags force
+     a fresh fetch each visit so the latest design edits actually appear on
+     the phone without users having to clear Safari data. -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#5b7351">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -35,6 +41,11 @@
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #d3e0c5; border-radius: 4px; }
   ::-webkit-scrollbar-thumb:hover { background: #a8c090; }
+  /* Per-row horizontal scroll without a visible scrollbar — used on the
+     To-Do/Wins rows so long titles or notes scroll inside the row instead
+     of wrapping and stretching the card vertically. */
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
   input[type="range"] { -webkit-appearance: none; appearance: none; height: 4px; background: #d3e0c5; border-radius: 2px; outline: none; }
   input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #7a9a6e; cursor: pointer; }
   input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #7a9a6e; cursor: pointer; border: 0; }
@@ -1714,6 +1725,96 @@ const TRANSLATIONS = {
     "Add a task": "Add a task",
     "What's the next small thing?": "What's the next small thing?",
     "Task name…": "Task name…",
+    "Start time": "Start time",
+    "End time": "End time",
+    "Start": "Start",
+    "End": "End",
+    "min": "min",
+    "hr": "hr",
+    "Add new event": "ADD NEW EVENT",
+    "What's happening?": "What's happening?",
+    "Notes (optional)…": "Notes (optional)…",
+    "Notes…": "Notes…",
+    "Add to": "Add to",
+    "Customize": "Customize",
+    "Customize summary": "Customize summary",
+    "Pick what shows on this page.": "Pick what shows on this page.",
+    "Affirmation": "Affirmation",
+    "Today's stat circles": "Today's stat circles",
+    "Today's tasks": "Today's tasks",
+    "My why (photo)": "My why (photo)",
+    "Three priorities": "Three priorities",
+    "Vitamins panel": "Vitamins panel",
+    "SHOW / HIDE": "SHOW / HIDE",
+    "ADD TO SUMMARY": "ADD TO SUMMARY",
+    "Today's events": "Today's events",
+    "From your Calendar": "From your Calendar",
+    "Money this month": "Money this month",
+    "Income, expenses, net": "Income, expenses, net",
+    "Goals progress": "Goals progress",
+    "Average across active goals": "Average across active goals",
+    "Vision board peek": "Vision board peek",
+    "A few images from your board": "A few images from your board",
+    "Today's wins": "Today's wins",
+    "From your Daily Planner": "From your Daily Planner",
+    "What's on your calendar today.": "What's on your calendar today.",
+    "Nothing scheduled.": "Nothing scheduled.",
+    "calendar →": "calendar →",
+    "In, out, and what's left.": "In, out, and what's left.",
+    "In": "In",
+    "Out": "Out",
+    "Net": "Net",
+    "finance →": "finance →",
+    "Where you are, on average.": "Where you are, on average.",
+    "No active goals yet.": "No active goals yet.",
+    "across {n} active": "across {n} active",
+    "goals →": "goals →",
+    "open board →": "open board →",
+    "{n} achieved · {m} on the way": "{n} achieved · {m} on the way",
+    "Your vision board is empty.": "Your vision board is empty.",
+    "What you're proud of.": "What you're proud of.",
+    "No wins logged yet today.": "No wins logged yet today.",
+    "planner →": "planner →",
+    "add": "add",
+    "Add a priority": "Add a priority",
+    "What matters most?": "What matters most?",
+    "Tap to edit": "Tap to edit",
+    "Add event": "Add event",
+    "Add income or expense": "Add income or expense",
+    "Add a goal": "Add a goal",
+    "Add to vision board": "Add to vision board",
+    "Add a win": "Add a win",
+    "Nothing scheduled. Tap + to add.": "Nothing scheduled. Tap + to add.",
+    "No active goals yet. Tap + to add.": "No active goals yet. Tap + to add.",
+    "Your vision board is empty. Tap + to add.": "Your vision board is empty. Tap + to add.",
+    "No wins logged yet. Tap + to add.": "No wins logged yet. Tap + to add.",
+    "STAT CIRCLES": "STAT CIRCLES",
+    "Pick what shows in the row of circles.": "Pick what shows in the row of circles.",
+    "Tasks left": "Tasks left",
+    "Top 3 priorities": "Top 3 priorities",
+    "Habits done": "Habits done",
+    "Water glasses": "Water glasses",
+    "Vitamins taken": "Vitamins taken",
+    "Mood logged": "Mood logged",
+    "Wins logged": "Wins logged",
+    "Events today": "Events today",
+    "Money (net)": "Money (net)",
+    "Vision achieved": "Vision achieved",
+    "avg across active": "avg across active",
+    "add a goal to begin": "add a goal to begin",
+    "logged today": "logged today",
+    "log a win": "log a win",
+    "on the calendar": "on the calendar",
+    "nothing scheduled": "nothing scheduled",
+    "net this month": "net this month",
+    "add to vision board": "add to vision board",
+    "goals": "goals",
+    "wins": "wins",
+    "events": "events",
+    "money": "money",
+    "vision": "vision",
+    "{n} achieved": "{n} achieved",
+    "Optional — leave blank for an untimed to-do.": "Optional — leave blank for an untimed to-do.",
     "Cancel": "Cancel",
     "Nothing here yet. Tap + to add one.": "Nothing here yet. Tap + to add one.",
     "Previous day": "Previous day",
@@ -2238,6 +2339,96 @@ const TRANSLATIONS = {
     "Add a task": "Añadir tarea",
     "What's the next small thing?": "¿Cuál es la próxima cosita?",
     "Task name…": "Nombre de la tarea…",
+    "Start time": "Hora de inicio",
+    "End time": "Hora de fin",
+    "Start": "Inicio",
+    "End": "Fin",
+    "min": "min",
+    "hr": "h",
+    "Add new event": "AÑADIR EVENTO",
+    "What's happening?": "¿Qué está pasando?",
+    "Notes (optional)…": "Notas (opcional)…",
+    "Notes…": "Notas…",
+    "Add to": "Añadir a",
+    "Customize": "Personalizar",
+    "Customize summary": "Personalizar resumen",
+    "Pick what shows on this page.": "Elige qué se muestra en esta página.",
+    "Affirmation": "Afirmación",
+    "Today's stat circles": "Círculos del día",
+    "Today's tasks": "Tareas de hoy",
+    "My why (photo)": "Mi porqué (foto)",
+    "Three priorities": "Tres prioridades",
+    "Vitamins panel": "Panel de vitaminas",
+    "SHOW / HIDE": "MOSTRAR / OCULTAR",
+    "ADD TO SUMMARY": "AÑADIR AL RESUMEN",
+    "Today's events": "Eventos de hoy",
+    "From your Calendar": "Desde tu Calendario",
+    "Money this month": "Dinero este mes",
+    "Income, expenses, net": "Ingresos, gastos, neto",
+    "Goals progress": "Progreso de metas",
+    "Average across active goals": "Promedio entre metas activas",
+    "Vision board peek": "Tablero de visión",
+    "A few images from your board": "Algunas imágenes de tu tablero",
+    "Today's wins": "Logros de hoy",
+    "From your Daily Planner": "Desde tu planificador diario",
+    "What's on your calendar today.": "Lo que tienes en tu calendario hoy.",
+    "Nothing scheduled.": "Nada agendado.",
+    "calendar →": "calendario →",
+    "In, out, and what's left.": "Entra, sale y lo que queda.",
+    "In": "Entra",
+    "Out": "Sale",
+    "Net": "Neto",
+    "finance →": "finanzas →",
+    "Where you are, on average.": "Dónde estás, en promedio.",
+    "No active goals yet.": "Sin metas activas todavía.",
+    "across {n} active": "entre {n} activas",
+    "goals →": "metas →",
+    "open board →": "abrir tablero →",
+    "{n} achieved · {m} on the way": "{n} logradas · {m} en camino",
+    "Your vision board is empty.": "Tu tablero de visión está vacío.",
+    "What you're proud of.": "De lo que estás orgullosa.",
+    "No wins logged yet today.": "Sin logros registrados hoy.",
+    "planner →": "planificador →",
+    "add": "añadir",
+    "Add a priority": "Añadir prioridad",
+    "What matters most?": "¿Qué es lo más importante?",
+    "Tap to edit": "Toca para editar",
+    "Add event": "Añadir evento",
+    "Add income or expense": "Añadir ingreso o gasto",
+    "Add a goal": "Añadir meta",
+    "Add to vision board": "Añadir al tablero de visión",
+    "Add a win": "Añadir un logro",
+    "Nothing scheduled. Tap + to add.": "Nada agendado. Toca + para añadir.",
+    "No active goals yet. Tap + to add.": "Sin metas activas. Toca + para añadir.",
+    "Your vision board is empty. Tap + to add.": "Tu tablero está vacío. Toca + para añadir.",
+    "No wins logged yet. Tap + to add.": "Sin logros aún. Toca + para añadir.",
+    "STAT CIRCLES": "CÍRCULOS DEL DÍA",
+    "Pick what shows in the row of circles.": "Elige qué se muestra en la fila de círculos.",
+    "Tasks left": "Tareas pendientes",
+    "Top 3 priorities": "Top 3 prioridades",
+    "Habits done": "Hábitos hechos",
+    "Water glasses": "Vasos de agua",
+    "Vitamins taken": "Vitaminas tomadas",
+    "Mood logged": "Estado de ánimo",
+    "Wins logged": "Logros registrados",
+    "Events today": "Eventos hoy",
+    "Money (net)": "Dinero (neto)",
+    "Vision achieved": "Visión lograda",
+    "avg across active": "promedio activo",
+    "add a goal to begin": "añade una meta",
+    "logged today": "registrados hoy",
+    "log a win": "registra un logro",
+    "on the calendar": "en el calendario",
+    "nothing scheduled": "nada agendado",
+    "net this month": "neto este mes",
+    "add to vision board": "añadir al tablero",
+    "goals": "metas",
+    "wins": "logros",
+    "events": "eventos",
+    "money": "dinero",
+    "vision": "visión",
+    "{n} achieved": "{n} logrados",
+    "Optional — leave blank for an untimed to-do.": "Opcional — déjalo en blanco para una tarea sin hora.",
     "Cancel": "Cancelar",
     "Nothing here yet. Tap + to add one.": "Nada todavía. Toca + para añadir una.",
     "Previous day": "Día anterior",
@@ -3005,7 +3196,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
         </div>
       </main>
 
-      {confetti && <ConfettiBurst big={confettiBig} />}
+      {confetti && <ConfettiBurst big={confettiBig} accent={accent} />}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 px-5 py-3 bg-[#7a9a6e] text-white rounded shadow-2xl flex items-center gap-2 animate-[fadeIn_0.3s_ease-out]">
           <CheckCircle2 className="w-5 h-5" /> <span className="font-medium">{toast}</span>
@@ -3227,11 +3418,19 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
 // ============================================================
 // CONFETTI ANIMATION
 // ============================================================
-function ConfettiBurst({ big = false }) {
-  // Sage + white + butter yellow palette (soft, creamy yellows)
+function ConfettiBurst({ big = false, accent = "sage" }) {
+  // Build the confetti palette from the user's current accent theme so the
+  // celebration always feels on-brand. Sage = original (sage greens + butter
+  // yellow + white); other themes swap the greens for their own primary/mid/
+  // light/pale + keep the cream + white as universal "sparkle" accents.
+  const palette = (typeof ACCENT_PALETTES !== "undefined" && ACCENT_PALETTES[accent])
+    || ACCENT_PALETTES.sage;
+  const themeShades = [palette.primary, palette.mid, palette.light, palette.pale];
+  const sparkles = ["#ffffff", "#f8f9f5", "#fef9c3", "#f5e6a8"];
+  const sparklesBig = [...sparkles, "#fefce8", "#ecd9a0", "#e8d394"];
   const colors = big
-    ? ["#7a9a6e", "#5b7351", "#a8c090", "#d3e0c5", "#bccfa8", "#9cb88f", "#4a5d3f", "#ffffff", "#f8f9f5", "#fefce8", "#fef9c3", "#f5e6a8", "#ecd9a0", "#e8d394"]
-    : ["#7a9a6e", "#a8c090", "#d3e0c5", "#5b7351", "#ffffff", "#f8f9f5", "#fef9c3", "#f5e6a8"];
+    ? [...themeShades, ...themeShades, ...sparklesBig]
+    : [...themeShades, ...sparkles];
   const count = big ? 280 : 100;
   const shapes = ["square", "rect", "circle", "ribbon"];
   // Each piece radiates from center on a unique vector
@@ -3283,7 +3482,10 @@ function ConfettiBurst({ big = false }) {
       `}</style>
       <div className="fixed inset-0 pointer-events-none z-[60] overflow-hidden">
         {pieces.map(p => {
-          const isLight = ["#ffffff", "#f8f9f5", "#fefce8", "#fef9c3", "#f5e6a8", "#ecd9a0", "#e8d394", "#d3e0c5"].includes(p.color);
+          // Sparkles + the palette's two lightest shades get the soft shadow;
+          // everything else uses the darker drop-shadow.
+          const isLight =
+            [...sparkles, ...sparklesBig, palette.pale, palette.light].includes(p.color);
           const baseStyle = {
             position: "absolute",
             left: "50%",
@@ -4433,6 +4635,40 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
 function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted, triggerConfetti, setActive, lang }) {
   const today = todayISO();
   const tasks = data.tasks || [];
+
+  // Per-user summary visibility. Two groups:
+  //   - "Core" sections (affirmation/circles/today/why/priorities/vitamins)
+  //     default ON so existing users see no change. Users can REMOVE.
+  //   - "Add-on" widgets (events/finance/goals/vision/wins) default OFF —
+  //     users opt INTO them via the Customize modal.
+  const SUMMARY_DEFAULTS = {
+    affirmation: true, circles: true, today: true, why: true, priorities: true, vitamins: true,
+    events: false, finance: false, goals: false, vision: false, wins: false,
+  };
+  const SUMMARY_KEYS = Object.keys(SUMMARY_DEFAULTS);
+  const summaryPrefs = SUMMARY_KEYS.reduce((acc, k) => {
+    const stored = data.summaryPrefs?.[k];
+    acc[k] = stored === undefined ? SUMMARY_DEFAULTS[k] : !!stored;
+    return acc;
+  }, {});
+  const [customizeOpen, setCustomizeOpen] = useState(false);
+  const toggleSummary = (key) => {
+    const next = { ...summaryPrefs, [key]: !summaryPrefs[key] };
+    setData({ ...data, summaryPrefs: next });
+  };
+
+  // Stat circle selection — user picks which of the 11 available circles
+  // show on the summary, in display order. Storage is an array of keys so
+  // we can support reorder later without a schema change.
+  const DEFAULT_CIRCLE_KEYS = ["tasks", "top3", "habits", "water", "vitamins", "mood"];
+  const enabledCircleKeys = Array.isArray(data.summaryCircles) ? data.summaryCircles : DEFAULT_CIRCLE_KEYS;
+  const toggleCircle = (key) => {
+    const isOn = enabledCircleKeys.includes(key);
+    const next = isOn
+      ? enabledCircleKeys.filter(k => k !== key)
+      : [...enabledCircleKeys, key];
+    setData({ ...data, summaryCircles: next });
+  };
   const todaysTasks = tasks.filter(t => t.date === today);
   const todayDone = todaysTasks.filter(t => t.done).length;
   const todayTotal = todaysTasks.length;
@@ -4577,19 +4813,148 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const firstName = (user.name || "").split(" ")[0];
   const serifStyle = { fontFamily: "'Playfair Display', Georgia, serif" };
 
+  // ----- Priority editing on the summary card -----
+  // We read from today's priority TASKS (modern model). Each priority slot
+  // 1/2/3 maps to a task whose .priorityOrder matches. Empty slots show an
+  // inline "+ add" affordance so the user can pick a priority without going
+  // to the planner first.
+  // "Three things that matter" — the Summary's three free-text slots.
+  // Deliberately NOT tied to the Daily Planner's Top-3 priorities anymore:
+  // editing one of these no longer creates a task and removing one no longer
+  // strips the priority flag off a planner task. Stored under its own
+  // data.summaryThreeThings field (an array of three strings).
+  const summaryThreeThingsRaw = Array.isArray(data.summaryThreeThings) ? data.summaryThreeThings : [];
+  const summaryThreeThings = [0, 1, 2].map(i => summaryThreeThingsRaw[i] || "");
+  const thingAt = (slot) => summaryThreeThings[slot - 1] || "";
+  const setThing = (slot, text) => {
+    const next = [...summaryThreeThings];
+    next[slot - 1] = text;
+    setData({ ...data, summaryThreeThings: next });
+  };
+  const [editingPriSlot, setEditingPriSlot] = useState(null);
+  const [editingPriText, setEditingPriText] = useState("");
+  const startEditPri = (slot) => {
+    setEditingPriSlot(slot);
+    setEditingPriText(thingAt(slot));
+  };
+  const cancelEditPri = () => { setEditingPriSlot(null); setEditingPriText(""); };
+  const saveEditPri = () => {
+    const text = (editingPriText || "").trim();
+    const slot = editingPriSlot;
+    if (slot == null) return;
+    setThing(slot, text);
+    cancelEditPri();
+  };
+  const clearThing = (slot) => setThing(slot, "");
+
+  // Customize modal — two groups of toggles. Core sections (default on) can
+  // be hidden; add-on widgets (default off) can be turned on.
+  const customizeCore = [
+    { key: "affirmation", label: t("Affirmation", lang) },
+    { key: "circles",     label: t("Today's stat circles", lang) },
+    { key: "today",       label: t("Today's tasks", lang) },
+    { key: "why",         label: t("My why (photo)", lang) },
+    { key: "priorities",  label: t("Three priorities", lang) },
+    { key: "vitamins",    label: t("Vitamins panel", lang) },
+  ];
+  const customizeAddons = [
+    { key: "events",   label: t("Today's events", lang),    hint: t("From your Calendar", lang) },
+    { key: "finance",  label: t("Money this month", lang),  hint: t("Income, expenses, net", lang) },
+    { key: "goals",    label: t("Goals progress", lang),    hint: t("Average across active goals", lang) },
+    { key: "vision",   label: t("Vision board peek", lang), hint: t("A few images from your board", lang) },
+    { key: "wins",     label: t("Today's wins", lang),      hint: t("From your Daily Planner", lang) },
+  ];
+  // The 11 circle options the user can mix and match.
+  const customizeCircleRows = [
+    { key: "tasks",    label: t("Tasks left", lang) },
+    { key: "top3",     label: t("Top 3 priorities", lang) },
+    { key: "habits",   label: t("Habits done", lang) },
+    { key: "water",    label: t("Water glasses", lang) },
+    { key: "vitamins", label: t("Vitamins taken", lang) },
+    { key: "mood",     label: t("Mood logged", lang) },
+    { key: "goals",    label: t("Goals progress", lang) },
+    { key: "wins",     label: t("Wins logged", lang) },
+    { key: "events",   label: t("Events today", lang) },
+    { key: "money",    label: t("Money (net)", lang) },
+    { key: "vision",   label: t("Vision achieved", lang) },
+  ];
+  const CustomizeRow = ({ row }) => (
+    <label className="flex items-center gap-3 px-3 py-2 rounded-lg border border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]/40 cursor-pointer transition">
+      <input
+        type="checkbox"
+        checked={summaryPrefs[row.key]}
+        onChange={() => toggleSummary(row.key)}
+        className="w-4 h-4 accent-[#5b7351]"
+      />
+      <span className="flex-1 min-w-0">
+        <span className="text-sm text-stone-800 block">{row.label}</span>
+        {row.hint && <span className="text-[10px] italic text-stone-400 block">{row.hint}</span>}
+      </span>
+    </label>
+  );
+  const CustomizeModal = customizeOpen ? (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setCustomizeOpen(false)}>
+      <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full max-h-[85vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
+        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Customize summary", lang)}</h3>
+        <p className="text-xs text-stone-500 mb-4 italic">{t("Pick what shows on this page.", lang)}</p>
+
+        <div className="text-[10px] tracking-[0.2em] text-stone-500 font-semibold mb-2">{t("SHOW / HIDE", lang)}</div>
+        <div className="space-y-2 mb-5">
+          {customizeCore.map(row => <CustomizeRow key={row.key} row={row} />)}
+        </div>
+
+        <div className="text-[10px] tracking-[0.2em] text-stone-500 font-semibold mb-2">{t("ADD TO SUMMARY", lang)}</div>
+        <div className="space-y-2 mb-5">
+          {customizeAddons.map(row => <CustomizeRow key={row.key} row={row} />)}
+        </div>
+
+        <div className="text-[10px] tracking-[0.2em] text-stone-500 font-semibold mb-2">{t("STAT CIRCLES", lang)}</div>
+        <p className="text-[11px] italic text-stone-400 mb-2">{t("Pick what shows in the row of circles.", lang)}</p>
+        <div className="space-y-2">
+          {customizeCircleRows.map(row => (
+            <label key={row.key} className="flex items-center gap-3 px-3 py-2 rounded-lg border border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]/40 cursor-pointer transition">
+              <input
+                type="checkbox"
+                checked={enabledCircleKeys.includes(row.key)}
+                onChange={() => toggleCircle(row.key)}
+                className="w-4 h-4 accent-[#5b7351]"
+              />
+              <span className="text-sm text-stone-800">{row.label}</span>
+            </label>
+          ))}
+        </div>
+
+        <div className="flex justify-end mt-5">
+          <button onClick={() => setCustomizeOpen(false)}
+            className="px-4 py-2 text-xs uppercase tracking-wider text-white rounded font-medium transition hover:opacity-90"
+            style={{ background: "var(--accent-mid)" }}>
+            {t("Done", lang)}
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   return (
     <div>
+      {CustomizeModal}
       {/* GREETING — softer hero, compact */}
-      <div className="mb-6">
-        <p className="text-[11px] italic tracking-wide text-[#7a9a6e] mb-1" style={serifStyle}>{dateStr}</p>
-        <h1 className="font-serif text-2xl tracking-tight leading-tight" style={serifStyle}>
-          {timeGreeting}, <span className="italic text-[#5b7351]">{firstName || t("love", lang)}</span>.
-        </h1>
-        <p className="text-sm italic text-stone-500 mt-1" style={serifStyle}>{dayPhrase}</p>
+      <div className="mb-6 flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <p className="text-[11px] italic tracking-wide text-[#7a9a6e] mb-1" style={serifStyle}>{dateStr}</p>
+          <h1 className="font-serif text-2xl tracking-tight leading-tight" style={serifStyle}>
+            {timeGreeting}, <span className="italic text-[#5b7351]">{firstName || t("love", lang)}</span>.
+          </h1>
+          <p className="text-sm italic text-stone-500 mt-1" style={serifStyle}>{dayPhrase}</p>
+        </div>
+        <button onClick={() => setCustomizeOpen(true)}
+          className="px-3 py-1.5 rounded-full border border-stone-200 text-[11px] tracking-wider uppercase text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee] hover:text-[#5b7351] transition flex-shrink-0">
+          {t("Customize", lang)}
+        </button>
       </div>
 
       {/* AFFIRMATION HERO — pick your own for today */}
-      {allAffs.length > 0 ? (
+      {summaryPrefs.affirmation && (allAffs.length > 0 ? (
         <div className="rounded-2xl bg-gradient-to-br from-[#f4f7ee] via-white to-[#f4f7ee]/50 border border-[#d3e0c5] px-6 py-6 mb-6 text-center relative">
           <div className="text-[10px] italic tracking-[0.2em] text-[#7a9a6e] mb-3" style={serifStyle}>{t("a word for today", lang)}</div>
           <p className="font-serif text-2xl md:text-3xl italic leading-snug text-stone-800 max-w-2xl mx-auto" style={serifStyle}>"{dailyAffirmation.text}"</p>
@@ -4608,7 +4973,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           <p className="text-sm italic text-stone-500" style={serifStyle}>{t("You don't have any affirmations saved yet.", lang)}</p>
           <button onClick={() => setActive("affirmations")} className="mt-2 text-xs italic text-[#5b7351] hover:underline" style={serifStyle}>{t("add your first →", lang)}</button>
         </div>
-      )}
+      ))}
 
       {/* AFFIRMATION PICKER MODAL */}
       {affPickerOpen && (
@@ -4665,7 +5030,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
       )}
 
       {/* TODAY CHECKLIST — circles, not boxes */}
-      {(() => {
+      {summaryPrefs.circles && (() => {
         const tasksLeft = todayTotal - todayDone;
         // Priority tasks = anything in today's tasks marked with .priority
         // (replaces the old standalone Top 3 array, which has been folded
@@ -4694,19 +5059,49 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
             </div>
           );
         };
-        const items = [
-          { onClick: () => setActive("planner"), label: "tasks left",    sub: todayTotal > 0 ? (tasksLeft > 0 ? t("of {n} today", lang, { n: todayTotal }) : t("all done — well done", lang)) : t("no tasks yet", lang),                       done: todayDone,                  total: todayTotal,            valueLabel: `${tasksLeft || 0}` },
-          { onClick: () => setActive("planner"), label: "top 3",         sub: prioritiesSet === 3 ? t("you know your why", lang) : t("set today's priorities", lang),                                                          done: prioritiesSet,              total: 3,                     valueLabel: `${prioritiesSet}/3` },
-          { onClick: () => setActive("habitsView"),  label: "habits",        sub: habitTotal > 0 ? (habitsLeft > 0 ? t("{n} of {m} left", lang, { n: habitsLeft, m: habitTotal }) : t("rhythm kept", lang)) : t("add habits to begin", lang),            done: habitDone,                  total: habitTotal,            valueLabel: `${habitDone}/${habitTotal}` },
-          { onClick: () => setActive("habitsView"), label: "water",         sub: waterLeft > 0 ? t(waterLeft === 1 ? "{n} glass to go" : "{n} glasses to go", lang, { n: waterLeft }) : t("hydrated · 8/8", lang),                                  done: water,                      total: 8,                     valueLabel: `${water}/8` },
-          { onClick: () => setActive("cycle"),   label: "vitamins",      sub: vitaminsList.length > 0 ? (vitaminsLeft > 0 ? t("left to take", lang) : t("{n}/{m} taken", lang, { n: vitaminsList.length, m: vitaminsList.length })) : t("add vitamins to begin", lang), done: vitaminsTakenToday, total: vitaminsList.length, valueLabel: vitaminsList.length > 0 ? `${vitaminsTakenToday}/${vitaminsList.length}` : "—" },
-          { onClick: () => setActive("cycle"),   label: "mood",          sub: moodLogged ? t("feeling {mood}", lang, { mood: t(todayMoodLabel || "okay", lang) }) : t("how am I today?", lang),                                                                   done: moodLogged ? 1 : 0,         total: 1,                     valueLabel: moodLogged ? todayMoodEmoji : "?", doneIcon: todayMoodEmoji },
+        // Live data used by the new opt-in circles (so they reflect the same
+        // numbers shown elsewhere on the summary).
+        const todaysEventsCount = ((data.calendarEvents || {})[today] || []).length;
+        const todaysWinsCount = (dailyPlan.wins || [])
+          .map(w => typeof w === "string" ? { text: w } : w)
+          .filter(w => w && w.text && String(w.text).trim()).length;
+        // Compact money formatter for the "money" circle (-$12k / +$3.4k / $0)
+        const fmtMoneyShort = (n) => {
+          const abs = Math.abs(n);
+          if (abs >= 1000) return `${n < 0 ? "-" : ""}$${(abs / 1000).toFixed(abs >= 10000 ? 0 : 1)}k`;
+          return `${n < 0 ? "-" : ""}$${abs}`;
+        };
+        // Canonical circle library. Each entry knows its data, target, label,
+        // sub-line, and the module to jump to on tap. The user picks which to
+        // show via the Customize modal (data.summaryCircles).
+        const allCircleDefs = [
+          { key: "tasks",    onClick: () => setActive("planner"),     label: "tasks left", sub: todayTotal > 0 ? (tasksLeft > 0 ? t("of {n} today", lang, { n: todayTotal }) : t("all done — well done", lang)) : t("no tasks yet", lang), done: todayDone, total: todayTotal, valueLabel: `${tasksLeft || 0}` },
+          { key: "top3",     onClick: () => setActive("planner"),     label: "top 3",      sub: prioritiesSet === 3 ? t("you know your why", lang) : t("set today's priorities", lang), done: prioritiesSet, total: 3, valueLabel: `${prioritiesSet}/3` },
+          { key: "habits",   onClick: () => setActive("habitsView"),  label: "habits",     sub: habitTotal > 0 ? (habitsLeft > 0 ? t("{n} of {m} left", lang, { n: habitsLeft, m: habitTotal }) : t("rhythm kept", lang)) : t("add habits to begin", lang), done: habitDone, total: habitTotal, valueLabel: `${habitDone}/${habitTotal}` },
+          { key: "water",    onClick: () => setActive("habitsView"),  label: "water",      sub: waterLeft > 0 ? t(waterLeft === 1 ? "{n} glass to go" : "{n} glasses to go", lang, { n: waterLeft }) : t("hydrated · 8/8", lang), done: water, total: 8, valueLabel: `${water}/8` },
+          { key: "vitamins", onClick: () => setActive("cycle"),       label: "vitamins",   sub: vitaminsList.length > 0 ? (vitaminsLeft > 0 ? t("left to take", lang) : t("{n}/{m} taken", lang, { n: vitaminsList.length, m: vitaminsList.length })) : t("add vitamins to begin", lang), done: vitaminsTakenToday, total: vitaminsList.length, valueLabel: vitaminsList.length > 0 ? `${vitaminsTakenToday}/${vitaminsList.length}` : "—" },
+          { key: "mood",     onClick: () => setActive("cycle"),       label: "mood",       sub: moodLogged ? t("feeling {mood}", lang, { mood: t(todayMoodLabel || "okay", lang) }) : t("how am I today?", lang), done: moodLogged ? 1 : 0, total: 1, valueLabel: moodLogged ? todayMoodEmoji : "?", doneIcon: todayMoodEmoji },
+          { key: "goals",    onClick: () => setActive("goals"),       label: "goals",      sub: activeGoals.length > 0 ? t("avg across active", lang) : t("add a goal to begin", lang), done: goalAvg, total: 100, valueLabel: `${goalAvg}%` },
+          { key: "wins",     onClick: () => setActive("planner"),     label: "wins",       sub: todaysWinsCount > 0 ? t("logged today", lang) : t("log a win", lang), done: Math.min(todaysWinsCount, 3), total: 3, valueLabel: `${todaysWinsCount}` },
+          { key: "events",   onClick: () => setActive("calendarYear"),label: "events",     sub: todaysEventsCount > 0 ? t("on the calendar", lang) : t("nothing scheduled", lang), done: todaysEventsCount > 0 ? 1 : 0, total: 1, valueLabel: `${todaysEventsCount}` },
+          { key: "money",    onClick: () => setActive("finance"),     label: "money",      sub: t("net this month", lang), done: net >= 0 ? 1 : 0, total: 1, valueLabel: fmtMoneyShort(net) },
+          { key: "vision",   onClick: () => setActive("vision"),      label: "vision",     sub: visionItems.length > 0 ? t("{n} achieved", lang, { n: visionAchieved }) : t("add to vision board", lang), done: visionAchieved, total: Math.max(1, visionItems.length), valueLabel: visionItems.length > 0 ? `${visionAchieved}/${visionItems.length}` : "—" },
         ];
+        // enabledCircleKeys is computed at component scope above so the
+        // Customize modal and this render path use the same source of truth.
+        const enabledCircles = allCircleDefs.filter(c => enabledCircleKeys.includes(c.key));
+        if (enabledCircles.length === 0) return null;
+        // Tailwind needs static class names — map circle count to a fixed
+        // sm:grid-cols-N class. Anything beyond 6 wraps onto a 2nd row.
+        const smCols = {
+          1: "sm:grid-cols-1", 2: "sm:grid-cols-2", 3: "sm:grid-cols-3",
+          4: "sm:grid-cols-4", 5: "sm:grid-cols-5", 6: "sm:grid-cols-6",
+        }[Math.min(6, enabledCircles.length)] || "sm:grid-cols-6";
         return (
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 mb-6">
-            {items.map((c, i) => (
+          <div className={`grid gap-2 mb-6 grid-cols-3 ${smCols}`}>
+            {enabledCircles.map((c) => (
               <button
-                key={i}
+                key={c.key}
                 onClick={c.onClick}
                 className="flex flex-col items-center text-center rounded-2xl px-2 py-3 transition hover:bg-[#f4f7ee]/40"
               >
@@ -4719,46 +5114,128 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         );
       })()}
 
-      <div className="grid lg:grid-cols-3 gap-5">
+      {(summaryPrefs.today || summaryPrefs.why) && (
+      <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[repeat(3,minmax(0,1fr))] gap-5">
         {/* TODAY — softer to-do */}
-        <div className="lg:col-span-2">
-          <div className={`rounded-2xl border ${themePanel} p-6`}>
-            <div className="flex items-baseline justify-between mb-1">
-              <h2 className="font-serif text-2xl text-stone-800" style={serifStyle}>{t("Today", lang)}</h2>
-              <button onClick={() => setActive("planner")} className="text-xs italic text-stone-500 hover:text-[#5b7351]" style={serifStyle}>
-                {t("{n} of {m} done →", lang, { n: todayDone, m: todayTotal })}
-              </button>
-            </div>
-            <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("The small things, in order.", lang)}</p>
-            <div className="h-1 rounded-full bg-stone-100 mb-5 overflow-hidden">
-              <div className="h-full bg-[#a8c090] transition-all duration-700" style={{ width: `${todayPct}%` }} />
-            </div>
-            <div className="divide-y divide-stone-100">
-              {todaysTasks.length === 0 ? (
-                <button onClick={() => setActive("planner")} className={`w-full py-10 text-center ${themeMuted} text-sm italic hover:text-[#5b7351] transition`} style={serifStyle}>{t("Nothing on the list yet — open your planner to add the first thing →", lang)}</button>
-              ) : todaysTasks.slice(0, 9).map(task => (
-                <div key={task.id} className="flex items-center gap-4 py-3 group">
-                  <button onClick={() => toggle(task.id)} className={`w-7 h-7 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition ${task.done ? "bg-[#a8c090] border-[#a8c090]" : "border-[#a8c090]/40 hover:border-[#a8c090]"}`}>
-                    {task.done && <Check className="w-3.5 h-3.5 text-white" />}
-                  </button>
-                  <div className="flex-1 min-w-0">
-                    <div className={`text-base ${task.done ? "text-stone-400" : "text-stone-900"} truncate`}>{task.title}</div>
-                    {(task.time || task.priority === "critical" || task.priority === "high") && (
-                      <div className="text-xs italic text-stone-400 mt-0.5" style={serifStyle}>
-                        {task.time && <span>{task.time}</span>}
-                        {task.time && (task.priority === "critical" || task.priority === "high") && <span> · </span>}
-                        {(task.priority === "critical" || task.priority === "high") && <span>{t("a priority", lang)}</span>}
-                      </div>
-                    )}
+        {summaryPrefs.today && (
+        <div className={summaryPrefs.why ? "lg:col-span-2" : "lg:col-span-3"}>
+          {/* Summary's TO DO LIST — pixel-matched to the Daily Planner's
+              version (header, progress bar, priority counter, scrollable
+              capped list, per-row horizontal scroll). The only difference is
+              the + button and SEE MORE jump to the planner tab to do the
+              actual editing, instead of opening a modal here. */}
+          {(() => {
+            const summaryPriorityCount = todaysTasks.filter(t => t && (t.priority === "high" || t.priority === "critical")).length;
+            const visibleSummaryTasks = todaysTasks.slice(0, 5);
+            const hiddenSummaryCount = Math.max(0, todaysTasks.length - 5);
+            return (
+              <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
+                <div className="flex items-center justify-between mb-2 gap-3">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO DO LIST", lang)}</h2>
+                    <button onClick={() => setActive("planner")}
+                      className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
+                      style={{ background: "var(--accent-mid)" }}
+                      aria-label={t("Add a task", lang)} title={t("Add a task", lang)}>
+                      <Plus className="w-3.5 h-3.5" />
+                    </button>
                   </div>
+                  {todaysTasks.length > 5 && (
+                    <button onClick={() => setActive("planner")}
+                      className="text-[10px] tracking-[0.18em] uppercase text-stone-500 hover:text-[#5b7351] transition flex-shrink-0">
+                      {t("see more", lang)}
+                    </button>
+                  )}
                 </div>
-              ))}
-            </div>
-          </div>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex-1 h-1 rounded-full bg-stone-100 overflow-hidden">
+                    <div className="h-full transition-all duration-500"
+                      style={{ width: todayTotal > 0 ? `${(todayDone / todayTotal) * 100}%` : "0%", background: "var(--accent-mid)" }} />
+                  </div>
+                  <span className="text-[10px] text-stone-400 font-mono flex-shrink-0">{todayDone}/{todayTotal}</span>
+                </div>
+                {summaryPriorityCount > 0 && (
+                  <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 mb-2">
+                    {summaryPriorityCount}/3 {t("priorities", lang)}
+                  </div>
+                )}
+                <div className="flex-1 overflow-y-auto -mx-1" style={{ maxHeight: "min(40vh, 280px)" }}>
+                  {todaysTasks.length === 0 ? (
+                    <button onClick={() => setActive("planner")} className={`w-full py-8 text-center ${themeMuted} text-xs italic hover:text-[#5b7351] transition`}>
+                      {t("Nothing here yet. Tap + to add one.", lang)}
+                    </button>
+                  ) : (
+                    <ul>
+                      {visibleSummaryTasks.map((task, idx) => {
+                        const isPri = task.priority === "critical" || task.priority === "high";
+                        const timeRange = task.startTime
+                          ? (task.endTime ? `${task.startTime} – ${task.endTime}` : task.startTime)
+                          : (task.time || null);
+                        const meta = timeRange ? timeRange.toUpperCase() : null;
+                        const isLast = idx === visibleSummaryTasks.length - 1;
+                        return (
+                          <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-1.5 sm:py-2.5 group ${isLast ? "" : "border-b border-stone-100"}`}>
+                            <button onClick={() => toggle(task.id)}
+                              className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border-2 hover:bg-stone-50"}`}
+                              style={task.done ? { background: "var(--accent-mid)" } : { borderColor: "var(--accent-mid)", opacity: 0.45 }}>
+                              {task.done && <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
+                            </button>
+                            <div
+                              role="button"
+                              tabIndex={0}
+                              onClick={() => setActive("planner")}
+                              onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActive("planner"); } }}
+                              className="flex-1 min-w-0 text-left overflow-hidden cursor-pointer">
+                              <div className="overflow-x-auto scrollbar-hide" style={{ touchAction: "pan-x" }}>
+                                <div className={`inline-flex min-w-max text-xs sm:text-sm font-medium whitespace-nowrap ${task.done ? "text-stone-400" : "text-stone-900"}`}>
+                                  {task.title}
+                                </div>
+                              </div>
+                              {(meta || isPri) && (
+                                <div className="overflow-x-auto scrollbar-hide mt-0.5" style={{ touchAction: "pan-x" }}>
+                                  <div className="inline-flex items-center gap-2 min-w-max whitespace-nowrap">
+                                    {meta && (
+                                      <span className={`text-[9px] sm:text-[10px] tracking-[0.18em] uppercase ${isPri ? "text-stone-600 font-semibold" : "text-stone-400"}`}>{meta}</span>
+                                    )}
+                                    {isPri && (
+                                      <span
+                                        className="text-[8px] sm:text-[9px] tracking-[0.18em] uppercase font-bold text-[#5b7351] bg-[#d3e0c5]/60 px-1.5 py-0.5 rounded"
+                                        title={t("Priority", lang)}>
+                                        {t("Priority", lang)}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              )}
+                              {task.notes && (
+                                <div className="overflow-x-auto scrollbar-hide mt-0.5" style={{ touchAction: "pan-x" }}>
+                                  <div className={`inline-flex min-w-max text-[11px] italic whitespace-nowrap ${task.done ? "text-stone-300" : "text-stone-500"}`}>
+                                    {task.notes}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                  {hiddenSummaryCount > 0 && (
+                    <button onClick={() => setActive("planner")}
+                      className="w-full mt-2 py-2 text-[11px] tracking-wider uppercase text-stone-500 hover:text-[#5b7351] transition border-t border-stone-100">
+                      + {hiddenSummaryCount} {hiddenSummaryCount === 1 ? t("more task", lang) : t("more tasks", lang)}
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })()}
         </div>
+        )}
 
         {/* MY WHY photo — softer, no harsh label */}
-        <div className={`rounded-2xl border ${themePanel} overflow-hidden relative group`}>
+        {summaryPrefs.why && (
+        <div className={`rounded-2xl border ${themePanel} overflow-hidden relative group min-w-0 ${summaryPrefs.today ? "" : "lg:col-span-3"}`}>
           {inspirationImg ? (
             <>
               <img src={inspirationImg} alt="Inspiration" className="w-full h-full min-h-[420px] object-cover" />
@@ -4786,30 +5263,66 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
             </label>
           )}
         </div>
+        )}
       </div>
+      )}
 
       {/* PRIORITIES + VITAMINS — soft headers */}
-      <div className="grid lg:grid-cols-2 gap-5 mt-5">
-        <button onClick={() => setActive("planner")} className={`text-left rounded-2xl border ${themePanel} p-6 hover:border-[#7a9a6e] transition`}>
+      {(summaryPrefs.priorities || summaryPrefs.vitamins) && (
+      <div className={`grid gap-5 mt-5 grid-cols-[minmax(0,1fr)] ${summaryPrefs.priorities && summaryPrefs.vitamins ? "lg:grid-cols-[repeat(2,minmax(0,1fr))]" : ""}`}>
+        {summaryPrefs.priorities && (
+        <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
           <div className="flex items-baseline justify-between mb-1">
             <h2 className="font-serif text-2xl text-stone-800" style={serifStyle}>{t("Three things that matter", lang)}</h2>
-            <span className="text-xs italic text-stone-400" style={serifStyle}>{t("edit →", lang)}</span>
+            <button onClick={() => setActive("planner")} className="text-xs italic text-stone-400 hover:text-[#5b7351]" style={serifStyle}>{t("planner →", lang)}</button>
           </div>
           <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("If only these get done, the day was a good one.", lang)}</p>
           <div className="space-y-3">
-            {[0, 1, 2].map(i => {
-              const text = ((dailyPlan.priorities || [])[i] || "").trim();
+            {[1, 2, 3].map(slot => {
+              const text = thingAt(slot);
+              const isEditing = editingPriSlot === slot;
               return (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="font-serif text-3xl italic text-[#a8c090] leading-none w-7 flex-shrink-0" style={serifStyle}>{i + 1}</div>
-                  <div className={`flex-1 text-sm leading-relaxed ${text ? "text-stone-900" : "italic text-stone-400"}`} style={!text ? serifStyle : undefined}>{text || t("not set yet", lang)}</div>
+                <div key={slot} className="flex items-start gap-3 group">
+                  <div className="font-serif text-3xl italic text-[#a8c090] leading-none w-7 flex-shrink-0" style={serifStyle}>{slot}</div>
+                  {isEditing ? (
+                    <div className="flex-1 flex items-center gap-2">
+                      <input
+                        autoFocus
+                        value={editingPriText}
+                        onChange={e => setEditingPriText(e.target.value)}
+                        onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); saveEditPri(); } if (e.key === "Escape") cancelEditPri(); }}
+                        onBlur={saveEditPri}
+                        placeholder={t("What matters most?", lang)}
+                        className="flex-1 px-2 py-1 border rounded text-sm outline-none bg-white border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20"
+                      />
+                    </div>
+                  ) : text ? (
+                    <>
+                      <button onClick={() => startEditPri(slot)}
+                        className="flex-1 text-left text-sm leading-relaxed text-stone-900 hover:text-[#5b7351] transition"
+                        title={t("Tap to edit", lang)}>
+                        {text}
+                      </button>
+                      <button onClick={() => clearThing(slot)}
+                        className="opacity-40 sm:opacity-0 group-hover:opacity-100 px-1 text-xs text-stone-400 hover:text-rose-500 transition flex-shrink-0"
+                        aria-label={t("Remove", lang)} title={t("Remove", lang)}>✕</button>
+                    </>
+                  ) : (
+                    <button onClick={() => startEditPri(slot)}
+                      className="flex-1 text-left text-sm italic text-stone-400 hover:text-[#5b7351] transition"
+                      style={serifStyle}>
+                      + {t("Add a priority", lang)}
+                    </button>
+                  )}
                 </div>
               );
             })}
           </div>
-        </button>
+        </div>
+        )}
 
-        <div onClick={() => setActive("cycle")} className={`rounded-2xl border ${themePanel} p-6 hover:border-[#7a9a6e] transition cursor-pointer`}>
+        {summaryPrefs.vitamins && (
+        <div onClick={() => setActive("cycle")} className={`rounded-2xl border ${themePanel} p-6 hover:border-[#7a9a6e] transition cursor-pointer min-w-0 overflow-hidden`}>
           <div className="flex items-baseline justify-between mb-1">
             <h2 className="font-serif text-2xl text-stone-800" style={serifStyle}>{t("Take care of you", lang)}</h2>
             <span className="text-xs italic text-stone-400" style={serifStyle}>{t("{n} of {m} today", lang, { n: vitaminsTakenToday, m: vitaminsList.length })}</span>
@@ -4841,7 +5354,145 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
             </div>
           )}
         </div>
+        )}
       </div>
+      )}
+
+      {/* OPT-IN WIDGETS — only show what the user has explicitly added. Each
+          widget pulls live data from its own module and links back there. */}
+      {(summaryPrefs.events || summaryPrefs.finance || summaryPrefs.goals || summaryPrefs.vision || summaryPrefs.wins) && (() => {
+        const todaysEvents = ((data.calendarEvents || {})[today] || []);
+        const todaysWinsRaw = dailyPlan.wins || [];
+        const todaysWins = todaysWinsRaw
+          .map(w => typeof w === "string" ? { text: w, done: false } : w)
+          .filter(w => w && w.text && w.text.trim());
+        return (
+          <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[repeat(2,minmax(0,1fr))] gap-5 mt-5">
+            {/* Each widget = its own card. Header has a "+" button that
+                jumps to the source module so the user can add a new entry
+                directly. Tapping the card title also navigates there. */}
+            {summaryPrefs.events && (
+              <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
+                <div className="flex items-baseline justify-between mb-1 gap-2">
+                  <button onClick={() => setActive("calendarYear")} className="text-left font-serif text-2xl text-stone-800 hover:text-[#5b7351] transition" style={serifStyle}>{t("Today's events", lang)}</button>
+                  <button onClick={() => setActive("calendarYear")} className="text-xs italic text-[#5b7351] hover:underline flex-shrink-0" style={serifStyle} title={t("Add event", lang)}>+ {t("add", lang)}</button>
+                </div>
+                <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("What's on your calendar today.", lang)}</p>
+                {todaysEvents.length === 0 ? (
+                  <button onClick={() => setActive("calendarYear")} className={`block w-full py-6 text-center ${themeMuted} text-sm italic hover:text-[#5b7351] transition`} style={serifStyle}>{t("Nothing scheduled. Tap + to add.", lang)}</button>
+                ) : (
+                  <div className="space-y-2">
+                    {todaysEvents.slice(0, 5).map(ev => (
+                      <div key={ev.id} className="flex items-baseline gap-3">
+                        <span className="font-mono text-[11px] text-[#5b7351] w-20 flex-shrink-0">
+                          {ev.startTime || ev.time || "—"}
+                        </span>
+                        <span className="text-sm text-stone-800 truncate">{ev.title}</span>
+                      </div>
+                    ))}
+                    {todaysEvents.length > 5 && (
+                      <div className="text-[11px] italic text-stone-400" style={serifStyle}>+ {todaysEvents.length - 5} more</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {summaryPrefs.finance && (
+              <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
+                <div className="flex items-baseline justify-between mb-1 gap-2">
+                  <button onClick={() => setActive("finance")} className="text-left font-serif text-2xl text-stone-800 hover:text-[#5b7351] transition" style={serifStyle}>{t("Money this month", lang)}</button>
+                  <button onClick={() => setActive("finance")} className="text-xs italic text-[#5b7351] hover:underline flex-shrink-0" style={serifStyle} title={t("Add income or expense", lang)}>+ {t("add", lang)}</button>
+                </div>
+                <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("In, out, and what's left.", lang)}</p>
+                <div className="grid grid-cols-3 gap-3 text-center">
+                  <div>
+                    <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500">{t("In", lang)}</div>
+                    <div className="font-serif text-xl text-emerald-700" style={serifStyle}>${Math.round(monthlyIncome).toLocaleString()}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500">{t("Out", lang)}</div>
+                    <div className="font-serif text-xl text-rose-600" style={serifStyle}>${Math.round(monthlyExpenses).toLocaleString()}</div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500">{t("Net", lang)}</div>
+                    <div className={`font-serif text-xl ${net >= 0 ? "text-[#5b7351]" : "text-rose-700"}`} style={serifStyle}>${net.toLocaleString()}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {summaryPrefs.goals && (
+              <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
+                <div className="flex items-baseline justify-between mb-1 gap-2">
+                  <button onClick={() => setActive("goals")} className="text-left font-serif text-2xl text-stone-800 hover:text-[#5b7351] transition" style={serifStyle}>{t("Goals progress", lang)}</button>
+                  <button onClick={() => setActive("goals")} className="text-xs italic text-[#5b7351] hover:underline flex-shrink-0" style={serifStyle} title={t("Add a goal", lang)}>+ {t("add", lang)}</button>
+                </div>
+                <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("Where you are, on average.", lang)}</p>
+                {activeGoals.length === 0 ? (
+                  <button onClick={() => setActive("goals")} className={`block w-full py-4 text-center ${themeMuted} text-sm italic hover:text-[#5b7351] transition`} style={serifStyle}>{t("No active goals yet. Tap + to add.", lang)}</button>
+                ) : (
+                  <>
+                    <div className="flex items-baseline gap-2 mb-3">
+                      <span className="font-serif text-4xl text-[#5b7351]" style={serifStyle}>{goalAvg}%</span>
+                      <span className="text-xs italic text-stone-500" style={serifStyle}>{t("across {n} active", lang, { n: activeGoals.length })}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-stone-100 overflow-hidden">
+                      <div className="h-full transition-all duration-700" style={{ width: `${goalAvg}%`, background: "var(--accent-mid)" }} />
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
+
+            {summaryPrefs.vision && (
+              <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
+                <div className="flex items-baseline justify-between mb-1 gap-2">
+                  <button onClick={() => setActive("vision")} className="text-left font-serif text-2xl text-stone-800 hover:text-[#5b7351] transition" style={serifStyle}>{t("Vision board peek", lang)}</button>
+                  <button onClick={() => setActive("vision")} className="text-xs italic text-[#5b7351] hover:underline flex-shrink-0" style={serifStyle} title={t("Add to vision board", lang)}>+ {t("add", lang)}</button>
+                </div>
+                <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("{n} achieved · {m} on the way", lang, { n: visionAchieved, m: Math.max(0, visionItems.length - visionAchieved) })}</p>
+                {visionItems.length === 0 ? (
+                  <button onClick={() => setActive("vision")} className={`block w-full py-4 text-center ${themeMuted} text-sm italic hover:text-[#5b7351] transition`} style={serifStyle}>{t("Your vision board is empty. Tap + to add.", lang)}</button>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2">
+                    {visionItems.slice(0, 3).map((v, i) => (
+                      <div key={i} className="aspect-square rounded-lg overflow-hidden bg-stone-100 relative">
+                        {v.img ? (
+                          <img src={v.img} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-[10px] italic text-stone-400 p-2 text-center">
+                            {v.caption || "—"}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {summaryPrefs.wins && (
+              <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
+                <div className="flex items-baseline justify-between mb-1 gap-2">
+                  <button onClick={() => setActive("planner")} className="text-left font-serif text-2xl text-stone-800 hover:text-[#5b7351] transition" style={serifStyle}>{t("Today's wins", lang)}</button>
+                  <button onClick={() => setActive("planner")} className="text-xs italic text-[#5b7351] hover:underline flex-shrink-0" style={serifStyle} title={t("Add a win", lang)}>+ {t("add", lang)}</button>
+                </div>
+                <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("What you're proud of.", lang)}</p>
+                {todaysWins.length === 0 ? (
+                  <button onClick={() => setActive("planner")} className={`block w-full py-4 text-center ${themeMuted} text-sm italic hover:text-[#5b7351] transition`} style={serifStyle}>{t("No wins logged yet. Tap + to add.", lang)}</button>
+                ) : (
+                  <ul className="space-y-2">
+                    {todaysWins.slice(0, 3).map((w, i) => (
+                      <li key={i} className="text-sm text-stone-800 leading-relaxed">— {w.text}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
     </div>
   );
@@ -5747,6 +6398,100 @@ const ELEGANT_PHRASES = [
   { id: 62, cat: "Under Pressure", from: "You're overreacting.", to: "Help me see what I'm missing.", why: "Curiosity defuses defensiveness." },
   { id: 63, cat: "Under Pressure", from: "Calm down.", to: "I want to hear you — let's slow down together.", why: "'Calm down' escalates. Slowing together regulates." },
   { id: 64, cat: "Under Pressure", from: "You're impossible.", to: "I'm struggling to find a way through this with you.", why: "Owns your part, names the dynamic." },
+
+  // MORE SAYING NO
+  { id: 65, cat: "Saying No", from: "I'll think about it.", to: "I've already thought about it — and the answer is no.", why: "Stop dragging things out." },
+  { id: 66, cat: "Saying No", from: "Maybe later.", to: "Not for me — but thank you for thinking of me.", why: "Final but warm." },
+  { id: 67, cat: "Saying No", from: "I have plans.", to: "I'm not available.", why: "No explanation owed." },
+  { id: 68, cat: "Saying No", from: "I guess so.", to: "I'd rather not.", why: "A resentment-free no." },
+  { id: 69, cat: "Saying No", from: "Sure, fine.", to: "I'm going to pass on that one.", why: "No fake yes." },
+  { id: 70, cat: "Saying No", from: "If you really need me to.", to: "I'm not the right person for this — let me think about who would be.", why: "Redirects without abandoning." },
+
+  // MORE DISAGREEING
+  { id: 71, cat: "Disagreeing", from: "That's a terrible idea.", to: "I think there's a better angle on this — can I share it?", why: "Critique with a path forward." },
+  { id: 72, cat: "Disagreeing", from: "You're missing the point.", to: "Let me bring it back to what I think is the core question.", why: "Refocuses without insulting." },
+  { id: 73, cat: "Disagreeing", from: "Did you even read it?", to: "I want to make sure we're working from the same context.", why: "Diplomatic check, not an accusation." },
+  { id: 74, cat: "Disagreeing", from: "That'll never work.", to: "I see some risks here — let's pressure-test it.", why: "Engages instead of dismissing." },
+  { id: 75, cat: "Disagreeing", from: "I disagree.", to: "My read is different. Here's what I'm seeing…", why: "Earns the seat at the table." },
+  { id: 76, cat: "Disagreeing", from: "Whatever you say.", to: "I want to honor your view and still share mine.", why: "Two truths, both kept." },
+
+  // MORE BOUNDARIES
+  { id: 77, cat: "Boundaries", from: "Get out of my room.", to: "I need some private time — I'll come find you when I'm ready.", why: "Names the need + offers the return." },
+  { id: 78, cat: "Boundaries", from: "Don't touch my stuff.", to: "I'd love it if you asked before borrowing my things.", why: "Sets the rule without the heat." },
+  { id: 79, cat: "Boundaries", from: "Stop interrupting me.", to: "Let me finish my thought, and then it's yours.", why: "Holds the floor with grace." },
+  { id: 80, cat: "Boundaries", from: "That's not your concern.", to: "I appreciate you caring — this is one I'll handle myself.", why: "Acknowledges, then keeps it." },
+  { id: 81, cat: "Boundaries", from: "Why are you in my business?", to: "That's a part of my life I'd like to keep just for me.", why: "Privacy, declared, not defended." },
+  { id: 82, cat: "Boundaries", from: "Quit pressuring me.", to: "I want to make this decision when I feel settled — not when I feel pushed.", why: "Names the dynamic, not the person." },
+
+  // MORE APOLOGIZING
+  { id: 83, cat: "Apologizing", from: "I'm a mess.", to: "I'm working through some things — thanks for your grace.", why: "Honest without self-flagellating." },
+  { id: 84, cat: "Apologizing", from: "I screwed up.", to: "I made a mistake here. Here's how I'm fixing it.", why: "Ownership + repair plan in one breath." },
+  { id: 85, cat: "Apologizing", from: "Sorry for taking up your time.", to: "Thank you for making time for this.", why: "Your time has value too." },
+  { id: 86, cat: "Apologizing", from: "I always mess things up.", to: "I missed the mark here — and I'm learning from it.", why: "One miss, not an identity." },
+  { id: 87, cat: "Apologizing", from: "I hate that I did that.", to: "I'd do it differently next time.", why: "Future-focused, not self-attacking." },
+  { id: 88, cat: "Apologizing", from: "I'm so sorry for everything.", to: "I'm sorry for the specific thing I did — I want to be clear about it.", why: "A clean apology is naming the actual thing." },
+
+  // MORE CONFIDENCE
+  { id: 89, cat: "Confidence", from: "I'm not an expert but…", to: "Based on what I'm seeing…", why: "Stand on your observation, not credentials." },
+  { id: 90, cat: "Confidence", from: "This is probably wrong but…", to: "Here's my read…", why: "Don't apologize for your perspective." },
+  { id: 91, cat: "Confidence", from: "If you don't mind…", to: "I'd like to…", why: "Lead with your want, then let them respond." },
+  { id: 92, cat: "Confidence", from: "I might be missing something but…", to: "What I'm noticing is…", why: "State what you see. Let it stand." },
+
+  // MORE FEEDBACK
+  { id: 93, cat: "Feedback", from: "You're being too critical.", to: "Help me understand what you'd do differently.", why: "Turns criticism into direction." },
+  { id: 94, cat: "Feedback", from: "That's not what I meant.", to: "Let me clarify what I was trying to say.", why: "Owns the message, not their reading." },
+  { id: 95, cat: "Feedback", from: "Everyone else thinks it's fine.", to: "Help me see what you're seeing — I want to understand.", why: "Crowd-truth isn't truth." },
+  { id: 96, cat: "Feedback", from: "Stop nitpicking.", to: "Walk me through which pieces matter most to you.", why: "Prioritizes their priorities." },
+
+  // MORE ASKING FOR HELP
+  { id: 97, cat: "Asking for Help", from: "I'm stuck.", to: "I've hit a wall on this — could I pick your brain?", why: "Specific, time-bound, flattering." },
+  { id: 98, cat: "Asking for Help", from: "I don't know what I'm doing.", to: "I'm in new territory here — would you mind walking me through it?", why: "Beginner's mind, not helplessness." },
+  { id: 99, cat: "Asking for Help", from: "I need a favor.", to: "I have a request — only if it's a good fit for you.", why: "Gives them the easy out up front." },
+  { id: 100, cat: "Asking for Help", from: "Can someone help me??", to: "I'd appreciate a hand with this when you have a moment.", why: "Calm asks get faster yeses." },
+
+  // MORE HARD CONVERSATIONS
+  { id: 101, cat: "Hard Conversations", from: "You're impossible to talk to.", to: "I want to find a way for us to actually hear each other.", why: "Names a shared goal instead of a flaw." },
+  { id: 102, cat: "Hard Conversations", from: "You never listen.", to: "I want to feel heard in this conversation — can we start there?", why: "Asks for what you need." },
+  { id: 103, cat: "Hard Conversations", from: "I'm done with this.", to: "I need to step back for a bit before we continue.", why: "Pause, don't abandon." },
+  { id: 104, cat: "Hard Conversations", from: "You don't care about me.", to: "I'm feeling unseen right now — and I want to share that with you.", why: "Your feeling, not their flaw." },
+  { id: 105, cat: "Hard Conversations", from: "Forget it.", to: "Let's come back to this when we're both ready.", why: "Schedules, doesn't slam." },
+  { id: 106, cat: "Hard Conversations", from: "I can't even talk to you.", to: "I need to take a breath and come at this with a clearer head.", why: "Self-regulation announced." },
+
+  // MORE EMOTIONAL HONESTY
+  { id: 107, cat: "Emotional Honesty", from: "I'm lonely.", to: "I'm craving more connection right now.", why: "Names the want, not just the lack." },
+  { id: 108, cat: "Emotional Honesty", from: "I hate my life.", to: "There's a lot I want to change — and I'm working on the first piece.", why: "From overwhelm to a single next step." },
+  { id: 109, cat: "Emotional Honesty", from: "Nothing is going right.", to: "I'm in a hard chapter — and chapters end.", why: "Frames the season, not your worth." },
+  { id: 110, cat: "Emotional Honesty", from: "I feel worthless.", to: "My self-talk is loud right now — and I'm not buying it.", why: "Notices the thought instead of becoming it." },
+
+  // MORE COMPLIMENTS
+  { id: 111, cat: "Compliments", from: "Oh stop.", to: "Thank you. That landed.", why: "Receive the gift completely." },
+  { id: 112, cat: "Compliments", from: "It was easy.", to: "Thank you — I'm proud of how it came together.", why: "Honors your effort." },
+  { id: 113, cat: "Compliments", from: "You're too nice.", to: "Thank you — I'll carry that with me today.", why: "Lets the kindness do its work." },
+
+  // MORE MONEY
+  { id: 114, cat: "Money", from: "I'm so cheap.", to: "I'm choosy about where my money goes.", why: "Discipline isn't cheapness." },
+  { id: 115, cat: "Money", from: "Money is tight.", to: "I'm being intentional with my cash flow this season.", why: "Operator language, not victim language." },
+  { id: 116, cat: "Money", from: "Can I get a discount?", to: "What flexibility do you have on the pricing?", why: "Opens the door instead of begging." },
+
+  // MORE UNDER PRESSURE
+  { id: 117, cat: "Under Pressure", from: "Stop pushing me.", to: "I'm going to give you my best answer when I have it — not before.", why: "Sets the pace, doesn't refuse." },
+  { id: 118, cat: "Under Pressure", from: "Why are you on my case?", to: "Help me understand what you need from me here.", why: "Surfaces the actual ask." },
+  { id: 119, cat: "Under Pressure", from: "You're stressing me out.", to: "I'm at capacity right now — let's pick this up later.", why: "Names your limit without blaming them." },
+  { id: 120, cat: "Under Pressure", from: "Just leave me alone.", to: "I need some space to think — I'll come back when I'm ready.", why: "Promise of return makes the ask land softer." },
+
+  // SELF-TALK (NEW CATEGORY)
+  { id: 121, cat: "Self-Talk", from: "I'm so stupid.", to: "I'm learning — and I'm not there yet.", why: "Growth language, not identity language." },
+  { id: 122, cat: "Self-Talk", from: "I can't do this.", to: "I haven't figured this out yet.", why: "Adds the magic word: yet." },
+  { id: 123, cat: "Self-Talk", from: "I'm such a failure.", to: "This didn't work — and now I have more information.", why: "Outcome ≠ identity." },
+  { id: 124, cat: "Self-Talk", from: "Why can't I just be normal?", to: "I'm exactly where I'm meant to be in my own becoming.", why: "Belongs to you, not the comparison." },
+  { id: 125, cat: "Self-Talk", from: "I'll never get it right.", to: "Right now I'm building the muscle.", why: "Process, not perfection." },
+
+  // AT WORK (NEW CATEGORY)
+  { id: 126, cat: "At Work", from: "That's not my job.", to: "Help me understand how this fits with my role.", why: "Defensible without sounding defensive." },
+  { id: 127, cat: "At Work", from: "I'm so swamped.", to: "I'm at capacity — what's the deadline so we can prioritize?", why: "Reframes overwhelm as triage." },
+  { id: 128, cat: "At Work", from: "I deserve a raise.", to: "I'd like to talk about what I've been contributing and what comes next.", why: "Invites a conversation instead of a demand." },
+  { id: 129, cat: "At Work", from: "My boss is impossible.", to: "I'm navigating a hard dynamic at work — and I'm clear on what I want.", why: "Owns the situation, not the venting." },
+  { id: 130, cat: "At Work", from: "I hate this job.", to: "I'm clear that this isn't my long-term path — and I'm working on what is.", why: "Names the truth + the action." },
 ];
 
 const ELEGANT_PHRASES_ES = [
@@ -5837,6 +6582,100 @@ const ELEGANT_PHRASES_ES = [
   { id: 62, cat: "Bajo presión", from: "Estás exagerando.", to: "Ayúdame a ver lo que se me está pasando.", why: "La curiosidad desactiva la defensiva." },
   { id: 63, cat: "Bajo presión", from: "Cálmate.", to: "Quiero escucharte — vamos a bajar el ritmo juntos.", why: "'Cálmate' escala. Bajar el ritmo juntos regula." },
   { id: 64, cat: "Bajo presión", from: "Eres imposible.", to: "Me está costando encontrar el camino contigo en esto.", why: "Asume tu parte, nombra la dinámica." },
+
+  // MÁS DECIR NO
+  { id: 65, cat: "Decir No", from: "Lo voy a pensar.", to: "Ya lo pensé — y la respuesta es no.", why: "Deja de alargarlo." },
+  { id: 66, cat: "Decir No", from: "Tal vez después.", to: "No es para mí — pero gracias por pensar en mí.", why: "Definitivo pero cálido." },
+  { id: 67, cat: "Decir No", from: "Tengo planes.", to: "No estoy disponible.", why: "No debes explicación." },
+  { id: 68, cat: "Decir No", from: "Supongo que sí.", to: "Prefiero no hacerlo.", why: "Un no sin resentimiento." },
+  { id: 69, cat: "Decir No", from: "Está bien, bueno.", to: "Voy a pasar de esta.", why: "Sin un sí falso." },
+  { id: 70, cat: "Decir No", from: "Si de verdad lo necesitas.", to: "No soy la persona indicada para esto — déjame pensar quién podría serlo.", why: "Redirige sin abandonar." },
+
+  // MÁS ESTAR EN DESACUERDO
+  { id: 71, cat: "Estar en desacuerdo", from: "Esa es una idea terrible.", to: "Creo que hay un mejor ángulo aquí — ¿te lo comparto?", why: "Crítica con un camino hacia adelante." },
+  { id: 72, cat: "Estar en desacuerdo", from: "Estás perdiendo el punto.", to: "Déjame volver a lo que creo que es la pregunta central.", why: "Reenfoca sin insultar." },
+  { id: 73, cat: "Estar en desacuerdo", from: "¿Siquiera lo leíste?", to: "Quiero asegurarme de que estamos partiendo del mismo contexto.", why: "Chequeo diplomático, no acusación." },
+  { id: 74, cat: "Estar en desacuerdo", from: "Eso jamás va a funcionar.", to: "Veo algunos riesgos aquí — vamos a ponerlo a prueba.", why: "Se compromete en vez de descartar." },
+  { id: 75, cat: "Estar en desacuerdo", from: "No estoy de acuerdo.", to: "Mi lectura es diferente. Esto es lo que veo…", why: "Te gana el lugar en la mesa." },
+  { id: 76, cat: "Estar en desacuerdo", from: "Lo que tú digas.", to: "Quiero honrar tu visión y aun así compartir la mía.", why: "Dos verdades, ambas conservadas." },
+
+  // MÁS LÍMITES
+  { id: 77, cat: "Límites", from: "Sal de mi cuarto.", to: "Necesito tiempo a solas — te busco cuando esté lista.", why: "Nombra la necesidad + ofrece el regreso." },
+  { id: 78, cat: "Límites", from: "No toques mis cosas.", to: "Me encantaría que me preguntaras antes de tomar mis cosas.", why: "Pone la regla sin el calor." },
+  { id: 79, cat: "Límites", from: "Deja de interrumpirme.", to: "Déjame terminar mi idea y después es tu turno.", why: "Sostiene la palabra con gracia." },
+  { id: 80, cat: "Límites", from: "Eso no es tu asunto.", to: "Aprecio que te importe — esta la manejo yo.", why: "Reconoce y aun así la guarda." },
+  { id: 81, cat: "Límites", from: "¿Por qué te metes en mis cosas?", to: "Esa es una parte de mi vida que prefiero guardar para mí.", why: "Privacidad declarada, no defendida." },
+  { id: 82, cat: "Límites", from: "Deja de presionarme.", to: "Quiero tomar esta decisión cuando me sienta tranquila — no cuando me sienta empujada.", why: "Nombra la dinámica, no a la persona." },
+
+  // MÁS DISCULPARSE
+  { id: 83, cat: "Disculparse", from: "Soy un desastre.", to: "Estoy trabajando en algunas cosas — gracias por tu paciencia.", why: "Honesta sin maltratarte." },
+  { id: 84, cat: "Disculparse", from: "La regué.", to: "Cometí un error aquí. Así es como lo voy a arreglar.", why: "Asume y repara en una sola frase." },
+  { id: 85, cat: "Disculparse", from: "Perdón por quitarte el tiempo.", to: "Gracias por hacer un espacio para esto.", why: "Tu tiempo también vale." },
+  { id: 86, cat: "Disculparse", from: "Siempre hago todo mal.", to: "Fallé esta vez — y estoy aprendiendo de eso.", why: "Una falla, no una identidad." },
+  { id: 87, cat: "Disculparse", from: "Odio haberlo hecho.", to: "Lo haría diferente la próxima vez.", why: "Enfocada al futuro, no en atacarte." },
+  { id: 88, cat: "Disculparse", from: "Perdón por todo.", to: "Perdón por la cosa específica que hice — quiero ser clara al respecto.", why: "Una disculpa limpia nombra lo específico." },
+
+  // MÁS CONFIANZA
+  { id: 89, cat: "Confianza", from: "No soy experta pero…", to: "Basándome en lo que estoy viendo…", why: "Apóyate en lo que observas, no en credenciales." },
+  { id: 90, cat: "Confianza", from: "Esto probablemente está mal pero…", to: "Esta es mi lectura…", why: "No te disculpes por tu perspectiva." },
+  { id: 91, cat: "Confianza", from: "Si no te importa…", to: "Me gustaría…", why: "Empieza por lo que quieres, deja que respondan." },
+  { id: 92, cat: "Confianza", from: "Quizás se me está pasando algo pero…", to: "Lo que noto es…", why: "Di lo que ves. Déjalo en pie." },
+
+  // MÁS RETROALIMENTACIÓN
+  { id: 93, cat: "Retroalimentación", from: "Estás siendo demasiado crítico.", to: "Ayúdame a entender qué harías diferente.", why: "Convierte la crítica en dirección." },
+  { id: 94, cat: "Retroalimentación", from: "No es lo que quise decir.", to: "Déjame aclarar lo que intentaba decir.", why: "Asume el mensaje, no su lectura." },
+  { id: 95, cat: "Retroalimentación", from: "Todos los demás piensan que está bien.", to: "Ayúdame a ver lo que ves — quiero entender.", why: "La verdad de la mayoría no siempre es verdad." },
+  { id: 96, cat: "Retroalimentación", from: "Deja de quejarte de cada detalle.", to: "Llévame por las piezas que más te importan.", why: "Prioriza sus prioridades." },
+
+  // MÁS PEDIR AYUDA
+  { id: 97, cat: "Pedir ayuda", from: "Estoy atorada.", to: "Choqué con un muro en esto — ¿podría pedir tu opinión?", why: "Específica, acotada y los honra." },
+  { id: 98, cat: "Pedir ayuda", from: "No sé lo que estoy haciendo.", to: "Estoy en territorio nuevo — ¿te molestaría guiarme?", why: "Mente de principiante, no impotencia." },
+  { id: 99, cat: "Pedir ayuda", from: "Necesito un favor.", to: "Tengo una petición — solo si te queda bien.", why: "Les da la salida fácil de entrada." },
+  { id: 100, cat: "Pedir ayuda", from: "¿Alguien me ayuda??", to: "Te agradecería una mano con esto cuando tengas un momento.", why: "Pedidos en calma reciben síes más rápido." },
+
+  // MÁS CONVERSACIONES DIFÍCILES
+  { id: 101, cat: "Conversaciones difíciles", from: "Eres imposible para hablar.", to: "Quiero encontrar una manera de que de verdad nos escuchemos.", why: "Nombra una meta compartida en vez de un defecto." },
+  { id: 102, cat: "Conversaciones difíciles", from: "Nunca escuchas.", to: "Quiero sentirme escuchada en esta conversación — ¿podemos empezar por ahí?", why: "Pide lo que necesitas." },
+  { id: 103, cat: "Conversaciones difíciles", from: "Ya terminé con esto.", to: "Necesito tomar distancia antes de continuar.", why: "Pausa, no abandones." },
+  { id: 104, cat: "Conversaciones difíciles", from: "No te importo.", to: "Me siento invisible ahora — y quiero compartirlo contigo.", why: "Tu sentir, no su defecto." },
+  { id: 105, cat: "Conversaciones difíciles", from: "Olvídalo.", to: "Volvamos a esto cuando ambos estemos listos.", why: "Agenda, no portazo." },
+  { id: 106, cat: "Conversaciones difíciles", from: "Ni siquiera puedo hablar contigo.", to: "Necesito respirar y volver con la mente más clara.", why: "Autorregulación anunciada." },
+
+  // MÁS HONESTIDAD EMOCIONAL
+  { id: 107, cat: "Honestidad emocional", from: "Estoy sola.", to: "Estoy buscando más conexión ahora mismo.", why: "Nombra el deseo, no solo la falta." },
+  { id: 108, cat: "Honestidad emocional", from: "Odio mi vida.", to: "Hay mucho que quiero cambiar — y estoy trabajando en lo primero.", why: "De la abrumación a un siguiente paso." },
+  { id: 109, cat: "Honestidad emocional", from: "Nada me sale bien.", to: "Estoy en un capítulo difícil — y los capítulos terminan.", why: "Encuadra la temporada, no tu valor." },
+  { id: 110, cat: "Honestidad emocional", from: "Me siento inservible.", to: "Mi voz interna está fuerte ahora — y no le estoy creyendo.", why: "Nota el pensamiento sin volverte él." },
+
+  // MÁS CUMPLIDOS
+  { id: 111, cat: "Cumplidos", from: "Ay, ya.", to: "Gracias. Me llegó.", why: "Recibe el regalo completo." },
+  { id: 112, cat: "Cumplidos", from: "Fue fácil.", to: "Gracias — estoy orgullosa de cómo quedó.", why: "Honra tu esfuerzo." },
+  { id: 113, cat: "Cumplidos", from: "Eres demasiado amable.", to: "Gracias — me llevo eso conmigo hoy.", why: "Deja que la ternura haga su trabajo." },
+
+  // MÁS DINERO
+  { id: 114, cat: "Dinero", from: "Soy tan tacaña.", to: "Soy selectiva con dónde va mi dinero.", why: "Disciplina no es tacañería." },
+  { id: 115, cat: "Dinero", from: "El dinero está apretado.", to: "Estoy siendo intencional con mi flujo de efectivo esta temporada.", why: "Lenguaje de operadora, no de víctima." },
+  { id: 116, cat: "Dinero", from: "¿Me puedes dar descuento?", to: "¿Qué flexibilidad tienes en el precio?", why: "Abre la puerta en vez de rogar." },
+
+  // MÁS BAJO PRESIÓN
+  { id: 117, cat: "Bajo presión", from: "Deja de empujarme.", to: "Te voy a dar mi mejor respuesta cuando la tenga — no antes.", why: "Marca el ritmo, no rechaza." },
+  { id: 118, cat: "Bajo presión", from: "¿Por qué estás sobre mí?", to: "Ayúdame a entender qué necesitas de mí aquí.", why: "Saca a la luz el pedido real." },
+  { id: 119, cat: "Bajo presión", from: "Me estás estresando.", to: "Estoy al límite ahora mismo — retomemos esto después.", why: "Nombra tu límite sin culparlos." },
+  { id: 120, cat: "Bajo presión", from: "Solo déjame en paz.", to: "Necesito espacio para pensar — vuelvo cuando esté lista.", why: "La promesa de regreso suaviza el pedido." },
+
+  // DIÁLOGO INTERNO (CATEGORÍA NUEVA)
+  { id: 121, cat: "Diálogo interno", from: "Soy tan tonta.", to: "Estoy aprendiendo — y aún no estoy ahí.", why: "Lenguaje de crecimiento, no de identidad." },
+  { id: 122, cat: "Diálogo interno", from: "No puedo hacer esto.", to: "Aún no lo he resuelto.", why: "Agrega la palabra mágica: aún." },
+  { id: 123, cat: "Diálogo interno", from: "Soy un fracaso.", to: "Esto no funcionó — y ahora tengo más información.", why: "Resultado ≠ identidad." },
+  { id: 124, cat: "Diálogo interno", from: "¿Por qué no puedo ser normal?", to: "Estoy exactamente donde me toca estar en mi propio camino.", why: "Te perteneces a ti, no a la comparación." },
+  { id: 125, cat: "Diálogo interno", from: "Nunca lo voy a lograr.", to: "Ahora mismo estoy construyendo el músculo.", why: "Proceso, no perfección." },
+
+  // EN EL TRABAJO (CATEGORÍA NUEVA)
+  { id: 126, cat: "En el trabajo", from: "Eso no es mi trabajo.", to: "Ayúdame a entender cómo encaja esto con mi rol.", why: "Defendible sin sonar defensiva." },
+  { id: 127, cat: "En el trabajo", from: "Estoy súper saturada.", to: "Estoy al límite — ¿cuál es la fecha límite para priorizar?", why: "Reformula la abrumación como triaje." },
+  { id: 128, cat: "En el trabajo", from: "Me merezco un aumento.", to: "Me gustaría hablar de lo que he aportado y de lo que sigue.", why: "Invita a una conversación, no una exigencia." },
+  { id: 129, cat: "En el trabajo", from: "Mi jefe es imposible.", to: "Estoy navegando una dinámica difícil en el trabajo — y tengo claro lo que quiero.", why: "Asume la situación, no el desahogo." },
+  { id: 130, cat: "En el trabajo", from: "Odio este trabajo.", to: "Tengo claro que este no es mi camino a largo plazo — y estoy trabajando en lo que sí lo es.", why: "Nombra la verdad + la acción." },
 ];
 
 
@@ -5980,7 +6819,7 @@ function BoundariesModule({ data, setData, dark, themePanel, themeMuted, trigger
     };
     const remove = (id) => onSave(list.filter(i => i.id !== id));
     return (
-      <div className={`rounded-2xl border ${themePanel} p-5 group`}>
+      <div className={`rounded-2xl border ${themePanel} p-5 group min-w-0 overflow-hidden`}>
         <div className="flex items-start gap-3 mb-4">
           <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: color + "20" }}>
             <Icon className="w-5 h-5" style={{ color }} />
@@ -7582,8 +8421,21 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   // full-width Weekly Schedule.
   const [date, setDate] = useState(todayISO());
   const [newTitle, setNewTitle] = useState("");
+  // newStart/newEnd are stored as 24h HH:MM strings (what <input type="time">
+  // returns); converted to the planner's 12h labels ("9:30 AM") at save time.
+  const [newStart, setNewStart] = useState("");
+  const [newEnd, setNewEnd] = useState("");
   const [editingId, setEditingId] = useState(null);
   const [editingText, setEditingText] = useState("");
+  const [editingStart, setEditingStart] = useState("");
+  const [editingEnd, setEditingEnd] = useState("");
+  const [editingNotes, setEditingNotes] = useState("");
+  const [newTaskNotes, setNewTaskNotes] = useState("");
+  const [newTaskPriority, setNewTaskPriority] = useState(false);
+  const [newWinNotes, setNewWinNotes] = useState("");
+  const [editingWinId, setEditingWinId] = useState(null);
+  const [editingWinText, setEditingWinText] = useState("");
+  const [editingWinNotes, setEditingWinNotes] = useState("");
   const [focusedField, setFocusedField] = useState(null);
   const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
   const [addWinModalOpen, setAddWinModalOpen] = useState(false);
@@ -7685,8 +8537,12 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (!text) return;
     const ids = wins.map(w => Number(w && w.id)).filter(n => !isNaN(n));
     const id = (ids.length ? Math.max(...ids) : 0) + 1;
-    updatePlan({ wins: [...wins, { id, text, done: false }] });
+    const notes = (newWinNotes || "").trim();
+    const win = { id, text, done: false };
+    if (notes) win.notes = notes;
+    updatePlan({ wins: [...wins, win] });
     setNewWin("");
+    setNewWinNotes("");
   };
   const toggleWinDone = (id) => {
     const becoming = wins.find(w => w && w.id === id);
@@ -7695,6 +8551,28 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (wasUndone && triggerConfetti) triggerConfetti();
   };
   const removeWin = (id) => updatePlan({ wins: wins.filter(w => w && w.id !== id) });
+  const startEditWin = (w) => {
+    setEditingWinId(w.id);
+    setEditingWinText(w.text || "");
+    setEditingWinNotes(w.notes || "");
+  };
+  const saveEditWin = () => {
+    const text = (editingWinText || "").trim();
+    if (!text) { setEditingWinId(null); setEditingWinText(""); setEditingWinNotes(""); return; }
+    const notes = (editingWinNotes || "").trim();
+    updatePlan({
+      wins: wins.map(w => {
+        if (!w || w.id !== editingWinId) return w;
+        const next = { ...w, text };
+        if (notes) next.notes = notes; else delete next.notes;
+        return next;
+      })
+    });
+    setEditingWinId(null);
+    setEditingWinText("");
+    setEditingWinNotes("");
+  };
+  const cancelEditWin = () => { setEditingWinId(null); setEditingWinText(""); setEditingWinNotes(""); };
 
   // ----- Weekly schedule helpers (verbatim from the Calendar) -----
   const weekStart = startOfWeekMonday(weekAnchor);
@@ -7704,6 +8582,146 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     const existing = planners[isoDate] || { priorities: ["","",""], blocks: {}, wins: ["","",""], gratitude: "", journal: "", waterGlasses: 0 };
     const next = { ...existing, blocks: { ...(existing.blocks || {}), [hour]: v } };
     setData({ ...data, planners: { ...planners, [isoDate]: next } });
+  };
+
+  // ----- Time helpers (PLANNER_HOURS uses 12h "9:30 AM"; <input type="time">
+  // returns 24h "09:30". These helpers bridge the two so the weekly schedule
+  // grid can lay tasks out as time blocks.) -----
+  const to24h = (h12) => {
+    if (!h12) return "";
+    const m = String(h12).match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!m) return "";
+    let h = parseInt(m[1], 10);
+    const min = m[2];
+    const ampm = m[3].toUpperCase();
+    if (ampm === "AM") h = h === 12 ? 0 : h;
+    else h = h === 12 ? 12 : h + 12;
+    return `${String(h).padStart(2, "0")}:${min}`;
+  };
+  const to12h = (h24) => {
+    if (!h24) return "";
+    const m = String(h24).match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return "";
+    let h = parseInt(m[1], 10);
+    const min = m[2];
+    const ampm = h >= 12 ? "PM" : "AM";
+    if (h === 0) h = 12;
+    else if (h > 12) h -= 12;
+    return `${h}:${min} ${ampm}`;
+  };
+  // Minutes-from-midnight, accepting either "9:30 AM" or "09:30".
+  const timeToMin = (s) => {
+    if (!s) return -1;
+    if (/AM|PM/i.test(s)) s = to24h(s);
+    const m = String(s).match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return -1;
+    return parseInt(m[1], 10) * 60 + parseInt(m[2], 10);
+  };
+  // Add minutes to a 24h "HH:MM", returning the new 24h string. Used by the
+  // "+30m / +1h / +1.5h / +2h" quick chips so the user doesn't have to fiddle
+  // with the End picker after choosing a Start.
+  const addMinutesTo = (h24, mins) => {
+    if (!h24) return "";
+    const m = String(h24).match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return "";
+    let total = parseInt(m[1], 10) * 60 + parseInt(m[2], 10) + mins;
+    if (total < 0) total = 0;
+    if (total >= 24 * 60) total = 24 * 60 - 1;
+    return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+  };
+  // Phone-friendly time parser: accepts "9", "930", "9:30", "09:30",
+  // "9:30am", "9 30 pm", "21:30" and returns 24h "HH:MM" or "". Lets the
+  // user type the time on the numeric keypad instead of the iOS wheel.
+  const parseTimeText = (raw) => {
+    if (!raw) return "";
+    const s = String(raw).trim().toLowerCase();
+    if (!s) return "";
+    const ampmMatch = s.match(/(a\.?m\.?|p\.?m\.?|a|p)$/);
+    let ampm = null;
+    let core = s;
+    if (ampmMatch) {
+      ampm = ampmMatch[1][0] === "p" ? "pm" : "am";
+      core = s.slice(0, ampmMatch.index).trim();
+    }
+    const cleaned = core.replace(/[^\d:]/g, "");
+    if (!cleaned) return "";
+    let h, m;
+    if (cleaned.includes(":")) {
+      const parts = cleaned.split(":");
+      h = parseInt(parts[0], 10);
+      m = parts[1] ? parseInt(parts[1].slice(0, 2).padEnd(2, "0"), 10) : 0;
+    } else if (cleaned.length <= 2) {
+      h = parseInt(cleaned, 10); m = 0;
+    } else if (cleaned.length === 3) {
+      h = parseInt(cleaned.slice(0, 1), 10); m = parseInt(cleaned.slice(1), 10);
+    } else {
+      h = parseInt(cleaned.slice(0, 2), 10); m = parseInt(cleaned.slice(2, 4), 10);
+    }
+    if (isNaN(h) || isNaN(m) || m < 0 || m > 59 || h < 0) return "";
+    if (ampm === "am") { if (h === 12) h = 0; }
+    else if (ampm === "pm") { if (h > 0 && h < 12) h += 12; }
+    if (h > 23) return "";
+    return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
+  };
+  // Phone-friendly time picker. value is the canonical 24h "HH:MM" or "".
+  // Renders two number boxes split by a permanent ":" + an AM/PM segmented
+  // toggle so users on the iPhone numeric keypad never have to type the colon
+  // or letters. onChange receives the new 24h "HH:MM" string ("" if invalid).
+  const TimePartInput = ({ value, onChange, hhPlaceholder = "9", mmPlaceholder = "30" }) => {
+    const parsed = (() => {
+      const mm = /^(\d{1,2}):(\d{2})$/.exec(String(value || "").trim());
+      if (!mm) return { hh: "", mm: "", ampm: "AM" };
+      let h = parseInt(mm[1], 10);
+      const mStr = mm[2];
+      if (h === 0) return { hh: "12", mm: mStr, ampm: "AM" };
+      if (h < 12) return { hh: String(h), mm: mStr, ampm: "AM" };
+      if (h === 12) return { hh: "12", mm: mStr, ampm: "PM" };
+      return { hh: String(h - 12), mm: mStr, ampm: "PM" };
+    })();
+    const emit = (nh, nm, nap) => {
+      const ih = parseInt(nh, 10);
+      const im = nm === "" ? 0 : parseInt(nm, 10);
+      if (isNaN(ih) || ih < 1 || ih > 12 || isNaN(im) || im < 0 || im > 59) {
+        onChange("");
+        return;
+      }
+      let h24 = ih === 12 ? 0 : ih;
+      if (nap === "PM") h24 = (ih === 12) ? 12 : ih + 12;
+      onChange(`${String(h24).padStart(2, "0")}:${String(im).padStart(2, "0")}`);
+    };
+    return (
+      <div className="flex items-center gap-1.5">
+        <input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2}
+          value={parsed.hh} placeholder={hhPlaceholder}
+          onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); emit(v, parsed.mm, parsed.ampm); }}
+          className="w-11 text-center px-1 py-1.5 border rounded text-sm bg-white border-stone-200 focus:border-[#7a9a6e] outline-none" />
+        <span className="text-stone-700 font-semibold text-base select-none">:</span>
+        <input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2}
+          value={parsed.mm} placeholder={mmPlaceholder}
+          onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); emit(parsed.hh, v, parsed.ampm); }}
+          className="w-11 text-center px-1 py-1.5 border rounded text-sm bg-white border-stone-200 focus:border-[#7a9a6e] outline-none" />
+        <div className="inline-flex border border-stone-200 rounded overflow-hidden ml-1 text-[10px] font-semibold tracking-wider">
+          <button type="button" tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={() => emit(parsed.hh, parsed.mm, "AM")}
+            className={`px-2 py-1.5 transition ${parsed.ampm === "AM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>AM</button>
+          <button type="button" tabIndex={-1}
+            onMouseDown={e => e.preventDefault()}
+            onClick={() => emit(parsed.hh, parsed.mm, "PM")}
+            className={`px-2 py-1.5 transition ${parsed.ampm === "PM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>PM</button>
+        </div>
+      </div>
+    );
+  };
+  // Returns true if hourLabel ("10:00 AM") falls in the task's [start, end)
+  // half-open interval. End-equal-to-start is treated as a single 30-min slot.
+  const taskCoversHour = (task, hourLabel) => {
+    const start = task.startTime ? timeToMin(task.startTime) : -1;
+    if (start < 0) return false;
+    const endRaw = task.endTime ? timeToMin(task.endTime) : -1;
+    const end = endRaw > start ? endRaw : start + 30;
+    const cell = timeToMin(hourLabel);
+    return cell >= start && cell < end;
   };
 
   // ----- To-do list -----
@@ -7716,8 +8734,25 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (!title) return;
     const ids = allTasks.map(t => Number(t && t.id)).filter(n => !isNaN(n));
     const id = (ids.length ? Math.max(...ids) : 0) + 1;
-    setTasks([...allTasks, { id, title, date, done: false }]);
+    const startTime = newStart ? to12h(newStart) : "";
+    const endTime = newEnd ? to12h(newEnd) : "";
+    const notes = (newTaskNotes || "").trim();
+    const task = { id, title, date, done: false };
+    if (startTime) task.startTime = startTime;
+    if (endTime) task.endTime = endTime;
+    if (notes) task.notes = notes;
+    if (newTaskPriority && priorityCount < 3) {
+      const usedOrders = dayTasks.filter(x => x.priority).map(x => x.priorityOrder || 0);
+      const order = [1, 2, 3].find(n => !usedOrders.includes(n)) || 1;
+      task.priority = "high";
+      task.priorityOrder = order;
+    }
+    setTasks([...allTasks, task]);
     setNewTitle("");
+    setNewStart("");
+    setNewEnd("");
+    setNewTaskNotes("");
+    setNewTaskPriority(false);
   };
 
   // ----- Priority handling (max 3 per day, bumps to top) -----
@@ -7748,12 +8783,31 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (becoming && triggerConfetti) triggerConfetti();
   };
   const removeTask = (id) => setTasks(allTasks.filter(x => x && x.id !== id));
-  const startEdit = (task) => { setEditingId(task.id); setEditingText(task.title); };
+  const startEdit = (task) => {
+    setEditingId(task.id);
+    setEditingText(task.title);
+    setEditingStart(task.startTime ? to24h(task.startTime) : "");
+    setEditingEnd(task.endTime ? to24h(task.endTime) : "");
+    setEditingNotes(task.notes || "");
+  };
   const saveEdit = () => {
     const text = (editingText || "").trim();
     if (!text) { setEditingId(null); return; }
-    setTasks(allTasks.map(x => x && x.id === editingId ? { ...x, title: text } : x));
+    const startTime = editingStart ? to12h(editingStart) : "";
+    const endTime = editingEnd ? to12h(editingEnd) : "";
+    const notes = (editingNotes || "").trim();
+    setTasks(allTasks.map(x => {
+      if (!x || x.id !== editingId) return x;
+      const next = { ...x, title: text };
+      if (startTime) next.startTime = startTime; else delete next.startTime;
+      if (endTime) next.endTime = endTime; else delete next.endTime;
+      if (notes) next.notes = notes; else delete next.notes;
+      return next;
+    }));
     setEditingId(null);
+    setEditingStart("");
+    setEditingEnd("");
+    setEditingNotes("");
   };
   const clearCompleted = () => setTasks(allTasks.filter(t => !(t && t.date === date && t.done)));
 
@@ -7784,7 +8838,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
 
   // ----- Section pieces -----
   const PrioritiesCard = (
-    <div className={`rounded-2xl border ${themePanel} ${showPriorities ? "p-5" : "p-3"} h-full flex flex-col`}>
+    <div className={`rounded-2xl border ${themePanel} ${showPriorities ? "p-5" : "p-3"} h-full flex flex-col min-w-0 overflow-hidden`}>
       <button onClick={togglePriorities} className="flex items-start gap-2 text-left group" title={showPriorities ? t("Hide priorities", lang) : t("Expand priorities", lang)}>
         <ChevronRight className={`w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0 transition ${showPriorities ? "rotate-90" : ""}`} />
         <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 group-hover:text-[#5b7351]">{t("TOP 3 PRIORITIES", lang)}</h2>
@@ -7843,7 +8897,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const hiddenCount = sortedDayTasks.length - visibleTasks.length;
 
   const TodoCard = (
-    <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
+    <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
       {/* Header — title + (+) add button on the left, SEE MORE on the right */}
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
@@ -7891,21 +8945,26 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         </div>
       )}
 
-      {/* Task list — two-line rows with star priority + arrow */}
-      <div className="flex-1 overflow-y-auto -mx-1" style={{ maxHeight: showAllTasks ? "560px" : "360px" }}>
+      {/* Task list — fixed phone-friendly scroll height so the card box
+          itself never stretches with content. Per-row text scrolls
+          horizontally inside the row (see whitespace-nowrap + scrollbar-hide
+          on the title/meta/notes lines). */}
+      <div className="flex-1 overflow-y-auto -mx-1" style={{ maxHeight: showAllTasks ? "min(55vh, 480px)" : "min(40vh, 280px)" }}>
         {sortedDayTasks.length === 0 ? (
           <div className={`py-8 text-center ${themeMuted} text-xs italic`}>{t("Nothing here yet. Tap + to add one.", lang)}</div>
         ) : (
           <ul>
             {visibleTasks.map((task, idx) => {
               const isPri = !!task.priority;
-              const meta = isPri
-                ? t("PRIORITY", lang)
-                : (task.time ? task.time.toUpperCase() : null);
+              const timeRange = task.startTime
+                ? (task.endTime ? `${task.startTime} – ${task.endTime}` : task.startTime)
+                : (task.time || null);
+              // Priority is communicated by the green pill on the right of
+              // the row; the meta line only needs to surface the time (if any).
+              const meta = timeRange ? timeRange.toUpperCase() : null;
               const isLast = idx === visibleTasks.length - 1;
-              const starDisabled = !isPri && priorityCount >= 3;
               return (
-                <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-2.5 sm:py-3 group ${isLast ? "" : "border-b border-stone-100"}`}>
+                <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-1.5 sm:py-2.5 group ${editingId === task.id ? "" : "h-[44px] sm:h-auto overflow-hidden"} ${isLast ? "" : "border-b border-stone-100"}`}>
                   {/* Done circle */}
                   <button onClick={() => toggleTask(task.id)}
                     className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border-2 hover:bg-stone-50"}`}
@@ -7918,36 +8977,150 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
 
                   {/* Title + meta */}
                   {editingId === task.id ? (
-                    <div className="flex-1 min-w-0">
-                      <textarea {...grow("todo-edit-" + task.id)} autoFocus value={editingText}
+                    <div className="flex-1 min-w-0"
+                      onBlur={(e) => {
+                        // Only save when focus leaves the entire edit panel
+                        // (not just the textarea moving to a time input).
+                        if (!e.currentTarget.contains(e.relatedTarget)) saveEdit();
+                      }}>
+                      <textarea
+                        autoFocus
+                        rows={2}
+                        value={editingText}
                         onChange={e => setEditingText(e.target.value)}
-                        onBlur={() => { setFocusedField(prev => prev === "todo-edit-" + task.id ? null : prev); saveEdit(); }}
-                        onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditingId(null); }} />
+                        onMouseDown={e => e.stopPropagation()}
+                        onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); saveEdit(); } if (e.key === "Escape") setEditingId(null); }}
+                        placeholder={t("Task name…", lang)}
+                        className="block w-full px-2 py-1.5 border rounded text-xs sm:text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+                        style={{ minHeight: "44px", maxHeight: "120px" }} />
+                      {/* Inline time editor — phone-friendly: split HH/MM
+                          with a permanent colon + AM/PM toggle so users can
+                          tap the numeric keypad without hunting for ":". */}
+                      <div className="mt-2 space-y-2">
+                        <div>
+                          <label className="block text-[9px] tracking-[0.15em] uppercase text-stone-500 mb-0.5">{t("Start", lang)}</label>
+                          <TimePartInput
+                            value={editingStart}
+                            onChange={(v) => { setEditingStart(v); if (v && !editingEnd) setEditingEnd(addMinutesTo(v, 30)); }}
+                            hhPlaceholder="9" mmPlaceholder="30" />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] tracking-[0.15em] uppercase text-stone-500 mb-0.5">{t("End", lang)}</label>
+                          <TimePartInput
+                            value={editingEnd}
+                            onChange={setEditingEnd}
+                            hhPlaceholder="10" mmPlaceholder="00" />
+                        </div>
+                      </div>
+                      <div className="mt-1.5 flex flex-wrap gap-1">
+                        {[30, 60, 90, 120].map(mins => (
+                          <button key={mins} type="button"
+                            onMouseDown={e => e.preventDefault()}
+                            onClick={() => { if (editingStart) setEditingEnd(addMinutesTo(editingStart, mins)); }}
+                            disabled={!editingStart}
+                            className="px-2 py-0.5 rounded border border-stone-200 text-[9px] text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee] disabled:opacity-40 disabled:cursor-not-allowed">
+                            {mins < 60 ? `${mins} ${t("min", lang)}` : `${mins / 60} ${t("hr", lang)}`}
+                          </button>
+                        ))}
+                      </div>
+                      <div className="mt-2">
+                        <label className="block text-[9px] tracking-[0.15em] uppercase text-stone-500 mb-0.5">{t("Notes", lang)}</label>
+                        <textarea
+                          rows={3}
+                          value={editingNotes}
+                          onChange={e => setEditingNotes(e.target.value)}
+                          onMouseDown={e => e.stopPropagation()}
+                          onKeyDown={e => { if (e.key === "Escape") setEditingId(null); }}
+                          placeholder={t("Notes (optional)…", lang)}
+                          className="block w-full px-2 py-1.5 border rounded text-xs outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+                          style={{ minHeight: "60px", maxHeight: "100px" }} />
+                      </div>
+                      {/* Priority toggle — lives inside the edit panel only,
+                          so the collapsed row stays clean. Honors the 3/day cap. */}
+                      {(() => {
+                        const disabled = !isPri && priorityCount >= 3;
+                        return (
+                          <div className="mt-2 flex items-center gap-2 flex-wrap">
+                            <button type="button"
+                              onMouseDown={e => e.preventDefault()}
+                              onClick={() => { if (!disabled) togglePriority(task.id); }}
+                              disabled={disabled}
+                              className={`px-2.5 py-1 rounded-md text-[10px] tracking-wider uppercase font-semibold transition ${
+                                isPri
+                                  ? "bg-[#5b7351] text-white"
+                                  : "border border-stone-200 text-stone-500 hover:border-[#7a9a6e] hover:text-[#5b7351]"
+                              } ${disabled ? "opacity-40 cursor-not-allowed" : ""}`}>
+                              {isPri ? "★ " + t("Priority", lang) : "+ " + t("Priority", lang)}
+                            </button>
+                            {disabled && (
+                              <span className="text-[9px] italic text-stone-400">{t("Max 3 priorities", lang)}</span>
+                            )}
+                          </div>
+                        );
+                      })()}
+                      {/* Big delete button shown only while the row is expanded
+                          for editing — easier touch target than the tiny ✕. */}
+                      <div className="mt-2 flex items-center gap-2">
+                        <button type="button"
+                          onMouseDown={e => e.preventDefault()}
+                          onClick={() => removeTask(task.id)}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-xs font-medium hover:bg-rose-100 active:bg-rose-200 transition">
+                          <Trash2 className="w-3.5 h-3.5" />
+                          {t("Delete task", lang)}
+                        </button>
+                        <button type="button"
+                          onMouseDown={e => e.preventDefault()}
+                          onClick={saveEdit}
+                          className="px-2.5 py-1 rounded-md text-xs font-medium text-white transition hover:opacity-90"
+                          style={{ background: "var(--accent-mid)" }}>
+                          {t("Save", lang)}
+                        </button>
+                        <button type="button"
+                          onMouseDown={e => e.preventDefault()}
+                          onClick={() => { setEditingId(null); setEditingText(""); setEditingStart(""); setEditingEnd(""); }}
+                          className="px-2.5 py-1 rounded-md text-xs text-stone-500 hover:text-stone-700 hover:bg-stone-100 transition">
+                          {t("Cancel", lang)}
+                        </button>
+                      </div>
                     </div>
                   ) : (
-                    <button onClick={() => startEdit(task)}
-                      className="flex-1 min-w-0 text-left" title={t("Click to edit", lang)}>
-                      <div className={`text-xs sm:text-sm font-medium truncate ${task.done ? "text-stone-400" : "text-stone-900"}`}>
-                        {task.title}
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => startEdit(task)}
+                      onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); startEdit(task); } }}
+                      className="flex-1 min-w-0 text-left overflow-hidden cursor-pointer"
+                      title={t("Click to edit", lang)}>
+                      <div className="overflow-x-auto scrollbar-hide" style={{ touchAction: "pan-x" }}>
+                        <div className={`inline-flex min-w-max text-xs sm:text-sm font-medium whitespace-nowrap ${task.done ? "text-stone-400" : "text-stone-900"}`}>
+                          {task.title}
+                        </div>
                       </div>
-                      {meta && (
-                        <div className={`text-[9px] sm:text-[10px] tracking-[0.18em] uppercase mt-0.5 truncate ${isPri ? "text-stone-600 font-semibold" : "text-stone-400"}`}>{meta}</div>
+                      {(meta || isPri) && (
+                        <div className="overflow-x-auto scrollbar-hide mt-0.5" style={{ touchAction: "pan-x" }}>
+                          <div className="inline-flex items-center gap-2 min-w-max whitespace-nowrap">
+                            {meta && (
+                              <span className={`text-[9px] sm:text-[10px] tracking-[0.18em] uppercase ${isPri ? "text-stone-600 font-semibold" : "text-stone-400"}`}>{meta}</span>
+                            )}
+                            {isPri && (
+                              <span
+                                className="text-[8px] sm:text-[9px] tracking-[0.18em] uppercase font-bold text-[#5b7351] bg-[#d3e0c5]/60 px-1.5 py-0.5 rounded"
+                                title={t("Priority", lang)}>
+                                {t("Priority", lang)}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       )}
-                    </button>
+                      {task.notes && (
+                        <div className="overflow-x-auto scrollbar-hide mt-0.5" style={{ touchAction: "pan-x" }}>
+                          <div className={`inline-flex min-w-max text-[11px] italic whitespace-nowrap ${task.done ? "text-stone-300" : "text-stone-500"}`}>
+                            {task.notes}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   )}
-
-                  {/* Priority toggle — plain text pill (no star icon) */}
-                  <button onClick={() => togglePriority(task.id)}
-                    disabled={starDisabled}
-                    className={`px-2 py-0.5 text-[9px] sm:text-[10px] tracking-wider uppercase rounded font-medium transition flex-shrink-0 ${
-                      isPri
-                        ? "bg-[#5b7351] text-white"
-                        : "border border-stone-200 text-stone-400 hover:border-[#7a9a6e] hover:text-[#5b7351]"
-                    } ${starDisabled ? "opacity-30 cursor-not-allowed hover:border-stone-200 hover:text-stone-400" : ""}`}
-                    aria-label={isPri ? t("Remove priority", lang) : t("Mark as priority", lang)}
-                    title={isPri ? t("Remove priority", lang) : (starDisabled ? t("Max 3 priorities", lang) : t("Mark as priority", lang))}>
-                    {isPri ? t("Priority", lang) : "+ " + t("Priority", lang)}
-                  </button>
 
                   {/* Edit arrow */}
                   <button onClick={() => startEdit(task)}
@@ -7986,10 +9159,13 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     addWin();
     setAddWinModalOpen(false);
   };
-  const cancelNewWin = () => { setNewWin(""); setAddWinModalOpen(false); };
+  const cancelNewWin = () => { setNewWin(""); setNewWinNotes(""); setAddWinModalOpen(false); };
   const AddWinModal = addWinModalOpen ? (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={cancelNewWin}>
-      <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4 bg-black/40" onClick={cancelNewWin}>
+      <div
+        className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 sm:p-6 overflow-y-auto"
+        style={{ maxHeight: "min(100dvh - 1.5rem, 480px)" }}
+        onClick={(e) => e.stopPropagation()}>
         <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Add a win", lang)}</h3>
         <p className="text-xs text-stone-500 mb-4 italic">{t("Anything you're proud of today.", lang)}</p>
         <textarea
@@ -8001,8 +9177,20 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submitNewWin(); } if (e.key === "Escape") cancelNewWin(); }}
           placeholder={t("Win…", lang)}
           className="block w-full max-w-full px-3 py-2 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20"
-          style={{ maxWidth: "100%", boxSizing: "border-box", minHeight: "80px" }}
+          style={{ maxWidth: "100%", boxSizing: "border-box", minHeight: "60px", maxHeight: "100px" }}
         />
+        <div className="mt-3">
+          <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1">{t("Notes", lang)}</label>
+          <textarea
+            rows={3}
+            value={newWinNotes}
+            onChange={(e) => setNewWinNotes(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Escape") cancelNewWin(); }}
+            placeholder={t("Notes (optional)…", lang)}
+            className="block w-full max-w-full px-3 py-2 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20"
+            style={{ maxWidth: "100%", boxSizing: "border-box", minHeight: "60px", maxHeight: "100px" }}
+          />
+        </div>
         <div className="flex justify-end gap-2 mt-4">
           <button onClick={cancelNewWin} className="px-4 py-2 text-xs uppercase tracking-wider text-stone-500 hover:text-stone-800 transition">
             {t("Cancel", lang)}
@@ -8018,7 +9206,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   ) : null;
 
   const WinsCard = (
-    <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
+    <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
       {/* Header — title + (+) add button, matching the TO-DO layout */}
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
@@ -8046,9 +9234,63 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                   aria-label={w.done ? t("Mark not done", lang) : t("Mark done", lang)}>
                   {w.done && <Check className="w-2.5 h-2.5" />}
                 </button>
-                <span className={`flex-1 text-xs sm:text-sm font-medium ${w.done ? "line-through text-stone-400" : "text-stone-900"}`}>
-                  {w.text}
-                </span>
+                {editingWinId === w.id ? (
+                  <div className="flex-1 min-w-0"
+                    onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) saveEditWin(); }}>
+                    <textarea autoFocus
+                      rows={2}
+                      value={editingWinText}
+                      onChange={e => setEditingWinText(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Escape") cancelEditWin(); }}
+                      placeholder={t("Win…", lang)}
+                      className="block w-full px-2 py-1.5 border rounded text-xs sm:text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+                      style={{ minHeight: "44px", maxHeight: "100px" }} />
+                    <textarea
+                      rows={2}
+                      value={editingWinNotes}
+                      onChange={e => setEditingWinNotes(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Escape") cancelEditWin(); }}
+                      placeholder={t("Notes (optional)…", lang)}
+                      className="block w-full mt-1.5 px-2 py-1.5 border rounded text-xs outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+                      style={{ minHeight: "44px", maxHeight: "100px" }} />
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <button type="button"
+                        onMouseDown={e => e.preventDefault()}
+                        onClick={saveEditWin}
+                        className="px-2.5 py-1 rounded-md text-xs font-medium text-white transition hover:opacity-90"
+                        style={{ background: "var(--accent-mid)" }}>
+                        {t("Save", lang)}
+                      </button>
+                      <button type="button"
+                        onMouseDown={e => e.preventDefault()}
+                        onClick={cancelEditWin}
+                        className="px-2.5 py-1 rounded-md text-xs text-stone-500 hover:text-stone-700 hover:bg-stone-100 transition">
+                        {t("Cancel", lang)}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => startEditWin(w)}
+                    onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); startEditWin(w); } }}
+                    className="flex-1 min-w-0 text-left overflow-hidden cursor-pointer"
+                    title={t("Click to edit", lang)}>
+                    <div className="overflow-x-auto scrollbar-hide" style={{ touchAction: "pan-x" }}>
+                      <div className={`inline-flex min-w-max text-xs sm:text-sm font-medium whitespace-nowrap ${w.done ? "line-through text-stone-400" : "text-stone-900"}`}>
+                        {w.text}
+                      </div>
+                    </div>
+                    {w.notes && (
+                      <div className="overflow-x-auto scrollbar-hide mt-0.5" style={{ touchAction: "pan-x" }}>
+                        <div className={`inline-flex min-w-max text-[11px] italic whitespace-nowrap ${w.done ? "text-stone-300" : "text-stone-500"}`}>
+                          {w.notes}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
                 <button onClick={() => removeWin(w.id)}
                   className="opacity-40 sm:opacity-0 group-hover:opacity-100 hover:!opacity-100 px-1 text-xs text-stone-400 hover:text-rose-500 transition flex-shrink-0"
                   aria-label={t("Delete", lang)}>✕</button>
@@ -8065,11 +9307,18 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     addTask();
     setAddTaskModalOpen(false);
   };
-  const cancelNewTask = () => { setNewTitle(""); setAddTaskModalOpen(false); };
+  const cancelNewTask = () => { setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false); setAddTaskModalOpen(false); };
 
   const AddTaskModal = addTaskModalOpen ? (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={cancelNewTask}>
-      <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6" onClick={(e) => e.stopPropagation()}>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4 bg-black/40" onClick={cancelNewTask}>
+      {/* Box stays phone-sized even on desktop — so what you see while
+          testing in the browser matches what the iPhone will actually show.
+          Width caps at max-w-sm (24rem ≈ 384px), height caps at 560px or
+          the viewport (whichever is smaller) with internal scroll. */}
+      <div
+        className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 sm:p-6 overflow-y-auto"
+        style={{ maxHeight: "min(100dvh - 1.5rem, 560px)" }}
+        onClick={(e) => e.stopPropagation()}>
         <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Add a task", lang)}</h3>
         <p className="text-xs text-stone-500 mb-4 italic">{t("What's the next small thing?", lang)}</p>
         <textarea
@@ -8081,8 +9330,67 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); submitNewTask(); } if (e.key === "Escape") cancelNewTask(); }}
           placeholder={t("Task name…", lang)}
           className="block w-full max-w-full px-3 py-2 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20"
-          style={{ maxWidth: "100%", boxSizing: "border-box", minHeight: "80px" }}
+          style={{ maxWidth: "100%", boxSizing: "border-box", minHeight: "60px", maxHeight: "100px" }}
         />
+        {/* Optional start + end times so the task can render as a block on
+            the weekly schedule grid. Leaving them blank keeps tasks unscheduled.
+            Phone-friendly: text input + numeric keypad, not the iOS wheel. */}
+        <div className="mt-3 space-y-3">
+          <div>
+            <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1">{t("Start time", lang)}</label>
+            <TimePartInput
+              value={newStart}
+              onChange={(v) => { setNewStart(v); if (v && !newEnd) setNewEnd(addMinutesTo(v, 30)); }}
+              hhPlaceholder="9" mmPlaceholder="30" />
+          </div>
+          <div>
+            <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1">{t("End time", lang)}</label>
+            <TimePartInput
+              value={newEnd}
+              onChange={setNewEnd}
+              hhPlaceholder="10" mmPlaceholder="00" />
+          </div>
+        </div>
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {[30, 60, 90, 120].map(mins => (
+            <button key={mins} type="button"
+              onClick={() => { if (newStart) setNewEnd(addMinutesTo(newStart, mins)); }}
+              disabled={!newStart}
+              className="px-2 py-0.5 rounded border border-stone-200 text-[10px] text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee] disabled:opacity-40 disabled:cursor-not-allowed">
+              {mins < 60 ? `${mins} ${t("min", lang)}` : `${mins / 60} ${t("hr", lang)}`}
+            </button>
+          ))}
+        </div>
+        <p className="mt-1.5 text-[10px] italic text-stone-400">{t("Optional — leave blank for an untimed to-do.", lang)}</p>
+        <div className="mt-3">
+          <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1">{t("Notes", lang)}</label>
+          <textarea
+            rows={3}
+            value={newTaskNotes}
+            onChange={(e) => setNewTaskNotes(e.target.value)}
+            onKeyDown={(e) => { if (e.key === "Escape") cancelNewTask(); }}
+            placeholder={t("Notes (optional)…", lang)}
+            className="block w-full max-w-full px-3 py-2 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20"
+            style={{ maxWidth: "100%", boxSizing: "border-box", minHeight: "60px", maxHeight: "100px" }}
+          />
+        </div>
+        {/* Priority toggle — mark the task as a Top 3 priority right here
+            instead of saving first and then tapping the row pill. Max 3 per day. */}
+        <div className="mt-3 flex items-center gap-2 flex-wrap">
+          <button type="button"
+            onClick={() => { if (!newTaskPriority && priorityCount >= 3) return; setNewTaskPriority(v => !v); }}
+            disabled={!newTaskPriority && priorityCount >= 3}
+            className={`px-3 py-1.5 text-[11px] tracking-wider uppercase rounded font-semibold transition ${
+              newTaskPriority
+                ? "bg-[#5b7351] text-white"
+                : "border border-stone-200 text-stone-500 hover:border-[#7a9a6e] hover:text-[#5b7351]"
+            } ${(!newTaskPriority && priorityCount >= 3) ? "opacity-40 cursor-not-allowed" : ""}`}>
+            {newTaskPriority ? "★ " + t("Priority", lang) : "+ " + t("Priority", lang)}
+          </button>
+          {!newTaskPriority && priorityCount >= 3 && (
+            <span className="text-[10px] italic text-stone-400">{t("Max 3 priorities", lang)}</span>
+          )}
+        </div>
         <div className="flex justify-end gap-2 mt-4">
           <button onClick={cancelNewTask} className="px-4 py-2 text-xs uppercase tracking-wider text-stone-500 hover:text-stone-800 transition">
             {t("Cancel", lang)}
@@ -8103,25 +9411,29 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       {AddWinModal}
       <PageHeader title={t("Daily Planner", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
-      {/* Row 1: To-do on its own line, Wins underneath (stacked at every width) */}
-      <div className="grid gap-6">
+      {/* Row 1: To-do on its own line, Wins underneath (stacked at every width).
+          Explicit minmax(0, 1fr) on the column so the card cannot stretch
+          wider than the viewport when a row's title is very long — without
+          this, grid items default to min-content which lets the title shove
+          the whole card off-screen. */}
+      <div className="grid gap-6" style={{ gridTemplateColumns: "minmax(0, 1fr)" }}>
         {TodoCard}
         {WinsCard}
       </div>
 
       {/* Row 2: Gratitude · My notes · Tomorrow */}
-      <div className="grid gap-6 lg:grid-cols-3">
-        <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
+      <div className="grid gap-6 grid-cols-[minmax(0,1fr)] lg:grid-cols-[repeat(3,minmax(0,1fr))]">
+        <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("GRATITUDE", lang)}</h2>
           <textarea {...grow("gratitude", 80, 220, 8)} value={gratitude} onChange={e => updatePlan({ gratitude: e.target.value })}
             placeholder={t("What did you appreciate today?", lang)} />
         </div>
-        <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
+        <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("MY NOTES", lang)}</h2>
           <textarea {...grow("notes", 80, 220, 8)} value={journal} onChange={e => updatePlan({ journal: e.target.value })}
             placeholder={t("Free-form journal for the day…", lang)} />
         </div>
-        <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col`}>
+        <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("TOMORROW", lang)}</h2>
           <textarea {...grow("tomorrow", 80, 220, 8)} value={tomorrow} onChange={e => updatePlan({ tomorrow: e.target.value })}
             placeholder={t("What's the first thing tomorrow needs from you?", lang)} />
@@ -8180,7 +9492,16 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                 const isHalf = hour.includes(":30");
                 if (!isHalf) return true;
                 if (showHalfHours) return true;
-                return weekDates.some(iso => (((planners[iso] || {}).blocks || {})[hour] || "").trim());
+                if (weekDates.some(iso => (((planners[iso] || {}).blocks || {})[hour] || "").trim())) return true;
+                // Also show this half-hour if any task OR calendar event
+                // scheduled for the week covers it — otherwise the block
+                // would visually clip mid-event.
+                const allCalEvents = data.calendarEvents || {};
+                return weekDates.some(iso => {
+                  if (allTasks.some(tk => tk && tk.date === iso && taskCoversHour(tk, hour))) return true;
+                  const evs = allCalEvents[iso] || [];
+                  return evs.some(ev => ev && taskCoversHour(ev, hour));
+                });
               }).map(hour => {
                 const isHalf = hour.includes(":30");
                 const isMeal = ["8:00 AM", "12:00 PM", "6:00 PM"].includes(hour);
@@ -8195,19 +9516,58 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                       const cellKey = iso + "|" + hour;
                       const cellValue = ((planners[iso] || {}).blocks || {})[hour] || "";
                       const isFocused = focusedCell === cellKey;
+                      // Surface anything scheduled across this hour — either
+                      // a Daily-Planner task or a Calendar event. If multiple
+                      // overlap, the first task wins; otherwise first event.
+                      const coveringTask = allTasks.find(tk =>
+                        tk && tk.date === iso && taskCoversHour(tk, hour)
+                      );
+                      const dayEvents = (data.calendarEvents || {})[iso] || [];
+                      const coveringEvent = !coveringTask && dayEvents.find(ev =>
+                        ev && taskCoversHour(ev, hour)
+                      );
+                      const coveringItem = coveringTask || coveringEvent;
+                      const isTaskStart =
+                        coveringItem && timeToMin(coveringItem.startTime) === timeToMin(hour);
                       return (
-                        <textarea
-                          key={cellKey}
-                          value={cellValue}
-                          onChange={e => updateBlockForDate(iso, hour, e.target.value)}
-                          onFocus={() => setFocusedCell(cellKey)}
-                          onBlur={() => setFocusedCell(prev => prev === cellKey ? null : prev)}
-                          rows={isFocused ? 6 : 1}
-                          placeholder=""
-                          title={cellValue}
-                          className={`text-[10px] leading-tight px-1 py-0.5 border-l border-stone-100 outline-none resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:border-[#7a9a6e] focus:relative focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30 ${cellValue ? "bg-white text-stone-800" : "bg-transparent hover:bg-stone-50"}`}
-                          style={{ minHeight: isFocused ? "130px" : "24px", height: isFocused ? "auto" : "24px" }}
-                        />
+                        <div key={cellKey} className="relative border-l border-stone-100">
+                          {coveringItem && (
+                            <div
+                              className="absolute inset-x-0 top-0 bottom-0 pointer-events-none"
+                              style={{
+                                background: "var(--accent-pale)",
+                                opacity: 0.55,
+                                zIndex: 0,
+                              }}
+                            />
+                          )}
+                          {coveringItem && isTaskStart && (
+                            <div
+                              className="absolute left-0.5 right-0.5 top-0.5 px-1 py-0.5 rounded text-[9px] font-semibold text-white truncate pointer-events-none z-[5]"
+                              style={{ background: "var(--accent-mid)" }}
+                              title={`${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}`}
+                            >
+                              {coveringItem.title}
+                            </div>
+                          )}
+                          <textarea
+                            value={cellValue}
+                            onChange={e => updateBlockForDate(iso, hour, e.target.value)}
+                            onFocus={() => setFocusedCell(cellKey)}
+                            onBlur={() => setFocusedCell(prev => prev === cellKey ? null : prev)}
+                            rows={isFocused ? 6 : 1}
+                            placeholder=""
+                            title={cellValue || (coveringItem ? coveringItem.title : "")}
+                            className={`relative z-[1] w-full text-[10px] leading-tight px-1 py-0.5 outline-none resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:border focus:border-[#7a9a6e] focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30 ${cellValue ? "bg-white text-stone-800" : "bg-transparent hover:bg-stone-50"}`}
+                            style={{
+                              minHeight: isFocused ? "130px" : "24px",
+                              height: isFocused ? "auto" : "24px",
+                              // Push manual text below the badge so they
+                              // don't overlap on the starting cell.
+                              paddingTop: coveringItem && isTaskStart && !isFocused ? "14px" : undefined,
+                            }}
+                          />
+                        </div>
                       );
                     })}
                   </div>
@@ -8263,10 +9623,17 @@ function buildMonthGrid(year, month) {
 function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const today = todayISO();
   const [year, setYear] = useState(new Date().getFullYear());
-  const [selectedDate, setSelectedDate] = useState(null); // ISO date or null
+  // Default to TODAY so the day's event editor panel opens immediately —
+  // the most common path is "I want to see what's happening today" and
+  // forcing a scroll-and-tap was awkward, especially on mobile.
+  const [selectedDate, setSelectedDate] = useState(today); // ISO date or null
   const [showCalendarConnect, setShowCalendarConnect] = useState(false);
   const [draftTitle, setDraftTitle] = useState("");
-  const [draftTime, setDraftTime] = useState("");
+  // draftStart/draftEnd are 24h "HH:MM" (native <input type="time"> format).
+  // We convert to "9:00 AM" before saving so events render the same way the
+  // Daily Planner's tasks do.
+  const [draftStart, setDraftStart] = useState("");
+  const [draftEnd, setDraftEnd] = useState("");
   const [draftNotes, setDraftNotes] = useState("");
   // Title rename + show/hide year view
   const calendarLabel = data.calendarLabel || "Calendar";
@@ -8275,6 +9642,39 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
   const showYearView = data.showYearView !== false; // default true
   const toggleYearView = () => setData({ ...data, showYearView: !showYearView });
 
+  // Time helpers — duplicated from PlannerModule on purpose to keep the two
+  // modules independent. Same semantics: "9:30 AM" ⇄ "09:30".
+  const to24h = (h12) => {
+    if (!h12) return "";
+    const m = String(h12).match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+    if (!m) return "";
+    let h = parseInt(m[1], 10);
+    const min = m[2];
+    const ampm = m[3].toUpperCase();
+    if (ampm === "AM") h = h === 12 ? 0 : h;
+    else h = h === 12 ? 12 : h + 12;
+    return `${String(h).padStart(2, "0")}:${min}`;
+  };
+  const to12h = (h24) => {
+    if (!h24) return "";
+    const m = String(h24).match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return "";
+    let h = parseInt(m[1], 10);
+    const min = m[2];
+    const ampm = h >= 12 ? "PM" : "AM";
+    if (h === 0) h = 12;
+    else if (h > 12) h -= 12;
+    return `${h}:${min} ${ampm}`;
+  };
+  const addMinutesTo = (h24, mins) => {
+    if (!h24) return "";
+    const m = String(h24).match(/^(\d{1,2}):(\d{2})$/);
+    if (!m) return "";
+    let total = parseInt(m[1], 10) * 60 + parseInt(m[2], 10) + mins;
+    if (total < 0) total = 0;
+    if (total >= 24 * 60) total = 24 * 60 - 1;
+    return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+  };
 
   const events = data.calendarEvents || {};
   const connectedCalendar = data.connectedCalendar || null;
@@ -8287,9 +9687,13 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
     if (!title) return;
     const list = events[selectedDate] || [];
     const id = (list.length ? Math.max(...list.map(e => e.id || 0)) : 0) + 1;
-    const next = [...list, { id, title, time: draftTime || "", notes: draftNotes || "" }];
+    const startTime = draftStart ? to12h(draftStart) : "";
+    const endTime = draftEnd ? to12h(draftEnd) : "";
+    // `.time` is kept populated (with the start) so old views that only know
+    // about that field still display something.
+    const next = [...list, { id, title, startTime, endTime, time: startTime, notes: draftNotes || "" }];
     setData({ ...data, calendarEvents: { ...events, [selectedDate]: next } });
-    setDraftTitle(""); setDraftTime(""); setDraftNotes("");
+    setDraftTitle(""); setDraftStart(""); setDraftEnd(""); setDraftNotes("");
   };
 
   const updateEvent = (id, patch) => {
@@ -8431,58 +9835,112 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
                 <div className={`py-6 text-center ${themeMuted} text-sm italic`}>No events yet for this day. Add one below.</div>
               ) : (
                 <div className="space-y-2">
-                  {dayEvents.map(ev => (
+                  {dayEvents.map(ev => {
+                    // Existing events from before this upgrade only have `.time`;
+                    // pre-fill the new Start picker from that so nothing is lost.
+                    const evStart24 = ev.startTime ? to24h(ev.startTime) : (ev.time ? to24h(ev.time) : "");
+                    const evEnd24 = ev.endTime ? to24h(ev.endTime) : "";
+                    return (
                     <div key={ev.id} className="rounded-lg border border-stone-200 p-3 group hover:border-[#7a9a6e] transition">
-                      <div className="flex items-center gap-2 mb-1">
-                        <input
-                          value={ev.time || ""}
-                          onChange={e => updateEvent(ev.id, { time: e.target.value })}
-                          placeholder="time (e.g. 2:30 PM)"
-                          className="text-xs font-mono w-28 px-2 py-1 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none bg-white"
-                        />
+                      <div className="flex items-center gap-2 mb-2">
                         <input
                           value={ev.title}
                           onChange={e => updateEvent(ev.id, { title: e.target.value })}
                           className="flex-1 text-sm font-medium px-2 py-1 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none bg-white"
                         />
-                        <button onClick={() => deleteEvent(ev.id)} className="opacity-0 group-hover:opacity-100 p-1 text-stone-400 hover:text-rose-500 transition">
+                        <button onClick={() => deleteEvent(ev.id)} className="opacity-40 sm:opacity-0 group-hover:opacity-100 p-1 text-stone-400 hover:text-rose-500 transition">
                           <Trash2 className="w-4 h-4" />
                         </button>
+                      </div>
+                      <div className="grid grid-cols-2 gap-2 mb-2">
+                        <div>
+                          <label className="block text-[9px] tracking-[0.15em] uppercase text-stone-500 mb-0.5">{t("Start", lang)}</label>
+                          <input type="time"
+                            value={evStart24}
+                            onChange={e => {
+                              const v = e.target.value;
+                              const patch = { startTime: v ? to12h(v) : "", time: v ? to12h(v) : "" };
+                              if (v && !evEnd24) patch.endTime = to12h(addMinutesTo(v, 30));
+                              updateEvent(ev.id, patch);
+                            }}
+                            className="block w-full px-2 py-1 border rounded text-xs outline-none bg-white border-stone-200 focus:border-[#7a9a6e]" />
+                        </div>
+                        <div>
+                          <label className="block text-[9px] tracking-[0.15em] uppercase text-stone-500 mb-0.5">{t("End", lang)}</label>
+                          <input type="time"
+                            value={evEnd24}
+                            min={evStart24 || undefined}
+                            onChange={e => updateEvent(ev.id, { endTime: e.target.value ? to12h(e.target.value) : "" })}
+                            className="block w-full px-2 py-1 border rounded text-xs outline-none bg-white border-stone-200 focus:border-[#7a9a6e]" />
+                        </div>
+                      </div>
+                      <div className="mb-2 flex flex-wrap gap-1">
+                        {[30, 60, 90, 120].map(mins => (
+                          <button key={mins} type="button"
+                            onClick={() => { if (evStart24) updateEvent(ev.id, { endTime: to12h(addMinutesTo(evStart24, mins)) }); }}
+                            disabled={!evStart24}
+                            className="px-2 py-0.5 rounded border border-stone-200 text-[9px] text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee] disabled:opacity-40 disabled:cursor-not-allowed">
+                            {mins < 60 ? `${mins} ${t("min", lang)}` : `${mins / 60} ${t("hr", lang)}`}
+                          </button>
+                        ))}
                       </div>
                       <textarea
                         value={ev.notes || ""}
                         onChange={e => updateEvent(ev.id, { notes: e.target.value })}
-                        placeholder="Notes…"
+                        placeholder={t("Notes…", lang)}
                         rows={2}
                         className="w-full text-xs px-2 py-1 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none resize-none bg-white"
                       />
                     </div>
-                  ))}
+                  );})}
                 </div>
               )}
 
               {/* Add new event */}
               <div className="rounded-lg border-2 border-dashed border-[#a8c090] p-3 bg-[#f4f7ee]/40">
-                <div className="text-[10px] tracking-[0.2em] text-[#5b7351] font-semibold mb-2">+ ADD NEW EVENT</div>
-                <div className="flex items-center gap-2 mb-2">
-                  <input
-                    value={draftTime}
-                    onChange={e => setDraftTime(e.target.value)}
-                    placeholder="time"
-                    className="text-xs font-mono w-28 px-2 py-1.5 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none bg-white"
-                  />
-                  <input
-                    value={draftTitle}
-                    onChange={e => setDraftTitle(e.target.value)}
-                    onKeyDown={e => e.key === "Enter" && addEvent()}
-                    placeholder="What's happening?"
-                    className="flex-1 text-sm px-2 py-1.5 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none bg-white"
-                  />
+                <div className="text-[10px] tracking-[0.2em] text-[#5b7351] font-semibold mb-2">+ {t("Add new event", lang)}</div>
+                <input
+                  value={draftTitle}
+                  onChange={e => setDraftTitle(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && addEvent()}
+                  placeholder={t("What's happening?", lang)}
+                  className="w-full text-sm px-2 py-1.5 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none bg-white mb-2"
+                />
+                <div className="grid grid-cols-2 gap-2 mb-2">
+                  <div>
+                    <label className="block text-[9px] tracking-[0.15em] uppercase text-stone-500 mb-0.5">{t("Start time", lang)}</label>
+                    <input type="time"
+                      value={draftStart}
+                      onChange={e => {
+                        const v = e.target.value;
+                        setDraftStart(v);
+                        if (v && !draftEnd) setDraftEnd(addMinutesTo(v, 30));
+                      }}
+                      className="block w-full px-2 py-1.5 border rounded text-sm outline-none bg-white border-stone-200 focus:border-[#7a9a6e]" />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] tracking-[0.15em] uppercase text-stone-500 mb-0.5">{t("End time", lang)}</label>
+                    <input type="time"
+                      value={draftEnd}
+                      min={draftStart || undefined}
+                      onChange={e => setDraftEnd(e.target.value)}
+                      className="block w-full px-2 py-1.5 border rounded text-sm outline-none bg-white border-stone-200 focus:border-[#7a9a6e]" />
+                  </div>
+                </div>
+                <div className="mb-2 flex flex-wrap gap-1.5">
+                  {[30, 60, 90, 120].map(mins => (
+                    <button key={mins} type="button"
+                      onClick={() => { if (draftStart) setDraftEnd(addMinutesTo(draftStart, mins)); }}
+                      disabled={!draftStart}
+                      className="px-2 py-0.5 rounded border border-stone-200 text-[10px] text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee] disabled:opacity-40 disabled:cursor-not-allowed">
+                      {mins < 60 ? `${mins} ${t("min", lang)}` : `${mins / 60} ${t("hr", lang)}`}
+                    </button>
+                  ))}
                 </div>
                 <textarea
                   value={draftNotes}
                   onChange={e => setDraftNotes(e.target.value)}
-                  placeholder="Notes (optional)…"
+                  placeholder={t("Notes (optional)…", lang)}
                   rows={2}
                   className="w-full text-xs px-2 py-1.5 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none resize-none bg-white mb-2"
                 />
@@ -8490,7 +9948,7 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
                   onClick={addEvent}
                   className="w-full py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center justify-center gap-2"
                 >
-                  <Plus className="w-4 h-4" /> Add to {selectedLabel}
+                  <Plus className="w-4 h-4" /> {t("Add to", lang)} {selectedLabel}
                 </button>
               </div>
             </div>

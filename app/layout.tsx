@@ -22,9 +22,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  // Sage — same forest-deep as the app's interior. Replaces the default gray
-  // that iOS/Android use when adding the site to the home screen.
-  themeColor: "#5b7351",
+  // Ivory — matches the cream landing background so iOS rubber-band scroll
+  // and the Safari address-bar tint blend in with the page instead of showing
+  // a sage band at the edges. The inner Sovereign app overrides this back to
+  // sage at app/(authed)/app/layout.tsx so the interior chrome still feels
+  // forest-deep.
+  themeColor: "#f5efe6",
   width: "device-width",
   initialScale: 1,
 };

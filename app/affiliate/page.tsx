@@ -76,7 +76,7 @@ const css = `
 `;
 
 const APPLY_HREF =
-  "mailto:hello@sovereignplanner.com?subject=Sovereign%20Affiliate%20Application&body=Hi%20Nataly%2C%0A%0AI%27d%20love%20to%20become%20a%20Sovereign%20affiliate.%0A%0AMy%20email%20on%20Sovereign%3A%20%0AWhy%20I%20use%20it%3A%20%0AHow%20I%20plan%20to%20share%20it%3A%20%0A%0AThank%20you%2C%0A%5BYour%20name%5D";
+  "mailto:admin@dominioncodeacademy.com?subject=Sovereign%20Affiliate%20Application&body=Hi%20Nataly%2C%0A%0AI%27d%20love%20to%20become%20a%20Sovereign%20affiliate.%0A%0AMy%20email%20on%20Sovereign%3A%20%0AWhy%20I%20use%20it%3A%20%0AHow%20I%20plan%20to%20share%20it%3A%20%0A%0AThank%20you%2C%0A%5BYour%20name%5D";
 
 export default function AffiliatePage() {
   return (
@@ -145,10 +145,10 @@ export default function AffiliatePage() {
             </div>
             <div className="num-card">
               <div className="big">
-                30<small>d</small>
+                60<small>d</small>
               </div>
               <div className="label">Cookie window</div>
-              <p>If she clicks your link and signs up within 30 days, she&apos;s yours</p>
+              <p>If she clicks your link and signs up within 60 days, she&apos;s yours</p>
             </div>
           </div>
         </div>
@@ -235,8 +235,11 @@ export default function AffiliatePage() {
             cancels or charges back, the corresponding commission is reversed.
           </p>
           <p>
-            You must be on the Annual plan to earn commission. Any commissions already earned
-            and not yet paid will be honored if you cancel your own subscription.
+            You must keep an active Year subscription to remain in the affiliate program. If
+            you cancel your own subscription, your referral link is deactivated effective
+            immediately — any clicks or signups that happen after your cancellation do not
+            credit you, even if they fall inside the 60-day cookie window. Commissions
+            already earned and not yet paid out before your cancellation will still be honored.
           </p>
           <p>
             We reserve the right to terminate affiliate participation for any reason, including

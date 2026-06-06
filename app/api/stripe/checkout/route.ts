@@ -23,13 +23,17 @@ export async function POST(req: NextRequest) {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("id, email, stripe_customer_id")
+    .select("id, email, stripe_customer_id, beta_until")
     .eq("id", user.id)
     .maybeSingle();
 
   if (!profile) {
     return NextResponse.json({ error: "Profile missing" }, { status: 500 });
   }
+
+  // Beta testers already had ~a week of free access — they don't get a
+  // second 3-day Stripe trial. Their subscription bills immediately.
+  const hadBetaAccess = Boolean(profile.beta_until);
 
   let customerId = profile.stripe_customer_id as string | null;
   if (!customerId) {
@@ -51,7 +55,7 @@ export async function POST(req: NextRequest) {
     customer: customerId,
     line_items: [{ price: plan.priceId, quantity: 1 }],
     subscription_data: {
-      trial_period_days: 3,
+      ...(hadBetaAccess ? {} : { trial_period_days: 3 }),
       metadata: { user_id: user.id },
     },
     payment_method_collection: "always",
