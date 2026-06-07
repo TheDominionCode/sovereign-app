@@ -135,8 +135,53 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
     return set.size;
   }, [filtered]);
 
+  // Headline counters (browser timezone). "Today" is midnight-local to now,
+  // so it matches what the admin actually thinks of as "today" on her phone
+  // — not server UTC time which could be hours off and confuse the count.
+  const headline = useMemo(() => {
+    const now = Date.now();
+    const todayMidnight = new Date();
+    todayMidnight.setHours(0, 0, 0, 0);
+    const todayStart = todayMidnight.getTime();
+    let today = 0;
+    let last7 = 0;
+    let last30 = 0;
+    let last90 = 0;
+    for (const c of clicks) {
+      if (slug !== "__all__" && c.link_slug !== slug) continue;
+      const t = new Date(c.clicked_at).getTime();
+      if (t >= todayStart) today += 1;
+      if (t >= now - 7 * 86_400_000) last7 += 1;
+      if (t >= now - 30 * 86_400_000) last30 += 1;
+      if (t >= now - 90 * 86_400_000) last90 += 1;
+    }
+    return { today, last7, last30, last90 };
+  }, [clicks, slug]);
+
   return (
     <div className="space-y-6">
+      {/* Headline stat cards — Today uses the admin's browser-local midnight
+          so the number matches her actual "today." */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+          <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-medium mb-3">Today</div>
+          <div className="font-display text-3xl leading-none text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{headline.today.toLocaleString()}</div>
+          <div className="text-xs italic text-stone-500 mt-2">Since midnight your time</div>
+        </div>
+        <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+          <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-medium mb-3">Last 7 days</div>
+          <div className="font-display text-3xl leading-none text-emerald-700" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{headline.last7.toLocaleString()}</div>
+        </div>
+        <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+          <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-medium mb-3">Last 30 days</div>
+          <div className="font-display text-3xl leading-none text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{headline.last30.toLocaleString()}</div>
+        </div>
+        <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+          <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-medium mb-3">Last 90 days</div>
+          <div className="font-display text-3xl leading-none text-stone-600" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{headline.last90.toLocaleString()}</div>
+        </div>
+      </div>
+
       {/* Filter row */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-1 rounded-lg border border-stone-200 bg-white p-1">
