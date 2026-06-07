@@ -10,15 +10,8 @@ export default async function AnalyticsPage() {
   // uses the admin's browser-local midnight, not server UTC.
   const clicks = await getRecentClicks(90);
 
-  if (clicks.length === 0) {
-    return (
-      <div className="rounded-xl border border-stone-200 bg-white p-8 text-center">
-        <div className="text-sm text-stone-600 mb-1">No visits tracked yet.</div>
-        <div className="text-xs italic text-stone-400">
-          Once the next deploy ships, every visit to the landing page will show up here.
-        </div>
-      </div>
-    );
-  }
+  // Render the full dashboard whether there's data or not — the admin should
+  // be able to load the page on a quiet day and still see all the cards,
+  // axes, and filters laid out. Empty days are visualized as 0-height bars.
   return <AnalyticsCharts clicks={clicks} />;
 }

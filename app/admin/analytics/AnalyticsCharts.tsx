@@ -294,30 +294,28 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
 
       {/* Daily breakdown table — same data as the chart but listed day-by-day
           with the explicit count next to it. Newest day on top, scrolls if
-          the window is long. */}
+          the window is long. Always renders every day in the window, even
+          when every count is 0 (matches Stan Store's "show the dashboard
+          even on a quiet day" UX). */}
       <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
         <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-medium mb-3">
           Day-by-day breakdown
         </div>
-        {dailySeries.every((d) => d.visits === 0) ? (
-          <div className="text-sm italic text-stone-400 py-3">No visits in this window yet.</div>
-        ) : (
-          <ul className="divide-y divide-stone-100 max-h-[320px] overflow-y-auto">
-            {[...dailySeries].reverse().map((row) => (
-              <li
-                key={row.date}
-                className={`flex items-center justify-between py-2.5 ${
-                  row.visits === 0 ? "opacity-40" : ""
-                }`}
-              >
-                <span className="text-sm text-stone-800">{row.date}</span>
-                <span className="text-sm font-mono text-[#5b7351] flex-shrink-0">
-                  {row.visits.toLocaleString()}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <ul className="divide-y divide-stone-100 max-h-[320px] overflow-y-auto">
+          {[...dailySeries].reverse().map((row) => (
+            <li
+              key={row.date}
+              className={`flex items-center justify-between py-2.5 ${
+                row.visits === 0 ? "opacity-40" : ""
+              }`}
+            >
+              <span className="text-sm text-stone-800">{row.date}</span>
+              <span className="text-sm font-mono text-[#5b7351] flex-shrink-0">
+                {row.visits.toLocaleString()}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       {/* Hourly chart */}
