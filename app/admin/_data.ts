@@ -5,6 +5,34 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { priceIdToPlan, type Plan } from "@/lib/stripe/plans";
 
+export type ClickRow = {
+  id: number;
+  link_slug: string;
+  path: string | null;
+  clicked_at: string;
+  ip: string | null;
+  referrer: string | null;
+  user_agent: string | null;
+  country: string | null;
+};
+
+// Pulls every click in the last `days` window, newest first. Used by the
+// analytics page to bucket into daily totals + hourly distribution and to
+// list raw referrers. We cap at 10k rows so a viral spike can't blow up the
+// admin page; if we ever cross that, switch to a server-side aggregation
+// SQL view.
+export async function getRecentClicks(days = 30): Promise<ClickRow[]> {
+  const admin = createAdminClient();
+  const since = new Date(Date.now() - days * 86_400_000).toISOString();
+  const { data } = await admin
+    .from("clicks")
+    .select("id,link_slug,path,clicked_at,ip,referrer,user_agent,country")
+    .gte("clicked_at", since)
+    .order("clicked_at", { ascending: false })
+    .limit(10_000);
+  return (data ?? []) as ClickRow[];
+}
+
 export type ProfileRow = {
   id: string;
   email: string;

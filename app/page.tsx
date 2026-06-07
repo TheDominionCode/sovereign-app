@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import LeaveTestimonialModal from "./_components/LeaveTestimonialModal";
+import VisitTracker from "./_components/VisitTracker";
 import {
   listApprovedTestimonials,
   type ApprovedTestimonial,
@@ -1943,6 +1944,7 @@ export default function Home() {
 
   return (
     <div className="landing-root">
+      <VisitTracker slug="landing" />
       <style dangerouslySetInnerHTML={{ __html: landingCss }} />
 
       <nav>
