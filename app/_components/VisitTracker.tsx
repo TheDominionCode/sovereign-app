@@ -12,7 +12,7 @@ export default function VisitTracker({ slug = "landing" }: { slug?: string }) {
     if (window.sessionStorage.getItem(key)) return;
     window.sessionStorage.setItem(key, "1");
 
-    fetch("/api/track", {
+    fetch("/api/visit", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

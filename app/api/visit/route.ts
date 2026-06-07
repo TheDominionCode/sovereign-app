@@ -8,7 +8,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
 //
 // Errors are swallowed and a 204 is returned no matter what — analytics
 // should never break the visitor's experience.
+//
+// force-dynamic is critical: without it, the Next.js/Netlify plugin can
+// cache a 404 response from build time and refuse to serve real requests
+// to this URL even after the route exists.
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
