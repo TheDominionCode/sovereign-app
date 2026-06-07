@@ -364,11 +364,19 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
       </div>
 
       {/* Reset all visit data — danger zone, lives at the bottom of the page
-          so it's not too easy to hit by accident. Uses a confirm() dialog as
-          the safety net, then calls the server action which deletes every
-          row in the clicks table. */}
-      <div className="rounded-xl border border-rose-200 bg-rose-50/50 p-5">
-        <div className="text-[10px] tracking-[0.18em] uppercase text-rose-700 font-medium mb-2">
+          so it's not too easy to hit by accident. Uses inline styles for the
+          red button because the project's tailwind.config.ts redefines the
+          `rose` color as a single hex, which deletes the rose-50/600/700
+          palette and silently turns Tailwind's bg-rose-* utilities into
+          no-ops. */}
+      <div
+        className="rounded-xl border p-5"
+        style={{ borderColor: "#fecaca", backgroundColor: "#fef2f2" }}
+      >
+        <div
+          className="text-[10px] tracking-[0.18em] uppercase font-semibold mb-2"
+          style={{ color: "#b91c1c" }}
+        >
           Danger zone
         </div>
         <div className="text-sm text-stone-700 mb-3">
@@ -381,7 +389,8 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
           type="button"
           onClick={onResetAll}
           disabled={isResetting}
-          className="px-4 py-2 text-xs font-medium rounded-lg bg-rose-600 text-white hover:bg-rose-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-xs font-medium rounded-lg transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+          style={{ backgroundColor: "#dc2626", color: "#ffffff" }}
         >
           {isResetting ? "Wiping…" : "Reset all visit data"}
         </button>
