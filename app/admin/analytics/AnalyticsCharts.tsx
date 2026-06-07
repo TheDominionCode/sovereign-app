@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import {
   BarChart,
   Bar,
@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { ClickRow } from "../_data";
+import { clearAllVisitsAction } from "./actions";
 
 // Two stacked charts (Stan-Store-style):
 //   1. Daily visits over a chosen window (7 / 30 / 90 days)
@@ -74,6 +75,22 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
   useEffect(() => {
     setExcluded(hasInternalCookie());
   }, []);
+
+  const [isResetting, startReset] = useTransition();
+  const onResetAll = () => {
+    if (typeof window === "undefined") return;
+    const ok = window.confirm(
+      "Delete every visit row in the analytics table?\n\nUse this when you want to start counting fresh. " +
+        "There is no undo.",
+    );
+    if (!ok) return;
+    startReset(async () => {
+      await clearAllVisitsAction();
+      // The server action revalidates the page so the next render shows zero;
+      // we also reload to be sure the headline stats refetch.
+      window.location.reload();
+    });
+  };
 
   const slugs = useMemo(() => {
     const set = new Set<string>();
@@ -344,6 +361,30 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
             ))}
           </ul>
         )}
+      </div>
+
+      {/* Reset all visit data — danger zone, lives at the bottom of the page
+          so it's not too easy to hit by accident. Uses a confirm() dialog as
+          the safety net, then calls the server action which deletes every
+          row in the clicks table. */}
+      <div className="rounded-xl border border-rose-200 bg-rose-50/50 p-5">
+        <div className="text-[10px] tracking-[0.18em] uppercase text-rose-700 font-medium mb-2">
+          Danger zone
+        </div>
+        <div className="text-sm text-stone-700 mb-3">
+          Wipe every visit row and start counting from zero. Useful right after you
+          set the &ldquo;Don&apos;t count my visits&rdquo; cookie on your devices, so the
+          leftover rows from earlier testing don&apos;t inflate your real numbers.
+          <span className="font-semibold"> This cannot be undone.</span>
+        </div>
+        <button
+          type="button"
+          onClick={onResetAll}
+          disabled={isResetting}
+          className="px-4 py-2 text-xs font-medium rounded-lg bg-rose-600 text-white hover:bg-rose-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isResetting ? "Wiping…" : "Reset all visit data"}
+        </button>
       </div>
     </div>
   );
