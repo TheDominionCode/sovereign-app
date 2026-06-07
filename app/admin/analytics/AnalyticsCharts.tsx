@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -45,9 +45,35 @@ function hostname(url: string | null) {
   }
 }
 
+// Cookie helpers for the "don't count my devices" toggle. The cookie is read
+// server-side by /api/visit before the row gets inserted, so once it's set on
+// a device, that device's visits are silently dropped at the server.
+function hasInternalCookie(): boolean {
+  if (typeof document === "undefined") return false;
+  return document.cookie
+    .split(";")
+    .map((c) => c.trim())
+    .some((c) => c === "sov-internal=1");
+}
+function setInternalCookie(on: boolean) {
+  if (typeof document === "undefined") return;
+  const secure = typeof location !== "undefined" && location.protocol === "https:" ? "; secure" : "";
+  if (on) {
+    document.cookie = `sov-internal=1; max-age=${365 * 24 * 60 * 60}; path=/; samesite=lax${secure}`;
+  } else {
+    document.cookie = `sov-internal=; max-age=0; path=/; samesite=lax${secure}`;
+  }
+}
+
 export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
   const [windowDays, setWindowDays] = useState<7 | 30 | 90>(30);
   const [slug, setSlug] = useState<string>("__all__");
+  const [excluded, setExcluded] = useState<boolean>(false);
+
+  // Read the cookie state once the page is mounted on the client.
+  useEffect(() => {
+    setExcluded(hasInternalCookie());
+  }, []);
 
   const slugs = useMemo(() => {
     const set = new Set<string>();
@@ -148,6 +174,40 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
         </div>
       </div>
 
+      {/* Exclude-my-device toggle. Sets a sov-internal=1 cookie that the
+          /api/visit endpoint reads on every incoming request and drops the
+          insert silently. Has to be set on each device the admin uses
+          (laptop, phone, etc.) because cookies don't sync across devices. */}
+      <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm flex items-center justify-between gap-3 flex-wrap">
+        <div className="min-w-0">
+          <div className="text-sm font-medium text-stone-800">
+            {excluded
+              ? "This device is NOT being counted"
+              : "This device IS being counted"}
+          </div>
+          <div className="text-xs italic text-stone-500 mt-0.5">
+            Click below to stop counting your own visits from this browser. So your
+            Facebook/Instagram-link traffic isn&apos;t inflated by your own
+            previews. Do this on each phone/computer you use to check the site.
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            const next = !excluded;
+            setInternalCookie(next);
+            setExcluded(next);
+          }}
+          className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors flex-shrink-0 ${
+            excluded
+              ? "bg-stone-200 text-stone-700 hover:bg-stone-300"
+              : "bg-[#5b7351] text-white hover:bg-[#4a5e42]"
+          }`}
+        >
+          {excluded ? "Start counting again" : "Don't count my visits"}
+        </button>
+      </div>
+
       {/* Daily chart */}
       <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
         <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-medium mb-3">
@@ -168,6 +228,34 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Daily breakdown table — same data as the chart but listed day-by-day
+          with the explicit count next to it. Newest day on top, scrolls if
+          the window is long. */}
+      <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+        <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-medium mb-3">
+          Day-by-day breakdown
+        </div>
+        {dailySeries.every((d) => d.visits === 0) ? (
+          <div className="text-sm italic text-stone-400 py-3">No visits in this window yet.</div>
+        ) : (
+          <ul className="divide-y divide-stone-100 max-h-[320px] overflow-y-auto">
+            {[...dailySeries].reverse().map((row) => (
+              <li
+                key={row.date}
+                className={`flex items-center justify-between py-2.5 ${
+                  row.visits === 0 ? "opacity-40" : ""
+                }`}
+              >
+                <span className="text-sm text-stone-800">{row.date}</span>
+                <span className="text-sm font-mono text-[#5b7351] flex-shrink-0">
+                  {row.visits.toLocaleString()}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       {/* Hourly chart */}

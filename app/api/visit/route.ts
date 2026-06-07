@@ -17,6 +17,13 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
+    // Owner exclusion: if the device has the sov-internal cookie set (the
+    // admin clicks "Don't count my visits" on /admin/analytics), bail out
+    // silently. The visitor sees a 204 like normal, no row gets inserted.
+    if (request.cookies.get("sov-internal")?.value === "1") {
+      return new NextResponse(null, { status: 204 });
+    }
+
     const body = (await request.json().catch(() => ({}))) as {
       slug?: unknown;
       path?: unknown;
