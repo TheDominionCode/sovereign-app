@@ -2886,16 +2886,23 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // Affiliate status — checked once on mount via /api/affiliate/me. Used by
-  // ProfileAvatar's Community menu item: green + "you're in" for approved
-  // affiliates, faded + routes to the join page for everyone else. Never
-  // throws — defaults to "not affiliate" if the fetch fails.
+  // Affiliate + admin status — checked once on mount via /api/affiliate/me.
+  // Used by ProfileAvatar to (a) render the Community menu item in green or
+  // faded, and (b) always render the "Admin dashboard" link for admins
+  // regardless of how they got to the planner. Previously the admin link
+  // relied on ?admin=1 in the URL, which iOS Safari sometimes drops on
+  // refresh / direct nav — fetching from the server is more reliable.
   const [isAffiliate, setIsAffiliate] = useState(false);
+  const [isPlannerAdmin, setIsPlannerAdmin] = useState(false);
   useEffect(() => {
     let cancelled = false;
     fetch("/api/affiliate/me", { credentials: "same-origin" })
       .then(r => (r.ok ? r.json() : null))
-      .then(j => { if (!cancelled && j && j.approved) setIsAffiliate(true); })
+      .then(j => {
+        if (cancelled || !j) return;
+        if (j.approved) setIsAffiliate(true);
+        if (j.isAdmin) setIsPlannerAdmin(true);
+      })
       .catch(() => {});
     return () => { cancelled = true; };
   }, []);
@@ -3163,7 +3170,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           </div>
           <div className="ml-auto flex items-center gap-3">
             <NotificationsBell data={data} setData={setData} setActive={setActive} open={bellOpen} setOpen={setBellOpen} />
-            <ProfileAvatar user={user} setUser={setUser} themeMuted={themeMuted} onLogout={onLogout} lang={lang} isAffiliate={isAffiliate} />
+            <ProfileAvatar user={user} setUser={setUser} themeMuted={themeMuted} onLogout={onLogout} lang={lang} isAffiliate={isAffiliate} isPlannerAdmin={isPlannerAdmin} />
           </div>
         </header>
 
@@ -7180,15 +7187,20 @@ function VisionImagePicker({ form, setForm, themeMuted, lang }) {
   );
 }
 
-function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate }) {
+function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate, isPlannerAdmin }) {
   const [open, setOpen] = useState(false);
   const fileRef = useRef(null);
 
-  // The parent /app page injects ?admin=1 into the iframe src when the
-  // signed-in user is on the admins allow-list. We use that flag to
-  // conditionally show the back-office link inside this dropdown.
-  const isAdmin = typeof window !== "undefined" &&
+  // Admin status can come from one of two places:
+  //   1. The `isPlannerAdmin` prop, populated server-side via /api/affiliate/me.
+  //      This is the source of truth — it works regardless of how the user
+  //      reached /os.html (direct nav, refresh, back button, etc.).
+  //   2. ?admin=1 in the URL (the original mechanism — kept as a fallback for
+  //      the legacy iframe path so old bookmarks still work).
+  // Either being true means the Admin dashboard link renders.
+  const urlAdmin = typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("admin") === "1";
+  const isAdmin = isPlannerAdmin === true || urlAdmin;
 
   const onPick = async (e) => {
     const file = e.target.files?.[0];
