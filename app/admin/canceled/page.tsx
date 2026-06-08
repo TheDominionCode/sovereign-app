@@ -1,8 +1,10 @@
 import { getCustomerRows } from "../_data";
+import { requirePermission } from "../guard";
 import CustomerTable from "../_components/CustomerTable";
 import StatCircle from "../_components/StatCircle";
 
 export default async function AdminCanceledPage() {
+  await requirePermission("canceled");
   const all = await getCustomerRows();
   // Show both: fully canceled subs + subs marked cancel-at-period-end.
   const rows = all.filter((r) => r.canceled || r.cancelAtPeriodEnd)

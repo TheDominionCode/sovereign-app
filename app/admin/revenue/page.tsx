@@ -1,11 +1,13 @@
 import { formatPrice, PLANS } from "@/lib/stripe/plans";
 import { getCustomerRows } from "../_data";
+import { requirePermission } from "../guard";
 
-// Revenue view — focused on money. MRR by plan, trial pipeline, conversion
-// rates, and a quick scan of every paying customer with their per-month
-// contribution and renewal date.
+// Revenue view — focused on money. Gated by the 'revenue' permission;
+// members without it are bounced back to the overview before this page
+// renders. MRR by plan, trial pipeline, conversion rates, customer list.
 
 export default async function AdminRevenuePage() {
+  await requirePermission("revenue");
   const all = await getCustomerRows();
   const active = all.filter((r) => r.status === "active");
   const trialing = all.filter((r) => r.status === "trialing");

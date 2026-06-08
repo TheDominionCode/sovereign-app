@@ -4,6 +4,7 @@ import {
   rejectTestimonialAction,
   unpublishTestimonialAction,
 } from "./actions";
+import { requirePermission } from "../guard";
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -70,6 +71,7 @@ export default async function AdminTestimonialsPage({
 }: {
   searchParams: SearchParams;
 }) {
+  await requirePermission("testimonials");
   const { approved, rejected, unpublished } = await searchParams;
   const [pending, live] = await Promise.all([
     listTestimonials("pending"),

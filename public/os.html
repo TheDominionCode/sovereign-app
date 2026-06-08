@@ -2886,6 +2886,20 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // Affiliate status — checked once on mount via /api/affiliate/me. Used by
+  // ProfileAvatar's Community menu item: green + "you're in" for approved
+  // affiliates, faded + routes to the join page for everyone else. Never
+  // throws — defaults to "not affiliate" if the fetch fails.
+  const [isAffiliate, setIsAffiliate] = useState(false);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/affiliate/me", { credentials: "same-origin" })
+      .then(r => (r.ok ? r.json() : null))
+      .then(j => { if (!cancelled && j && j.approved) setIsAffiliate(true); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
   const navItems = PERSONAL_NAV;
   const allNav = [...navItems, ...SHARED_NAV];
 
@@ -3149,7 +3163,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           </div>
           <div className="ml-auto flex items-center gap-3">
             <NotificationsBell data={data} setData={setData} setActive={setActive} open={bellOpen} setOpen={setBellOpen} />
-            <ProfileAvatar user={user} setUser={setUser} themeMuted={themeMuted} onLogout={onLogout} lang={lang} />
+            <ProfileAvatar user={user} setUser={setUser} themeMuted={themeMuted} onLogout={onLogout} lang={lang} isAffiliate={isAffiliate} />
           </div>
         </header>
 
@@ -7166,7 +7180,7 @@ function VisionImagePicker({ form, setForm, themeMuted, lang }) {
   );
 }
 
-function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang }) {
+function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate }) {
   const [open, setOpen] = useState(false);
   const fileRef = useRef(null);
 
@@ -7241,6 +7255,24 @@ function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang }) {
                   <Trash2 className="w-4 h-4" /> Remove picture
                 </button>
               )}
+              {/* Community link — green when the signed-in user is an approved
+                  affiliate (or admin), faded otherwise. Both states are
+                  clickable; the destination just differs. Non-affiliates land
+                  on /affiliate/apply which shows a preview of the community
+                  feed plus the application form. */}
+              <a
+                href={isAffiliate ? "/affiliate/community" : "/affiliate/apply"}
+                target="_top"
+                onClick={() => setOpen(false)}
+                className={`w-full px-3 py-2 text-left text-sm rounded flex items-center gap-2 ${
+                  isAffiliate
+                    ? "text-[#5b7351] font-medium hover:bg-[#f4f7ee]"
+                    : "text-stone-400 hover:bg-stone-50 hover:text-stone-600"
+                }`}
+              >
+                <Star className={`w-4 h-4 ${isAffiliate ? "fill-[#5b7351]" : ""}`} />
+                Community
+              </a>
               {isAdmin && (
                 <>
                   <div className="border-t border-stone-100 my-1" />

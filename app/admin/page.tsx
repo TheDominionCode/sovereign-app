@@ -1,14 +1,21 @@
 import Link from "next/link";
 import { formatPrice } from "@/lib/stripe/plans";
 import { getCustomerRows, computeStats } from "./_data";
+import { requirePermission } from "./guard";
+import { hasPermission } from "@/lib/admin/permissions";
 import CustomerTable from "./_components/CustomerTable";
 
 // Overview — landing page when you open /admin. Stats tiles double as
-// links into their detail pages.
+// links into their detail pages. Each tile is only shown if the admin has
+// permission for that section; the MRR tile + trial pipeline banner are
+// gated on the 'revenue' permission specifically.
 export default async function AdminOverviewPage() {
+  const me = await requirePermission("overview");
   const rows = await getCustomerRows();
   const stats = computeStats(rows);
   const recent = rows.slice(0, 8);
+  const canSeeMoney = hasPermission(me, "revenue");
+  const canSee = (perm: Parameters<typeof hasPermission>[1]) => hasPermission(me, perm);
 
   // tone → text color for the big number. Background stays white; only the
   // numeric text picks up the accent so the card stays clean and legible.
@@ -20,13 +27,15 @@ export default async function AdminOverviewPage() {
     stone:   "text-stone-600",
   };
 
+  // Each tile requires the matching permission. The owner always sees them
+  // all; a member admin only sees the sections she's been granted access to.
   const tiles = [
-    { href: "/admin",          label: "TOTAL SIGNUPS", value: String(stats.total),         hint: "all-time",          tone: "forest",  icon: "👥" },
-    { href: "/admin/active",   label: "ACTIVE SUBS",   value: String(stats.active),        hint: "currently paying",  tone: "emerald", icon: "✓" },
-    { href: "/admin/trial",    label: "ON TRIAL",      value: String(stats.trialing),      hint: "3-day free",        tone: "amber",   icon: "⏳" },
-    { href: "/admin/canceled", label: "CANCELED",      value: String(stats.canceled),      hint: "lost",              tone: "rose",    icon: "✕" },
-    { href: "/admin/revenue",  label: "MRR",           value: formatPrice(stats.mrrCents), hint: "monthly recurring", tone: "forest",  icon: "$" },
-  ];
+    { href: "/admin",          label: "TOTAL SIGNUPS", value: String(stats.total),         hint: "all-time",          tone: "forest",  icon: "👥", visible: true },
+    { href: "/admin/active",   label: "ACTIVE SUBS",   value: String(stats.active),        hint: "currently paying",  tone: "emerald", icon: "✓", visible: canSee("active") },
+    { href: "/admin/trial",    label: "ON TRIAL",      value: String(stats.trialing),      hint: "3-day free",        tone: "amber",   icon: "⏳", visible: canSee("trial") },
+    { href: "/admin/canceled", label: "CANCELED",      value: String(stats.canceled),      hint: "lost",              tone: "rose",    icon: "✕", visible: canSee("canceled") },
+    { href: "/admin/revenue",  label: "MRR",           value: formatPrice(stats.mrrCents), hint: "monthly recurring", tone: "forest",  icon: "$", visible: canSeeMoney },
+  ].filter((t) => t.visible);
 
   return (
     <div>
@@ -49,7 +58,9 @@ export default async function AdminOverviewPage() {
         ))}
       </div>
 
-      {stats.trialPipelineCents > 0 && (
+      {/* Trial-pipeline revenue banner needs the 'revenue' permission —
+          staff without it see the trial counts but not the dollar projection. */}
+      {canSeeMoney && stats.trialPipelineCents > 0 && (
         <Link
           href="/admin/trial"
           className="block mb-6 rounded-md border border-amber-200 bg-amber-50/40 px-4 py-3 text-xs italic text-amber-900 hover:bg-amber-50"

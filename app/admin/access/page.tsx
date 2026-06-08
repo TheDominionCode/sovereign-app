@@ -1,5 +1,6 @@
 import { getCustomerRows, fmtDate, daysFromNow } from "../_data";
 import { grantAccessUntilAction, revokeAccessAction } from "../actions";
+import { requirePermission } from "../guard";
 
 // Force a fresh DB read on every render — never serve a cached customer list
 // to the admin, since they expect to see the result of their click immediately.
@@ -38,6 +39,7 @@ export default async function AdminAccessPage({
 }: {
   searchParams: SearchParams;
 }) {
+  await requirePermission("access");
   const { granted, revoked, error } = await searchParams;
   const rows = await getCustomerRows();
   const friday = nextFridayDate();

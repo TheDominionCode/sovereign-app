@@ -7,6 +7,24 @@ import { requireAdmin } from "./guard";
 
 const MAX_ADMINS = 5;
 
+// Valid permission keys — kept in sync with lib/admin/permissions.ts.
+// Anything else in the submitted form is silently ignored so a tampered
+// request can't grant an arbitrary capability.
+const VALID_PERMS = new Set([
+  "overview", "active", "trial", "access", "canceled",
+  "revenue", "analytics", "affiliates", "community",
+  "testimonials", "admins",
+]);
+
+function parsePermissionsFromForm(formData: FormData): string[] {
+  const perms = new Set<string>();
+  for (const value of formData.getAll("permissions")) {
+    const s = String(value);
+    if (VALID_PERMS.has(s)) perms.add(s);
+  }
+  return Array.from(perms);
+}
+
 export async function addAdminAction(formData: FormData) {
   const me = await requireAdmin();
   if (me.role !== "owner") return; // member can't add
@@ -21,11 +39,41 @@ export async function addAdminAction(formData: FormData) {
     .select("email", { count: "exact", head: true });
   if ((count ?? 0) >= MAX_ADMINS) return;
 
+  // Owners get the 'all' marker so legacy paths treat them right; members get
+  // exactly the checkboxes that were ticked. Adding without any permissions
+  // ticked is allowed — the member just sees nothing until you grant them
+  // something via the per-row edit form.
+  const permissions = role === "owner" ? ["all"] : parsePermissionsFromForm(formData);
+
   await admin.from("admins").upsert(
-    { email, role, added_by: me.email },
+    { email, role, added_by: me.email, permissions },
     { onConflict: "email" }
   );
-  revalidatePath("/admin");
+  revalidatePath("/admin/admins");
+}
+
+// Update the permissions array on an existing member admin. Owner-only.
+// The role is intentionally NOT mutable here — flipping someone between
+// owner ↔ member is a bigger deal and we want it to require an explicit
+// separate action down the road. For now this just updates the checkboxes.
+export async function setAdminPermissionsAction(formData: FormData) {
+  const me = await requireAdmin();
+  if (me.role !== "owner") return;
+
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!email) return;
+  // Never let the owner accidentally wipe her own permissions row — owners
+  // are protected by the role-based override but we skip the write anyway
+  // to keep the audit history clean.
+  if (email === me.email) {
+    revalidatePath("/admin/admins");
+    return;
+  }
+
+  const permissions = parsePermissionsFromForm(formData);
+  const admin = createAdminClient();
+  await admin.from("admins").update({ permissions }).eq("email", email);
+  revalidatePath("/admin/admins");
 }
 
 export async function removeAdminAction(formData: FormData) {

@@ -75,8 +75,10 @@ const css = `
   }
 `;
 
-const APPLY_HREF =
-  "mailto:admin@dominioncodeacademy.com?subject=Sovereign%20Affiliate%20Application&body=Hi%20Nataly%2C%0A%0AI%27d%20love%20to%20become%20a%20Sovereign%20affiliate.%0A%0AMy%20email%20on%20Sovereign%3A%20%0AWhy%20I%20use%20it%3A%20%0AHow%20I%20plan%20to%20share%20it%3A%20%0A%0AThank%20you%2C%0A%5BYour%20name%5D";
+// Was a mailto: link. Replaced with the in-app application flow so applications
+// land in the Supabase `affiliate_applications` table and show up in /admin/affiliates
+// instead of getting buried in an inbox.
+const APPLY_HREF = "/affiliate/apply";
 
 export default function AffiliatePage() {
   return (

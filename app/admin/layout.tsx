@@ -33,7 +33,7 @@ export default async function AdminLayout({
             </div>
           </div>
           <div className="max-w-7xl mx-auto">
-            <AdminTabs />
+            <AdminTabs role={me.role} permissions={me.permissions} />
           </div>
         </div>
       </header>

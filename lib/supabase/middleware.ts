@@ -57,10 +57,15 @@ export async function updateSession(request: NextRequest) {
     return res;
   }
 
+  // Auth gates. The /admin check is intentionally precise (exact "/admin"
+  // or "/admin/<sub>") so adjacent public routes like "/admin-preview" —
+  // a read-only mock of the staff admin view used by the owner to see what
+  // members will see — stay reachable without a session.
   const requiresAuth =
     path.startsWith("/app") ||
     path.startsWith("/billing") ||
-    path.startsWith("/admin") ||
+    path === "/admin" ||
+    path.startsWith("/admin/") ||
     path.startsWith("/os.html");
 
   if (requiresAuth && !user) {

@@ -33,6 +33,70 @@ export async function getRecentClicks(days = 30): Promise<ClickRow[]> {
   return (data ?? []) as ClickRow[];
 }
 
+// Funnel events for the analytics dashboard.
+//   signupAt — auth.users.created_at (account made)
+//   trialAt  — any subscription's first current_period_start (entered the
+//              funnel by starting a free trial; status was 'trialing')
+//   paidAt   — first subscription start whose status is 'active' and not
+//              currently in trial (they continued paying after the trial,
+//              OR they paid directly without a trial).
+// Each is independently null/non-null so the analytics page can render the
+// "24 clicked → 3 trialed → 1 paying" leaderboard cleanly.
+export type ConversionEvent = {
+  userId: string;
+  email: string | null;
+  signupAt: string;
+  trialAt: string | null;
+  paidAt: string | null;
+};
+
+export async function getRecentConversions(days = 90): Promise<ConversionEvent[]> {
+  const admin = createAdminClient();
+  const since = new Date(Date.now() - days * 86_400_000).toISOString();
+
+  const [usersRes, subsRes] = await Promise.all([
+    admin.auth.admin.listUsers({ perPage: 500 }),
+    admin
+      .from("subscriptions")
+      .select("user_id,current_period_start,status,trial_end")
+      .gte("current_period_start", since),
+  ]);
+
+  const trialByUser = new Map<string, string>();
+  const paidByUser = new Map<string, string>();
+  const now = Date.now();
+  for (const s of subsRes.data ?? []) {
+    if (!s.current_period_start) continue;
+    // Anyone with a non-canceled subscription counts as having "started"
+    // the funnel — either trialing or paying.
+    if (["trialing", "active", "past_due"].includes(s.status)) {
+      const prevTrial = trialByUser.get(s.user_id);
+      if (!prevTrial || s.current_period_start < prevTrial) {
+        trialByUser.set(s.user_id, s.current_period_start);
+      }
+    }
+    // "Paying" = active AND the trial period has already ended (or never
+    // existed). past_due also counts as paying — they entered a billing cycle.
+    const trialEnded = !s.trial_end || new Date(s.trial_end).getTime() <= now;
+    if ((s.status === "active" || s.status === "past_due") && trialEnded) {
+      const prevPaid = paidByUser.get(s.user_id);
+      if (!prevPaid || s.current_period_start < prevPaid) {
+        paidByUser.set(s.user_id, s.current_period_start);
+      }
+    }
+  }
+
+  return (usersRes.data?.users ?? [])
+    .filter((u) => u.created_at && u.created_at >= since)
+    .map((u) => ({
+      userId: u.id,
+      email: u.email ?? null,
+      signupAt: u.created_at!,
+      trialAt: trialByUser.get(u.id) ?? null,
+      paidAt: paidByUser.get(u.id) ?? null,
+    }));
+}
+
 export type ProfileRow = {
   id: string;
   email: string;
@@ -59,6 +123,7 @@ export type AdminRow = {
   role: string;
   added_at: string;
   added_by: string | null;
+  permissions: string[];
 };
 
 export type CustomerRow = {
@@ -136,9 +201,12 @@ export async function getAdmins(): Promise<AdminRow[]> {
   const admin = createAdminClient();
   const { data } = await admin
     .from("admins")
-    .select("email,role,added_at,added_by")
+    .select("email,role,added_at,added_by,permissions")
     .order("added_at");
-  return (data ?? []) as AdminRow[];
+  return (data ?? []).map((r) => ({
+    ...r,
+    permissions: Array.isArray(r.permissions) ? r.permissions : [],
+  })) as AdminRow[];
 }
 
 export type AdminStats = {

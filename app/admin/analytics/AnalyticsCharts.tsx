@@ -10,8 +10,12 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { ClickRow } from "../_data";
+import type { ClickRow, ConversionEvent } from "../_data";
 import { clearAllVisitsAction } from "./actions";
+import {
+  excludeMyDeviceAction,
+  includeMyDeviceAction,
+} from "./exclusion-actions";
 
 // Two stacked charts (Stan-Store-style):
 //   1. Daily visits over a chosen window (7 / 30 / 90 days)
@@ -46,9 +50,69 @@ function hostname(url: string | null) {
   }
 }
 
-// Cookie helpers for the "don't count my devices" toggle. The cookie is read
-// server-side by /api/visit before the row gets inserted, so once it's set on
-// a device, that device's visits are silently dropped at the server.
+// One circle in the conversion funnel. Big serif number in the middle,
+// colored ring around it, label + sublabel below. The ring + bg + text are
+// configurable so each step can have its own tone (sage / amber / emerald).
+function FunnelCircle({
+  label,
+  sublabel,
+  value,
+  ringColor,
+  textColor,
+  bgColor,
+}: {
+  label: string;
+  sublabel: string;
+  value: number;
+  ringColor: string;
+  textColor: string;
+  bgColor: string;
+}) {
+  return (
+    <div className="flex flex-col items-center text-center min-w-[88px]">
+      <div
+        className="w-[88px] h-[88px] sm:w-[112px] sm:h-[112px] rounded-full flex items-center justify-center shadow-sm"
+        style={{
+          backgroundColor: bgColor,
+          border: `3px solid ${ringColor}`,
+        }}
+      >
+        <div
+          className="font-display text-3xl sm:text-4xl leading-none"
+          style={{
+            fontFamily: "'Playfair Display', Georgia, serif",
+            color: textColor,
+          }}
+        >
+          {value.toLocaleString()}
+        </div>
+      </div>
+      <div className="mt-2 text-xs font-semibold text-stone-800">{label}</div>
+      <div className="text-[10px] italic text-stone-500">{sublabel}</div>
+    </div>
+  );
+}
+
+// The little "→ 12.5% trial" arrow between two circles. Stacked vertically
+// on mobile (because the row wraps), inline on wider screens.
+function FunnelArrow({ pct, caption }: { pct: number; caption: string }) {
+  return (
+    <div className="flex flex-col items-center text-center px-1">
+      <div className="text-stone-400 text-xl leading-none" aria-hidden>
+        →
+      </div>
+      <div className="text-[11px] font-mono text-stone-600 mt-1">
+        {pct.toFixed(1)}%
+      </div>
+      <div className="text-[10px] italic text-stone-500">{caption}</div>
+    </div>
+  );
+}
+
+// Reads the "don't count my devices" cookie set by the exclude server action.
+// Used to render the toggle in its correct state without bouncing to the
+// server. The cookie itself is set by the server action (10-year max-age)
+// because that's also where we delete the last counted visit by IP.
 function hasInternalCookie(): boolean {
   if (typeof document === "undefined") return false;
   return document.cookie
@@ -56,17 +120,14 @@ function hasInternalCookie(): boolean {
     .map((c) => c.trim())
     .some((c) => c === "sov-internal=1");
 }
-function setInternalCookie(on: boolean) {
-  if (typeof document === "undefined") return;
-  const secure = typeof location !== "undefined" && location.protocol === "https:" ? "; secure" : "";
-  if (on) {
-    document.cookie = `sov-internal=1; max-age=${365 * 24 * 60 * 60}; path=/; samesite=lax${secure}`;
-  } else {
-    document.cookie = `sov-internal=; max-age=0; path=/; samesite=lax${secure}`;
-  }
-}
 
-export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
+export default function AnalyticsCharts({
+  clicks,
+  conversions,
+}: {
+  clicks: ClickRow[];
+  conversions: ConversionEvent[];
+}) {
   const [windowDays, setWindowDays] = useState<7 | 30 | 90>(30);
   const [slug, setSlug] = useState<string>("__all__");
   const [excluded, setExcluded] = useState<boolean>(false);
@@ -175,6 +236,29 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
     return { today, last7, last30, last90 };
   }, [clicks, slug]);
 
+  // Funnel counts in the current window. Three steps:
+  //   1. Clicked the link  — every visit in clicks table
+  //   2. Started free trial — auth.users row whose subscription opened
+  //   3. Continued paying — subscription went active post-trial
+  // Plus the conversion rate at each step.
+  const funnel = useMemo(() => {
+    const since = Date.now() - windowDays * 86_400_000;
+    const recent = conversions.filter((c) => new Date(c.signupAt).getTime() >= since);
+    const clicked = filtered.length;
+    const trialed = recent.filter((c) => c.trialAt !== null).length;
+    const paying = recent.filter((c) => c.paidAt !== null).length;
+    const pct = (numerator: number, denominator: number) =>
+      denominator > 0 ? (numerator / denominator) * 100 : 0;
+    return {
+      clicked,
+      trialed,
+      paying,
+      clickToTrial: pct(trialed, clicked),
+      trialToPaying: pct(paying, trialed),
+      clickToPaying: pct(paying, clicked),
+    };
+  }, [conversions, windowDays, filtered]);
+
   return (
     <div className="space-y-6">
       {/* Headline stat cards — Today uses the admin's browser-local midnight
@@ -196,6 +280,72 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
         <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
           <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-medium mb-3">Last 90 days</div>
           <div className="font-display text-3xl leading-none text-stone-600" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{headline.last90.toLocaleString()}</div>
+        </div>
+      </div>
+
+      {/* Conversion funnel — three circles in a row with the drop-off %
+          between each one. On mobile the row wraps, but on tablet+ desktop
+          you read left-to-right: clicked → trialed → paying. */}
+      <div className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+        <div className="flex items-baseline justify-between mb-5 flex-wrap gap-2">
+          <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-medium">
+            Conversion funnel (last {windowDays} days)
+          </div>
+          <div className="text-xs italic text-stone-500">
+            of visits that turned into customers
+          </div>
+        </div>
+
+        <div className="flex items-center justify-center gap-2 sm:gap-4 flex-wrap">
+          {/* Circle 1 — clicked */}
+          <FunnelCircle
+            label="Clicked"
+            sublabel="the link"
+            value={funnel.clicked}
+            ringColor="#a8c090"
+            textColor="#5b7351"
+            bgColor="#f4f7ee"
+          />
+
+          <FunnelArrow pct={funnel.clickToTrial} caption="trial" />
+
+          {/* Circle 2 — trial */}
+          <FunnelCircle
+            label="Free trial"
+            sublabel="signed up"
+            value={funnel.trialed}
+            ringColor="#fbbf24"
+            textColor="#b45309"
+            bgColor="#fef3c7"
+          />
+
+          <FunnelArrow pct={funnel.trialToPaying} caption="paid" />
+
+          {/* Circle 3 — paying */}
+          <FunnelCircle
+            label="Paying"
+            sublabel="customers"
+            value={funnel.paying}
+            ringColor="#34d399"
+            textColor="#047857"
+            bgColor="#d1fae5"
+          />
+        </div>
+
+        {/* Bottom-line headline */}
+        <div className="mt-5 pt-4 border-t border-stone-100 flex items-center justify-between gap-3 flex-wrap">
+          <div className="text-sm text-stone-700">
+            <span className="font-semibold text-[#5b7351]">{funnel.paying.toLocaleString()}</span>{" "}
+            of{" "}
+            <span className="font-semibold text-[#5b7351]">{funnel.clicked.toLocaleString()}</span>{" "}
+            visitors became paying customers.
+          </div>
+          <div
+            className="font-display text-2xl leading-none text-[#5b7351]"
+            style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+          >
+            {funnel.clickToPaying.toFixed(1)}%
+          </div>
         </div>
       </div>
 
@@ -236,10 +386,13 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
         </div>
       </div>
 
-      {/* Exclude-my-device toggle. Sets a sov-internal=1 cookie that the
-          /api/visit endpoint reads on every incoming request and drops the
-          insert silently. Has to be set on each device the admin uses
-          (laptop, phone, etc.) because cookies don't sync across devices. */}
+      {/* Exclude-my-device toggle. Calls a server action that:
+          1. Sets a 10-year sov-internal cookie so future visits from this
+             device are dropped at /api/visit before the row is inserted.
+          2. Deletes the most recent visit row matching this device's IP —
+             which removes the visit she just made loading this very page
+             (it got counted before she could click the button).
+          The page reloads after so the stat cards reflect the deletion. */}
       <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm flex items-center justify-between gap-3 flex-wrap">
         <div className="min-w-0">
           <div className="text-sm font-medium text-stone-800">
@@ -248,19 +401,25 @@ export default function AnalyticsCharts({ clicks }: { clicks: ClickRow[] }) {
               : "This device IS being counted"}
           </div>
           <div className="text-xs italic text-stone-500 mt-0.5">
-            Click below to stop counting your own visits from this browser. So your
-            Facebook/Instagram-link traffic isn&apos;t inflated by your own
-            previews. Do this on each phone/computer you use to check the site.
+            Click below to stop counting your own visits from this browser — permanently,
+            on this device, until you toggle it back. Your most recent visit
+            from this IP gets cleaned out too. Do this once on each phone/computer.
           </div>
         </div>
         <button
           type="button"
           onClick={() => {
-            const next = !excluded;
-            setInternalCookie(next);
-            setExcluded(next);
+            startReset(async () => {
+              if (excluded) {
+                await includeMyDeviceAction();
+              } else {
+                await excludeMyDeviceAction();
+              }
+              window.location.reload();
+            });
           }}
-          className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors flex-shrink-0 ${
+          disabled={isResetting}
+          className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
             excluded
               ? "bg-stone-200 text-stone-700 hover:bg-stone-300"
               : "bg-[#5b7351] text-white hover:bg-[#4a5e42]"
