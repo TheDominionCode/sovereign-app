@@ -2126,6 +2126,16 @@ const TRANSLATIONS = {
     "Show": "Show",
     "weekly": "weekly",
     "monthly": "monthly",
+    // Permanent / recurring tasks (Weekly Schedule modal)
+    "Make permanent": "Make permanent",
+    "One-time": "One-time",
+    "Every day": "Every day",
+    "Every {weekday}": "Every {weekday}",
+    "Appears on every day going forward. Edit or delete from any day.": "Appears on every day going forward. Edit or delete from any day.",
+    "Appears every week on this weekday going forward.": "Appears every week on this weekday going forward.",
+    "permanent": "permanent",
+    "daily": "daily",
+    "Remove this permanent task from every day?": "Remove this permanent task from every day?",
     // Owner profile quick-links (top-right avatar dropdown)
     "My links": "My links",
     "Add link": "Add link",
@@ -2783,6 +2793,16 @@ const TRANSLATIONS = {
     "Show": "Mostrar",
     "weekly": "semanal",
     "monthly": "mensual",
+    // Tareas permanentes / recurrentes (modal del Horario Semanal)
+    "Make permanent": "Hacer permanente",
+    "One-time": "Una vez",
+    "Every day": "Todos los días",
+    "Every {weekday}": "Todos los {weekday}",
+    "Appears on every day going forward. Edit or delete from any day.": "Aparecerá todos los días de aquí en adelante. Edita o elimina desde cualquier día.",
+    "Appears every week on this weekday going forward.": "Aparecerá cada semana este día de aquí en adelante.",
+    "permanent": "permanente",
+    "daily": "diario",
+    "Remove this permanent task from every day?": "¿Quitar esta tarea permanente de todos los días?",
     // Enlaces rápidos del dueño (menú del avatar arriba a la derecha)
     "My links": "Mis enlaces",
     "Add link": "Agregar enlace",
@@ -5036,7 +5056,29 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
       : [...enabledCircleKeys, key];
     setData({ ...data, summaryCircles: next });
   };
-  const todaysTasks = tasks.filter(t => t.date === today);
+  // Merge real one-off tasks for today with any recurring rules that fire
+  // today. Virtual occurrences match the shape PlannerModule uses so the
+  // same row UI keeps working. The Summary toggle handler below detects
+  // virtual ids and patches `doneByDate` on the rule.
+  const recurringTasksHome = Array.isArray(data.recurringTasks) ? data.recurringTasks : [];
+  const dowToday = new Date(today + "T00:00:00").getDay();
+  const todaysRecurring = recurringTasksHome
+    .filter(r => r && r.title && (!r.startDate || r.startDate <= today))
+    .filter(r => r.recurrence === "daily" || (r.recurrence === "weekly" && r.weekday === dowToday))
+    .map(r => ({
+      id: `recur-${r.id}-${today}`,
+      date: today,
+      title: r.title,
+      startTime: r.startTime || "",
+      endTime: r.endTime || "",
+      notes: r.notes || "",
+      done: !!(r.doneByDate && r.doneByDate[today]),
+      order: 100000 + (r.id || 0),
+      _recurring: true,
+      _ruleId: r.id,
+      _recurrence: r.recurrence,
+    }));
+  const todaysTasks = [...tasks.filter(t => t.date === today), ...todaysRecurring];
   const todayDone = todaysTasks.filter(t => t.done).length;
   const todayTotal = todaysTasks.length;
   const todayPct = todayTotal > 0 ? (todayDone / todayTotal) * 100 : 0;
@@ -5061,13 +5103,43 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const removeInspiration = () => setData({ ...data, inspirationImg: "" });
 
   const toggle = (id) => {
+    // Recurring task (virtual): patch the rule's per-day doneByDate map
+    // instead of mutating tasks[]. Mirror the celebration logic below.
+    if (typeof id === "string" && id.startsWith("recur-")) {
+      const m = String(id).match(/^recur-(\d+)-(\d{4}-\d{2}-\d{2})$/);
+      if (!m) return;
+      const ruleId = Number(m[1]);
+      const isoDate = m[2];
+      const rule = recurringTasksHome.find(r => r && r.id === ruleId);
+      if (!rule) return;
+      const wasUndone = !(rule.doneByDate && rule.doneByDate[isoDate]);
+      const nextRules = recurringTasksHome.map(r => {
+        if (r.id !== ruleId) return r;
+        const next = { ...r, doneByDate: { ...(r.doneByDate || {}) } };
+        if (wasUndone) next.doneByDate[isoDate] = true;
+        else delete next.doneByDate[isoDate];
+        return next;
+      });
+      setData({ ...data, recurringTasks: nextRules });
+      if (wasUndone) {
+        // Recompute "all done" using merged list with the new rules.
+        const realDone = tasks.filter(t => t.date === today).every(t => t.done);
+        const recurDone = nextRules
+          .filter(r => r && r.title && (!r.startDate || r.startDate <= today))
+          .filter(r => r.recurrence === "daily" || (r.recurrence === "weekly" && r.weekday === dowToday))
+          .every(r => !!(r.doneByDate && r.doneByDate[today]));
+        if (realDone && recurDone && todaysTasks.length > 0) triggerConfetti(t("All done — champion day", lang), true);
+      }
+      return;
+    }
     const task = tasks.find(t => t.id === id);
     const wasUndone = task && !task.done;
     const updated = tasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
     setData({ ...data, tasks: updated });
     if (wasUndone) {
       const todayList = updated.filter(t => t.date === today);
-      const allDone = todayList.length > 0 && todayList.every(t => t.done);
+      const recurDone = todaysRecurring.every(r => r.done);
+      const allDone = todayList.length > 0 && todayList.every(t => t.done) && recurDone;
       if (allDone) triggerConfetti(t("All done — champion day", lang), true);
     }
   };
@@ -5088,6 +5160,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     if (target < 0 || target >= sortedTodaysTasks.length) return;
     const cur = sortedTodaysTasks[idx];
     const swap = sortedTodaysTasks[target];
+    if (cur._recurring || swap._recurring) return;
     if (!!cur.priority !== !!swap.priority) return;
     if (cur.priority && swap.priority) {
       setData({ ...data, tasks: tasks.map(x => {
@@ -5110,7 +5183,9 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     if (idx === -1) return false;
     const target = idx + dir;
     if (target < 0 || target >= sortedTodaysTasks.length) return false;
-    return !!sortedTodaysTasks[idx].priority === !!sortedTodaysTasks[target].priority;
+    const a = sortedTodaysTasks[idx], b = sortedTodaysTasks[target];
+    if (a._recurring || b._recurring) return false;
+    return !!a.priority === !!b.priority;
   };
 
   // Summaries from each module
@@ -9029,6 +9104,9 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const [editingNotes, setEditingNotes] = useState("");
   const [newTaskNotes, setNewTaskNotes] = useState("");
   const [newTaskPriority, setNewTaskPriority] = useState(false);
+  // "none" = one-off task. "daily" = appears every day. "weekly" = appears
+  // every week on the same weekday as the active date.
+  const [newRecurrence, setNewRecurrence] = useState("none");
   const [newWinNotes, setNewWinNotes] = useState("");
   const [editingWinId, setEditingWinId] = useState(null);
   const [editingWinText, setEditingWinText] = useState("");
@@ -9328,7 +9406,43 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
 
   // ----- To-do list -----
   const allTasks = Array.isArray(data.tasks) ? data.tasks : [];
-  const dayTasks = allTasks.filter(t => t && t.date === date);
+
+  // ----- Recurring ("Permanent") tasks -----
+  // Rules live separately in data.recurringTasks so a single edit on the
+  // rule changes every day it shows up. Each day we generate virtual task
+  // objects from rules and merge them into dayTasks. Virtual ids are
+  // strings like "recur-<ruleId>-YYYY-MM-DD" so the existing
+  // toggle/edit/remove handlers can route by id pattern.
+  const recurringTasks = Array.isArray(data.recurringTasks) ? data.recurringTasks : [];
+  const setRecurringTasks = (next) => setData({ ...data, recurringTasks: next });
+  const dayOfWeekIdx = (iso) => new Date(iso + "T00:00:00").getDay();
+  const isVirtualTaskId = (id) => typeof id === "string" && id.startsWith("recur-");
+  const parseRecurId = (vid) => {
+    const m = String(vid).match(/^recur-(\d+)-(\d{4}-\d{2}-\d{2})$/);
+    return m ? { ruleId: Number(m[1]), date: m[2] } : null;
+  };
+  const dayRecurringOccurrences = (iso) => {
+    const dow = dayOfWeekIdx(iso);
+    return recurringTasks
+      .filter(r => r && r.title && (!r.startDate || r.startDate <= iso))
+      .filter(r => r.recurrence === "daily" || (r.recurrence === "weekly" && r.weekday === dow))
+      .map(r => ({
+        id: `recur-${r.id}-${iso}`,
+        date: iso,
+        title: r.title,
+        startTime: r.startTime || "",
+        endTime: r.endTime || "",
+        notes: r.notes || "",
+        done: !!(r.doneByDate && r.doneByDate[iso]),
+        order: 100000 + (r.id || 0),
+        _recurring: true,
+        _ruleId: r.id,
+        _recurrence: r.recurrence,
+      }));
+  };
+
+  const dayRealTasks = allTasks.filter(t => t && t.date === date);
+  const dayTasks = [...dayRealTasks, ...dayRecurringOccurrences(date)];
   const doneCount = dayTasks.filter(t => t.done).length;
   const setTasks = (next) => setData({ ...data, tasks: next });
   const addTask = () => {
@@ -9390,6 +9504,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (target < 0 || target >= sortedDayTasks.length) return;
     const cur = sortedDayTasks[idx];
     const swap = sortedDayTasks[target];
+    if (cur._recurring || swap._recurring) return;
     if (!!cur.priority !== !!swap.priority) return;
     if (cur.priority && swap.priority) {
       setTasks(allTasks.map(x => {
@@ -9412,15 +9527,42 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (idx === -1) return false;
     const target = idx + dir;
     if (target < 0 || target >= sortedDayTasks.length) return false;
-    return !!sortedDayTasks[idx].priority === !!sortedDayTasks[target].priority;
+    const a = sortedDayTasks[idx], b = sortedDayTasks[target];
+    if (a._recurring || b._recurring) return false;
+    return !!a.priority === !!b.priority;
   };
   const toggleTask = (id) => {
+    if (isVirtualTaskId(id)) {
+      const parsed = parseRecurId(id);
+      if (!parsed) return;
+      const rule = recurringTasks.find(r => r && r.id === parsed.ruleId);
+      if (!rule) return;
+      const becoming = !(rule.doneByDate && rule.doneByDate[parsed.date]);
+      setRecurringTasks(recurringTasks.map(r => {
+        if (r.id !== parsed.ruleId) return r;
+        const doneByDate = { ...(r.doneByDate || {}) };
+        if (becoming) doneByDate[parsed.date] = true;
+        else delete doneByDate[parsed.date];
+        return { ...r, doneByDate };
+      }));
+      if (becoming && triggerConfetti) triggerConfetti();
+      return;
+    }
     const t = allTasks.find(x => x && x.id === id);
     const becoming = t && !t.done;
     setTasks(allTasks.map(x => x && x.id === id ? { ...x, done: !x.done } : x));
     if (becoming && triggerConfetti) triggerConfetti();
   };
-  const removeTask = (id) => setTasks(allTasks.filter(x => x && x.id !== id));
+  const removeTask = (id) => {
+    if (isVirtualTaskId(id)) {
+      const parsed = parseRecurId(id);
+      if (!parsed) return;
+      if (typeof window !== "undefined" && !window.confirm(t("Remove this permanent task from every day?", lang))) return;
+      setRecurringTasks(recurringTasks.filter(r => r && r.id !== parsed.ruleId));
+      return;
+    }
+    setTasks(allTasks.filter(x => x && x.id !== id));
+  };
   const startEdit = (task) => {
     setEditingId(task.id);
     setEditingText(task.title);
@@ -9434,14 +9576,28 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     const startTime = editingStart ? to12h(editingStart) : "";
     const endTime = editingEnd ? to12h(editingEnd) : "";
     const notes = (editingNotes || "").trim();
-    setTasks(allTasks.map(x => {
-      if (!x || x.id !== editingId) return x;
-      const next = { ...x, title: text };
-      if (startTime) next.startTime = startTime; else delete next.startTime;
-      if (endTime) next.endTime = endTime; else delete next.endTime;
-      if (notes) next.notes = notes; else delete next.notes;
-      return next;
-    }));
+    if (isVirtualTaskId(editingId)) {
+      const parsed = parseRecurId(editingId);
+      if (parsed) {
+        setRecurringTasks(recurringTasks.map(r => {
+          if (r.id !== parsed.ruleId) return r;
+          const next = { ...r, title: text };
+          if (startTime) next.startTime = startTime; else delete next.startTime;
+          if (endTime) next.endTime = endTime; else delete next.endTime;
+          if (notes) next.notes = notes; else delete next.notes;
+          return next;
+        }));
+      }
+    } else {
+      setTasks(allTasks.map(x => {
+        if (!x || x.id !== editingId) return x;
+        const next = { ...x, title: text };
+        if (startTime) next.startTime = startTime; else delete next.startTime;
+        if (endTime) next.endTime = endTime; else delete next.endTime;
+        if (notes) next.notes = notes; else delete next.notes;
+        return next;
+      }));
+    }
     setEditingId(null);
     setEditingStart("");
     setEditingEnd("");
@@ -9730,11 +9886,14 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                       className="flex-1 min-w-0 text-left overflow-hidden cursor-pointer"
                       title={t("Click to edit", lang)}>
                       <div className="overflow-x-auto scrollbar-hide" style={{ touchAction: "pan-x" }}>
-                        <div className={`inline-flex min-w-max text-xs sm:text-sm font-medium whitespace-nowrap ${task.done ? "text-stone-400" : "text-stone-900"}`}>
+                        <div className={`inline-flex items-center gap-1 min-w-max text-xs sm:text-sm font-medium whitespace-nowrap ${task.done ? "text-stone-400" : "text-stone-900"}`}>
+                          {task._recurring && (
+                            <span title={t("permanent", lang)} className="text-[10px] text-[#5b7351] flex-shrink-0">↻</span>
+                          )}
                           {task.title}
                         </div>
                       </div>
-                      {(meta || isPri) && (
+                      {(meta || isPri || task._recurring) && (
                         <div className="overflow-x-auto scrollbar-hide mt-0.5" style={{ touchAction: "pan-x" }}>
                           <div className="inline-flex items-center gap-2 min-w-max whitespace-nowrap">
                             {meta && (
@@ -9745,6 +9904,11 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                                 className="text-[8px] sm:text-[9px] tracking-[0.18em] uppercase font-bold text-[#5b7351] bg-[#d3e0c5]/60 px-1.5 py-0.5 rounded"
                                 title={t("Priority", lang)}>
                                 {t("Priority", lang)}
+                              </span>
+                            )}
+                            {task._recurring && (
+                              <span className="text-[8px] sm:text-[9px] tracking-[0.18em] uppercase font-bold text-[#5b7351] bg-[#9cb88f]/30 px-1.5 py-0.5 rounded" title={t("permanent", lang)}>
+                                {task._recurrence === "weekly" ? t("weekly", lang) : t("daily", lang)}
                               </span>
                             )}
                           </div>
@@ -9973,11 +10137,39 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     setNewEnd(task.endTime ? to24h(task.endTime) : "");
     setNewTaskNotes(task.notes || "");
     setNewTaskPriority(!!task.priority);
+    // If this is a recurring rule's virtual occurrence, surface the rule's
+    // recurrence type so the picker shows the right radio when opened.
+    setNewRecurrence(task._recurring ? (task._recurrence || "daily") : "none");
     setAddTaskModalOpen(true);
   };
 
-  // Update an existing task with the modal's current draft values. Mirrors
-  // addTask()'s field handling so we don't drift between create and edit.
+  // Push a brand-new recurring rule for today onward. Today's weekday is
+  // baked in for weekly rules so "every Monday at 5am" stays anchored
+  // even if she navigates to a different week.
+  const addRecurringFromModal = (recurrence) => {
+    const title = (newTitle || "").trim();
+    if (!title) return;
+    const ids = recurringTasks.map(r => Number(r && r.id)).filter(n => !isNaN(n));
+    const id = (ids.length ? Math.max(...ids) : 0) + 1;
+    const startTime = newStart ? to12h(newStart) : "";
+    const endTime = newEnd ? to12h(newEnd) : "";
+    const notes = (newTaskNotes || "").trim();
+    const rule = { id, title, recurrence, startDate: date, doneByDate: {} };
+    if (startTime) rule.startTime = startTime;
+    if (endTime) rule.endTime = endTime;
+    if (notes) rule.notes = notes;
+    if (recurrence === "weekly") rule.weekday = dayOfWeekIdx(date);
+    setRecurringTasks([...recurringTasks, rule]);
+  };
+
+  // Update an existing task with the modal's current draft values. Handles
+  // three cases:
+  //   1. real → real: just patch fields on the existing task
+  //   2. recurring rule → recurring rule: patch the rule (changes apply to
+  //      every day it shows up). Supports changing the recurrence type
+  //      (e.g., "daily" → "weekly") in place.
+  //   3. cross-type conversions: real ↔ recurring. Rebuilds the right side
+  //      from scratch so we don't leave orphan rows/rules behind.
   const updateExistingTaskFromModal = () => {
     const id = editingTaskIdFromSchedule;
     if (id == null) return;
@@ -9986,6 +10178,56 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     const startTime = newStart ? to12h(newStart) : "";
     const endTime = newEnd ? to12h(newEnd) : "";
     const notes = (newTaskNotes || "").trim();
+
+    if (isVirtualTaskId(id)) {
+      const parsed = parseRecurId(id);
+      if (!parsed) return;
+      if (newRecurrence === "none") {
+        // Recurring → one-off: drop the rule, add a single task for today.
+        const newTaskId = (allTasks.length ? Math.max(0, ...allTasks.map(x => Number(x && x.id) || 0)) : 0) + 1;
+        const oneOff = { id: newTaskId, title, date: parsed.date, done: false };
+        if (startTime) oneOff.startTime = startTime;
+        if (endTime) oneOff.endTime = endTime;
+        if (notes) oneOff.notes = notes;
+        setData({
+          ...data,
+          tasks: [...allTasks, oneOff],
+          recurringTasks: recurringTasks.filter(r => r && r.id !== parsed.ruleId),
+        });
+      } else {
+        // Recurring → recurring: patch the rule, possibly switching daily/weekly.
+        setRecurringTasks(recurringTasks.map(r => {
+          if (r.id !== parsed.ruleId) return r;
+          const next = { ...r, title, recurrence: newRecurrence };
+          if (startTime) next.startTime = startTime; else delete next.startTime;
+          if (endTime) next.endTime = endTime; else delete next.endTime;
+          if (notes) next.notes = notes; else delete next.notes;
+          if (newRecurrence === "weekly") next.weekday = dayOfWeekIdx(parsed.date);
+          else delete next.weekday;
+          return next;
+        }));
+      }
+      return;
+    }
+
+    // Real task path.
+    if (newRecurrence === "daily" || newRecurrence === "weekly") {
+      // One-off → recurring: drop the row, push a new rule.
+      const realTask = allTasks.find(x => x && x.id === id);
+      const startDate = (realTask && realTask.date) || date;
+      const newRuleId = (recurringTasks.length ? Math.max(0, ...recurringTasks.map(r => Number(r && r.id) || 0)) : 0) + 1;
+      const rule = { id: newRuleId, title, recurrence: newRecurrence, startDate, doneByDate: {} };
+      if (startTime) rule.startTime = startTime;
+      if (endTime) rule.endTime = endTime;
+      if (notes) rule.notes = notes;
+      if (newRecurrence === "weekly") rule.weekday = dayOfWeekIdx(startDate);
+      setData({
+        ...data,
+        tasks: allTasks.filter(x => x && x.id !== id),
+        recurringTasks: [...recurringTasks, rule],
+      });
+      return;
+    }
     setTasks(allTasks.map(x => {
       if (!x || x.id !== id) return x;
       const next = { ...x, title };
@@ -10011,25 +10253,37 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (!newTitle.trim()) { cancelNewTask(); return; }
     if (editingTaskIdFromSchedule != null) {
       updateExistingTaskFromModal();
+    } else if (newRecurrence === "daily" || newRecurrence === "weekly") {
+      addRecurringFromModal(newRecurrence);
     } else {
       addTask();
     }
     setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false);
+    setNewRecurrence("none");
     setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
   // Delete the task currently being edited from the modal (schedule path).
+  // For a recurring rule, this nukes the rule from every day, not just today.
   const deleteEditingTaskFromModal = () => {
     const id = editingTaskIdFromSchedule;
     if (id == null) return;
-    if (typeof window !== "undefined" && !window.confirm(t("Delete this task?", lang))) return;
-    setTasks(allTasks.filter(x => x && x.id !== id));
+    if (isVirtualTaskId(id)) {
+      if (typeof window !== "undefined" && !window.confirm(t("Remove this permanent task from every day?", lang))) return;
+      const parsed = parseRecurId(id);
+      if (parsed) setRecurringTasks(recurringTasks.filter(r => r && r.id !== parsed.ruleId));
+    } else {
+      if (typeof window !== "undefined" && !window.confirm(t("Delete this task?", lang))) return;
+      setTasks(allTasks.filter(x => x && x.id !== id));
+    }
     setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false);
+    setNewRecurrence("none");
     setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
   const cancelNewTask = () => {
     setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false);
+    setNewRecurrence("none");
     setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
@@ -10114,6 +10368,42 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
           </button>
           {!newTaskPriority && priorityCount >= 3 && (
             <span className="text-[10px] italic text-stone-400">{t("Max 3 priorities", lang)}</span>
+          )}
+        </div>
+
+        {/* Permanent / recurring picker. Three options: one-off (default),
+            every day, or every <weekday-of-current-date>. The weekday label
+            updates with the active date so it reads naturally — e.g.,
+            "Every Monday" instead of an abstract "Weekly". */}
+        <div className="mt-3">
+          <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1.5">{t("Make permanent", lang)}</label>
+          <div className="grid grid-cols-3 gap-1.5">
+            {[
+              { key: "none",   label: t("One-time", lang) },
+              { key: "daily",  label: t("Every day", lang) },
+              { key: "weekly", label: t("Every {weekday}", lang, { weekday: t(WEEK_DAYS[(dayOfWeekIdx(date) + 6) % 7], lang) }) },
+            ].map(opt => {
+              const picked = newRecurrence === opt.key;
+              return (
+                <button
+                  key={opt.key}
+                  type="button"
+                  onClick={() => setNewRecurrence(opt.key)}
+                  className={`px-2 py-1.5 rounded text-[11px] font-medium transition border ${
+                    picked
+                      ? "bg-[#5b7351] text-white border-[#5b7351]"
+                      : "bg-white text-stone-600 border-stone-200 hover:border-[#7a9a6e]"
+                  }`}
+                >{opt.label}</button>
+              );
+            })}
+          </div>
+          {newRecurrence !== "none" && (
+            <p className="mt-1.5 text-[10px] italic text-stone-400">
+              {newRecurrence === "daily"
+                ? t("Appears on every day going forward. Edit or delete from any day.", lang)
+                : t("Appears every week on this weekday going forward.", lang)}
+            </p>
           )}
         </div>
         <div className="flex justify-between items-center gap-2 mt-4 flex-wrap">
@@ -10269,11 +10559,18 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                       const coveringTask = allTasks.find(tk =>
                         tk && tk.date === iso && taskCoversHour(tk, hour)
                       );
+                      // Recurring tasks (daily / weekly) — materialize the
+                      // virtual occurrence for this iso so it shows on the
+                      // grid and stays tappable for edit/delete.
+                      const coveringRecurring = !coveringTask && dayRecurringOccurrences(iso).find(rt =>
+                        rt && taskCoversHour(rt, hour)
+                      );
                       const dayEvents = (data.calendarEvents || {})[iso] || [];
-                      const coveringEvent = !coveringTask && dayEvents.find(ev =>
+                      const coveringEvent = !coveringTask && !coveringRecurring && dayEvents.find(ev =>
                         ev && taskCoversHour(ev, hour)
                       );
-                      const coveringItem = coveringTask || coveringEvent;
+                      const coveringTaskLike = coveringTask || coveringRecurring;
+                      const coveringItem = coveringTaskLike || coveringEvent;
                       const isTaskStart =
                         coveringItem && timeToMin(coveringItem.startTime) === timeToMin(hour);
                       return (
@@ -10289,15 +10586,15 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                             />
                           )}
                           {coveringItem && isTaskStart && (
-                            coveringTask ? (
+                            coveringTaskLike ? (
                               <button
                                 type="button"
-                                onClick={(e) => { e.stopPropagation(); openTaskEditorFromSchedule(coveringTask); }}
+                                onClick={(e) => { e.stopPropagation(); openTaskEditorFromSchedule(coveringTaskLike); }}
                                 className="absolute left-0.5 right-0.5 top-0.5 px-1 py-0.5 rounded text-[9px] font-semibold text-white truncate z-[6] text-left hover:opacity-90"
                                 style={{ background: "var(--accent-mid)" }}
-                                title={`${t("Tap to edit", lang)} · ${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}`}
+                                title={`${t("Tap to edit", lang)} · ${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}${coveringRecurring ? " · " + t("permanent", lang) : ""}`}
                               >
-                                {coveringItem.title}
+                                {coveringRecurring ? "↻ " : ""}{coveringItem.title}
                               </button>
                             ) : (
                               <div
