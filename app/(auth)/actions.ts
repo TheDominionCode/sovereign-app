@@ -64,6 +64,11 @@ export async function signUpWithPasswordAction(formData: FormData) {
 
   const supabase = await createClient();
   const site = process.env.NEXT_PUBLIC_SITE_URL!;
+  // Both the "no email confirmation" path (below) and the "click the link
+  // in your email" path land on /welcome first. The email-confirmation
+  // callback's `next` is /welcome?next=<original-next> so new users see
+  // the founder letter + how-it-works before bouncing into their planner.
+  const welcomeNext = `/welcome?next=${encodeURIComponent(next)}`;
   const { error } = await supabase.auth.signUp({
     email,
     password,
@@ -71,7 +76,7 @@ export async function signUpWithPasswordAction(formData: FormData) {
       // raw_user_meta_data — the on_auth_user_created trigger copies these
       // into the profiles row on insert.
       data: meta,
-      emailRedirectTo: `${site}/auth/callback?next=${encodeURIComponent(next)}`,
+      emailRedirectTo: `${site}/auth/callback?next=${encodeURIComponent(welcomeNext)}`,
     },
   });
   if (error) {
@@ -79,7 +84,12 @@ export async function signUpWithPasswordAction(formData: FormData) {
   }
   // If email confirmation is disabled (local default), the user is signed in
   // immediately. If enabled (production), they need to click the email link.
-  redirect(next);
+  //
+  // New signups land on /welcome (founder letter + how-it-works + how to add
+  // to home screen). The page has an "Open my Sovereign →" CTA that uses the
+  // `next` we collected here so beta testers still skip to /app and paying
+  // signups still go through /pricing once they're done reading.
+  redirect(welcomeNext);
 }
 
 export async function forgotPasswordAction(formData: FormData) {
