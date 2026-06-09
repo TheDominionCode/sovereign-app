@@ -1,5 +1,20 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {
+  BookOpen,
+  Calendar,
+  Activity,
+  Target,
+  DollarSign,
+  Heart,
+  Image as ImageIcon,
+  Sparkles,
+  Shield,
+  MessageCircle,
+  StickyNote,
+  Lock,
+  Home as HomeIcon,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -28,18 +43,37 @@ const HOW_IT_WORKS = [
   },
 ];
 
-function pickFirstName(fullName: string | null | undefined, email: string): string {
-  if (fullName && fullName.trim()) {
-    return fullName.trim().split(/\s+/)[0];
+// Every module the user will find in the planner sidebar, with a one-line
+// description in Nataly's voice. Lucide icons mirror what's used inside the
+// planner itself so the gallery matches what they're about to walk into.
+const FEATURES = [
+  { icon: HomeIcon,      name: "Summary",            body: "Your one-screen morning. Three Things, stat circles, today at a glance." },
+  { icon: BookOpen,      name: "Daily Planner",      body: "To-dos, the weekly schedule, today's wins, gratitude, journal, tomorrow." },
+  { icon: Activity,      name: "Habits & Water",     body: "Routines, water glasses, the rhythm of the days you're proud of." },
+  { icon: Calendar,      name: "Calendar",           body: "Events by day, week, year. Connected to your planner — your wins show up here too." },
+  { icon: Target,        name: "Goals",              body: "The 3, 6, 12-month picture. Track progress without nagging notifications." },
+  { icon: DollarSign,    name: "Personal Finance",   body: "Income, expenses, savings goals. What's coming in, what's going out, what's yours to keep." },
+  { icon: Heart,         name: "Cycle & Mood",       body: "Track your cycle, mood, symptoms, vitamins. Quietly. For you." },
+  { icon: ImageIcon,     name: "Vision Board",       body: "Photos + captions of the life you're building toward. Look at it. Often." },
+  { icon: Sparkles,      name: "Affirmations",       body: "50+ to start, plus the ones you write yourself. Daily streak counter." },
+  { icon: Shield,        name: "Boundaries",         body: "Scripts and reminders for the moments you need to say no without flinching." },
+  { icon: MessageCircle, name: "Speak Eloquently",   body: "Rehearse the hard conversation. Refine the email. Pick your words." },
+  { icon: StickyNote,    name: "Notes",              body: "Private, encrypted on your device. For the thoughts that aren't ready for anywhere else." },
+  { icon: Lock,          name: "Logins & Passwords", body: "Encrypted on your device. Sovereign never sees them. Neither does anyone else." },
+];
+
+// Pick the user's first name without ever falling back to an email-derived
+// guess (those produce ugly greetings like "Hello, Iconic"). Returns null if
+// no real name is on file, which lets the page render an un-personalized but
+// still warm "Hello." instead.
+function firstNameOrNull(...candidates: Array<string | null | undefined>): string | null {
+  for (const raw of candidates) {
+    if (!raw) continue;
+    const cleaned = String(raw).trim();
+    if (!cleaned) continue;
+    return cleaned.split(/\s+/)[0];
   }
-  const local = email.split("@")[0] ?? "";
-  return (
-    local
-      .replace(/[._-]+/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase())
-      .trim()
-      .split(/\s+/)[0] || "friend"
-  );
+  return null;
 }
 
 export default async function WelcomePage({ searchParams }: { searchParams: SearchParams }) {
@@ -48,21 +82,26 @@ export default async function WelcomePage({ searchParams }: { searchParams: Sear
   const { data: { user } } = await supabase.auth.getUser();
   if (!user?.email) redirect(`/login?next=${encodeURIComponent("/welcome")}`);
 
-  // Pull the user's name (best-effort) so the greeting feels personal. The
-  // welcome page renders fine even if the profile row hasn't been synced yet.
+  // Pull the user's name. Best sources in priority order:
+  //   1. profiles.full_name (synced from raw_user_meta_data at signup)
+  //   2. user.user_metadata.full_name (signup form input, before sync)
+  // No email-derived guesses — we'd rather say "Hello." than "Hello, Iconic."
   const admin = createAdminClient();
-  let fullName: string | null = null;
+  let profileFullName: string | null = null;
   try {
     const { data } = await admin
       .from("profiles")
       .select("full_name")
       .eq("id", user.id)
       .maybeSingle();
-    fullName = (data?.full_name as string | null) ?? null;
+    profileFullName = (data?.full_name as string | null) ?? null;
   } catch {
-    fullName = null;
+    profileFullName = null;
   }
-  const firstName = pickFirstName(fullName, user.email);
+  const metadataFullName = (user.user_metadata?.full_name as string | undefined) ?? null;
+  const firstName = firstNameOrNull(profileFullName, metadataFullName);
+  const greeting = firstName ? `Hello, ${firstName}.` : "Hello.";
+  const ctaName = firstName ? `Ready, ${firstName}?` : "Ready?";
   const continueHref = next && next.startsWith("/") ? next : "/app";
 
   return (
@@ -77,7 +116,7 @@ export default async function WelcomePage({ searchParams }: { searchParams: Sear
             className="font-serif text-5xl sm:text-6xl leading-tight mb-4"
             style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
           >
-            Hello, {firstName}.
+            {greeting}
           </h1>
           <p
             className="font-serif text-xl italic text-[#856a3f]"
@@ -103,7 +142,7 @@ export default async function WelcomePage({ searchParams }: { searchParams: Sear
             style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
           >
             <p>
-              I built Sovereign because I was tired of being scattered. Seven apps open at any
+              {firstName ? `${firstName}, ` : ""}I built Sovereign because I was tired of being scattered. Seven apps open at any
               given time, none of them talking to each other, all of them designed to keep
               me using them instead of <em>living</em>. So I built one quiet place that
               holds my whole life.
@@ -147,6 +186,36 @@ export default async function WelcomePage({ searchParams }: { searchParams: Sear
               </li>
             ))}
           </ol>
+        </section>
+
+        {/* WHAT'S INSIDE — feature tour */}
+        <section className="mb-10">
+          <div className="text-[10px] tracking-[0.18em] uppercase text-[#856a3f] font-semibold mb-4">
+            What you&apos;ll see inside
+          </div>
+          <p className="text-sm italic text-[#6b6258] mb-5">
+            Every section of Sovereign in one line. You don&apos;t have to use them all
+            — pick the ones that fit your life and ignore the rest.
+          </p>
+          <div className="grid sm:grid-cols-2 gap-3">
+            {FEATURES.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div
+                  key={f.name}
+                  className="rounded-xl border border-[#d9cdb8] bg-white p-4 flex items-start gap-3"
+                >
+                  <div className="w-10 h-10 rounded-full bg-[#f4f7ee] border border-[#d3e0c5] flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-[#5b7351]" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-[#1a1816] mb-0.5">{f.name}</div>
+                    <div className="text-xs text-[#2c2926] leading-relaxed">{f.body}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </section>
 
         {/* ADD TO HOME SCREEN */}
@@ -219,7 +288,7 @@ export default async function WelcomePage({ searchParams }: { searchParams: Sear
             className="font-serif text-3xl mb-3"
             style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
           >
-            Ready, {firstName}?
+            {ctaName}
           </h2>
           <p className="text-sm italic text-[#c9a961] mb-6">
             Open your planner. Write the three things that matter today. Begin.
