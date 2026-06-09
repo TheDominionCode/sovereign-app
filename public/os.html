@@ -2107,6 +2107,25 @@ const TRANSLATIONS = {
     "Move back": "Move back",
     "Move earlier": "Move earlier",
     "Move later": "Move later",
+    // Subscriptions tab (Personal Finance)
+    "Subscriptions": "Subscriptions",
+    "Add subscription or membership": "Add subscription or membership",
+    "Name (e.g., Netflix, gym)": "Name (e.g., Netflix, gym)",
+    "Cost $": "Cost $",
+    "Login email / username": "Login email / username",
+    "Password (optional)": "Password (optional)",
+    "Site URL (optional)": "Site URL (optional)",
+    "No subscriptions yet. Add one above.": "No subscriptions yet. Add one above.",
+    "Estimated monthly total:": "Estimated monthly total:",
+    "Delete this subscription?": "Delete this subscription?",
+    "open ↗": "open ↗",
+    "Login:": "Login:",
+    "Password:": "Password:",
+    "Copy": "Copy",
+    "Hide": "Hide",
+    "Show": "Show",
+    "weekly": "weekly",
+    "monthly": "monthly",
     // Owner profile quick-links (top-right avatar dropdown)
     "My links": "My links",
     "Add link": "Add link",
@@ -2745,6 +2764,25 @@ const TRANSLATIONS = {
     "Move back": "Mover de vuelta",
     "Move earlier": "Mover antes",
     "Move later": "Mover después",
+    // Suscripciones (Finanzas)
+    "Subscriptions": "Suscripciones",
+    "Add subscription or membership": "Agregar suscripción o membresía",
+    "Name (e.g., Netflix, gym)": "Nombre (ej. Netflix, gimnasio)",
+    "Cost $": "Costo $",
+    "Login email / username": "Email / usuario",
+    "Password (optional)": "Contraseña (opcional)",
+    "Site URL (optional)": "URL del sitio (opcional)",
+    "No subscriptions yet. Add one above.": "Aún no hay suscripciones. Agrega una arriba.",
+    "Estimated monthly total:": "Total mensual estimado:",
+    "Delete this subscription?": "¿Eliminar esta suscripción?",
+    "open ↗": "abrir ↗",
+    "Login:": "Email:",
+    "Password:": "Contraseña:",
+    "Copy": "Copiar",
+    "Hide": "Ocultar",
+    "Show": "Mostrar",
+    "weekly": "semanal",
+    "monthly": "mensual",
     // Enlaces rápidos del dueño (menú del avatar arriba a la derecha)
     "My links": "Mis enlaces",
     "Add link": "Agregar enlace",
@@ -4282,6 +4320,74 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
 
   const inputCls = "px-3 py-2.5 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white";
 
+  // --- Subscriptions & memberships (Netflix, gym, software, etc.) -----
+  // Each row stores cost, billing frequency, and the login email +
+  // password so the user has one place for both expenses AND credentials.
+  // Passwords are stored in-clear inside data.personalFinance.subscriptions
+  // — same storage tier as the existing Logins module (data.logins) — and
+  // are masked behind a reveal/copy button in the list.
+  const subscriptions = Array.isArray(pf.subscriptions) ? pf.subscriptions : [];
+  const blankSubscription = { name: "", cost: "", frequency: "monthly", login: "", password: "", url: "", notes: "" };
+  const [subForm, setSubForm] = useState(blankSubscription);
+  const [editingSubId, setEditingSubId] = useState(null);
+  const [subEditForm, setSubEditForm] = useState(blankSubscription);
+  const [revealedPw, setRevealedPw] = useState({});
+  const addSubscription = () => {
+    const name = (subForm.name || "").trim();
+    if (!name) return;
+    const id = Math.max(0, ...subscriptions.map(s => s.id || 0)) + 1;
+    updatePF({ subscriptions: [...subscriptions, {
+      id,
+      name,
+      cost: parseFloat(subForm.cost) || 0,
+      frequency: subForm.frequency || "monthly",
+      login: (subForm.login || "").trim(),
+      password: subForm.password || "",
+      url: (subForm.url || "").trim(),
+      notes: (subForm.notes || "").trim(),
+    }] });
+    setSubForm(blankSubscription);
+  };
+  const removeSubscription = (id) => {
+    if (typeof window !== "undefined" && !window.confirm(t("Delete this subscription?", lang))) return;
+    updatePF({ subscriptions: subscriptions.filter(s => s.id !== id) });
+  };
+  const startEditSub = (s) => {
+    setEditingSubId(s.id);
+    setSubEditForm({
+      name: s.name || "",
+      cost: s.cost != null ? String(s.cost) : "",
+      frequency: s.frequency || "monthly",
+      login: s.login || "",
+      password: s.password || "",
+      url: s.url || "",
+      notes: s.notes || "",
+    });
+  };
+  const cancelEditSub = () => { setEditingSubId(null); setSubEditForm(blankSubscription); };
+  const saveEditSub = () => {
+    if (editingSubId == null) return;
+    const name = (subEditForm.name || "").trim();
+    if (!name) return;
+    updatePF({ subscriptions: subscriptions.map(s => s.id === editingSubId ? {
+      ...s,
+      name,
+      cost: parseFloat(subEditForm.cost) || 0,
+      frequency: subEditForm.frequency || "monthly",
+      login: (subEditForm.login || "").trim(),
+      password: subEditForm.password || "",
+      url: (subEditForm.url || "").trim(),
+      notes: (subEditForm.notes || "").trim(),
+    } : s) });
+    cancelEditSub();
+  };
+  const toggleRevealPw = (id) => setRevealedPw(prev => ({ ...prev, [id]: !prev[id] }));
+  const copyText = (s) => {
+    if (!s || typeof navigator === "undefined" || !navigator.clipboard) return;
+    navigator.clipboard.writeText(s).catch(() => {});
+  };
+  const subscriptionsMonthlyTotal = subscriptions.reduce((sum, s) => sum + ((s.cost || 0) * (FREQ_TO_MONTHLY[s.frequency] || 1)), 0);
+
   return (
     <div>
       <div className="mb-6">
@@ -4324,11 +4430,12 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
       </div>
 
       {/* TABS */}
-      <div className="grid grid-cols-4 gap-1 sm:gap-2 mb-5">
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-1 sm:gap-2 mb-5">
         {[
           { id: "income", label: t("Income", lang) },
           { id: "expenses", label: t("Expenses", lang) },
           { id: "bills", label: t("Bills", lang) },
+          { id: "subscriptions", label: t("Subscriptions", lang) },
           { id: "goals", label: t("Goals", lang) },
         ].map(t => (
           <button
@@ -4398,6 +4505,31 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
           <button onClick={addGoal} className="px-5 py-2.5 rounded text-white font-medium flex items-center justify-center gap-1" style={{ background: FOREST }} title="Add">
             <Plus className="w-4 h-4" />
           </button>
+        </div>
+      )}
+
+      {tab === "subscriptions" && (
+        <div className="rounded border border-stone-200 p-3 mb-5 bg-white">
+          <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-semibold mb-2">{t("Add subscription or membership", lang)}</div>
+          <div className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_1fr] gap-2 mb-2">
+            <input value={subForm.name} onChange={e => setSubForm({ ...subForm, name: e.target.value })} placeholder={t("Name (e.g., Netflix, gym)", lang)} className={inputCls} />
+            <input type="number" value={subForm.cost} onChange={e => setSubForm({ ...subForm, cost: e.target.value })} placeholder={t("Cost $", lang)} className={inputCls} />
+            <select value={subForm.frequency} onChange={e => setSubForm({ ...subForm, frequency: e.target.value })} className={inputCls}>
+              <option value="weekly">{t("weekly", lang)}</option>
+              <option value="monthly">{t("monthly", lang)}</option>
+              <option value="yearly">{t("yearly", lang)}</option>
+            </select>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-2">
+            <input value={subForm.login} onChange={e => setSubForm({ ...subForm, login: e.target.value })} placeholder={t("Login email / username", lang)} className={inputCls} autoComplete="off" />
+            <input type="text" value={subForm.password} onChange={e => setSubForm({ ...subForm, password: e.target.value })} placeholder={t("Password (optional)", lang)} className={inputCls} autoComplete="off" />
+            <input value={subForm.url} onChange={e => setSubForm({ ...subForm, url: e.target.value })} placeholder={t("Site URL (optional)", lang)} className={inputCls} />
+          </div>
+          <div className="flex justify-end">
+            <button onClick={addSubscription} className="px-4 py-2 rounded text-white text-sm font-medium flex items-center gap-1.5" style={{ background: FOREST }}>
+              <Plus className="w-4 h-4" /> {t("Add", lang)}
+            </button>
+          </div>
         </div>
       )}
 
@@ -4574,6 +4706,89 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
                 </div>
                 <button onClick={() => removeExpense(e.id)} className="p-2 text-stone-400 hover:text-rose-500 hover:bg-rose-50 rounded justify-self-end" title="Delete"><Trash2 className="w-4 h-4" /></button>
               </div>
+            ))}
+          </div>
+        )
+      )}
+
+      {tab === "subscriptions" && (
+        subscriptions.length === 0 ? (
+          <div className={`p-12 text-center italic ${themeMuted} text-sm`}>{t("No subscriptions yet. Add one above.", lang)}</div>
+        ) : (
+          <div className="space-y-2">
+            <div className="text-[11px] text-stone-500 italic mb-1 pl-1">
+              {t("Estimated monthly total:", lang)} <span className="font-mono text-[#5b7351]">{fmt(subscriptionsMonthlyTotal)}</span>
+            </div>
+            {[...subscriptions].sort((a, b) => (Number(b.id) || 0) - (Number(a.id) || 0)).map(s => (
+              editingSubId === s.id ? (
+                <div key={s.id} className="p-3 rounded border-2 border-[#7a9a6e] bg-[#f4f7ee]/40 space-y-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_1fr] gap-2">
+                    <input autoFocus value={subEditForm.name} onChange={e => setSubEditForm({ ...subEditForm, name: e.target.value })} placeholder={t("Name", lang)} className={inputCls} />
+                    <input type="number" value={subEditForm.cost} onChange={e => setSubEditForm({ ...subEditForm, cost: e.target.value })} placeholder={t("Cost $", lang)} className={inputCls} />
+                    <select value={subEditForm.frequency} onChange={e => setSubEditForm({ ...subEditForm, frequency: e.target.value })} className={inputCls}>
+                      <option value="weekly">{t("weekly", lang)}</option>
+                      <option value="monthly">{t("monthly", lang)}</option>
+                      <option value="yearly">{t("yearly", lang)}</option>
+                    </select>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <input value={subEditForm.login} onChange={e => setSubEditForm({ ...subEditForm, login: e.target.value })} placeholder={t("Login email / username", lang)} className={inputCls} autoComplete="off" />
+                    <input type="text" value={subEditForm.password} onChange={e => setSubEditForm({ ...subEditForm, password: e.target.value })} placeholder={t("Password (optional)", lang)} className={inputCls} autoComplete="off" />
+                    <input value={subEditForm.url} onChange={e => setSubEditForm({ ...subEditForm, url: e.target.value })} placeholder={t("Site URL (optional)", lang)} className={inputCls} />
+                  </div>
+                  <textarea value={subEditForm.notes} onChange={e => setSubEditForm({ ...subEditForm, notes: e.target.value })} rows={2} placeholder={t("Notes (optional)…", lang)} className={`${inputCls} w-full resize-none`} />
+                  <div className="flex justify-end gap-2">
+                    <button onClick={cancelEditSub} className="px-3 py-1.5 text-xs text-stone-500 hover:text-stone-800">{t("Cancel", lang)}</button>
+                    <button onClick={saveEditSub} className="px-3 py-1.5 text-xs font-semibold rounded text-white" style={{ background: FOREST }}>{t("Save", lang)}</button>
+                  </div>
+                </div>
+              ) : (
+                <div key={s.id} className="p-3 rounded border border-stone-200 hover:border-[#7a9a6e] transition">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline gap-2 flex-wrap">
+                        <span className="font-medium text-sm">{s.name}</span>
+                        <span className="text-xs text-stone-500">· {fmt(s.cost)}/{t(s.frequency || "monthly", lang)}</span>
+                        {s.url && (
+                          <a href={s.url.startsWith("http") ? s.url : `https://${s.url}`} target="_blank" rel="noopener noreferrer" className="text-[11px] text-[#5b7351] hover:underline">{t("open ↗", lang)}</a>
+                        )}
+                      </div>
+                      {(s.login || s.password) && (
+                        <div className="mt-1 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3 text-[11px] text-stone-600">
+                          {s.login && (
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-stone-400 flex-shrink-0">{t("Login:", lang)}</span>
+                              <span className="font-mono truncate">{s.login}</span>
+                              <button onClick={() => copyText(s.login)} className="p-0.5 text-stone-400 hover:text-[#5b7351] flex-shrink-0" title={t("Copy", lang)} aria-label={t("Copy", lang)}>
+                                <CheckSquare className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
+                          {s.password && (
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-stone-400 flex-shrink-0">{t("Password:", lang)}</span>
+                              <span className="font-mono truncate">{revealedPw[s.id] ? s.password : "••••••••"}</span>
+                              <button onClick={() => toggleRevealPw(s.id)} className="p-0.5 text-stone-400 hover:text-[#5b7351] flex-shrink-0" title={revealedPw[s.id] ? t("Hide", lang) : t("Show", lang)} aria-label={revealedPw[s.id] ? t("Hide", lang) : t("Show", lang)}>
+                                {revealedPw[s.id] ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                              </button>
+                              <button onClick={() => copyText(s.password)} className="p-0.5 text-stone-400 hover:text-[#5b7351] flex-shrink-0" title={t("Copy", lang)} aria-label={t("Copy", lang)}>
+                                <CheckSquare className="w-3 h-3" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      {s.notes && (
+                        <div className="text-[11px] italic text-stone-500 mt-1 whitespace-pre-wrap break-words">{s.notes}</div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <button onClick={() => startEditSub(s)} className="p-1.5 text-stone-500 hover:text-[#5b7351] hover:bg-stone-50 rounded" title={t("Edit", lang)} aria-label={t("Edit", lang)}><Edit2 className="w-3.5 h-3.5" /></button>
+                      <button onClick={() => removeSubscription(s.id)} className="p-1.5 text-stone-400 hover:text-rose-500 hover:bg-rose-50 rounded" title={t("Delete", lang)} aria-label={t("Delete", lang)}><Trash2 className="w-3.5 h-3.5" /></button>
+                    </div>
+                  </div>
+                </div>
+              )
             ))}
           </div>
         )
