@@ -1,10 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import { COMMUNITY_THEMES, type CommunityThemeName } from "@/lib/affiliate/themes";
 import { saveCommunitySettingsAction } from "./settings-actions";
 
 // Admin-only settings card at the top of /admin/community. Edits the heading
 // quote and color theme that the public /affiliate/community page reads on
-// every render. Server-rendered form so refreshing always shows the saved
-// values without any client JS.
+// every render.
+//
+// Client component on purpose: the theme swatches need controlled state so
+// the visual selected ring updates immediately when the admin taps a
+// different theme. Earlier version used sr-only radios with defaultChecked
+// which left the visual state stuck on the server-rendered initial choice.
 export default function CommunitySettings({
   quote,
   theme,
@@ -12,6 +19,12 @@ export default function CommunitySettings({
   quote: string;
   theme: string;
 }) {
+  const [selectedTheme, setSelectedTheme] = useState<CommunityThemeName>(
+    (theme as CommunityThemeName) in COMMUNITY_THEMES
+      ? (theme as CommunityThemeName)
+      : "sand",
+  );
+
   return (
     <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
       <div className="flex items-baseline justify-between mb-3 flex-wrap gap-2">
@@ -40,29 +53,27 @@ export default function CommunitySettings({
           <label className="block text-[10px] tracking-[0.18em] uppercase text-stone-500 font-semibold mb-2">
             Color theme
           </label>
+          {/* Hidden field carries the selected theme name into the server action.
+              Kept in sync with selectedTheme state above. */}
+          <input type="hidden" name="theme" value={selectedTheme} />
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {(Object.keys(COMMUNITY_THEMES) as CommunityThemeName[]).map((name) => {
               const t = COMMUNITY_THEMES[name];
-              const selected = name === theme;
+              const isSelected = name === selectedTheme;
               return (
-                <label
+                <button
                   key={name}
-                  className={`relative cursor-pointer rounded-lg p-3 border-2 transition-all ${
-                    selected ? "ring-2 ring-offset-2" : "hover:border-stone-300"
-                  }`}
+                  type="button"
+                  onClick={() => setSelectedTheme(name)}
+                  aria-pressed={isSelected}
+                  className="relative cursor-pointer rounded-lg p-3 text-left transition-all"
                   style={{
                     backgroundColor: t.background,
-                    borderColor: selected ? t.accent : t.border,
                     color: t.text,
+                    border: isSelected ? `3px solid ${t.accent}` : `1px solid ${t.border}`,
+                    boxShadow: isSelected ? `0 0 0 3px ${t.accent}33` : "none",
                   }}
                 >
-                  <input
-                    type="radio"
-                    name="theme"
-                    value={name}
-                    defaultChecked={selected}
-                    className="sr-only"
-                  />
                   <div
                     className="text-[10px] tracking-[0.18em] uppercase font-semibold mb-2"
                     style={{ color: t.accent }}
@@ -79,7 +90,7 @@ export default function CommunitySettings({
                       />
                     ))}
                   </div>
-                  {selected && (
+                  {isSelected && (
                     <div
                       className="absolute top-1.5 right-1.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
                       style={{ backgroundColor: t.accent, color: t.card }}
@@ -87,7 +98,7 @@ export default function CommunitySettings({
                       ✓
                     </div>
                   )}
-                </label>
+                </button>
               );
             })}
           </div>

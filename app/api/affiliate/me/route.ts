@@ -11,13 +11,14 @@ export async function GET() {
   try {
     const info = await getAffiliateStatus();
     if (!info) {
-      return NextResponse.json({ approved: false, isAdmin: false });
+      return NextResponse.json({ approved: false, isAdmin: false, isOwner: false });
     }
     return NextResponse.json({
       approved: info.status === "approved",
       isAdmin: info.isAdmin,
+      isOwner: info.isOwner,
     });
   } catch {
-    return NextResponse.json({ approved: false, isAdmin: false });
+    return NextResponse.json({ approved: false, isAdmin: false, isOwner: false });
   }
 }

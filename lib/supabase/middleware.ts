@@ -3,6 +3,18 @@ import { NextResponse, type NextRequest } from "next/server";
 
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
 
+// Keep Supabase auth cookies alive for 30 days so a phone going to sleep,
+// closing the tab, or backgrounding the PWA doesn't wipe the session. We
+// only extend non-empty cookie values — signout still clears properly
+// because Supabase rewrites the cookie with an empty value + maxAge: 0.
+const THIRTY_DAYS_SECONDS = 60 * 60 * 24 * 30;
+function extendAuthCookie(name: string, value: string, options?: CookieOptions): CookieOptions | undefined {
+  if (!name.startsWith("sb-") || !value) return options;
+  const next: CookieOptions = { ...(options || {}) };
+  if (!next.maxAge || next.maxAge < THIRTY_DAYS_SECONDS) next.maxAge = THIRTY_DAYS_SECONDS;
+  return next;
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
@@ -20,7 +32,7 @@ export async function updateSession(request: NextRequest) {
           );
           supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, extendAuthCookie(name, value, options))
           );
         },
       },

@@ -10,6 +10,7 @@ export type AffiliateInfo = {
   status: AffiliateStatus;
   message: string | null;
   isAdmin: boolean;
+  isOwner: boolean;
 };
 
 // Look up the signed-in user's affiliate status. Returns "none" if they've
@@ -34,10 +35,11 @@ export async function getAffiliateStatus(): Promise<AffiliateInfo | null> {
       .select("status,message")
       .eq("user_id", user.id)
       .maybeSingle(),
-    admin.from("admins").select("email").eq("email", email).maybeSingle(),
+    admin.from("admins").select("email,role").eq("email", email).maybeSingle(),
   ]);
 
   const isAdmin = !!adminRes.data;
+  const isOwner = (adminRes.data as { role?: string } | null)?.role === "owner";
   const rawStatus = (appRes.data?.status as AffiliateStatus) ?? "none";
 
   return {
@@ -46,6 +48,7 @@ export async function getAffiliateStatus(): Promise<AffiliateInfo | null> {
     status: isAdmin ? "approved" : rawStatus,
     message: appRes.data?.message ?? null,
     isAdmin,
+    isOwner,
   };
 }
 

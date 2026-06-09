@@ -185,7 +185,7 @@ import {
   Crown, Home, Users, UserPlus, DollarSign, Calendar, Mail, Share2,
   TrendingUp, MessageSquare, StickyNote, Calculator, Target, Sparkles,
   Image as ImageIcon, BookOpen, LogOut, Moon, Sun, Plus, Search, Check,
-  X, ChevronRight, Star, Flame, Trophy, Award, Phone, FileText, Send,
+  X, ChevronRight, ChevronLeft, Star, Flame, Trophy, Award, Phone, FileText, Send,
   Heart, Bell, Settings, ArrowRight, ArrowUp, ArrowDown, Edit2, Trash2,
   Filter, MoreVertical, Eye, EyeOff, Menu, Zap, Briefcase, Activity,
   PieChart as PieIcon, BarChart3, CheckCircle2, Circle, Pin, Tag,
@@ -288,6 +288,63 @@ const DEFAULT_PERSONAL_AFFIRMATIONS = [
 ];
 
 const DEFAULT_AFFIRMATION_CATEGORIES = ["Confidence", "Self-Worth", "Peace", "Body", "Boundaries", "Faith"];
+
+// Spanish translations for the seeded default affirmations, keyed by id.
+// Custom affirmations (custom: true) are NEVER translated — they're the
+// user's own words. Storage stays English so toggling languages doesn't
+// lose data; affText() picks the Spanish version at render time when
+// lang === "es" and a translation exists for that id.
+const SPANISH_DEFAULT_AFFIRMATIONS = {
+  1:  "Estoy en calma, centrada y al mando de mi vida.",
+  2:  "Confío en mí. Confío en mi voz. Confío en mis decisiones.",
+  3:  "Soy la mujer en la que he estado orando convertirme.",
+  4:  "No me encojo para que nadie esté cómodo.",
+  5:  "Soy suave y soy fuerte. Las dos me pertenecen.",
+  6:  "Me muevo con gracia y decido con claridad.",
+  7:  "Estoy orgullosa de la mujer que veo en el espejo.",
+  8:  "No persigo. Lo que es para mí me encuentra.",
+  9:  "Mi voz importa. El tono lo elijo yo.",
+  10: "Ocupo mi espacio, suave y plenamente.",
+  11: "Me hablo como le hablaría a alguien que amo.",
+  12: "Soy suficiente exactamente como soy hoy.",
+  13: "Perdono a la mujer que fui. Hizo lo mejor que pudo.",
+  14: "Tengo permiso para cambiar de opinión.",
+  15: "Mi valor no está en negociación.",
+  16: "El descanso es parte del trabajo, no una recompensa por él.",
+  17: "Mi paz vale más que ser comprendida.",
+  18: "Es seguro ir más despacio. Lo bueno seguirá encontrándome.",
+  19: "Dejo que las pequeñas alegrías cuenten.",
+  20: "Confío en el tiempo de mi propio camino.",
+  21: "Mi cuerpo es un hogar, no un proyecto.",
+  22: "Confío en lo que mi cuerpo me dice.",
+  23: "Cuido mi cuerpo porque me ha cargado a través de todo.",
+  24: "Mis límites son un acto de amor — para mí y para ellos.",
+  25: "No es una oración completa. No debo explicaciones.",
+  26: "Soy soberana de mi tiempo, mi energía y mi atención.",
+  27: "Nada que sea para mí se me va a escapar.",
+  28: "Soy elegida, ungida y estoy a tiempo.",
+  29: "Estoy sostenida por el amor, lo diga alguien en voz alta o no.",
+  30: "Estoy en proceso. No tengo que haber llegado.",
+};
+const SPANISH_AFFIRMATION_CATEGORIES = {
+  "Confidence":  "Confianza",
+  "Self-Worth":  "Valor propio",
+  "Peace":       "Paz",
+  "Body":        "Cuerpo",
+  "Boundaries":  "Límites",
+  "Faith":       "Fe",
+};
+function affText(a, lang) {
+  if (!a) return "";
+  if (lang === "es" && !a.custom && SPANISH_DEFAULT_AFFIRMATIONS[a.id]) {
+    return SPANISH_DEFAULT_AFFIRMATIONS[a.id];
+  }
+  return a.text || "";
+}
+function affCat(c, lang) {
+  if (lang === "es" && SPANISH_AFFIRMATION_CATEGORIES[c]) return SPANISH_AFFIRMATION_CATEGORIES[c];
+  return c;
+}
 
 // ============================================================
 // DEMO DATA
@@ -1880,6 +1937,22 @@ const TRANSLATIONS = {
     "add your first →": "add your first →",
     "{n} of {m} done →": "{n} of {m} done →",
     "Nothing on the list yet — open your planner to add the first thing →": "Nothing on the list yet — open your planner to add the first thing →",
+    // Important Dates (Calendar)
+    "Add a date": "Add a date",
+    "Save important date": "Save important date",
+    "Repeats yearly": "Repeats yearly",
+    "Repeats every year": "Repeats every year",
+    "Yes, every year": "Yes, every year",
+    "No, just once": "No, just once",
+    "Just once": "Just once",
+    "Trips, birthdays, anniversaries — the dates you don't want to miss.": "Trips, birthdays, anniversaries — the dates you don't want to miss.",
+    "Nothing on the list yet. Add the first one above.": "Nothing on the list yet. Add the first one above.",
+    "Anything else…": "Anything else…",
+    "Mom's birthday": "Mom's birthday",
+    "in {n} days": "in {n} days",
+    "{n} days ago": "{n} days ago",
+    // Task editor (schedule)
+    "Update title, time, or notes — or delete it.": "Update title, time, or notes — or delete it.",
     "a priority": "a priority",
     "uploading…": "uploading…",
     "edit →": "edit →",
@@ -1967,6 +2040,7 @@ const TRANSLATIONS = {
     "Back to today": "Back to today",
     "FLOW": "FLOW",
     "HOW DO YOU FEEL?": "HOW DO YOU FEEL?",
+    "optional": "optional",
     "SYMPTOMS": "SYMPTOMS",
     "Remove this vitamin?": "Remove this vitamin?",
     "Clear all cycle and mood entries?": "Clear all cycle and mood entries?",
@@ -2031,6 +2105,14 @@ const TRANSLATIONS = {
     "Add a picture or scripture": "Add a picture or scripture",
     "ACHIEVED": "ACHIEVED",
     "Move back": "Move back",
+    "Move earlier": "Move earlier",
+    "Move later": "Move later",
+    // Owner profile quick-links (top-right avatar dropdown)
+    "My links": "My links",
+    "Add link": "Add link",
+    "No links yet — tap + Add.": "No links yet — tap + Add.",
+    "Label (e.g., Landing page)": "Label (e.g., Landing page)",
+    "Delete this link?": "Delete this link?",
     "Mark achieved": "Mark achieved",
     "Read your letter": "Read your letter",
     "Caption (verse, scripture, or short phrase)": "Caption (verse, scripture, or short phrase)",
@@ -2494,6 +2576,22 @@ const TRANSLATIONS = {
     "add your first →": "añade la primera →",
     "{n} of {m} done →": "{n} de {m} hechas →",
     "Nothing on the list yet — open your planner to add the first thing →": "Nada en la lista todavía — abre tu planificador para añadir lo primero →",
+    // Fechas importantes (Calendario)
+    "Add a date": "Agregar una fecha",
+    "Save important date": "Guardar fecha importante",
+    "Repeats yearly": "Se repite cada año",
+    "Repeats every year": "Se repite cada año",
+    "Yes, every year": "Sí, cada año",
+    "No, just once": "No, solo una vez",
+    "Just once": "Solo una vez",
+    "Trips, birthdays, anniversaries — the dates you don't want to miss.": "Viajes, cumpleaños, aniversarios — las fechas que no quieres olvidar.",
+    "Nothing on the list yet. Add the first one above.": "Aún no hay nada en la lista. Agrega la primera arriba.",
+    "Anything else…": "¿Algo más…?",
+    "Mom's birthday": "Cumpleaños de mamá",
+    "in {n} days": "en {n} días",
+    "{n} days ago": "hace {n} días",
+    // Editor de tareas (horario)
+    "Update title, time, or notes — or delete it.": "Actualiza el título, la hora o las notas — o elimínala.",
     "a priority": "una prioridad",
     "uploading…": "subiendo…",
     "edit →": "editar →",
@@ -2581,6 +2679,7 @@ const TRANSLATIONS = {
     "Back to today": "Volver a hoy",
     "FLOW": "FLUJO",
     "HOW DO YOU FEEL?": "¿CÓMO TE SIENTES?",
+    "optional": "opcional",
     "SYMPTOMS": "SÍNTOMAS",
     "Remove this vitamin?": "¿Quitar esta vitamina?",
     "Clear all cycle and mood entries?": "¿Borrar todas las entradas de ciclo y ánimo?",
@@ -2644,6 +2743,14 @@ const TRANSLATIONS = {
     "Add a picture or scripture": "Añade una imagen o versículo",
     "ACHIEVED": "LOGRADO",
     "Move back": "Mover de vuelta",
+    "Move earlier": "Mover antes",
+    "Move later": "Mover después",
+    // Enlaces rápidos del dueño (menú del avatar arriba a la derecha)
+    "My links": "Mis enlaces",
+    "Add link": "Agregar enlace",
+    "No links yet — tap + Add.": "Aún no hay enlaces — toca + Agregar.",
+    "Label (e.g., Landing page)": "Nombre (ej. Página principal)",
+    "Delete this link?": "¿Eliminar este enlace?",
     "Mark achieved": "Marcar logrado",
     "Read your letter": "Lee tu carta",
     "Caption (verse, scripture, or short phrase)": "Subtítulo (versículo o frase corta)",
@@ -2857,6 +2964,28 @@ const t = (key, lang, params) => {
 
 function AppShell({ user, setUser, dark, setDark, onLogout }) {
   const [active, setActive] = useState("personalHome");
+  // When a Summary card jumps to another module, we remember which inner
+  // section to scroll to. Cleared once we've scrolled there.
+  const [scrollTarget, setScrollTarget] = useState(null);
+  const navigateTo = (tab, anchor) => {
+    if (anchor) setScrollTarget(anchor);
+    if (tab) setActive(tab);
+  };
+  // After the target module mounts, scroll to the anchored section. Two
+  // rAFs so React has time to render the new module + Tailwind classes.
+  useEffect(() => {
+    if (!scrollTarget) return;
+    const id = requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const el = document.getElementById(scrollTarget);
+        if (el && typeof el.scrollIntoView === "function") {
+          el.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+        setScrollTarget(null);
+      });
+    });
+    return () => cancelAnimationFrame(id);
+  }, [active, scrollTarget]);
   const [mode, setMode] = useState("personal");
   // mode is locked to personal in this build
   const [collapsed, setCollapsed] = useState(() => typeof window !== "undefined" && window.innerWidth < 768);
@@ -2894,6 +3023,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   // refresh / direct nav — fetching from the server is more reliable.
   const [isAffiliate, setIsAffiliate] = useState(false);
   const [isPlannerAdmin, setIsPlannerAdmin] = useState(false);
+  const [isOwner, setIsOwner] = useState(false);
   useEffect(() => {
     let cancelled = false;
     fetch("/api/affiliate/me", { credentials: "same-origin" })
@@ -2902,6 +3032,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
         if (cancelled || !j) return;
         if (j.approved) setIsAffiliate(true);
         if (j.isAdmin) setIsPlannerAdmin(true);
+        if (j.isOwner) setIsOwner(true);
       })
       .catch(() => {});
     return () => { cancelled = true; };
@@ -3072,7 +3203,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   const themePanel = dark ? "bg-white border-stone-200" : "bg-white border-stone-200";
   const themeMuted = dark ? "text-stone-400" : "text-stone-600";
 
-  const moduleProps = { data, setData, user, dark, triggerConfetti, themePanel, themeMuted, themeText, accent, setAccent, lang, setLang };
+  const moduleProps = { data, setData, user, dark, triggerConfetti, themePanel, themeMuted, themeText, accent, setAccent, lang, setLang, navigateTo };
 
   return (
     <div className={`min-h-screen ${themeBg} ${themeText} flex`} style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
@@ -3170,7 +3301,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           </div>
           <div className="ml-auto flex items-center gap-3">
             <NotificationsBell data={data} setData={setData} setActive={setActive} open={bellOpen} setOpen={setBellOpen} />
-            <ProfileAvatar user={user} setUser={setUser} themeMuted={themeMuted} onLogout={onLogout} lang={lang} isAffiliate={isAffiliate} isPlannerAdmin={isPlannerAdmin} />
+            <ProfileAvatar user={user} setUser={setUser} themeMuted={themeMuted} onLogout={onLogout} lang={lang} isAffiliate={isAffiliate} isPlannerAdmin={isPlannerAdmin} isOwner={isOwner} data={data} setData={setData} />
           </div>
         </header>
 
@@ -4653,7 +4784,7 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
 // ============================================================
 // PERSONAL SUMMARY (HOME) MODULE — checklist hero
 // ============================================================
-function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted, triggerConfetti, setActive, lang }) {
+function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted, triggerConfetti, setActive, navigateTo, lang }) {
   const today = todayISO();
   const tasks = data.tasks || [];
 
@@ -4724,6 +4855,47 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
       const allDone = todayList.length > 0 && todayList.every(t => t.done);
       if (allDone) triggerConfetti(t("All done — champion day", lang), true);
     }
+  };
+
+  // Same ordering rule as the Daily Planner so the Summary's TO DO list
+  // shows the same sequence — priorities first by slot, then by manual
+  // `order` (defaulting to id for legacy tasks without one).
+  const sortedTodaysTasks = [...todaysTasks].sort((a, b) => {
+    const ap = a.priority ? (a.priorityOrder || 99) : 1000;
+    const bp = b.priority ? (b.priorityOrder || 99) : 1000;
+    if (ap !== bp) return ap - bp;
+    return ((a.order ?? a.id) || 0) - ((b.order ?? b.id) || 0);
+  });
+  const moveSummaryTask = (id, dir) => {
+    const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
+    if (idx === -1) return;
+    const target = idx + dir;
+    if (target < 0 || target >= sortedTodaysTasks.length) return;
+    const cur = sortedTodaysTasks[idx];
+    const swap = sortedTodaysTasks[target];
+    if (!!cur.priority !== !!swap.priority) return;
+    if (cur.priority && swap.priority) {
+      setData({ ...data, tasks: tasks.map(x => {
+        if (!x) return x;
+        if (x.id === cur.id) return { ...x, priorityOrder: swap.priorityOrder };
+        if (x.id === swap.id) return { ...x, priorityOrder: cur.priorityOrder };
+        return x;
+      }) });
+      return;
+    }
+    setData({ ...data, tasks: tasks.map(x => {
+      if (!x) return x;
+      if (x.id === cur.id) return { ...x, order: swap.order ?? swap.id };
+      if (x.id === swap.id) return { ...x, order: cur.order ?? cur.id };
+      return x;
+    }) });
+  };
+  const canMoveSummaryTask = (id, dir) => {
+    const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
+    if (idx === -1) return false;
+    const target = idx + dir;
+    if (target < 0 || target >= sortedTodaysTasks.length) return false;
+    return !!sortedTodaysTasks[idx].priority === !!sortedTodaysTasks[target].priority;
   };
 
   // Summaries from each module
@@ -4817,7 +4989,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const filteredAffs = allAffs.filter(a => {
     if (affPickerCategory === "Favorites" && !a.favorite) return false;
     if (affPickerCategory !== "All" && affPickerCategory !== "Favorites" && a.category !== affPickerCategory) return false;
-    if (affPickerSearch && !a.text.toLowerCase().includes(affPickerSearch.toLowerCase())) return false;
+    if (affPickerSearch && !affText(a, lang).toLowerCase().includes(affPickerSearch.toLowerCase())) return false;
     return true;
   });
 
@@ -4978,7 +5150,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
       {summaryPrefs.affirmation && (allAffs.length > 0 ? (
         <div className="rounded-2xl bg-gradient-to-br from-[#f4f7ee] via-white to-[#f4f7ee]/50 border border-[#d3e0c5] px-6 py-6 mb-6 text-center relative">
           <div className="text-[10px] italic tracking-[0.2em] text-[#7a9a6e] mb-3" style={serifStyle}>{t("a word for today", lang)}</div>
-          <p className="font-serif text-2xl md:text-3xl italic leading-snug text-stone-800 max-w-2xl mx-auto" style={serifStyle}>"{dailyAffirmation.text}"</p>
+          <p className="font-serif text-2xl md:text-3xl italic leading-snug text-stone-800 max-w-2xl mx-auto" style={serifStyle}>"{affText(dailyAffirmation, lang)}"</p>
           <div className="mt-3 flex items-center justify-center gap-4 text-[11px] italic" style={serifStyle}>
             <button onClick={() => { setAffPickerCategory("All"); setAffPickerSearch(""); setAffPickerOpen(true); }} className="text-[#5b7351] hover:underline">
               {pickedToday ? t("change today's word", lang) : t("pick today's word", lang)}
@@ -5015,14 +5187,17 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                 className="w-full px-3 py-2 text-sm rounded border border-stone-200 focus:border-[#7a9a6e] outline-none bg-white"
               />
               <div className="flex flex-wrap gap-1.5">
-                {affCategories.map(c => (
-                  <button
-                    key={c}
-                    onClick={() => setAffPickerCategory(c)}
-                    className={`px-2.5 py-1 text-[11px] rounded-full italic transition ${affPickerCategory === c ? "bg-[#7a9a6e] text-white" : "bg-stone-50 text-stone-500 hover:bg-[#f4f7ee]"}`}
-                    style={serifStyle}
-                  >{c}</button>
-                ))}
+                {affCategories.map(c => {
+                  const label = (c === "All" || c === "Favorites") ? t(c, lang) : affCat(c, lang);
+                  return (
+                    <button
+                      key={c}
+                      onClick={() => setAffPickerCategory(c)}
+                      className={`px-2.5 py-1 text-[11px] rounded-full italic transition ${affPickerCategory === c ? "bg-[#7a9a6e] text-white" : "bg-stone-50 text-stone-500 hover:bg-[#f4f7ee]"}`}
+                      style={serifStyle}
+                    >{label}</button>
+                  );
+                })}
               </div>
             </div>
             <div className="overflow-y-auto flex-1 px-5 py-3 space-y-2">
@@ -5036,9 +5211,9 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                     onClick={() => pickAffirmation(a.id)}
                     className={`w-full text-left rounded-lg border p-3 transition ${isPicked ? "border-[#7a9a6e] bg-[#f4f7ee]/60" : "border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]/30"}`}
                   >
-                    <p className="font-serif italic text-sm text-stone-800 leading-snug" style={serifStyle}>"{a.text}"</p>
+                    <p className="font-serif italic text-sm text-stone-800 leading-snug" style={serifStyle}>"{affText(a, lang)}"</p>
                     <div className="flex items-center gap-2 mt-1.5">
-                      {a.category && <span className="text-[10px] italic text-stone-400" style={serifStyle}>{a.category}</span>}
+                      {a.category && <span className="text-[10px] italic text-stone-400" style={serifStyle}>{affCat(a.category, lang)}</span>}
                       {a.favorite && <Heart className="w-3 h-3 fill-rose-300 text-rose-300" />}
                       {isPicked && <span className="text-[10px] italic text-[#5b7351] ml-auto" style={serifStyle}>{t("currently showing", lang)}</span>}
                     </div>
@@ -5096,17 +5271,17 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         // sub-line, and the module to jump to on tap. The user picks which to
         // show via the Customize modal (data.summaryCircles).
         const allCircleDefs = [
-          { key: "tasks",    onClick: () => setActive("planner"),     label: "tasks left", sub: todayTotal > 0 ? (tasksLeft > 0 ? t("of {n} today", lang, { n: todayTotal }) : t("all done — well done", lang)) : t("no tasks yet", lang), done: todayDone, total: todayTotal, valueLabel: `${tasksLeft || 0}` },
-          { key: "top3",     onClick: () => setActive("planner"),     label: "top 3",      sub: prioritiesSet === 3 ? t("you know your why", lang) : t("set today's priorities", lang), done: prioritiesSet, total: 3, valueLabel: `${prioritiesSet}/3` },
-          { key: "habits",   onClick: () => setActive("habitsView"),  label: "habits",     sub: habitTotal > 0 ? (habitsLeft > 0 ? t("{n} of {m} left", lang, { n: habitsLeft, m: habitTotal }) : t("rhythm kept", lang)) : t("add habits to begin", lang), done: habitDone, total: habitTotal, valueLabel: `${habitDone}/${habitTotal}` },
-          { key: "water",    onClick: () => setActive("habitsView"),  label: "water",      sub: waterLeft > 0 ? t(waterLeft === 1 ? "{n} glass to go" : "{n} glasses to go", lang, { n: waterLeft }) : t("hydrated · 8/8", lang), done: water, total: 8, valueLabel: `${water}/8` },
-          { key: "vitamins", onClick: () => setActive("cycle"),       label: "vitamins",   sub: vitaminsList.length > 0 ? (vitaminsLeft > 0 ? t("left to take", lang) : t("{n}/{m} taken", lang, { n: vitaminsList.length, m: vitaminsList.length })) : t("add vitamins to begin", lang), done: vitaminsTakenToday, total: vitaminsList.length, valueLabel: vitaminsList.length > 0 ? `${vitaminsTakenToday}/${vitaminsList.length}` : "—" },
-          { key: "mood",     onClick: () => setActive("cycle"),       label: "mood",       sub: moodLogged ? t("feeling {mood}", lang, { mood: t(todayMoodLabel || "okay", lang) }) : t("how am I today?", lang), done: moodLogged ? 1 : 0, total: 1, valueLabel: moodLogged ? todayMoodEmoji : "?", doneIcon: todayMoodEmoji },
-          { key: "goals",    onClick: () => setActive("goals"),       label: "goals",      sub: activeGoals.length > 0 ? t("avg across active", lang) : t("add a goal to begin", lang), done: goalAvg, total: 100, valueLabel: `${goalAvg}%` },
-          { key: "wins",     onClick: () => setActive("planner"),     label: "wins",       sub: todaysWinsCount > 0 ? t("logged today", lang) : t("log a win", lang), done: Math.min(todaysWinsCount, 3), total: 3, valueLabel: `${todaysWinsCount}` },
-          { key: "events",   onClick: () => setActive("calendarYear"),label: "events",     sub: todaysEventsCount > 0 ? t("on the calendar", lang) : t("nothing scheduled", lang), done: todaysEventsCount > 0 ? 1 : 0, total: 1, valueLabel: `${todaysEventsCount}` },
-          { key: "money",    onClick: () => setActive("finance"),     label: "money",      sub: t("net this month", lang), done: net >= 0 ? 1 : 0, total: 1, valueLabel: fmtMoneyShort(net) },
-          { key: "vision",   onClick: () => setActive("vision"),      label: "vision",     sub: visionItems.length > 0 ? t("{n} achieved", lang, { n: visionAchieved }) : t("add to vision board", lang), done: visionAchieved, total: Math.max(1, visionItems.length), valueLabel: visionItems.length > 0 ? `${visionAchieved}/${visionItems.length}` : "—" },
+          { key: "tasks",    onClick: () => navigateTo("planner", "section-todo"),         label: "tasks left", sub: todayTotal > 0 ? (tasksLeft > 0 ? t("of {n} today", lang, { n: todayTotal }) : t("all done — well done", lang)) : t("no tasks yet", lang), done: todayDone, total: todayTotal, valueLabel: `${tasksLeft || 0}` },
+          { key: "top3",     onClick: () => navigateTo("planner", "section-top3"),         label: "top 3",      sub: prioritiesSet === 3 ? t("you know your why", lang) : t("set today's priorities", lang), done: prioritiesSet, total: 3, valueLabel: `${prioritiesSet}/3` },
+          { key: "habits",   onClick: () => navigateTo("habitsView", "section-habits"),    label: "habits",     sub: habitTotal > 0 ? (habitsLeft > 0 ? t("{n} of {m} left", lang, { n: habitsLeft, m: habitTotal }) : t("rhythm kept", lang)) : t("add habits to begin", lang), done: habitDone, total: habitTotal, valueLabel: `${habitDone}/${habitTotal}` },
+          { key: "water",    onClick: () => navigateTo("habitsView", "section-water"),     label: "water",      sub: waterLeft > 0 ? t(waterLeft === 1 ? "{n} glass to go" : "{n} glasses to go", lang, { n: waterLeft }) : t("hydrated · 8/8", lang), done: water, total: 8, valueLabel: `${water}/8` },
+          { key: "vitamins", onClick: () => navigateTo("cycle",   "section-vitamins"),     label: "vitamins",   sub: vitaminsList.length > 0 ? (vitaminsLeft > 0 ? t("left to take", lang) : t("{n}/{m} taken", lang, { n: vitaminsList.length, m: vitaminsList.length })) : t("add vitamins to begin", lang), done: vitaminsTakenToday, total: vitaminsList.length, valueLabel: vitaminsList.length > 0 ? `${vitaminsTakenToday}/${vitaminsList.length}` : "—" },
+          { key: "mood",     onClick: () => navigateTo("cycle",   "section-mood"),         label: "mood",       sub: moodLogged ? t("feeling {mood}", lang, { mood: t(todayMoodLabel || "okay", lang) }) : t("how am I today?", lang), done: moodLogged ? 1 : 0, total: 1, valueLabel: moodLogged ? todayMoodEmoji : "?", doneIcon: todayMoodEmoji },
+          { key: "goals",    onClick: () => navigateTo("goals"),                            label: "goals",      sub: activeGoals.length > 0 ? t("avg across active", lang) : t("add a goal to begin", lang), done: goalAvg, total: 100, valueLabel: `${goalAvg}%` },
+          { key: "wins",     onClick: () => navigateTo("planner", "section-wins"),         label: "wins",       sub: todaysWinsCount > 0 ? t("logged today", lang) : t("log a win", lang), done: Math.min(todaysWinsCount, 3), total: 3, valueLabel: `${todaysWinsCount}` },
+          { key: "events",   onClick: () => navigateTo("calendarYear"),                     label: "events",     sub: todaysEventsCount > 0 ? t("on the calendar", lang) : t("nothing scheduled", lang), done: todaysEventsCount > 0 ? 1 : 0, total: 1, valueLabel: `${todaysEventsCount}` },
+          { key: "money",    onClick: () => navigateTo("finance"),                          label: "money",      sub: t("net this month", lang), done: net >= 0 ? 1 : 0, total: 1, valueLabel: fmtMoneyShort(net) },
+          { key: "vision",   onClick: () => navigateTo("vision"),                           label: "vision",     sub: visionItems.length > 0 ? t("{n} achieved", lang, { n: visionAchieved }) : t("add to vision board", lang), done: visionAchieved, total: Math.max(1, visionItems.length), valueLabel: visionItems.length > 0 ? `${visionAchieved}/${visionItems.length}` : "—" },
         ];
         // enabledCircleKeys is computed at component scope above so the
         // Customize modal and this render path use the same source of truth.
@@ -5146,15 +5321,15 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
               the + button and SEE MORE jump to the planner tab to do the
               actual editing, instead of opening a modal here. */}
           {(() => {
-            const summaryPriorityCount = todaysTasks.filter(t => t && (t.priority === "high" || t.priority === "critical")).length;
-            const visibleSummaryTasks = todaysTasks.slice(0, 5);
-            const hiddenSummaryCount = Math.max(0, todaysTasks.length - 5);
+            const summaryPriorityCount = sortedTodaysTasks.filter(t => t && (t.priority === "high" || t.priority === "critical")).length;
+            const visibleSummaryTasks = sortedTodaysTasks.slice(0, 5);
+            const hiddenSummaryCount = Math.max(0, sortedTodaysTasks.length - 5);
             return (
               <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
                 <div className="flex items-center justify-between mb-2 gap-3">
                   <div className="flex items-center gap-2 min-w-0">
                     <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO DO LIST", lang)}</h2>
-                    <button onClick={() => setActive("planner")}
+                    <button onClick={() => navigateTo("planner", "section-todo")}
                       className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
                       style={{ background: "var(--accent-mid)" }}
                       aria-label={t("Add a task", lang)} title={t("Add a task", lang)}>
@@ -5162,7 +5337,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                     </button>
                   </div>
                   {todaysTasks.length > 5 && (
-                    <button onClick={() => setActive("planner")}
+                    <button onClick={() => navigateTo("planner", "section-todo")}
                       className="text-[10px] tracking-[0.18em] uppercase text-stone-500 hover:text-[#5b7351] transition flex-shrink-0">
                       {t("see more", lang)}
                     </button>
@@ -5182,7 +5357,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                 )}
                 <div className="flex-1 overflow-y-auto -mx-1" style={{ maxHeight: "min(40vh, 280px)" }}>
                   {todaysTasks.length === 0 ? (
-                    <button onClick={() => setActive("planner")} className={`w-full py-8 text-center ${themeMuted} text-xs italic hover:text-[#5b7351] transition`}>
+                    <button onClick={() => navigateTo("planner", "section-todo")} className={`w-full py-8 text-center ${themeMuted} text-xs italic hover:text-[#5b7351] transition`}>
                       {t("Nothing here yet. Tap + to add one.", lang)}
                     </button>
                   ) : (
@@ -5204,8 +5379,8 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                             <div
                               role="button"
                               tabIndex={0}
-                              onClick={() => setActive("planner")}
-                              onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActive("planner"); } }}
+                              onClick={() => navigateTo("planner", "section-todo")}
+                              onKeyDown={e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigateTo("planner", "section-todo"); } }}
                               className="flex-1 min-w-0 text-left overflow-hidden cursor-pointer">
                               <div className="overflow-x-auto scrollbar-hide" style={{ touchAction: "pan-x" }}>
                                 <div className={`inline-flex min-w-max text-xs sm:text-sm font-medium whitespace-nowrap ${task.done ? "text-stone-400" : "text-stone-900"}`}>
@@ -5236,13 +5411,30 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                                 </div>
                               )}
                             </div>
+                            {/* Move up/down — keeps the same priority band */}
+                            <div className="flex gap-0.5 flex-shrink-0">
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); moveSummaryTask(task.id, -1); }}
+                                disabled={!canMoveSummaryTask(task.id, -1)}
+                                className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                                title={t("Move up", lang)} aria-label={t("Move up", lang)}
+                              ><ChevronUp className="w-3.5 h-3.5" /></button>
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); moveSummaryTask(task.id, 1); }}
+                                disabled={!canMoveSummaryTask(task.id, 1)}
+                                className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                                title={t("Move down", lang)} aria-label={t("Move down", lang)}
+                              ><ChevronDown className="w-3.5 h-3.5" /></button>
+                            </div>
                           </li>
                         );
                       })}
                     </ul>
                   )}
                   {hiddenSummaryCount > 0 && (
-                    <button onClick={() => setActive("planner")}
+                    <button onClick={() => navigateTo("planner", "section-todo")}
                       className="w-full mt-2 py-2 text-[11px] tracking-wider uppercase text-stone-500 hover:text-[#5b7351] transition border-t border-stone-100">
                       + {hiddenSummaryCount} {hiddenSummaryCount === 1 ? t("more task", lang) : t("more tasks", lang)}
                     </button>
@@ -5295,7 +5487,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
           <div className="flex items-baseline justify-between mb-1">
             <h2 className="font-serif text-2xl text-stone-800" style={serifStyle}>{t("Three things that matter", lang)}</h2>
-            <button onClick={() => setActive("planner")} className="text-xs italic text-stone-400 hover:text-[#5b7351]" style={serifStyle}>{t("planner →", lang)}</button>
+            <button onClick={() => navigateTo("planner", "section-top3")} className="text-xs italic text-stone-400 hover:text-[#5b7351]" style={serifStyle}>{t("planner →", lang)}</button>
           </div>
           <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("If only these get done, the day was a good one.", lang)}</p>
           <div className="space-y-3">
@@ -5343,7 +5535,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         )}
 
         {summaryPrefs.vitamins && (
-        <div onClick={() => setActive("cycle")} className={`rounded-2xl border ${themePanel} p-6 hover:border-[#7a9a6e] transition cursor-pointer min-w-0 overflow-hidden`}>
+        <div onClick={() => navigateTo("cycle", "section-vitamins")} className={`rounded-2xl border ${themePanel} p-6 hover:border-[#7a9a6e] transition cursor-pointer min-w-0 overflow-hidden`}>
           <div className="flex items-baseline justify-between mb-1">
             <h2 className="font-serif text-2xl text-stone-800" style={serifStyle}>{t("Take care of you", lang)}</h2>
             <span className="text-xs italic text-stone-400" style={serifStyle}>{t("{n} of {m} today", lang, { n: vitaminsTakenToday, m: vitaminsList.length })}</span>
@@ -5496,12 +5688,12 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
             {summaryPrefs.wins && (
               <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
                 <div className="flex items-baseline justify-between mb-1 gap-2">
-                  <button onClick={() => setActive("planner")} className="text-left font-serif text-2xl text-stone-800 hover:text-[#5b7351] transition" style={serifStyle}>{t("Today's wins", lang)}</button>
-                  <button onClick={() => setActive("planner")} className="text-xs italic text-[#5b7351] hover:underline flex-shrink-0" style={serifStyle} title={t("Add a win", lang)}>+ {t("add", lang)}</button>
+                  <button onClick={() => navigateTo("planner", "section-wins")} className="text-left font-serif text-2xl text-stone-800 hover:text-[#5b7351] transition" style={serifStyle}>{t("Today's wins", lang)}</button>
+                  <button onClick={() => navigateTo("planner", "section-wins")} className="text-xs italic text-[#5b7351] hover:underline flex-shrink-0" style={serifStyle} title={t("Add a win", lang)}>+ {t("add", lang)}</button>
                 </div>
                 <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("What you're proud of.", lang)}</p>
                 {todaysWins.length === 0 ? (
-                  <button onClick={() => setActive("planner")} className={`block w-full py-4 text-center ${themeMuted} text-sm italic hover:text-[#5b7351] transition`} style={serifStyle}>{t("No wins logged yet. Tap + to add.", lang)}</button>
+                  <button onClick={() => navigateTo("planner", "section-wins")} className={`block w-full py-4 text-center ${themeMuted} text-sm italic hover:text-[#5b7351] transition`} style={serifStyle}>{t("No wins logged yet. Tap + to add.", lang)}</button>
                 ) : (
                   <ul className="space-y-2">
                     {todaysWins.slice(0, 3).map((w, i) => (
@@ -5636,7 +5828,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
       <PageHeader title={t("Habits", lang)} subtitle={fmtDate(today) + " — " + t("your rhythm for today", lang)} dark={dark} />
 
       {/* Top row: completion ring + water */}
-      <div className={`rounded-lg border ${themePanel} p-5 mb-5 flex flex-wrap items-center justify-between gap-6`}>
+      <div id="section-water" className={`rounded-lg border ${themePanel} p-5 mb-5 flex flex-wrap items-center justify-between gap-6 scroll-mt-20`}>
         <div className="flex items-center gap-5">
           <ProgressRing value={totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0} size={90} stroke={8} dark={dark} label="done" />
           <div>
@@ -5648,13 +5840,13 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
           <div className="text-xs tracking-[0.2em] text-[#7a9a6e] mb-2">{t("WATER (8 glasses)", lang)}</div>
           <div className="flex gap-1">
             {[1, 2, 3, 4, 5, 6, 7, 8].map(n => (
-              <button key={n} onClick={() => update({ waterGlasses: n === todayPlan.waterGlasses ? n - 1 : n })} className={`w-5 h-7 rounded-b-md border-2 ${n <= (todayPlan.waterGlasses || 0) ? "bg-[#a8c090] border-[#7a9a6e]" : "border-stone-300 bg-white"}`} title={t("Glass {n}", lang, { n })} />
+              <button key={n} onClick={() => update({ waterGlasses: n === todayPlan.waterGlasses ? n - 1 : n })} className={`w-3.5 h-5 rounded-b-md border ${n <= (todayPlan.waterGlasses || 0) ? "bg-[#a8c090] border-[#7a9a6e]" : "border-stone-300 bg-white"}`} title={t("Glass {n}", lang, { n })} />
             ))}
           </div>
         </div>
       </div>
 
-      <Panel title={t("Daily habits I'm tracking", lang)} dark={dark} className="mb-5" action={
+      <div id="section-habits" className="scroll-mt-20"><Panel title={t("Daily habits I'm tracking", lang)} dark={dark} className="mb-5" action={
         <span className="text-[10px] text-stone-500">{t(totalCount === 1 ? "{n} habit" : "{n} habits", lang, { n: totalCount })}</span>
       }>
         <p className={`text-xs ${themeMuted} mb-3 italic`}>{t("Tap the circle to mark a habit done today. Click any name to rename.", lang)}</p>
@@ -5672,7 +5864,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                   onDragOver={e => e.preventDefault()}
                   onDrop={e => { e.preventDefault(); reorderBuiltIns(draggedBuiltInKey, b.key); setDraggedBuiltInKey(null); }}
                   onDragEnd={() => setDraggedBuiltInKey(null)}
-                  className={`flex items-center gap-2 p-3 rounded border group transition ${isDragging ? "opacity-40" : ""} ${done ? "bg-[#f4f7ee] border-[#a8c090]" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`}
+                  className={`flex items-center gap-1.5 sm:gap-2 p-2 sm:p-3 rounded border group transition ${isDragging ? "opacity-40" : ""} ${done ? "bg-[#f4f7ee] border-[#a8c090]" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`}
                 >
                   <span
                     className="text-stone-300 hover:text-stone-500 cursor-grab active:cursor-grabbing select-none px-1 flex-shrink-0"
@@ -5685,14 +5877,14 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                   <input
                     value={routineLabels[b.key]}
                     onChange={e => renameBuiltIn(b.key, e.target.value)}
-                    className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
+                    className={`flex-1 min-w-0 text-xs sm:text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
                   />
                   <div className="flex gap-0.5 flex-shrink-0">
                     <button
                       type="button"
                       onClick={() => moveBuiltIn(b.key, -1)}
                       disabled={idx === 0}
-                      className="w-8 h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                      className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
                       title={t("Move up", lang)}
                       aria-label={t("Move up", lang)}
                     ><ChevronUp className="w-4 h-4" /></button>
@@ -5700,7 +5892,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                       type="button"
                       onClick={() => moveBuiltIn(b.key, 1)}
                       disabled={idx === visible.length - 1}
-                      className="w-8 h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                      className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
                       title={t("Move down", lang)}
                       aria-label={t("Move down", lang)}
                     ><ChevronDown className="w-4 h-4" /></button>
@@ -5724,7 +5916,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                 className={`flex items-center gap-2 p-3 rounded border group transition ${isDragging ? "opacity-40" : ""} ${done ? "bg-[#f4f7ee] border-[#a8c090]" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`}
               >
                 <span
-                  className="text-stone-300 hover:text-stone-500 cursor-grab active:cursor-grabbing select-none px-1 flex-shrink-0"
+                  className="hidden sm:inline-block text-stone-300 hover:text-stone-500 cursor-grab active:cursor-grabbing select-none px-1 flex-shrink-0"
                   title={t("Drag to reorder", lang)}
                   aria-label={t("Drag to reorder", lang)}
                 >⋮⋮</span>
@@ -5734,7 +5926,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                 <input
                   value={h.name}
                   onChange={e => renameCustomHabit(h.id, e.target.value)}
-                  className={`flex-1 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
+                  className={`flex-1 min-w-0 text-sm bg-transparent border-0 outline-none focus:bg-white focus:px-2 focus:py-1 focus:rounded transition-all ${done ? "text-stone-500" : ""}`}
                 />
                 {/* Up/Down buttons — covers touch where HTML5 drag is unreliable */}
                 <div className="flex gap-0.5 flex-shrink-0">
@@ -5742,7 +5934,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                     type="button"
                     onClick={() => moveHabit(h.id, -1)}
                     disabled={idx === 0}
-                    className="w-8 h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
                     title={t("Move up", lang)}
                     aria-label={t("Move up", lang)}
                   ><ChevronUp className="w-4 h-4" /></button>
@@ -5750,7 +5942,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                     type="button"
                     onClick={() => moveHabit(h.id, 1)}
                     disabled={idx === habitsCustom.length - 1}
-                    className="w-8 h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                    className="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
                     title={t("Move down", lang)}
                     aria-label={t("Move down", lang)}
                   ><ChevronDown className="w-4 h-4" /></button>
@@ -5774,7 +5966,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
             ))}
           </div>
         )}
-      </Panel>
+      </Panel></div>
     </div>
   );
 }
@@ -6029,7 +6221,8 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
     setDraft(next);
   };
   const setFlow = (flow) => saveEntry({ ...draft, flow });
-  const setMood = (mood) => saveEntry({ ...draft, mood });
+  // Tapping the currently-selected mood clears it (mood is optional).
+  const setMood = (mood) => saveEntry({ ...draft, mood: draft.mood === mood ? "" : mood });
   const toggleSymptom = (s) => {
     const has = (draft.symptoms || []).includes(s);
     saveEntry({ ...draft, symptoms: has ? draft.symptoms.filter(x => x !== s) : [...(draft.symptoms || []), s] });
@@ -6129,15 +6322,25 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
               </div>
             </div>
 
-            <div className="mb-4">
-              <div className="text-[10px] tracking-wider text-stone-500 mb-2">{t("HOW DO YOU FEEL?", lang)}</div>
+            <div id="section-mood" className="mb-4 scroll-mt-20">
+              <div className="text-[10px] tracking-wider text-stone-500 mb-2">
+                {t("HOW DO YOU FEEL?", lang)} <span className="italic normal-case tracking-normal text-stone-400">({t("optional", lang)})</span>
+              </div>
               <div className="grid grid-cols-4 gap-2">
-                {MOOD_OPTIONS.map(m => (
-                  <button key={m.id} onClick={() => setMood(m.id)} className={`p-3 rounded-lg border-2 text-center transition ${draft.mood === m.id ? "border-[#7a9a6e] bg-[#f4f7ee]" : "border-stone-200 hover:border-[#7a9a6e]/50"}`}>
-                    <div className="text-2xl">{m.emoji}</div>
-                    <div className="text-[10px] mt-1 text-stone-600">{t(m.label, lang)}</div>
-                  </button>
-                ))}
+                {MOOD_OPTIONS.map(m => {
+                  const picked = draft.mood === m.id;
+                  return (
+                    <button key={m.id} onClick={() => setMood(m.id)} className={`p-3 rounded-lg border-2 text-center transition ${picked ? "border-[#7a9a6e] bg-[#f4f7ee]" : "border-stone-200 hover:border-[#7a9a6e]/50"}`}>
+                      {/* Default state: grayscale + low opacity so the emoji
+                          reads as a black outline. Picked: full color. */}
+                      <div
+                        className="text-2xl transition"
+                        style={{ filter: picked ? "none" : "grayscale(1) contrast(0.6)", opacity: picked ? 1 : 0.55 }}
+                      >{m.emoji}</div>
+                      <div className="text-[10px] mt-1 text-stone-600">{t(m.label, lang)}</div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -6168,7 +6371,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
             </div>
           </Panel>
 
-          <Panel title="Vitamins & Supplements" dark={dark}>
+          <div id="section-vitamins" className="scroll-mt-20"><Panel title="Vitamins & Supplements" dark={dark}>
             <p className={`text-xs ${themeMuted} mb-3`}>Add what you take daily. Tap the circle to mark today done.</p>
             <div className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_1fr_auto] gap-2 mb-3">
               <input value={vitForm.name} onChange={e => setVitForm({ ...vitForm, name: e.target.value })} onKeyDown={e => e.key === "Enter" && addVitamin()} placeholder="Vitamin / supplement" className="px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white" />
@@ -6220,27 +6423,27 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                     );
                   }
                   return (
-                    <div key={v.id} className="flex items-center gap-3 p-3 rounded border border-stone-200 group hover:border-[#7a9a6e] transition">
-                      <button onClick={() => toggleVitamin(v.id)} className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition ${takenToday ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`} title={takenToday ? "Taken today — tap to undo" : "Mark as taken today"}>
-                        {takenToday && <Check className="w-5 h-5" />}
+                    <div key={v.id} className="flex items-center gap-1.5 sm:gap-3 p-2 sm:p-3 rounded border border-stone-200 group hover:border-[#7a9a6e] transition">
+                      <button onClick={() => toggleVitamin(v.id)} className={`w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 border-2 transition ${takenToday ? "bg-[#7a9a6e] border-[#7a9a6e] text-white" : "bg-white border-stone-200 hover:border-[#7a9a6e]"}`} title={takenToday ? "Taken today — tap to undo" : "Mark as taken today"}>
+                        {takenToday && <Check className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
                       </button>
                       <div className="flex-1 min-w-0">
-                        <div className="text-sm font-medium truncate">{v.name}</div>
-                        <div className="text-xs text-stone-500 truncate">{[v.dose, v.time].filter(Boolean).join(" · ") || <span className="italic text-stone-400">no dose/time set</span>}</div>
+                        <div className="text-xs sm:text-sm font-medium truncate">{v.name}</div>
+                        <div className="text-[11px] sm:text-xs text-stone-500 truncate">{[v.dose, v.time].filter(Boolean).join(" · ") || <span className="italic text-stone-400">no dose/time set</span>}</div>
                       </div>
                       {streak > 0 && (
-                        <div className="flex items-center gap-1 text-xs font-mono text-[#5b7351] flex-shrink-0" title={`${streak}-day streak`}><Flame className="w-3.5 h-3.5" /> {streak}d</div>
+                        <div className="flex items-center gap-1 text-[11px] sm:text-xs font-mono text-[#5b7351] flex-shrink-0" title={`${streak}-day streak`}><Flame className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> {streak}d</div>
                       )}
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                        <button onClick={() => startEditVitamin(v)} className="p-2 text-stone-500 hover:text-[#5b7351] hover:bg-stone-50 rounded" title="Edit"><Edit2 className="w-4 h-4" /></button>
-                        <button onClick={() => removeVitamin(v.id)} className="p-2 text-stone-400 hover:text-rose-500 hover:bg-rose-50 rounded" title="Delete"><Trash2 className="w-4 h-4" /></button>
+                      <div className="flex items-center gap-0.5 sm:gap-1 flex-shrink-0">
+                        <button onClick={() => startEditVitamin(v)} className="p-1 sm:p-2 text-stone-500 hover:text-[#5b7351] hover:bg-stone-50 rounded" title="Edit"><Edit2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /></button>
+                        <button onClick={() => removeVitamin(v.id)} className="p-1 sm:p-2 text-stone-400 hover:text-rose-500 hover:bg-rose-50 rounded" title="Delete"><Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /></button>
                       </div>
                     </div>
                   );
                 })}
               </div>
             )}
-          </Panel>
+          </Panel></div>
 
           <Panel title="Recent log" dark={dark}>
             {entries.length === 0 ? (
@@ -6513,6 +6716,20 @@ const ELEGANT_PHRASES = [
   { id: 128, cat: "At Work", from: "I deserve a raise.", to: "I'd like to talk about what I've been contributing and what comes next.", why: "Invites a conversation instead of a demand." },
   { id: 129, cat: "At Work", from: "My boss is impossible.", to: "I'm navigating a hard dynamic at work — and I'm clear on what I want.", why: "Owns the situation, not the venting." },
   { id: 130, cat: "At Work", from: "I hate this job.", to: "I'm clear that this isn't my long-term path — and I'm working on what is.", why: "Names the truth + the action." },
+
+  // REAL APOLOGIES — when you actually did something wrong. The "Apologizing"
+  // category above is about not over-apologizing; this one is about doing
+  // it well when you owe one.
+  { id: 131, cat: "Real Apologies", from: "I'm sorry you feel that way.",                to: "I'm sorry for [the specific thing I did]. That was wrong of me.",                 why: "Owns the action, not their reaction." },
+  { id: 132, cat: "Real Apologies", from: "I'm sorry but…",                              to: "I'm sorry. Full stop.",                                                          why: "Anything after 'but' undoes the apology." },
+  { id: 133, cat: "Real Apologies", from: "I didn't mean to hurt you.",                  to: "I hurt you. My intent doesn't change that.",                                     why: "Impact matters more than intent." },
+  { id: 134, cat: "Real Apologies", from: "I'm sorry if I upset you.",                   to: "I'm sorry that I upset you. I see it now.",                                      why: "'If' implies doubt. 'That' names what happened." },
+  { id: 135, cat: "Real Apologies", from: "I was just trying to help.",                  to: "I hear how that landed. I was wrong, and here's what I'll do differently.",      why: "Drop the defense. Lead with repair." },
+  { id: 136, cat: "Real Apologies", from: "It won't happen again.",                      to: "Here's the specific change I'm making so it doesn't happen again.",              why: "A promise without a plan is just hope." },
+  { id: 137, cat: "Real Apologies", from: "Can we just move on?",                        to: "Take the time you need. I'm not going anywhere.",                                why: "Rushing repair is a second offense." },
+  { id: 138, cat: "Real Apologies", from: "I'm a terrible person.",                      to: "I did something wrong — and I'm taking responsibility for it.",                  why: "Don't make them comfort you." },
+  { id: 139, cat: "Real Apologies", from: "You know I love you.",                        to: "I love you — and that's exactly why I have to make this right.",                  why: "Love isn't a free pass. Action proves it." },
+  { id: 140, cat: "Real Apologies", from: "I'm sorry, okay?",                            to: "I'm sorry. You don't have to accept it today — I just needed you to hear it.",   why: "Apology is a gift, not a transaction." },
 ];
 
 const ELEGANT_PHRASES_ES = [
@@ -6697,6 +6914,20 @@ const ELEGANT_PHRASES_ES = [
   { id: 128, cat: "En el trabajo", from: "Me merezco un aumento.", to: "Me gustaría hablar de lo que he aportado y de lo que sigue.", why: "Invita a una conversación, no una exigencia." },
   { id: 129, cat: "En el trabajo", from: "Mi jefe es imposible.", to: "Estoy navegando una dinámica difícil en el trabajo — y tengo claro lo que quiero.", why: "Asume la situación, no el desahogo." },
   { id: 130, cat: "En el trabajo", from: "Odio este trabajo.", to: "Tengo claro que este no es mi camino a largo plazo — y estoy trabajando en lo que sí lo es.", why: "Nombra la verdad + la acción." },
+
+  // DISCULPAS REALES — para cuando de verdad hiciste algo mal. La categoría
+  // "Disculparse" arriba es para no disculparse de más; esta es para hacerlo
+  // bien cuando sí debes una disculpa.
+  { id: 131, cat: "Disculpas reales", from: "Lamento que te sientas así.",                  to: "Lamento [lo específico que hice]. Estuvo mal de mi parte.",                          why: "Asume la acción, no la reacción del otro." },
+  { id: 132, cat: "Disculpas reales", from: "Perdón pero…",                                 to: "Perdón. Punto.",                                                                     why: "Todo lo que sigue al 'pero' anula la disculpa." },
+  { id: 133, cat: "Disculpas reales", from: "No quise lastimarte.",                         to: "Te lastimé. Mi intención no cambia eso.",                                            why: "El impacto pesa más que la intención." },
+  { id: 134, cat: "Disculpas reales", from: "Perdón si te molesté.",                        to: "Perdón por haberte molestado. Ahora lo veo.",                                        why: "'Si' implica duda. Nombra lo que pasó." },
+  { id: 135, cat: "Disculpas reales", from: "Solo estaba tratando de ayudar.",              to: "Escucho cómo cayó eso. Estuve mal, y esto es lo que voy a hacer diferente.",          why: "Suelta la defensa. Lidera con la reparación." },
+  { id: 136, cat: "Disculpas reales", from: "No va a volver a pasar.",                      to: "Este es el cambio específico que estoy haciendo para que no vuelva a pasar.",          why: "Una promesa sin plan es solo esperanza." },
+  { id: 137, cat: "Disculpas reales", from: "¿Podemos solo pasar la página?",               to: "Tómate el tiempo que necesites. No me voy a ir a ningún lado.",                       why: "Apurar la reparación es una segunda ofensa." },
+  { id: 138, cat: "Disculpas reales", from: "Soy una persona horrible.",                    to: "Hice algo mal — y me hago responsable.",                                              why: "No los hagas consolarte a ti." },
+  { id: 139, cat: "Disculpas reales", from: "Tú sabes que te amo.",                         to: "Te amo — y por eso mismo tengo que arreglar esto.",                                   why: "El amor no es un pase libre. La acción lo prueba." },
+  { id: 140, cat: "Disculpas reales", from: "Perdón, ¿okey?",                               to: "Perdón. No tienes que aceptarlo hoy — solo necesitaba que lo escucharas.",            why: "La disculpa es un regalo, no una transacción." },
 ];
 
 
@@ -7187,9 +7418,39 @@ function VisionImagePicker({ form, setForm, themeMuted, lang }) {
   );
 }
 
-function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate, isPlannerAdmin }) {
+function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate, isPlannerAdmin, isOwner, data, setData }) {
   const [open, setOpen] = useState(false);
   const fileRef = useRef(null);
+  // Owner-only quick-links rail. Defaults to two starter entries the first
+  // time it renders; afterwards we trust whatever the user has saved.
+  const DEFAULT_OWNER_LINKS = [
+    { id: 1, label: "Sovereign app",  url: "/app",        emoji: "📱" },
+    { id: 2, label: "Landing page",   url: "/",           emoji: "🌿" },
+  ];
+  const ownerLinks = Array.isArray(data?.ownerQuickLinks) ? data.ownerQuickLinks : DEFAULT_OWNER_LINKS;
+  const [linkEditOpen, setLinkEditOpen] = useState(false);
+  const [linkDraft, setLinkDraft] = useState({ id: null, label: "", url: "", emoji: "🔗" });
+  const saveOwnerLinks = (next) => { if (setData) setData({ ...data, ownerQuickLinks: next }); };
+  const startNewLink = () => { setLinkDraft({ id: null, label: "", url: "", emoji: "🔗" }); setLinkEditOpen(true); };
+  const startEditLink = (l) => { setLinkDraft({ id: l.id, label: l.label || "", url: l.url || "", emoji: l.emoji || "🔗" }); setLinkEditOpen(true); };
+  const cancelLinkEdit = () => { setLinkEditOpen(false); setLinkDraft({ id: null, label: "", url: "", emoji: "🔗" }); };
+  const saveLinkDraft = () => {
+    const label = (linkDraft.label || "").trim();
+    const url = (linkDraft.url || "").trim();
+    if (!label || !url) return;
+    const emoji = (linkDraft.emoji || "🔗").trim() || "🔗";
+    if (linkDraft.id == null) {
+      const nextId = (ownerLinks.map(l => l.id).filter(n => typeof n === "number").reduce((m, n) => Math.max(m, n), 0) || 0) + 1;
+      saveOwnerLinks([...ownerLinks, { id: nextId, label, url, emoji }]);
+    } else {
+      saveOwnerLinks(ownerLinks.map(l => l.id === linkDraft.id ? { ...l, label, url, emoji } : l));
+    }
+    cancelLinkEdit();
+  };
+  const deleteLink = (id) => {
+    if (typeof window !== "undefined" && !window.confirm(t("Delete this link?", lang))) return;
+    saveOwnerLinks(ownerLinks.filter(l => l.id !== id));
+  };
 
   // Admin status can come from one of two places:
   //   1. The `isPlannerAdmin` prop, populated server-side via /api/affiliate/me.
@@ -7296,6 +7557,83 @@ function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate,
                   >
                     <Crown className="w-4 h-4" /> Admin dashboard
                   </a>
+                </>
+              )}
+              {isOwner && (
+                <>
+                  <div className="border-t border-stone-100 my-1" />
+                  <div className="px-3 py-1 flex items-center justify-between">
+                    <span className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-semibold">{t("My links", lang)}</span>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); startNewLink(); }}
+                      className="text-[10px] text-[#5b7351] hover:underline"
+                      title={t("Add link", lang)}
+                    >+ {t("Add", lang)}</button>
+                  </div>
+                  {ownerLinks.length === 0 ? (
+                    <div className="px-3 py-1.5 text-[11px] italic text-stone-400">{t("No links yet — tap + Add.", lang)}</div>
+                  ) : (
+                    ownerLinks.map(l => (
+                      <div key={l.id} className="group flex items-center gap-1 px-1">
+                        <a
+                          href={l.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpen(false)}
+                          className="flex-1 min-w-0 px-2 py-2 text-left text-sm rounded hover:bg-[#f4f7ee] flex items-center gap-2"
+                          title={l.url}
+                        >
+                          <span aria-hidden className="text-base flex-shrink-0">{l.emoji || "🔗"}</span>
+                          <span className="truncate">{l.label}</span>
+                        </a>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); startEditLink(l); }}
+                          className="p-1 rounded text-stone-400 hover:text-[#5b7351] hover:bg-stone-50 opacity-0 group-hover:opacity-100 transition"
+                          title={t("Edit", lang)} aria-label={t("Edit", lang)}
+                        ><Edit2 className="w-3 h-3" /></button>
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); deleteLink(l.id); }}
+                          className="p-1 rounded text-stone-400 hover:text-rose-500 hover:bg-rose-50 opacity-0 group-hover:opacity-100 transition"
+                          title={t("Delete", lang)} aria-label={t("Delete", lang)}
+                        ><Trash2 className="w-3 h-3" /></button>
+                      </div>
+                    ))
+                  )}
+                  {linkEditOpen && (
+                    <div className="mx-2 mt-2 mb-1 p-2 rounded border border-[#a8c090] bg-[#f4f7ee]/60 space-y-1.5">
+                      <div className="flex gap-1.5">
+                        <input
+                          value={linkDraft.emoji}
+                          onChange={e => setLinkDraft({ ...linkDraft, emoji: e.target.value.slice(0, 2) })}
+                          placeholder="🔗"
+                          maxLength={2}
+                          className="w-9 px-1 py-1 text-center text-sm rounded border border-stone-200 bg-white focus:border-[#7a9a6e] outline-none"
+                        />
+                        <input
+                          autoFocus
+                          value={linkDraft.label}
+                          onChange={e => setLinkDraft({ ...linkDraft, label: e.target.value })}
+                          onKeyDown={e => { if (e.key === "Enter") saveLinkDraft(); if (e.key === "Escape") cancelLinkEdit(); }}
+                          placeholder={t("Label (e.g., Landing page)", lang)}
+                          className="flex-1 min-w-0 px-2 py-1 text-xs rounded border border-stone-200 bg-white focus:border-[#7a9a6e] outline-none"
+                        />
+                      </div>
+                      <input
+                        value={linkDraft.url}
+                        onChange={e => setLinkDraft({ ...linkDraft, url: e.target.value })}
+                        onKeyDown={e => { if (e.key === "Enter") saveLinkDraft(); if (e.key === "Escape") cancelLinkEdit(); }}
+                        placeholder="https://…"
+                        className="w-full px-2 py-1 text-xs rounded border border-stone-200 bg-white focus:border-[#7a9a6e] outline-none"
+                      />
+                      <div className="flex justify-end gap-1">
+                        <button type="button" onClick={cancelLinkEdit} className="px-2 py-1 text-[11px] text-stone-500 hover:text-stone-700 rounded">{t("Cancel", lang)}</button>
+                        <button type="button" onClick={saveLinkDraft} className="px-2 py-1 text-[11px] text-white rounded font-medium" style={{ background: "#5b7351" }}>{t("Save", lang)}</button>
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
               {onLogout && (
@@ -8483,6 +8821,11 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const [focusedField, setFocusedField] = useState(null);
   const [addTaskModalOpen, setAddTaskModalOpen] = useState(false);
   const [addWinModalOpen, setAddWinModalOpen] = useState(false);
+  // When non-null, the AddTask modal is being used to EDIT an existing
+  // task that was tapped from the weekly schedule grid. Submit updates
+  // the matched task in-place; a "Delete task" button is added to the
+  // modal footer. Null = normal "add new task" flow.
+  const [editingTaskIdFromSchedule, setEditingTaskIdFromSchedule] = useState(null);
   const [showAllTasks, setShowAllTasks] = useState(false);
   const TASK_PREVIEW_LIMIT = 5;
 
@@ -8813,13 +9156,49 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     const order = [1, 2, 3].find(n => !usedOrders.includes(n)) || 1;
     setTasks(allTasks.map(t => t && t.id === id ? { ...t, priority: "high", priorityOrder: order } : t));
   };
-  // Render-order: priorities first by their order slot, then the rest by id
+  // Render-order: priorities first by their order slot, then the rest by
+  // manual `order` (defaults to id so existing tasks keep the same position).
   const sortedDayTasks = [...dayTasks].sort((a, b) => {
     const ap = a.priority ? (a.priorityOrder || 99) : 1000;
     const bp = b.priority ? (b.priorityOrder || 99) : 1000;
     if (ap !== bp) return ap - bp;
-    return (a.id || 0) - (b.id || 0);
+    return ((a.order ?? a.id) || 0) - ((b.order ?? b.id) || 0);
   });
+
+  // Move a task up (-1) or down (+1) within its band — won't cross the
+  // priority/non-priority boundary, since priorities are pinned to slots
+  // 1/2/3 and live in their own visual zone.
+  const moveTask = (id, dir) => {
+    const idx = sortedDayTasks.findIndex(x => x && x.id === id);
+    if (idx === -1) return;
+    const target = idx + dir;
+    if (target < 0 || target >= sortedDayTasks.length) return;
+    const cur = sortedDayTasks[idx];
+    const swap = sortedDayTasks[target];
+    if (!!cur.priority !== !!swap.priority) return;
+    if (cur.priority && swap.priority) {
+      setTasks(allTasks.map(x => {
+        if (!x) return x;
+        if (x.id === cur.id) return { ...x, priorityOrder: swap.priorityOrder };
+        if (x.id === swap.id) return { ...x, priorityOrder: cur.priorityOrder };
+        return x;
+      }));
+      return;
+    }
+    setTasks(allTasks.map(x => {
+      if (!x) return x;
+      if (x.id === cur.id) return { ...x, order: swap.order ?? swap.id };
+      if (x.id === swap.id) return { ...x, order: cur.order ?? cur.id };
+      return x;
+    }));
+  };
+  const canMoveTask = (id, dir) => {
+    const idx = sortedDayTasks.findIndex(x => x && x.id === id);
+    if (idx === -1) return false;
+    const target = idx + dir;
+    if (target < 0 || target >= sortedDayTasks.length) return false;
+    return !!sortedDayTasks[idx].priority === !!sortedDayTasks[target].priority;
+  };
   const toggleTask = (id) => {
     const t = allTasks.find(x => x && x.id === id);
     const becoming = t && !t.done;
@@ -8882,7 +9261,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
 
   // ----- Section pieces -----
   const PrioritiesCard = (
-    <div className={`rounded-2xl border ${themePanel} ${showPriorities ? "p-5" : "p-3"} h-full flex flex-col min-w-0 overflow-hidden`}>
+    <div id="section-top3" className={`rounded-2xl border ${themePanel} ${showPriorities ? "p-5" : "p-3"} h-full flex flex-col min-w-0 overflow-hidden scroll-mt-20`}>
       <button onClick={togglePriorities} className="flex items-start gap-2 text-left group" title={showPriorities ? t("Hide priorities", lang) : t("Expand priorities", lang)}>
         <ChevronRight className={`w-4 h-4 text-stone-400 mt-0.5 flex-shrink-0 transition ${showPriorities ? "rotate-90" : ""}`} />
         <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 group-hover:text-[#5b7351]">{t("TOP 3 PRIORITIES", lang)}</h2>
@@ -8941,7 +9320,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const hiddenCount = sortedDayTasks.length - visibleTasks.length;
 
   const TodoCard = (
-    <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
+    <div id="section-todo" className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden scroll-mt-20`}>
       {/* Header — title + (+) add button on the left, SEE MORE on the right */}
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
@@ -9166,6 +9545,28 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                     </div>
                   )}
 
+                  {/* Up/Down — reorder this task within its priority band.
+                      Hidden while the row is being edited (the inline editor
+                      already owns the row). */}
+                  {editingId !== task.id && (
+                    <div className="flex gap-0.5 flex-shrink-0">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); moveTask(task.id, -1); }}
+                        disabled={!canMoveTask(task.id, -1)}
+                        className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                        title={t("Move up", lang)} aria-label={t("Move up", lang)}
+                      ><ChevronUp className="w-3.5 h-3.5" /></button>
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); moveTask(task.id, 1); }}
+                        disabled={!canMoveTask(task.id, 1)}
+                        className="w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                        title={t("Move down", lang)} aria-label={t("Move down", lang)}
+                      ><ChevronDown className="w-3.5 h-3.5" /></button>
+                    </div>
+                  )}
+
                   {/* Edit arrow */}
                   <button onClick={() => startEdit(task)}
                     className="w-6 h-6 sm:w-7 sm:h-7 rounded-full flex items-center justify-center flex-shrink-0 text-white transition hover:opacity-90"
@@ -9250,7 +9651,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   ) : null;
 
   const WinsCard = (
-    <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
+    <div id="section-wins" className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden scroll-mt-20`}>
       {/* Header — title + (+) add button, matching the TO-DO layout */}
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
@@ -9346,12 +9747,77 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     </div>
   );
 
+  // Pre-fill the AddTask modal with an existing task's values so tapping a
+  // schedule grid block opens the edit form right there. Submit will then
+  // route to "update this task in place" instead of "add a new one."
+  const openTaskEditorFromSchedule = (task) => {
+    if (!task) return;
+    setEditingTaskIdFromSchedule(task.id);
+    setNewTitle(task.title || "");
+    setNewStart(task.startTime ? to24h(task.startTime) : "");
+    setNewEnd(task.endTime ? to24h(task.endTime) : "");
+    setNewTaskNotes(task.notes || "");
+    setNewTaskPriority(!!task.priority);
+    setAddTaskModalOpen(true);
+  };
+
+  // Update an existing task with the modal's current draft values. Mirrors
+  // addTask()'s field handling so we don't drift between create and edit.
+  const updateExistingTaskFromModal = () => {
+    const id = editingTaskIdFromSchedule;
+    if (id == null) return;
+    const title = (newTitle || "").trim();
+    if (!title) return;
+    const startTime = newStart ? to12h(newStart) : "";
+    const endTime = newEnd ? to12h(newEnd) : "";
+    const notes = (newTaskNotes || "").trim();
+    setTasks(allTasks.map(x => {
+      if (!x || x.id !== id) return x;
+      const next = { ...x, title };
+      if (startTime) next.startTime = startTime; else delete next.startTime;
+      if (endTime) next.endTime = endTime; else delete next.endTime;
+      if (notes) next.notes = notes; else delete next.notes;
+      // Only flip the priority flag if the user changed it — preserve the
+      // assigned priorityOrder slot when she just edited the title/time.
+      if (newTaskPriority && !x.priority) {
+        const usedOrders = dayTasks.filter(t => t.priority).map(t => t.priorityOrder || 0);
+        const order = [1, 2, 3].find(n => !usedOrders.includes(n)) || 1;
+        next.priority = "high";
+        next.priorityOrder = order;
+      } else if (!newTaskPriority && x.priority) {
+        next.priority = null;
+        next.priorityOrder = null;
+      }
+      return next;
+    }));
+  };
+
   const submitNewTask = () => {
-    if (!newTitle.trim()) { setAddTaskModalOpen(false); return; }
-    addTask();
+    if (!newTitle.trim()) { cancelNewTask(); return; }
+    if (editingTaskIdFromSchedule != null) {
+      updateExistingTaskFromModal();
+    } else {
+      addTask();
+    }
+    setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false);
+    setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
-  const cancelNewTask = () => { setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false); setAddTaskModalOpen(false); };
+  // Delete the task currently being edited from the modal (schedule path).
+  const deleteEditingTaskFromModal = () => {
+    const id = editingTaskIdFromSchedule;
+    if (id == null) return;
+    if (typeof window !== "undefined" && !window.confirm(t("Delete this task?", lang))) return;
+    setTasks(allTasks.filter(x => x && x.id !== id));
+    setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false);
+    setEditingTaskIdFromSchedule(null);
+    setAddTaskModalOpen(false);
+  };
+  const cancelNewTask = () => {
+    setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false);
+    setEditingTaskIdFromSchedule(null);
+    setAddTaskModalOpen(false);
+  };
 
   const AddTaskModal = addTaskModalOpen ? (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-3 sm:p-4 bg-black/40" onClick={cancelNewTask}>
@@ -9363,8 +9829,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 sm:p-6 overflow-y-auto"
         style={{ maxHeight: "min(100dvh - 1.5rem, 560px)" }}
         onClick={(e) => e.stopPropagation()}>
-        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Add a task", lang)}</h3>
-        <p className="text-xs text-stone-500 mb-4 italic">{t("What's the next small thing?", lang)}</p>
+        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{editingTaskIdFromSchedule != null ? t("Edit task", lang) : t("Add a task", lang)}</h3>
+        <p className="text-xs text-stone-500 mb-4 italic">{editingTaskIdFromSchedule != null ? t("Update title, time, or notes — or delete it.", lang) : t("What's the next small thing?", lang)}</p>
         <textarea
           autoFocus
           rows={3}
@@ -9435,15 +9901,24 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
             <span className="text-[10px] italic text-stone-400">{t("Max 3 priorities", lang)}</span>
           )}
         </div>
-        <div className="flex justify-end gap-2 mt-4">
-          <button onClick={cancelNewTask} className="px-4 py-2 text-xs uppercase tracking-wider text-stone-500 hover:text-stone-800 transition">
-            {t("Cancel", lang)}
-          </button>
-          <button onClick={submitNewTask}
-            className="px-4 py-2 text-xs uppercase tracking-wider text-white rounded font-medium transition hover:opacity-90"
-            style={{ background: "var(--accent-mid)" }}>
-            + {t("Add", lang)}
-          </button>
+        <div className="flex justify-between items-center gap-2 mt-4 flex-wrap">
+          {editingTaskIdFromSchedule != null ? (
+            <button onClick={deleteEditingTaskFromModal}
+              className="px-3 py-2 text-xs uppercase tracking-wider text-white rounded font-medium transition hover:opacity-90"
+              style={{ backgroundColor: "#dc2626" }}>
+              {t("Delete task", lang)}
+            </button>
+          ) : <span />}
+          <div className="flex gap-2 ml-auto">
+            <button onClick={cancelNewTask} className="px-4 py-2 text-xs uppercase tracking-wider text-stone-500 hover:text-stone-800 transition">
+              {t("Cancel", lang)}
+            </button>
+            <button onClick={submitNewTask}
+              className="px-4 py-2 text-xs uppercase tracking-wider text-white rounded font-medium transition hover:opacity-90"
+              style={{ background: "var(--accent-mid)" }}>
+              {editingTaskIdFromSchedule != null ? t("Save changes", lang) : "+ " + t("Add", lang)}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -9500,6 +9975,19 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
           </button>
           {showWeeklySchedule && (
             <div className="flex items-center gap-2 flex-wrap">
+              {/* Big green + button — opens the Add Task modal so users can
+                  drop something directly onto the schedule without scrolling
+                  back up to the TO DO LIST card. Lands on the currently
+                  selected day (top date picker); times entered in the modal
+                  become the visible block on the grid. */}
+              <button
+                onClick={() => setAddTaskModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-semibold text-white bg-[#5b7351] hover:bg-[#4a5e42] transition shadow-sm"
+                title={t("Add a task", lang)}
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{t("Add", lang)}</span>
+              </button>
               <button
                 onClick={() => setShowHalfHours(v => !v)}
                 className={`px-3 py-1.5 rounded text-xs font-medium border transition ${showHalfHours ? "bg-[#5b7351] text-white border-[#5b7351]" : "border-stone-200 text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
@@ -9586,13 +10074,25 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                             />
                           )}
                           {coveringItem && isTaskStart && (
-                            <div
-                              className="absolute left-0.5 right-0.5 top-0.5 px-1 py-0.5 rounded text-[9px] font-semibold text-white truncate pointer-events-none z-[5]"
-                              style={{ background: "var(--accent-mid)" }}
-                              title={`${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}`}
-                            >
-                              {coveringItem.title}
-                            </div>
+                            coveringTask ? (
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); openTaskEditorFromSchedule(coveringTask); }}
+                                className="absolute left-0.5 right-0.5 top-0.5 px-1 py-0.5 rounded text-[9px] font-semibold text-white truncate z-[6] text-left hover:opacity-90"
+                                style={{ background: "var(--accent-mid)" }}
+                                title={`${t("Tap to edit", lang)} · ${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}`}
+                              >
+                                {coveringItem.title}
+                              </button>
+                            ) : (
+                              <div
+                                className="absolute left-0.5 right-0.5 top-0.5 px-1 py-0.5 rounded text-[9px] font-semibold text-white truncate pointer-events-none z-[5]"
+                                style={{ background: "var(--accent-mid)" }}
+                                title={`${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}`}
+                              >
+                                {coveringItem.title}
+                              </div>
+                            )
                           )}
                           <textarea
                             value={cellValue}
@@ -9761,6 +10261,79 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
   const eventCountFor = (iso) => (events[iso] || []).length;
 
   const selectedLabel = selectedDate ? fmtDate(selectedDate) : "";
+
+  // -------- IMPORTANT DATES (trips, birthdays, anniversaries, holidays) --
+  // Flat list, stored under data.importantDates so it survives between
+  // years. Each row: { id, title, date (YYYY-MM-DD), category, recurring,
+  // notes }. We sort by next-upcoming-occurrence so the section reads
+  // top-to-bottom like a countdown.
+  const importantDates = Array.isArray(data.importantDates) ? data.importantDates : [];
+  const [newImpTitle, setNewImpTitle] = useState("");
+  const [newImpDate, setNewImpDate] = useState("");
+  // Empty = no category picked (it's optional).
+  const [newImpCategory, setNewImpCategory] = useState("");
+  const [newImpRecurring, setNewImpRecurring] = useState(true);
+  const [newImpNotes, setNewImpNotes] = useState("");
+  const [editingImpId, setEditingImpId] = useState(null);
+  const [editingImpDraft, setEditingImpDraft] = useState({ title: "", date: "", category: "", recurring: false, notes: "" });
+  const IMPORTANT_CATEGORIES = [
+    { key: "birthday",    label: "Birthday",    icon: "🎂", color: "#f59e0b" },
+    { key: "anniversary", label: "Anniversary", icon: "💞", color: "#ec4899" },
+    { key: "trip",        label: "Trip",        icon: "✈️", color: "#3b82f6" },
+    { key: "holiday",     label: "Holiday",     icon: "🎉", color: "#a855f7" },
+    { key: "other",       label: "Other",       icon: "📌", color: "#5b7351" },
+  ];
+  const categoryFor = (key) => IMPORTANT_CATEGORIES.find(c => c.key === key) || IMPORTANT_CATEGORIES[4];
+  // Next occurrence helper — for recurring dates, jumps to the same MM-DD
+  // in the next year if this year's already passed.
+  const nextOccurrenceOf = (impDate, recurring) => {
+    if (!impDate) return null;
+    const [, mm, dd] = impDate.split("-").map(Number);
+    if (!recurring) return new Date(`${impDate}T00:00:00`);
+    const now = new Date();
+    const thisYear = new Date(now.getFullYear(), (mm || 1) - 1, dd || 1);
+    if (thisYear < new Date(now.getFullYear(), now.getMonth(), now.getDate())) {
+      return new Date(now.getFullYear() + 1, (mm || 1) - 1, dd || 1);
+    }
+    return thisYear;
+  };
+  const daysUntil = (d) => {
+    if (!d) return null;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const diff = Math.round((d.getTime() - today.getTime()) / 86_400_000);
+    return diff;
+  };
+  const sortedImportant = [...importantDates].sort((a, b) => {
+    const da = nextOccurrenceOf(a.date, !!a.recurring);
+    const db = nextOccurrenceOf(b.date, !!b.recurring);
+    if (!da) return 1; if (!db) return -1;
+    return da.getTime() - db.getTime();
+  });
+  const addImportantDate = () => {
+    const title = (newImpTitle || "").trim();
+    if (!title || !newImpDate) return;
+    const ids = importantDates.map(i => Number(i.id)).filter(n => !isNaN(n));
+    const id = (ids.length ? Math.max(...ids) : 0) + 1;
+    const row = { id, title, date: newImpDate, category: newImpCategory, recurring: !!newImpRecurring, notes: (newImpNotes || "").trim() };
+    setData({ ...data, importantDates: [...importantDates, row] });
+    setNewImpTitle(""); setNewImpDate(""); setNewImpCategory(""); setNewImpRecurring(true); setNewImpNotes("");
+  };
+  const startEditImportant = (row) => {
+    setEditingImpId(row.id);
+    setEditingImpDraft({ title: row.title, date: row.date, category: row.category, recurring: !!row.recurring, notes: row.notes || "" });
+  };
+  const saveEditImportant = () => {
+    if (editingImpId == null) return;
+    setData({
+      ...data,
+      importantDates: importantDates.map(i => i.id === editingImpId ? { ...i, ...editingImpDraft, title: editingImpDraft.title.trim(), notes: (editingImpDraft.notes || "").trim() } : i),
+    });
+    setEditingImpId(null);
+  };
+  const cancelEditImportant = () => setEditingImpId(null);
+  const deleteImportantDate = (id) => {
+    setData({ ...data, importantDates: importantDates.filter(i => i.id !== id) });
+  };
 
   return (
     <div>
@@ -9999,6 +10572,204 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
           </div>
         </div>
       )}
+
+      {/* IMPORTANT DATES — trips, birthdays, anniversaries, recurring holidays.
+          Persistent across years, sorted by next-upcoming occurrence so the
+          card reads like a soft countdown. Recurring toggle defaults to ON
+          since most entries (birthdays, anniversaries) repeat annually. */}
+      <div className={`mt-8 rounded-2xl border ${themePanel} p-5 sm:p-6`}>
+        <div className="flex items-baseline justify-between mb-4 gap-3 flex-wrap">
+          <div>
+            <h3 className="text-sm font-semibold tracking-[0.2em] text-stone-700">IMPORTANT DATES</h3>
+            <p className={`text-[11px] ${themeMuted} mt-0.5`}>
+              {t("Trips, birthdays, anniversaries — the dates you don't want to miss.", lang)}
+            </p>
+          </div>
+        </div>
+
+        {/* Add new */}
+        <div className={`rounded-xl border ${themePanel} p-4 mb-4`}>
+          <div className="text-[10px] tracking-[0.18em] uppercase text-stone-500 font-semibold mb-3">{t("Add a date", lang)}</div>
+          <div className="grid sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1">{t("Title", lang)}</label>
+              <input
+                value={newImpTitle}
+                onChange={e => setNewImpTitle(e.target.value)}
+                placeholder={t("Mom's birthday", lang)}
+                className="block w-full px-3 py-2 border rounded text-sm outline-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1">{t("Date", lang)}</label>
+              <input
+                type="date"
+                value={newImpDate}
+                onChange={e => setNewImpDate(e.target.value)}
+                className="block w-full px-3 py-2 border rounded text-sm outline-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+              />
+            </div>
+            <div>
+              <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1">
+                {t("Category", lang)} <span className="italic normal-case tracking-normal text-stone-400">({t("optional", lang)})</span>
+              </label>
+              <div className="flex flex-wrap gap-1.5">
+                {IMPORTANT_CATEGORIES.map(c => {
+                  const picked = newImpCategory === c.key;
+                  return (
+                    <button
+                      key={c.key}
+                      type="button"
+                      onClick={() => setNewImpCategory(picked ? "" : c.key)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs font-medium transition ${picked ? "text-white" : "text-stone-600 border-stone-200 hover:border-stone-300"}`}
+                      style={picked ? { backgroundColor: c.color, borderColor: c.color } : {}}
+                    >
+                      {/* Outline-style emoji until picked, then full color. */}
+                      <span aria-hidden style={{ filter: picked ? "none" : "grayscale(1) contrast(0.6)", opacity: picked ? 1 : 0.55 }}>{c.icon}</span>{c.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1">{t("Repeats yearly", lang)}</label>
+              <button
+                type="button"
+                onClick={() => setNewImpRecurring(v => !v)}
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded text-sm border transition ${newImpRecurring ? "bg-[#5b7351] text-white border-[#5b7351]" : "bg-white text-stone-600 border-stone-200"}`}
+              >
+                <span aria-hidden>{newImpRecurring ? "✓" : "○"}</span>
+                {newImpRecurring ? t("Yes, every year", lang) : t("No, just once", lang)}
+              </button>
+            </div>
+          </div>
+          <div className="mt-3">
+            <label className="block text-[10px] tracking-[0.15em] uppercase text-stone-500 mb-1">{t("Notes (optional)…", lang)}</label>
+            <textarea
+              rows={2}
+              value={newImpNotes}
+              onChange={e => setNewImpNotes(e.target.value)}
+              placeholder={t("Anything else…", lang)}
+              className="block w-full px-3 py-2 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+            />
+          </div>
+          <div className="mt-3 flex justify-end">
+            <button
+              onClick={addImportantDate}
+              disabled={!newImpTitle.trim() || !newImpDate}
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-lg text-white bg-[#5b7351] hover:bg-[#4a5e42] transition disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              {t("Save important date", lang)}
+            </button>
+          </div>
+        </div>
+
+        {/* List */}
+        {sortedImportant.length === 0 ? (
+          <div className={`rounded-xl border border-dashed ${themePanel} p-6 text-center text-xs italic ${themeMuted}`}>
+            {t("Nothing on the list yet. Add the first one above.", lang)}
+          </div>
+        ) : (
+          <ul className="space-y-2">
+            {sortedImportant.map(row => {
+              const cat = categoryFor(row.category);
+              const next = nextOccurrenceOf(row.date, !!row.recurring);
+              const dleft = daysUntil(next);
+              const isToday = dleft === 0;
+              const isEditing = editingImpId === row.id;
+              const countdown = next ? next.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" }) : "—";
+              const daysLabel = isToday ? t("today", lang) : (dleft > 0 ? t("in {n} days", lang, { n: dleft }) : t("{n} days ago", lang, { n: Math.abs(dleft) }));
+              return (
+                <li key={row.id} className={`rounded-xl border ${themePanel} p-4`}>
+                  {isEditing ? (
+                    <div className="space-y-3">
+                      <input
+                        value={editingImpDraft.title}
+                        onChange={e => setEditingImpDraft({ ...editingImpDraft, title: e.target.value })}
+                        className="block w-full px-3 py-2 border rounded text-sm outline-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+                      />
+                      <div className="grid sm:grid-cols-2 gap-3">
+                        <input
+                          type="date"
+                          value={editingImpDraft.date}
+                          onChange={e => setEditingImpDraft({ ...editingImpDraft, date: e.target.value })}
+                          className="block w-full px-3 py-2 border rounded text-sm outline-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setEditingImpDraft({ ...editingImpDraft, recurring: !editingImpDraft.recurring })}
+                          className={`inline-flex items-center gap-2 px-3 py-2 rounded text-sm border transition ${editingImpDraft.recurring ? "bg-[#5b7351] text-white border-[#5b7351]" : "bg-white text-stone-600 border-stone-200"}`}
+                        >
+                          <span aria-hidden>{editingImpDraft.recurring ? "✓" : "○"}</span>
+                          {editingImpDraft.recurring ? t("Repeats every year", lang) : t("Just once", lang)}
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {IMPORTANT_CATEGORIES.map(c => {
+                          const picked = editingImpDraft.category === c.key;
+                          return (
+                            <button
+                              key={c.key}
+                              type="button"
+                              onClick={() => setEditingImpDraft({ ...editingImpDraft, category: picked ? "" : c.key })}
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs font-medium transition ${picked ? "text-white" : "text-stone-600 border-stone-200"}`}
+                              style={picked ? { backgroundColor: c.color, borderColor: c.color } : {}}
+                            >
+                              <span aria-hidden style={{ filter: picked ? "none" : "grayscale(1) contrast(0.6)", opacity: picked ? 1 : 0.55 }}>{c.icon}</span>{c.label}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <textarea
+                        rows={2}
+                        value={editingImpDraft.notes}
+                        onChange={e => setEditingImpDraft({ ...editingImpDraft, notes: e.target.value })}
+                        className="block w-full px-3 py-2 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e]"
+                      />
+                      <div className="flex items-center justify-end gap-2">
+                        <button onClick={cancelEditImportant} className="px-3 py-1.5 text-xs text-stone-500 hover:text-stone-800">{t("Cancel", lang)}</button>
+                        <button onClick={saveEditImportant} className="px-3 py-1.5 text-xs font-semibold rounded-md text-white bg-[#5b7351] hover:bg-[#4a5e42]">{t("Save", lang)}</button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-3">
+                      <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center text-base flex-shrink-0 border"
+                        style={row.category
+                          ? { background: `${cat.color}22`, color: cat.color, borderColor: "transparent" }
+                          : { background: "white", borderColor: "#e5e1d8" }}
+                      >
+                        <span aria-hidden style={row.category ? {} : { filter: "grayscale(1) contrast(0.6)", opacity: 0.55 }}>{cat.icon}</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-baseline justify-between gap-2 flex-wrap">
+                          <div className="text-sm font-semibold text-stone-800 truncate">{row.title}</div>
+                          <div
+                            className={`text-[10px] uppercase tracking-wider font-semibold ${isToday ? "text-[#5b7351]" : (dleft >= 0 ? "text-stone-600" : "text-stone-400")}`}
+                          >
+                            {daysLabel}
+                          </div>
+                        </div>
+                        <div className="text-[11px] text-stone-500 mt-0.5">
+                          {countdown}{row.recurring ? ` · ${t("yearly", lang)}` : ""}
+                        </div>
+                        {row.notes && (
+                          <div className="text-xs text-stone-600 italic mt-1 whitespace-pre-wrap break-words">{row.notes}</div>
+                        )}
+                        <div className="mt-2 flex items-center gap-3 text-[11px]">
+                          <button onClick={() => startEditImportant(row)} className="text-[#5b7351] hover:underline">{t("Edit", lang)}</button>
+                          <button onClick={() => deleteImportantDate(row.id)} className="text-stone-400 hover:text-rose-500">{t("Delete", lang)}</button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
 
       {/* CONNECT CALENDAR MODAL */}
       {showCalendarConnect && (
@@ -11679,9 +12450,9 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
       {dailyAffirmation && (
         <div className={`rounded-lg border ${themePanel} p-5 sm:p-8 mb-5 bg-gradient-to-br from-[#9cb88f]/15 to-white text-center`}>
           <div className="text-[10px] sm:text-xs tracking-[0.3em] text-[#9cb88f] mb-3" style={serif}>{t("TODAY'S AFFIRMATION", lang)}</div>
-          <p className="font-serif text-xl sm:text-3xl md:text-4xl italic leading-snug mb-5 max-w-3xl mx-auto break-words" style={serif}>"{dailyAffirmation.text}"</p>
+          <p className="font-serif text-xl sm:text-3xl md:text-4xl italic leading-snug mb-5 max-w-3xl mx-auto break-words" style={serif}>"{affText(dailyAffirmation, lang)}"</p>
           <div className="flex items-center justify-center gap-2 flex-wrap">
-            <span className="text-[10px] tracking-wider px-2 py-0.5 rounded bg-[#9cb88f]/10 text-[#5b7351]">{dailyAffirmation.category}</span>
+            <span className="text-[10px] tracking-wider px-2 py-0.5 rounded bg-[#9cb88f]/10 text-[#5b7351]">{affCat(dailyAffirmation.category, lang)}</span>
             <button onClick={markRead} className="px-3 py-1.5 bg-[#7a9a6e] text-white text-xs font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5"><Flame className="w-3 h-3" /> {t("Mark read · {n}d streak", lang, { n: streak.count })}</button>
             <button onClick={() => setRoutineMode(!routineMode)} className="px-3 py-1.5 border border-stone-300 text-xs rounded hover:border-[#7a9a6e] flex items-center gap-1.5"><PlayCircle className="w-3 h-3" /> {t("Morning routine", lang)}</button>
           </div>
@@ -11695,7 +12466,7 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
             {routineList.map((a, i) => (
               <li key={a.id} className="flex items-start gap-3">
                 <span className="font-serif text-2xl sm:text-3xl text-[#9cb88f]/50 flex-shrink-0" style={serif}>{i + 1}</span>
-                <span className="font-serif text-base sm:text-xl italic leading-snug break-words" style={serif}>"{a.text}"</span>
+                <span className="font-serif text-base sm:text-xl italic leading-snug break-words" style={serif}>"{affText(a, lang)}"</span>
               </li>
             ))}
             {routineList.length === 0 && <li className={`${themeMuted} text-sm italic`} style={serif}>{t("Mark some affirmations as favorites to build your routine.", lang)}</li>}
@@ -11703,16 +12474,21 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
         </div>
       )}
 
-      {/* Category filter — horizontal scroll on mobile */}
+      {/* Category filter — horizontal scroll on mobile. "All" / "Favorites"
+          go through the global dict; affirmation cats go through affCat
+          (which keeps "Body" → "Cuerpo" instead of the global "Contenido"). */}
       <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1 -mx-1 px-1 sm:flex-wrap">
-        {cats.map(c => (
-          <button
-            key={c}
-            onClick={() => setFilter(c)}
-            className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-full italic transition ${filter === c ? "bg-[#5b7351] text-white font-medium" : "bg-white border border-stone-200 text-stone-600 hover:border-[#7a9a6e]"}`}
-            style={serif}
-          >{t(c, lang)}</button>
-        ))}
+        {cats.map(c => {
+          const label = (c === "All" || c === "Favorites") ? t(c, lang) : affCat(c, lang);
+          return (
+            <button
+              key={c}
+              onClick={() => setFilter(c)}
+              className={`flex-shrink-0 px-3 py-1.5 text-xs rounded-full italic transition ${filter === c ? "bg-[#5b7351] text-white font-medium" : "bg-white border border-stone-200 text-stone-600 hover:border-[#7a9a6e]"}`}
+              style={serif}
+            >{label}</button>
+          );
+        })}
       </div>
 
       {/* Affirmations list — single column on mobile, two on tablet+ */}
@@ -11740,7 +12516,7 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
                   onChange={e => setEditDraft({ ...editDraft, category: e.target.value })}
                   className="w-full px-3 py-2 rounded border border-stone-200 text-xs bg-white focus:border-[#7a9a6e] outline-none mb-3"
                 >
-                  {DEFAULT_AFFIRMATION_CATS.map(c => <option key={c} value={c}>{c}</option>)}
+                  {DEFAULT_AFFIRMATION_CATS.map(c => <option key={c} value={c}>{affCat(c, lang)}</option>)}
                 </select>
                 <div className="flex gap-2">
                   <button onClick={saveEdit} className="flex-1 py-2 bg-[#7a9a6e] text-white text-xs font-medium rounded hover:bg-[#5b7351]">{t("Save", lang)}</button>
@@ -11755,13 +12531,13 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
           return (
             <div key={a.id} className={`p-4 sm:p-5 rounded-lg border ${themePanel} group hover:border-[#7a9a6e] transition`}>
               <div className="flex items-start justify-between gap-3 mb-3">
-                <p className="font-serif text-base sm:text-lg italic flex-1 leading-snug break-words" style={serif}>"{a.text}"</p>
+                <p className="font-serif text-base sm:text-lg italic flex-1 leading-snug break-words" style={serif}>"{affText(a, lang)}"</p>
                 <button onClick={() => toggleFav(a.id)} className="flex-shrink-0">
                   <Heart className={`w-4 h-4 transition ${a.favorite ? "fill-rose-400 text-rose-400" : "text-stone-300 hover:text-rose-400"}`} />
                 </button>
               </div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] italic tracking-wide px-2 py-0.5 rounded bg-[#9cb88f]/10 text-[#5b7351]" style={serif}>{a.category}</span>
+                <span className="text-[10px] italic tracking-wide px-2 py-0.5 rounded bg-[#9cb88f]/10 text-[#5b7351]" style={serif}>{affCat(a.category, lang)}</span>
                 <div className="flex items-center gap-1">
                   <button onClick={() => startEdit(a)} className="p-1.5 rounded text-stone-400 hover:text-[#5b7351] hover:bg-stone-50" title="Edit"><Edit2 className="w-3.5 h-3.5" /></button>
                   <button onClick={() => del(a.id)} className="p-1.5 rounded text-stone-400 hover:text-rose-500 hover:bg-rose-50" title="Delete"><Trash2 className="w-3.5 h-3.5" /></button>
@@ -11775,7 +12551,7 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
       <Modal open={open} onClose={() => setOpen(false)} title={t("Add Affirmation", lang)} dark={dark}>
         <div className="space-y-3">
           <div><label className={`text-xs ${themeMuted}`}>{t("Affirmation", lang)}</label><textarea value={form.text} onChange={e => setForm({ ...form, text: e.target.value })} rows={3} placeholder="I am…" className="mt-1 w-full px-3 py-2 rounded border outline-none focus:border-[#7a9a6e] text-sm bg-white border-stone-300" /></div>
-          <SelectField label={t("Category", lang)} value={form.category} onChange={v => setForm({ ...form, category: v })} options={DEFAULT_AFFIRMATION_CATS} dark={dark} />
+          <SelectField label={t("Category", lang)} value={form.category} onChange={v => setForm({ ...form, category: v })} options={DEFAULT_AFFIRMATION_CATS.map(c => ({ value: c, label: affCat(c, lang) }))} dark={dark} />
           <button onClick={add} className="w-full py-2 bg-[#7a9a6e] text-white font-medium rounded hover:bg-[#5b7351]">{t("Add affirmation", lang)}</button>
         </div>
       </Modal>
@@ -11826,6 +12602,29 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
   const toggleAchieved = (id) => {
     const v = items.find(x => x.id === id);
     setData({ ...data, visionBoard: items.map(x => x.id === id ? { ...x, achieved: !x.achieved, achievedDate: !x.achieved ? todayISO() : null } : x) });
+  };
+
+  // Swap a card with the previous (-1) or next (+1) one within the current
+  // tab so reordering doesn't accidentally move achieved cards into the
+  // active board, or vice versa. Reads the position in `filtered`, then
+  // patches the same positions in the full `items` array.
+  const moveVisionItem = (id, dir) => {
+    const targetIdx = filtered.findIndex(v => v.id === id) + dir;
+    if (targetIdx < 0 || targetIdx >= filtered.length) return;
+    const curId = id;
+    const swapId = filtered[targetIdx].id;
+    const next = items.slice();
+    const a = next.findIndex(v => v.id === curId);
+    const b = next.findIndex(v => v.id === swapId);
+    if (a === -1 || b === -1) return;
+    [next[a], next[b]] = [next[b], next[a]];
+    setData({ ...data, visionBoard: next });
+  };
+  const canMoveVisionItem = (id, dir) => {
+    const idx = filtered.findIndex(v => v.id === id);
+    if (idx === -1) return false;
+    const target = idx + dir;
+    return target >= 0 && target < filtered.length;
   };
 
   return (
@@ -11909,6 +12708,26 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
               <button onClick={() => del(v.id)} className="p-1.5 rounded bg-white/90 backdrop-blur hover:bg-rose-50 text-stone-700 hover:text-rose-600" title="Delete">
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
+            </div>
+
+            {/* Move arrows — always visible (touch-friendly). Bottom-right so
+                they don't fight with the letter-icon (bottom-left) or hover
+                actions (top-right). */}
+            <div className="absolute bottom-2 right-2 flex gap-1">
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); moveVisionItem(v.id, -1); }}
+                disabled={!canMoveVisionItem(v.id, -1)}
+                className="p-1.5 rounded bg-white/90 backdrop-blur hover:bg-[#f4f7ee] text-stone-700 disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                title={t("Move earlier", lang)} aria-label={t("Move earlier", lang)}
+              ><ChevronLeft className="w-3.5 h-3.5" /></button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); moveVisionItem(v.id, 1); }}
+                disabled={!canMoveVisionItem(v.id, 1)}
+                className="p-1.5 rounded bg-white/90 backdrop-blur hover:bg-[#f4f7ee] text-stone-700 disabled:opacity-30 disabled:cursor-not-allowed shadow-sm"
+                title={t("Move later", lang)} aria-label={t("Move later", lang)}
+              ><ChevronRight className="w-3.5 h-3.5" /></button>
             </div>
           </div>
         ))}
