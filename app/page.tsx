@@ -2164,8 +2164,8 @@ export default function Home() {
               <div className="show-phone">
                 <div className="show-phone-notch"></div>
                 <img
-                  src="/images/sovereign-app-screen.png?v=3"
-                  alt="Sovereign app summary view"
+                  src="/images/landing/lifestyle-vision-screen.jpg"
+                  alt="Vision Board 2026 inside Sovereign"
                   className="show-phone-screen"
                 />
               </div>
@@ -2241,21 +2241,6 @@ export default function Home() {
               </div>
             ))}
 
-            {/* Closing showcase — the actual Vision Board screen so the
-                viewer sees the app one more time before scrolling on. */}
-            <div className="lifestyle-tile showcase">
-              <img
-                src="/images/landing/lifestyle-vision-screen.jpg"
-                alt={lang === "es" ? "Tablero de visión en la app" : "Vision Board inside the app"}
-                loading="lazy"
-              />
-              <div className="lifestyle-cap">
-                <div className="kicker">{lang === "es" ? "Dentro de Sovereign" : "Inside Sovereign"}</div>
-                <div className="label">
-                  {lang === "es" ? "El tablero de visión, vivo en tu bolsillo." : "Your vision board, alive in your pocket."}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
