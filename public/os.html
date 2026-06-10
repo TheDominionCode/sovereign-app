@@ -2141,6 +2141,13 @@ const TRANSLATIONS = {
     "Rename categories": "Rename categories",
     "Done": "Done",
     "Label": "Label",
+    "Tap to add at this time": "Tap to add at this time",
+    // Schedule stack expander (multi-task popup)
+    "things": "things",
+    "at this time — tap to view all": "at this time — tap to view all",
+    "At this time": "At this time",
+    "Close": "Close",
+    "(untitled)": "(untitled)",
     // Owner profile quick-links (top-right avatar dropdown)
     "My links": "My links",
     "Add link": "Add link",
@@ -2813,6 +2820,13 @@ const TRANSLATIONS = {
     "Rename categories": "Renombrar categorías",
     "Done": "Listo",
     "Label": "Nombre",
+    "Tap to add at this time": "Toca para agregar a esta hora",
+    // Expansor de pila del horario (varias tareas a la vez)
+    "things": "cosas",
+    "at this time — tap to view all": "a esta hora — toca para ver todas",
+    "At this time": "A esta hora",
+    "Close": "Cerrar",
+    "(untitled)": "(sin título)",
     // Enlaces rápidos del dueño (menú del avatar arriba a la derecha)
     "My links": "Mis enlaces",
     "Add link": "Agregar enlace",
@@ -3273,8 +3287,76 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
 
   const moduleProps = { data, setData, user, dark, triggerConfetti, themePanel, themeMuted, themeText, accent, setAccent, lang, setLang, navigateTo };
 
+  // "What's new" pop-out — shows once after each release so trial users
+  // see what changed when they open the app. Bumping WHATS_NEW_VERSION
+  // here surfaces it again to everyone. Storage key is per-device so the
+  // dismissal sticks even when they sign back in.
+  const WHATS_NEW_VERSION = "2026-06-09";
+  const [whatsNewOpen, setWhatsNewOpen] = useState(() =>
+    storage.get("dom_whats_new_seen", "") !== WHATS_NEW_VERSION
+  );
+  const dismissWhatsNew = () => {
+    storage.set("dom_whats_new_seen", WHATS_NEW_VERSION);
+    setWhatsNewOpen(false);
+  };
+  const WHATS_NEW_ITEMS = lang === "es" ? [
+    "Horario semanal estilo Google Calendar — los bloques llenan toda la duración con texto en blanco y color por categoría.",
+    "Elige una categoría de color (Familia · Personal · Trabajo…) — renómbralas como quieras.",
+    "Marca tareas como permanentes — todos los días o cada semana en el mismo día.",
+    "Toca cualquier celda del horario para agregar a esa hora.",
+    "Las tareas que se traslapan se apilan legibles, con todos los títulos visibles.",
+    "El selector de hora ahora funciona — escribe 5:30 sin pelearte con el teclado.",
+    "Finanzas personales: nueva pestaña Suscripciones con costo, email y contraseña.",
+    "Vision Board: flechas para reordenar las tarjetas.",
+    "Afirmaciones traducidas al español (las 30).",
+    "Te mantenemos conectada — ya no tienes que iniciar sesión cada día.",
+  ] : [
+    "Weekly Schedule reads like Google Calendar — full-duration blocks with white titles and color categories.",
+    "Pick a color category (Family · Personal · Work…) — rename each to mean whatever you want.",
+    "Mark tasks as permanent — every day or every weekday at the same time.",
+    "Tap any cell on the schedule to add a task at that time.",
+    "Overlapping tasks stack with all titles visible instead of hiding behind each other.",
+    "Time picker now actually works — type 5:30 without fighting the keyboard.",
+    "Personal Finance: new Subscriptions tab with cost, login email, and password.",
+    "Vision Board: arrows to reorder your cards.",
+    "Affirmations now translate to Spanish (all 30).",
+    "Stay signed in longer — no more daily re-login.",
+  ];
+
   return (
     <div className={`min-h-screen ${themeBg} ${themeText} flex`} style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+      {whatsNewOpen && (
+        <div className="fixed inset-x-3 bottom-3 sm:inset-auto sm:bottom-4 sm:right-4 sm:max-w-sm z-50">
+          <div className="rounded-2xl border border-[#a8c090] bg-white shadow-2xl p-4 sm:p-5">
+            <div className="flex items-start justify-between gap-3 mb-2">
+              <div>
+                <div className="text-[10px] tracking-[0.18em] uppercase text-[#5b7351] font-semibold">{lang === "es" ? "Nuevo" : "What's new"}</div>
+                <h3 className="font-serif text-lg leading-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                  {lang === "es" ? "Últimas mejoras" : "Latest updates"}
+                </h3>
+              </div>
+              <button onClick={dismissWhatsNew} aria-label="Close" className="p-1 rounded-full text-stone-400 hover:text-stone-700 hover:bg-stone-100 flex-shrink-0">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <ul className="space-y-1.5 max-h-[40vh] overflow-y-auto pr-1 mb-3">
+              {WHATS_NEW_ITEMS.map((line, i) => (
+                <li key={i} className="text-xs leading-snug text-stone-700 flex gap-1.5">
+                  <span className="text-[#5b7351] flex-shrink-0">✓</span>
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+            <button
+              onClick={dismissWhatsNew}
+              className="w-full py-2 rounded-lg text-xs uppercase tracking-wider text-white font-medium hover:opacity-90"
+              style={{ background: "#5b7351" }}
+            >
+              {lang === "es" ? "Entendido" : "Got it"}
+            </button>
+          </div>
+        </div>
+      )}
       {/* MOBILE OVERLAY when drawer is open */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 bg-black/40 z-30 md:hidden" onClick={() => setMobileMenuOpen(false)}></div>
@@ -9094,77 +9176,105 @@ const DEFAULT_SCHEDULE_COLORS = [
   { id: "s", color: "#7d7d7d", label: "Other" },
 ];
 
-// Phone-friendly time picker — kept at module scope so it isn't remounted
-// every time a parent component re-renders (otherwise the inputs lose
-// focus and tap targets break mid-edit). value is canonical 24h "HH:MM"
-// or "". Typing ":" in the hour box auto-advances to the minute box so a
-// user can type "5:30" naturally without thinking about which box is
-// which.
+// Phone-friendly time picker. Kept at module scope so it doesn't remount
+// on every parent re-render. value is canonical 24h "HH:MM" or "".
+//
+// We hold the three field fragments (hh / mm / ampm) in LOCAL state so a
+// half-typed minute like "3" stays on screen until the user reaches "30".
+// The earlier version called onChange("") for any partial state and the
+// controlled inputs would snap back to empty mid-keystroke — making it
+// impossible to actually type two digits in the minute box.
+function parseHHMM(raw) {
+  const m = /^(\d{1,2}):(\d{2})$/.exec(String(raw || "").trim());
+  if (!m) return { hh: "", mm: "", ampm: "AM" };
+  let h = parseInt(m[1], 10);
+  const mStr = m[2];
+  if (h === 0) return { hh: "12", mm: mStr, ampm: "AM" };
+  if (h < 12) return { hh: String(h), mm: mStr, ampm: "AM" };
+  if (h === 12) return { hh: "12", mm: mStr, ampm: "PM" };
+  return { hh: String(h - 12), mm: mStr, ampm: "PM" };
+}
 function TimePartInput({ value, onChange, hhPlaceholder = "9", mmPlaceholder = "30" }) {
   const mmRef = useRef(null);
-  const parsed = (() => {
-    const mm = /^(\d{1,2}):(\d{2})$/.exec(String(value || "").trim());
-    if (!mm) return { hh: "", mm: "", ampm: "AM" };
-    let h = parseInt(mm[1], 10);
-    const mStr = mm[2];
-    if (h === 0) return { hh: "12", mm: mStr, ampm: "AM" };
-    if (h < 12) return { hh: String(h), mm: mStr, ampm: "AM" };
-    if (h === 12) return { hh: "12", mm: mStr, ampm: "PM" };
-    return { hh: String(h - 12), mm: mStr, ampm: "PM" };
-  })();
-  const emit = (nh, nm, nap) => {
+  const lastEmitted = useRef(value || "");
+  const [hh, setHh] = useState(() => parseHHMM(value).hh);
+  const [mm, setMm] = useState(() => parseHHMM(value).mm);
+  const [ampm, setAmpm] = useState(() => parseHHMM(value).ampm);
+  // Resync from the outside ONLY when the external value differs from
+  // whatever we last sent up. Without this guard, every parent re-render
+  // would clobber the user's mid-edit minute field.
+  useEffect(() => {
+    if (value === lastEmitted.current) return;
+    const p = parseHHMM(value);
+    setHh(p.hh);
+    setMm(p.mm);
+    setAmpm(p.ampm);
+    lastEmitted.current = value || "";
+  }, [value]);
+  const commit = (nh, nm, nap) => {
+    if (!nh) {
+      if (lastEmitted.current !== "") { lastEmitted.current = ""; onChange(""); }
+      return;
+    }
     const ih = parseInt(nh, 10);
     const im = nm === "" ? 0 : parseInt(nm, 10);
     if (isNaN(ih) || ih < 1 || ih > 12 || isNaN(im) || im < 0 || im > 59) {
-      onChange("");
+      // Mid-edit — leave the local fields alone so the user can keep typing.
       return;
     }
     let h24 = ih === 12 ? 0 : ih;
     if (nap === "PM") h24 = (ih === 12) ? 12 : ih + 12;
-    onChange(`${String(h24).padStart(2, "0")}:${String(im).padStart(2, "0")}`);
+    const next = `${String(h24).padStart(2, "0")}:${String(im).padStart(2, "0")}`;
+    if (next !== lastEmitted.current) { lastEmitted.current = next; onChange(next); }
   };
+  const onChangeHh = (raw) => {
+    if (raw.includes(":")) {
+      const [hPart, mPart = ""] = raw.split(":");
+      const h = hPart.replace(/\D/g, "").slice(0, 2);
+      const m = (mPart || "").replace(/\D/g, "").slice(0, 2);
+      setHh(h); setMm(m); commit(h, m, ampm);
+      if (mmRef.current) mmRef.current.focus();
+      return;
+    }
+    const v = raw.replace(/\D/g, "").slice(0, 2);
+    setHh(v); commit(v, mm, ampm);
+    if (v.length === 2 && mmRef.current) mmRef.current.focus();
+  };
+  const onChangeMm = (raw) => {
+    const v = raw.replace(/\D/g, "").slice(0, 2);
+    setMm(v); commit(hh, v, ampm);
+  };
+  const setAmpmAnd = (nap) => { setAmpm(nap); commit(hh, mm, nap); };
   return (
     <div className="flex items-center gap-1.5">
       <input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2}
-        value={parsed.hh} placeholder={hhPlaceholder}
+        value={hh} placeholder={hhPlaceholder}
         onKeyDown={e => {
-          // ":" or " " jumps to the minute box so the user can type "5:30"
-          // naturally instead of having to tap the next field manually.
           if (e.key === ":" || e.key === " " || e.key === "ArrowRight") {
             e.preventDefault();
             if (mmRef.current) mmRef.current.focus();
           }
         }}
-        onChange={e => {
-          const raw = e.target.value;
-          // If the user pasted/typed "5:30" or "530" into HH, split it
-          // across both fields automatically.
-          if (raw.includes(":")) {
-            const [hPart, mPart = ""] = raw.split(":");
-            emit(hPart.replace(/\D/g, "").slice(0, 2), mPart.replace(/\D/g, "").slice(0, 2), parsed.ampm);
-            if (mmRef.current) mmRef.current.focus();
-            return;
-          }
-          const v = raw.replace(/\D/g, "").slice(0, 2);
-          emit(v, parsed.mm, parsed.ampm);
-          // Auto-advance once the hour box reaches 2 digits.
-          if (v.length === 2 && mmRef.current) mmRef.current.focus();
-        }}
+        onChange={e => onChangeHh(e.target.value)}
         className="w-11 text-center px-1 py-1.5 border rounded text-sm bg-white border-stone-200 focus:border-[#7a9a6e] outline-none" />
-      <span className="text-stone-700 font-semibold text-base select-none">:</span>
+      <button type="button" tabIndex={-1}
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => { if (mmRef.current) mmRef.current.focus(); }}
+        className="text-stone-700 font-semibold text-base select-none px-1 leading-none cursor-pointer"
+        aria-label="Minutes">:</button>
       <input ref={mmRef} type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2}
-        value={parsed.mm} placeholder={mmPlaceholder}
-        onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); emit(parsed.hh, v, parsed.ampm); }}
+        value={mm} placeholder={mmPlaceholder}
+        onChange={e => onChangeMm(e.target.value)}
         className="w-11 text-center px-1 py-1.5 border rounded text-sm bg-white border-stone-200 focus:border-[#7a9a6e] outline-none" />
       <div className="inline-flex border border-stone-200 rounded overflow-hidden ml-1 text-[10px] font-semibold tracking-wider">
         <button type="button" tabIndex={-1}
           onMouseDown={e => e.preventDefault()}
-          onClick={() => emit(parsed.hh, parsed.mm, "AM")}
-          className={`px-2 py-1.5 transition ${parsed.ampm === "AM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>AM</button>
+          onClick={() => setAmpmAnd("AM")}
+          className={`px-2 py-1.5 transition ${ampm === "AM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>AM</button>
         <button type="button" tabIndex={-1}
           onMouseDown={e => e.preventDefault()}
-          onClick={() => emit(parsed.hh, parsed.mm, "PM")}
-          className={`px-2 py-1.5 transition ${parsed.ampm === "PM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>PM</button>
+          onClick={() => setAmpmAnd("PM")}
+          className={`px-2 py-1.5 transition ${ampm === "PM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>PM</button>
       </div>
     </div>
   );
@@ -9206,6 +9316,15 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   // "none" = one-off task. "daily" = appears every day. "weekly" = appears
   // every week on the same weekday as the active date.
   const [newRecurrence, setNewRecurrence] = useState("none");
+  // When the user taps a schedule cell to add, we remember the cell's day
+  // here so the new task lands on THAT day without dragging the visible
+  // TO-DO list off the day she was already viewing. Null = use `date`.
+  const [modalTaskDate, setModalTaskDate] = useState(null);
+  // When a schedule cell has 2+ overlapping tasks/events, tapping the
+  // "+N" block opens a popup listing all of them so each is readable
+  // instead of getting squashed into a narrow side-by-side column.
+  // Stores "<iso>|<hour>" or null.
+  const [cellExpanderKey, setCellExpanderKey] = useState(null);
   // Selected color category for the task being created/edited in the modal.
   const [newTaskColorId, setNewTaskColorId] = useState("g");
   // Toggle for the inline "rename my categories" editor inside the modal.
@@ -9472,6 +9591,28 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     const cell = timeToMin(hourLabel);
     return cell >= start && cell < end;
   };
+  // Returns true if the task's time range OVERLAPS the 30-min cell that
+  // starts at hourLabel. Unlike taskCoversHour this catches tasks that
+  // start mid-cell — e.g. a 6:05 AM shower still shows up in the 6:00 AM
+  // cell so it doesn't disappear off the grid.
+  const taskOverlapsHour = (task, hourLabel) => {
+    const start = task.startTime ? timeToMin(task.startTime) : -1;
+    if (start < 0) return false;
+    const endRaw = task.endTime ? timeToMin(task.endTime) : -1;
+    const end = endRaw > start ? endRaw : start + 30;
+    const cellStart = timeToMin(hourLabel);
+    const cellEnd = cellStart + 30;
+    return start < cellEnd && end > cellStart;
+  };
+  // True when the task's startTime falls inside this 30-min cell. The
+  // schedule block uses this to decide which cell shows the title text
+  // (so a 6:05 task shows its label in the 6:00 cell, not the 6:30 one).
+  const taskStartsInCell = (task, hourLabel) => {
+    const start = task.startTime ? timeToMin(task.startTime) : -1;
+    if (start < 0) return false;
+    const cellStart = timeToMin(hourLabel);
+    return start >= cellStart && start < cellStart + 30;
+  };
 
   // ----- To-do list -----
   const allTasks = Array.isArray(data.tasks) ? data.tasks : [];
@@ -9523,7 +9664,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     const startTime = newStart ? to12h(newStart) : "";
     const endTime = newEnd ? to12h(newEnd) : "";
     const notes = (newTaskNotes || "").trim();
-    const task = { id, title, date, done: false };
+    const task = { id, title, date: modalTaskDate || date, done: false };
     if (startTime) task.startTime = startTime;
     if (endTime) task.endTime = endTime;
     if (notes) task.notes = notes;
@@ -10200,6 +10341,27 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   // Pre-fill the AddTask modal with an existing task's values so tapping a
   // schedule grid block opens the edit form right there. Submit will then
   // route to "update this task in place" instead of "add a new one."
+  // Tapping an empty grid cell opens the same AddTask modal that the
+  // green "+ Add" header button opens, but pre-fills the day and time
+  // from the cell so she can pick color / recurrence / edit in one shot
+  // without scrolling back to the header.
+  const openModalForCell = (iso, hour) => {
+    // Stash the target date on a separate state slot so the TO-DO list
+    // above (which reads `date`) doesn't jump to a different day.
+    setModalTaskDate(iso || null);
+    setEditingTaskIdFromSchedule(null);
+    setNewTitle("");
+    setNewTaskNotes("");
+    setNewTaskPriority(false);
+    setNewRecurrence("none");
+    setNewTaskColorId("g");
+    setEditingColorLabels(false);
+    const startT = to24h(hour);
+    setNewStart(startT);
+    setNewEnd(addMinutesTo(startT, 30));
+    setAddTaskModalOpen(true);
+  };
+
   const openTaskEditorFromSchedule = (task) => {
     if (!task) return;
     setEditingTaskIdFromSchedule(task.id);
@@ -10226,12 +10388,13 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     const startTime = newStart ? to12h(newStart) : "";
     const endTime = newEnd ? to12h(newEnd) : "";
     const notes = (newTaskNotes || "").trim();
-    const rule = { id, title, recurrence, startDate: date, doneByDate: {} };
+    const startDate = modalTaskDate || date;
+    const rule = { id, title, recurrence, startDate, doneByDate: {} };
     if (startTime) rule.startTime = startTime;
     if (endTime) rule.endTime = endTime;
     if (notes) rule.notes = notes;
     if (newTaskColorId) rule.colorId = newTaskColorId;
-    if (recurrence === "weekly") rule.weekday = dayOfWeekIdx(date);
+    if (recurrence === "weekly") rule.weekday = dayOfWeekIdx(startDate);
     setRecurringTasks([...recurringTasks, rule]);
   };
 
@@ -10339,6 +10502,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     setNewRecurrence("none");
     setNewTaskColorId("g");
     setEditingColorLabels(false);
+    setModalTaskDate(null);
     setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
@@ -10359,6 +10523,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     setNewRecurrence("none");
     setNewTaskColorId("g");
     setEditingColorLabels(false);
+    setModalTaskDate(null);
     setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
@@ -10367,6 +10532,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     setNewRecurrence("none");
     setNewTaskColorId("g");
     setEditingColorLabels(false);
+    setModalTaskDate(null);
     setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
@@ -10566,9 +10732,74 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     </div>
   ) : null;
 
+  // Popup that opens when the user taps a "+N things" stack indicator on
+  // the schedule. Lists each overlapping item (task / recurring / event)
+  // as its own row with title + time + tap-to-edit. Closes on backdrop
+  // tap or after the user opens any item.
+  const CellExpanderPopup = (() => {
+    if (!cellExpanderKey) return null;
+    const sepIdx = cellExpanderKey.indexOf("|");
+    const xIso = cellExpanderKey.slice(0, sepIdx);
+    const xHour = cellExpanderKey.slice(sepIdx + 1);
+    const xTasks = allTasks.filter(t => t && t.date === xIso && taskOverlapsHour(t, xHour));
+    const xRecurring = dayRecurringOccurrences(xIso).filter(r => taskOverlapsHour(r, xHour));
+    const xEvents = ((data.calendarEvents || {})[xIso] || []).filter(e => taskOverlapsHour(e, xHour));
+    const xTaskLike = [...xTasks, ...xRecurring];
+    const xAll = [...xTaskLike, ...xEvents];
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setCellExpanderKey(null)}>
+        <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-4 sm:p-5 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-baseline justify-between mb-3 gap-2 flex-wrap">
+            <h3 className="font-serif text-lg" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+              {t("At this time", lang)}
+            </h3>
+            <span className="text-[11px] text-stone-500">{xHour} · {fmtDate(xIso)}</span>
+          </div>
+          <ul className="space-y-1.5">
+            {xAll.map((entry) => {
+              const isEvent = !xTaskLike.includes(entry);
+              const blockColor = !isEvent ? colorForId(entry.colorId).color : "#5b7351";
+              return (
+                <li key={`${entry.id}-${entry.title}`}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCellExpanderKey(null);
+                      if (!isEvent) openTaskEditorFromSchedule(entry);
+                    }}
+                    className="w-full flex items-center gap-2 p-2 rounded-lg border border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]/40 transition text-left"
+                  >
+                    <span className="w-2 h-8 rounded-sm flex-shrink-0" style={{ background: blockColor }} />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-medium text-stone-800 truncate">
+                        {entry._recurring ? "↻ " : ""}{entry.title || t("(untitled)", lang)}
+                      </div>
+                      {(entry.startTime || entry.endTime) && (
+                        <div className="text-[11px] text-stone-500">
+                          {entry.startTime || ""}{entry.endTime ? " – " + entry.endTime : ""}
+                        </div>
+                      )}
+                    </div>
+                    {!isEvent && <ArrowRight className="w-3.5 h-3.5 text-stone-400 flex-shrink-0" />}
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          <div className="mt-3 flex justify-end">
+            <button onClick={() => setCellExpanderKey(null)} className="px-3 py-1.5 text-xs uppercase tracking-wider text-stone-500 hover:text-stone-800">
+              {t("Close", lang)}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  })();
+
   return (
     <div className="p-3 sm:p-6 lg:p-10 max-w-6xl mx-auto space-y-4 sm:space-y-6 overflow-x-hidden">
       {AddTaskModal}
+      {CellExpanderPopup}
       {AddWinModal}
       <PageHeader title={t("Daily Planner", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
@@ -10674,10 +10905,10 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                 const cellMin = timeToMin(hour);
                 const endsAtCell = (item) => item && item.endTime && timeToMin(item.endTime) === cellMin;
                 return weekDates.some(iso => {
-                  if (allTasks.some(tk => tk && tk.date === iso && taskCoversHour(tk, hour))) return true;
-                  if (dayRecurringOccurrences(iso).some(rt => rt && taskCoversHour(rt, hour))) return true;
+                  if (allTasks.some(tk => tk && tk.date === iso && taskOverlapsHour(tk, hour))) return true;
+                  if (dayRecurringOccurrences(iso).some(rt => rt && taskOverlapsHour(rt, hour))) return true;
                   const evs = allCalEvents[iso] || [];
-                  if (evs.some(ev => ev && taskCoversHour(ev, hour))) return true;
+                  if (evs.some(ev => ev && taskOverlapsHour(ev, hour))) return true;
                   // Show the :30 divider when a task ENDS at that :30 mark
                   // so a 5:00-5:30 task ends visually at 5:30 instead of
                   // filling the whole 5:00 cell to look like a 60-min event.
@@ -10700,81 +10931,119 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                       const cellKey = iso + "|" + hour;
                       const cellValue = ((planners[iso] || {}).blocks || {})[hour] || "";
                       const isFocused = focusedCell === cellKey;
-                      // Surface anything scheduled across this hour — either
-                      // a Daily-Planner task or a Calendar event. If multiple
-                      // overlap, the first task wins; otherwise first event.
-                      const coveringTask = allTasks.find(tk =>
-                        tk && tk.date === iso && taskCoversHour(tk, hour)
+                      // Every task / recurring occurrence / calendar event
+                      // that overlaps this 30-min cell. Multiple entries
+                      // render side-by-side so a 6:00 and 6:05 task both
+                      // show — instead of one quietly hiding the other.
+                      const cellTasks = allTasks.filter(tk =>
+                        tk && tk.date === iso && taskOverlapsHour(tk, hour)
                       );
-                      // Recurring tasks (daily / weekly) — materialize the
-                      // virtual occurrence for this iso so it shows on the
-                      // grid and stays tappable for edit/delete.
-                      const coveringRecurring = !coveringTask && dayRecurringOccurrences(iso).find(rt =>
-                        rt && taskCoversHour(rt, hour)
+                      const cellRecurring = dayRecurringOccurrences(iso).filter(rt =>
+                        rt && taskOverlapsHour(rt, hour)
                       );
                       const dayEvents = (data.calendarEvents || {})[iso] || [];
-                      const coveringEvent = !coveringTask && !coveringRecurring && dayEvents.find(ev =>
-                        ev && taskCoversHour(ev, hour)
+                      const cellEvents = dayEvents.filter(ev =>
+                        ev && taskOverlapsHour(ev, hour)
                       );
-                      const coveringTaskLike = coveringTask || coveringRecurring;
-                      const coveringItem = coveringTaskLike || coveringEvent;
-                      const isTaskStart =
-                        coveringItem && timeToMin(coveringItem.startTime) === timeToMin(hour);
-                      const blockColor = coveringTaskLike
-                        ? colorForId(coveringTaskLike.colorId).color
-                        : "#5b7351";
+                      const cellTaskLike = [...cellTasks, ...cellRecurring];
+                      const cellAll = [...cellTaskLike, ...cellEvents];
+                      const hasAny = cellAll.length > 0;
+                      // Two buckets per cell:
+                      //   - startsHere: items whose start-time falls IN this 30-min cell.
+                      //     Each gets its own stacked row with a visible WHITE title so
+                      //     the user always sees what's scheduled — no "+N things" pill.
+                      //   - continuesHere: items that started earlier but still cover
+                      //     this cell. Rendered as thin colored stripes so a multi-cell
+                      //     block reads as one continuous event without repeating titles.
+                      const startsHere = cellAll.filter(e => taskStartsInCell(e, hour));
+                      const continuesHere = cellAll.filter(e => !taskStartsInCell(e, hour));
                       return (
-                        <div key={cellKey} className="relative border-l border-stone-100">
-                          {/* Google-Calendar-style block: every covered cell
-                              gets a full-cell colored fill so a multi-row
-                              task reads as one continuous event. Only the
-                              start cell carries the title text. */}
-                          {coveringItem && (
-                            coveringTaskLike ? (
-                              <button
-                                type="button"
-                                onClick={(e) => { e.stopPropagation(); openTaskEditorFromSchedule(coveringTaskLike); }}
-                                className="absolute left-0.5 right-0.5 top-0 bottom-0 rounded text-left hover:opacity-90 z-[6] overflow-hidden"
-                                style={{ background: blockColor }}
-                                title={`${t("Tap to edit", lang)} · ${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}${coveringRecurring ? " · " + t("permanent", lang) : ""}`}
-                              >
-                                {isTaskStart && (
-                                  <span className="block px-1 py-0.5 text-[9px] font-semibold text-white truncate">
-                                    {coveringRecurring ? "↻ " : ""}{coveringItem.title}
-                                  </span>
-                                )}
-                              </button>
-                            ) : (
+                        <div key={cellKey} className="relative border-l border-stone-100" style={{ minHeight: 24 }}>
+                          {/* Continuation stripes — sit behind everything, give a
+                              subtle vertical color trail so a 5:00-7:00 block
+                              still reads as continuous across cells. */}
+                          {continuesHere.map((entry, i) => {
+                            const isEvent = !cellTaskLike.includes(entry);
+                            const blockColor = !isEvent ? colorForId(entry.colorId).color : "#5b7351";
+                            return (
                               <div
-                                className="absolute left-0.5 right-0.5 top-0 bottom-0 rounded pointer-events-none z-[5] overflow-hidden"
-                                style={{ background: blockColor }}
-                                title={`${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}`}
-                              >
-                                {isTaskStart && (
-                                  <span className="block px-1 py-0.5 text-[9px] font-semibold text-white truncate">
-                                    {coveringItem.title}
+                                key={`cont-${entry.id}-${i}`}
+                                className="absolute left-0.5 right-0.5 top-0 bottom-0 pointer-events-none z-[3]"
+                                style={{ background: blockColor, opacity: 0.35 }}
+                              />
+                            );
+                          })}
+
+                          {/* Title rows for every task starting here. Each
+                              is a full-width button with WHITE title text on
+                              its category color. Cell height grows naturally
+                              so 4 tasks at once = 4 readable rows instead of
+                              one squished pill. */}
+                          {startsHere.length > 0 && (
+                            <div className="relative z-[6] flex flex-col gap-px py-px">
+                              {startsHere.map((entry, i) => {
+                                const isEvent = !cellTaskLike.includes(entry);
+                                const blockColor = !isEvent ? colorForId(entry.colorId).color : "#5b7351";
+                                const isRecurring = entry._recurring;
+                                const titleAttr = `${!isEvent ? t("Tap to edit", lang) + " · " : ""}${entry.title || ""}${entry.startTime ? ` · ${entry.startTime}${entry.endTime ? "–" + entry.endTime : ""}` : ""}${isRecurring ? " · " + t("permanent", lang) : ""}`;
+                                const titleNode = (
+                                  <span className="block px-1 py-0.5 text-[8px] sm:text-[9px] font-semibold text-white truncate leading-tight">
+                                    {isRecurring ? "↻ " : ""}{entry.title || t("(untitled)", lang)}
                                   </span>
-                                )}
-                              </div>
-                            )
+                                );
+                                return isEvent ? (
+                                  <div key={`ev-${entry.id}-${i}`} className="rounded overflow-hidden mx-0.5" style={{ background: blockColor }} title={titleAttr}>
+                                    {titleNode}
+                                  </div>
+                                ) : (
+                                  <button
+                                    key={`tk-${entry.id}-${i}`}
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); openTaskEditorFromSchedule(entry); }}
+                                    className="rounded overflow-hidden mx-0.5 text-left hover:opacity-90 transition"
+                                    style={{ background: blockColor }}
+                                    title={titleAttr}
+                                  >
+                                    {titleNode}
+                                  </button>
+                                );
+                              })}
+                            </div>
                           )}
-                          <textarea
-                            value={cellValue}
-                            onChange={e => updateBlockForDate(iso, hour, e.target.value)}
-                            onFocus={() => setFocusedCell(cellKey)}
-                            onBlur={() => setFocusedCell(prev => prev === cellKey ? null : prev)}
-                            rows={isFocused ? 6 : 1}
-                            placeholder=""
-                            title={cellValue || (coveringItem ? coveringItem.title : "")}
-                            className={`relative z-[1] w-full text-[10px] leading-tight px-1 py-0.5 outline-none resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:border focus:border-[#7a9a6e] focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30 ${cellValue ? "bg-white text-stone-800" : "bg-transparent hover:bg-stone-50"}`}
-                            style={{
-                              minHeight: isFocused ? "130px" : "24px",
-                              height: isFocused ? "auto" : "24px",
-                              // Push manual text below the badge so they
-                              // don't overlap on the starting cell.
-                              paddingTop: coveringItem && isTaskStart && !isFocused ? "14px" : undefined,
-                            }}
-                          />
+                          {/* Empty cell — show tap-to-add overlay. Legacy
+                              free-form text cells show the textarea. Cells
+                              with tasks just rely on the rows rendered above
+                              (continuation cells get the stripe; nothing
+                              else needed). */}
+                          {!hasAny && !cellValue ? (
+                            <button
+                              type="button"
+                              onClick={() => openModalForCell(iso, hour)}
+                              className="absolute inset-0 w-full h-full z-[1] bg-transparent hover:bg-stone-50 transition cursor-pointer"
+                              title={t("Tap to add at this time", lang)}
+                              aria-label={t("Tap to add at this time", lang)}
+                            />
+                          ) : !hasAny ? (
+                            <textarea
+                              value={cellValue}
+                              onChange={e => updateBlockForDate(iso, hour, e.target.value)}
+                              onFocus={() => setFocusedCell(cellKey)}
+                              onBlur={() => setFocusedCell(prev => prev === cellKey ? null : prev)}
+                              rows={isFocused ? 6 : 1}
+                              placeholder=""
+                              title={cellValue}
+                              className={`relative z-[1] w-full text-[10px] leading-tight px-1 py-0.5 outline-none resize-none overflow-hidden focus:overflow-auto focus:bg-[#f4f7ee] focus:border focus:border-[#7a9a6e] focus:z-10 focus:shadow-lg focus:ring-2 focus:ring-[#7a9a6e]/30 ${cellValue ? "bg-white text-stone-800" : "bg-transparent hover:bg-stone-50"}`}
+                              style={{
+                                minHeight: isFocused ? "130px" : "24px",
+                                height: isFocused ? "auto" : "24px",
+                              }}
+                            />
+                          ) : startsHere.length === 0 ? (
+                            // Continuation-only cell — stretch the row's
+                            // height to match the rest of the column. The
+                            // stripe above handles the visual.
+                            <div className="w-full" style={{ height: 24 }} />
+                          ) : null}
                         </div>
                       );
                     })}

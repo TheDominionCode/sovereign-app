@@ -162,6 +162,39 @@ export default async function WelcomePage({ searchParams }: { searchParams: Sear
           </div>
         </section>
 
+        {/* WHAT'S NEW — refreshed for every release so new signups walk in
+            knowing the latest. Keep this list short (~8 items) and in the
+            user's voice — what changed for HER, not the engineering of it. */}
+        <section className="rounded-2xl border border-[#d9cdb8] bg-white p-7 sm:p-9 shadow-sm mb-10">
+          <div className="text-[10px] tracking-[0.18em] uppercase text-[#856a3f] font-semibold mb-3">
+            Latest updates
+          </div>
+          <h2
+            className="font-serif text-3xl mb-5"
+            style={{ fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+          >
+            Fresh from this week
+          </h2>
+          <ul className="space-y-2.5 text-sm text-[#2c2926]">
+            {[
+              "Weekly Schedule now reads like Google Calendar — full-duration colored blocks with the title in white.",
+              "Pick a color category for every task (Family · Personal · Work · Self-care · Spiritual · Other) and rename them to mean whatever fits your life.",
+              "Mark tasks as permanent — every day, or every Monday, at the same time. They appear forever, no re-entry.",
+              "Tap any empty cell on the schedule to add a task at that exact time.",
+              "Tasks that overlap stack with every title visible instead of hiding behind each other.",
+              "Personal Finance: a new Subscriptions tab with cost, login email, and password — all in one place.",
+              "Vision Board: arrows on every card so you can reorder your dream lineup.",
+              "Affirmations now translate to Spanish (all 30 default ones).",
+              "You stay signed in — no more daily re-login on the phone.",
+            ].map((line) => (
+              <li key={line} className="flex gap-2.5 leading-relaxed">
+                <span className="text-[#5b7351] flex-shrink-0 mt-0.5">✓</span>
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         {/* HOW IT WORKS */}
         <section className="mb-10">
           <div className="text-[10px] tracking-[0.18em] uppercase text-[#856a3f] font-semibold mb-4">
