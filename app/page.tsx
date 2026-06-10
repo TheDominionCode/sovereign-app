@@ -1291,6 +1291,94 @@ const landingCss = `
     .landing-root .cta-row{flex-direction:column;align-items:stretch}
     .landing-root .btn{justify-content:center}
   }
+
+  /* =========================================================
+     LIFESTYLE GALLERY — "Real life with Sovereign"
+     Pinterest-ish grid of in-the-wild photos showing the app
+     across real days. Mobile collapses to a single column so
+     each image is readable on a phone instead of squashed.
+     ========================================================= */
+  .landing-root .lifestyle{padding:90px 0;background:linear-gradient(180deg, var(--ivory) 0%, var(--cream) 100%)}
+  .landing-root .lifestyle .section-eyebrow.center{margin-bottom:14px}
+  .landing-root .lifestyle h2{
+    text-align:center;font-family:'Cormorant Garamond',serif;
+    font-size:46px;line-height:1.1;letter-spacing:-0.01em;color:var(--ink);
+    margin-bottom:18px;font-weight:400;
+  }
+  .landing-root .lifestyle .section-sub{
+    text-align:center;color:var(--muted);font-size:17px;
+    max-width:540px;margin:0 auto 56px;line-height:1.6;
+  }
+  .landing-root .lifestyle-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);
+    gap:18px;max-width:1180px;margin:0 auto;
+  }
+  .landing-root .lifestyle-tile{
+    position:relative;overflow:hidden;border-radius:14px;
+    box-shadow:0 18px 40px rgba(26,24,22,0.08);
+    background:var(--cream);transition:transform .35s ease;
+  }
+  .landing-root .lifestyle-tile:hover{transform:translateY(-3px)}
+  .landing-root .lifestyle-tile.tall{aspect-ratio:3/4}
+  .landing-root .lifestyle-tile.wide{aspect-ratio:1/1}
+  .landing-root .lifestyle-tile img{
+    display:block;width:100%;height:100%;object-fit:cover;
+  }
+  .landing-root .lifestyle-cap{
+    position:absolute;left:0;right:0;bottom:0;padding:18px 18px 20px;
+    background:linear-gradient(180deg, rgba(26,24,22,0) 0%, rgba(26,24,22,0.65) 80%);
+    color:#fff;
+  }
+  .landing-root .lifestyle-cap .kicker{
+    font-size:10px;letter-spacing:0.24em;text-transform:uppercase;
+    color:rgba(255,255,255,0.75);margin-bottom:6px;
+  }
+  .landing-root .lifestyle-cap .label{
+    font-family:'Cormorant Garamond',serif;font-size:22px;font-style:italic;line-height:1.15;
+  }
+  @media (max-width:960px){
+    .landing-root .lifestyle{padding:70px 0}
+    .landing-root .lifestyle h2{font-size:36px}
+    .landing-root .lifestyle-grid{grid-template-columns:1fr 1fr;gap:14px}
+  }
+  @media (max-width:560px){
+    .landing-root .lifestyle{padding:54px 0}
+    .landing-root .lifestyle h2{font-size:30px;line-height:1.15}
+    .landing-root .lifestyle .section-sub{font-size:15px;margin-bottom:36px}
+    .landing-root .lifestyle-grid{grid-template-columns:1fr;gap:14px}
+    .landing-root .lifestyle-tile.tall,
+    .landing-root .lifestyle-tile.wide{aspect-ratio:4/5}
+    .landing-root .lifestyle-cap{padding:14px 14px 16px}
+    .landing-root .lifestyle-cap .label{font-size:20px}
+  }
+
+  /* =========================================================
+     ADDITIONAL MOBILE POLISH — every section on phones
+     Existing media queries handle big-ticket layout shifts;
+     these add the typography + padding refinements so the
+     page feels finished on a phone, not just functional.
+     ========================================================= */
+  @media (max-width:768px){
+    .landing-root .container{padding:0 20px}
+    .landing-root .hero{padding:48px 0 56px}
+    .landing-root .hero h1,
+    .landing-root .hero-center h1{font-size:42px;line-height:1.1}
+    .landing-root .hero-sub{font-size:16px}
+    .landing-root section{padding:60px 0}
+    .landing-root h2{font-size:34px;line-height:1.15}
+    .landing-root .section-sub{font-size:15px}
+    .landing-root .strip{padding:14px 0}
+    .landing-root .strip-inner span{font-size:12px;padding:0 18px}
+  }
+  @media (max-width:480px){
+    .landing-root .hero h1,
+    .landing-root .hero-center h1{font-size:36px}
+    .landing-root .hero-sub{font-size:15px}
+    .landing-root h2{font-size:28px}
+    .landing-root .nav-row{padding:12px 0}
+    .landing-root .logo{font-size:18px;letter-spacing:0.24em}
+    .landing-root .nav-price-amt{font-size:16px}
+  }
 `;
 
 type Lang = "en" | "es";
@@ -2053,6 +2141,83 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {/* LIFESTYLE GALLERY — real photos of the app being lived with.
+          Bilingual via inline ternary so we don't need to refactor the
+          Copy type for one section. Six tiles in a 3-col grid on desktop,
+          2-col on tablet, single column on phone. */}
+      <section className="lifestyle">
+        <div className="container">
+          <div className="section-eyebrow center">
+            {lang === "es" ? "La vida con Sovereign" : "Real life with Sovereign"}
+          </div>
+          <h2>
+            {lang === "es" ? (
+              <>
+                El día, <span className="italic">tuyo</span>
+              </>
+            ) : (
+              <>
+                The day, <span className="italic">yours</span>
+              </>
+            )}
+          </h2>
+          <p className="section-sub">
+            {lang === "es"
+              ? "Sovereign no se queda en la pantalla — se entrelaza con la cafetería, el Pilates, la mañana lenta, la vista del horario antes de empezar."
+              : "Sovereign doesn't stay on the screen — it weaves into the matcha, the Pilates session, the slow morning, the schedule glance before the day begins."}
+          </p>
+
+          <div className="lifestyle-grid">
+            {[
+              {
+                src: "/images/landing/lifestyle-signin.png",
+                kicker: lang === "es" ? "El regreso" : "Welcome back",
+                label: lang === "es" ? "Hábitos antes del café." : "Habits before the coffee.",
+                cls: "tall",
+              },
+              {
+                src: "/images/landing/lifestyle-schedule.png",
+                kicker: lang === "es" ? "El horario" : "Weekly schedule",
+                label: lang === "es" ? "Un día entero, en un vistazo." : "A whole week at a glance.",
+                cls: "tall",
+              },
+              {
+                src: "/images/landing/lifestyle-vision.png",
+                kicker: lang === "es" ? "Vision Board" : "Vision Board",
+                label: lang === "es" ? "La vida que estás construyendo." : "The life you're building.",
+                cls: "tall",
+              },
+              {
+                src: "/images/landing/lifestyle-menu.png",
+                kicker: lang === "es" ? "Todo en una app" : "All in one place",
+                label: lang === "es" ? "Trece secciones para tu día." : "Thirteen sections for your day.",
+                cls: "tall",
+              },
+              {
+                src: "/images/landing/lifestyle-habits.png",
+                kicker: lang === "es" ? "El ritmo" : "Daily rhythm",
+                label: lang === "es" ? "Los hábitos que te traen de vuelta." : "The habits that bring you back.",
+                cls: "tall",
+              },
+              {
+                src: "/images/landing/lifestyle-flatlay.png",
+                kicker: lang === "es" ? "La mañana" : "Morning ritual",
+                label: lang === "es" ? "Tu rutina, ordenada." : "Your routine, in order.",
+                cls: "tall",
+              },
+            ].map((t) => (
+              <div key={t.src} className={`lifestyle-tile ${t.cls}`}>
+                <img src={t.src} alt={t.label} loading="lazy" />
+                <div className="lifestyle-cap">
+                  <div className="kicker">{t.kicker}</div>
+                  <div className="label">{t.label}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <section id="pillars" className="pillars">
         <div className="container">
