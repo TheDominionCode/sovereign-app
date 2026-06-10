@@ -1321,6 +1321,46 @@ const landingCss = `
   .landing-root .lifestyle-tile:hover{transform:translateY(-3px)}
   .landing-root .lifestyle-tile.tall{aspect-ratio:3/4}
   .landing-root .lifestyle-tile.wide{aspect-ratio:1/1}
+  /* Pillar tile — taller bottom panel that carries the roman numeral,
+     pillar name, and full description for one of the three brand pillars
+     (Stillness · Strength · Sovereignty). Visually heavier than the
+     supporting lifestyle tiles so the pillars read first. */
+  .landing-root .lifestyle-tile.pillar{aspect-ratio:3/4.4}
+  .landing-root .lifestyle-tile.pillar .lifestyle-cap{
+    padding:22px 20px 22px;
+    background:linear-gradient(180deg, rgba(26,24,22,0) 0%, rgba(26,24,22,0.55) 35%, rgba(26,24,22,0.85) 100%);
+  }
+  .landing-root .lifestyle-tile.pillar .num{
+    font-family:'Cormorant Garamond',serif;
+    font-size:13px;font-style:italic;letter-spacing:0.06em;
+    color:var(--gold);margin-bottom:6px;
+  }
+  .landing-root .lifestyle-tile.pillar .name{
+    font-family:'Cormorant Garamond',serif;
+    font-size:30px;line-height:1.1;color:#fff;margin-bottom:10px;
+  }
+  .landing-root .lifestyle-tile.pillar .desc{
+    font-size:13px;line-height:1.55;color:rgba(245,239,230,0.88);
+    max-width:34ch;
+  }
+  /* Wide showcase tile — the closing "see-inside" image. Spans the full
+     grid width on desktop, sits as a hero crescendo under the lifestyle
+     grid. Uses object-position:top so the app's title row never crops off
+     the top of the screenshot. */
+  .landing-root .lifestyle-tile.showcase{
+    grid-column:1 / -1;aspect-ratio:16/7;
+  }
+  .landing-root .lifestyle-tile.showcase img{object-position:top center}
+  @media (max-width:960px){
+    .landing-root .lifestyle-tile.pillar{aspect-ratio:3/4}
+    .landing-root .lifestyle-tile.pillar .name{font-size:24px}
+    .landing-root .lifestyle-tile.showcase{aspect-ratio:4/3}
+  }
+  @media (max-width:560px){
+    .landing-root .lifestyle-tile.pillar .name{font-size:22px}
+    .landing-root .lifestyle-tile.pillar .desc{font-size:12.5px}
+    .landing-root .lifestyle-tile.showcase{aspect-ratio:3/2}
+  }
   .landing-root .lifestyle-tile img{
     display:block;width:100%;height:100%;object-fit:cover;
   }
@@ -2142,72 +2182,57 @@ export default function Home() {
         </div>
       </div>
 
-      {/* LIFESTYLE GALLERY — real photos of the app being lived with.
-          Bilingual via inline ternary so we don't need to refactor the
-          Copy type for one section. Six tiles in a 3-col grid on desktop,
-          2-col on tablet, single column on phone. */}
-      <section className="lifestyle">
+      {/* THREE PILLARS — combined into the lifestyle gallery so the
+          method and the photos read as one section. First row: 3 pillar
+          tiles (Stillness · Strength · Sovereignty) each paired with a
+          lifestyle image and the pillar copy. Second row: 3 supporting
+          lifestyle tiles. Closing showcase: a wide app screenshot. */}
+      <section id="pillars" className="lifestyle">
         <div className="container">
-          <div className="section-eyebrow center">
-            {lang === "es" ? "La vida con Sovereign" : "Real life with Sovereign"}
-          </div>
-          <h2>
-            {lang === "es" ? (
-              <>
-                El día, <span className="italic">tuyo</span>
-              </>
-            ) : (
-              <>
-                The day, <span className="italic">yours</span>
-              </>
-            )}
-          </h2>
-          <p className="section-sub">
-            {lang === "es"
-              ? "Sovereign no se queda en la pantalla — se entrelaza con la cafetería, el Pilates, la mañana lenta, la vista del horario antes de empezar."
-              : "Sovereign doesn't stay on the screen — it weaves into the matcha, the Pilates session, the slow morning, the schedule glance before the day begins."}
-          </p>
+          <div className="section-eyebrow center">{c.pillars.eyebrow}</div>
+          <h2>{renderParts(c.pillars.title)}</h2>
+          <p className="section-sub">{c.pillars.sub}</p>
 
           <div className="lifestyle-grid">
+            {/* Pillar row — each tile carries a paired lifestyle image and
+                the brand-pillar copy (numeral + name + description). */}
+            {c.pillars.items.map((item, idx) => {
+              const pillarImg = [
+                "/images/landing/lifestyle-flatlay.png", // Stillness — morning ritual
+                "/images/landing/lifestyle-habits.png",  // Strength  — daily rhythm
+                "/images/landing/lifestyle-menu.png",    // Sovereignty — all in one place
+              ][idx] || "/images/landing/lifestyle-flatlay.png";
+              return (
+                <div key={item.num} className="lifestyle-tile pillar">
+                  <img src={pillarImg} alt={item.title} loading="lazy" />
+                  <div className="lifestyle-cap">
+                    <div className="num">{item.num}</div>
+                    <div className="name">{item.title}</div>
+                    <div className="desc">{item.desc}</div>
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* Supporting lifestyle tiles — the day, in real life. */}
             {[
               {
                 src: "/images/landing/lifestyle-signin.png",
                 kicker: lang === "es" ? "El regreso" : "Welcome back",
                 label: lang === "es" ? "Hábitos antes del café." : "Habits before the coffee.",
-                cls: "tall",
               },
               {
                 src: "/images/landing/lifestyle-schedule.png",
                 kicker: lang === "es" ? "El horario" : "Weekly schedule",
                 label: lang === "es" ? "Un día entero, en un vistazo." : "A whole week at a glance.",
-                cls: "tall",
               },
               {
                 src: "/images/landing/lifestyle-vision.png",
                 kicker: lang === "es" ? "Vision Board" : "Vision Board",
                 label: lang === "es" ? "La vida que estás construyendo." : "The life you're building.",
-                cls: "tall",
-              },
-              {
-                src: "/images/landing/lifestyle-menu.png",
-                kicker: lang === "es" ? "Todo en una app" : "All in one place",
-                label: lang === "es" ? "Trece secciones para tu día." : "Thirteen sections for your day.",
-                cls: "tall",
-              },
-              {
-                src: "/images/landing/lifestyle-habits.png",
-                kicker: lang === "es" ? "El ritmo" : "Daily rhythm",
-                label: lang === "es" ? "Los hábitos que te traen de vuelta." : "The habits that bring you back.",
-                cls: "tall",
-              },
-              {
-                src: "/images/landing/lifestyle-flatlay.png",
-                kicker: lang === "es" ? "La mañana" : "Morning ritual",
-                label: lang === "es" ? "Tu rutina, ordenada." : "Your routine, in order.",
-                cls: "tall",
               },
             ].map((t) => (
-              <div key={t.src} className={`lifestyle-tile ${t.cls}`}>
+              <div key={t.src} className="lifestyle-tile tall">
                 <img src={t.src} alt={t.label} loading="lazy" />
                 <div className="lifestyle-cap">
                   <div className="kicker">{t.kicker}</div>
@@ -2215,24 +2240,22 @@ export default function Home() {
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
 
-      <section id="pillars" className="pillars">
-        <div className="container">
-          <div className="section-eyebrow center">{c.pillars.eyebrow}</div>
-          <h2 className="center">{renderParts(c.pillars.title)}</h2>
-          <p className="section-sub center">{c.pillars.sub}</p>
-
-          <div className="pillar-grid">
-            {c.pillars.items.map((item) => (
-              <div className="pillar" key={item.num}>
-                <div className="pillar-num">{item.num}</div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
+            {/* Closing showcase — the actual Vision Board screen so the
+                viewer sees the app one more time before scrolling on. */}
+            <div className="lifestyle-tile showcase">
+              <img
+                src="/images/landing/lifestyle-vision-screen.jpg"
+                alt={lang === "es" ? "Tablero de visión en la app" : "Vision Board inside the app"}
+                loading="lazy"
+              />
+              <div className="lifestyle-cap">
+                <div className="kicker">{lang === "es" ? "Dentro de Sovereign" : "Inside Sovereign"}</div>
+                <div className="label">
+                  {lang === "es" ? "El tablero de visión, vivo en tu bolsillo." : "Your vision board, alive in your pocket."}
+                </div>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
