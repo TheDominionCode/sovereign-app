@@ -3,20 +3,38 @@ import { NextResponse, type NextRequest } from "next/server";
 
 type CookieToSet = { name: string; value: string; options?: CookieOptions };
 
-// Keep Supabase auth cookies alive for 30 days so a phone going to sleep,
-// closing the tab, or backgrounding the PWA doesn't wipe the session. We
-// only extend non-empty cookie values — signout still clears properly
-// because Supabase rewrites the cookie with an empty value + maxAge: 0.
-const THIRTY_DAYS_SECONDS = 60 * 60 * 24 * 30;
-function extendAuthCookie(name: string, value: string, options?: CookieOptions): CookieOptions | undefined {
+// Keep Supabase auth cookies alive for the maximum the spec allows so
+// closing the tab, backgrounding the PWA, putting the phone to sleep, or
+// switching networks doesn't wipe the session. We only extend non-empty
+// cookie values — signout still clears properly because Supabase
+// rewrites the cookie with an empty value + maxAge: 0, which we honor.
+//
+// Chrome caps cookie lifetime at 400 days (~34.5M seconds); we use that.
+// We also drop any `expires` Date the SDK supplied so it can't shorten
+// maxAge, force `sameSite: lax` so OAuth + email-callback redirects keep
+// the cookie, set `path: '/'` so any page in the app can read it, and
+// flag `secure` outside localhost so iOS Safari doesn't silently reject
+// cross-restart cookies.
+const FOUR_HUNDRED_DAYS_SECONDS = 60 * 60 * 24 * 400;
+function extendAuthCookie(
+  name: string,
+  value: string,
+  options: CookieOptions | undefined,
+  isLocalhost: boolean
+): CookieOptions | undefined {
   if (!name.startsWith("sb-") || !value) return options;
   const next: CookieOptions = { ...(options || {}) };
-  if (!next.maxAge || next.maxAge < THIRTY_DAYS_SECONDS) next.maxAge = THIRTY_DAYS_SECONDS;
+  if (!next.maxAge || next.maxAge < FOUR_HUNDRED_DAYS_SECONDS) next.maxAge = FOUR_HUNDRED_DAYS_SECONDS;
+  delete (next as { expires?: unknown }).expires;
+  if (!next.sameSite) next.sameSite = "lax";
+  if (!next.path) next.path = "/";
+  if (next.secure === undefined) next.secure = !isLocalhost;
   return next;
 }
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
+  const isLocalhost = request.nextUrl.hostname.startsWith("localhost");
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -32,7 +50,7 @@ export async function updateSession(request: NextRequest) {
           );
           supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, extendAuthCookie(name, value, options))
+            supabaseResponse.cookies.set(name, value, extendAuthCookie(name, value, options, isLocalhost))
           );
         },
       },

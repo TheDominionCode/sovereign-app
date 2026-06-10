@@ -2136,6 +2136,11 @@ const TRANSLATIONS = {
     "permanent": "permanent",
     "daily": "daily",
     "Remove this permanent task from every day?": "Remove this permanent task from every day?",
+    // Schedule block color category (AddTask modal)
+    "Color category": "Color category",
+    "Rename categories": "Rename categories",
+    "Done": "Done",
+    "Label": "Label",
     // Owner profile quick-links (top-right avatar dropdown)
     "My links": "My links",
     "Add link": "Add link",
@@ -2803,6 +2808,11 @@ const TRANSLATIONS = {
     "permanent": "permanente",
     "daily": "diario",
     "Remove this permanent task from every day?": "¿Quitar esta tarea permanente de todos los días?",
+    // Categoría de color (modal del Horario)
+    "Color category": "Categoría de color",
+    "Rename categories": "Renombrar categorías",
+    "Done": "Listo",
+    "Label": "Nombre",
     // Enlaces rápidos del dueño (menú del avatar arriba a la derecha)
     "My links": "Mis enlaces",
     "Add link": "Agregar enlace",
@@ -9071,6 +9081,95 @@ const WEEK_HOURS = [
 
 const WEEK_DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+// Default schedule categories (color + label). The label is what the user
+// edits to mean whatever she wants — Family, Personal, Work, etc. — and
+// the color is what the block on the weekly schedule grid is filled with.
+// All six were chosen so white text on top stays legible.
+const DEFAULT_SCHEDULE_COLORS = [
+  { id: "g", color: "#5b7351", label: "Family" },
+  { id: "b", color: "#4a6fa5", label: "Personal" },
+  { id: "p", color: "#c97b85", label: "Self-care" },
+  { id: "o", color: "#d68b58", label: "Work" },
+  { id: "v", color: "#8a6daa", label: "Spiritual" },
+  { id: "s", color: "#7d7d7d", label: "Other" },
+];
+
+// Phone-friendly time picker — kept at module scope so it isn't remounted
+// every time a parent component re-renders (otherwise the inputs lose
+// focus and tap targets break mid-edit). value is canonical 24h "HH:MM"
+// or "". Typing ":" in the hour box auto-advances to the minute box so a
+// user can type "5:30" naturally without thinking about which box is
+// which.
+function TimePartInput({ value, onChange, hhPlaceholder = "9", mmPlaceholder = "30" }) {
+  const mmRef = useRef(null);
+  const parsed = (() => {
+    const mm = /^(\d{1,2}):(\d{2})$/.exec(String(value || "").trim());
+    if (!mm) return { hh: "", mm: "", ampm: "AM" };
+    let h = parseInt(mm[1], 10);
+    const mStr = mm[2];
+    if (h === 0) return { hh: "12", mm: mStr, ampm: "AM" };
+    if (h < 12) return { hh: String(h), mm: mStr, ampm: "AM" };
+    if (h === 12) return { hh: "12", mm: mStr, ampm: "PM" };
+    return { hh: String(h - 12), mm: mStr, ampm: "PM" };
+  })();
+  const emit = (nh, nm, nap) => {
+    const ih = parseInt(nh, 10);
+    const im = nm === "" ? 0 : parseInt(nm, 10);
+    if (isNaN(ih) || ih < 1 || ih > 12 || isNaN(im) || im < 0 || im > 59) {
+      onChange("");
+      return;
+    }
+    let h24 = ih === 12 ? 0 : ih;
+    if (nap === "PM") h24 = (ih === 12) ? 12 : ih + 12;
+    onChange(`${String(h24).padStart(2, "0")}:${String(im).padStart(2, "0")}`);
+  };
+  return (
+    <div className="flex items-center gap-1.5">
+      <input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2}
+        value={parsed.hh} placeholder={hhPlaceholder}
+        onKeyDown={e => {
+          // ":" or " " jumps to the minute box so the user can type "5:30"
+          // naturally instead of having to tap the next field manually.
+          if (e.key === ":" || e.key === " " || e.key === "ArrowRight") {
+            e.preventDefault();
+            if (mmRef.current) mmRef.current.focus();
+          }
+        }}
+        onChange={e => {
+          const raw = e.target.value;
+          // If the user pasted/typed "5:30" or "530" into HH, split it
+          // across both fields automatically.
+          if (raw.includes(":")) {
+            const [hPart, mPart = ""] = raw.split(":");
+            emit(hPart.replace(/\D/g, "").slice(0, 2), mPart.replace(/\D/g, "").slice(0, 2), parsed.ampm);
+            if (mmRef.current) mmRef.current.focus();
+            return;
+          }
+          const v = raw.replace(/\D/g, "").slice(0, 2);
+          emit(v, parsed.mm, parsed.ampm);
+          // Auto-advance once the hour box reaches 2 digits.
+          if (v.length === 2 && mmRef.current) mmRef.current.focus();
+        }}
+        className="w-11 text-center px-1 py-1.5 border rounded text-sm bg-white border-stone-200 focus:border-[#7a9a6e] outline-none" />
+      <span className="text-stone-700 font-semibold text-base select-none">:</span>
+      <input ref={mmRef} type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2}
+        value={parsed.mm} placeholder={mmPlaceholder}
+        onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); emit(parsed.hh, v, parsed.ampm); }}
+        className="w-11 text-center px-1 py-1.5 border rounded text-sm bg-white border-stone-200 focus:border-[#7a9a6e] outline-none" />
+      <div className="inline-flex border border-stone-200 rounded overflow-hidden ml-1 text-[10px] font-semibold tracking-wider">
+        <button type="button" tabIndex={-1}
+          onMouseDown={e => e.preventDefault()}
+          onClick={() => emit(parsed.hh, parsed.mm, "AM")}
+          className={`px-2 py-1.5 transition ${parsed.ampm === "AM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>AM</button>
+        <button type="button" tabIndex={-1}
+          onMouseDown={e => e.preventDefault()}
+          onClick={() => emit(parsed.hh, parsed.mm, "PM")}
+          className={`px-2 py-1.5 transition ${parsed.ampm === "PM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>PM</button>
+      </div>
+    </div>
+  );
+}
+
 // Get the Monday of the ISO week containing `dateStr` (YYYY-MM-DD)
 function startOfWeekMonday(dateStr) {
   const d = new Date(dateStr + "T00:00:00");
@@ -9107,6 +9206,22 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   // "none" = one-off task. "daily" = appears every day. "weekly" = appears
   // every week on the same weekday as the active date.
   const [newRecurrence, setNewRecurrence] = useState("none");
+  // Selected color category for the task being created/edited in the modal.
+  const [newTaskColorId, setNewTaskColorId] = useState("g");
+  // Toggle for the inline "rename my categories" editor inside the modal.
+  const [editingColorLabels, setEditingColorLabels] = useState(false);
+
+  // Schedule color categories (user-renameable). Falls back to defaults
+  // when the user hasn't customized anything yet so existing accounts keep
+  // working without a migration.
+  const scheduleColors = (Array.isArray(data.scheduleColors) && data.scheduleColors.length > 0)
+    ? data.scheduleColors
+    : DEFAULT_SCHEDULE_COLORS;
+  const setScheduleColors = (next) => setData({ ...data, scheduleColors: next });
+  const colorForId = (id) => scheduleColors.find(c => c && c.id === id) || scheduleColors[0] || DEFAULT_SCHEDULE_COLORS[0];
+  const renameColorLabel = (id, label) => {
+    setScheduleColors(scheduleColors.map(c => c.id === id ? { ...c, label: (label || "").slice(0, 24) } : c));
+  };
   const [newWinNotes, setNewWinNotes] = useState("");
   const [editingWinId, setEditingWinId] = useState(null);
   const [editingWinText, setEditingWinText] = useState("");
@@ -9343,56 +9458,10 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (h > 23) return "";
     return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
   };
-  // Phone-friendly time picker. value is the canonical 24h "HH:MM" or "".
-  // Renders two number boxes split by a permanent ":" + an AM/PM segmented
-  // toggle so users on the iPhone numeric keypad never have to type the colon
-  // or letters. onChange receives the new 24h "HH:MM" string ("" if invalid).
-  const TimePartInput = ({ value, onChange, hhPlaceholder = "9", mmPlaceholder = "30" }) => {
-    const parsed = (() => {
-      const mm = /^(\d{1,2}):(\d{2})$/.exec(String(value || "").trim());
-      if (!mm) return { hh: "", mm: "", ampm: "AM" };
-      let h = parseInt(mm[1], 10);
-      const mStr = mm[2];
-      if (h === 0) return { hh: "12", mm: mStr, ampm: "AM" };
-      if (h < 12) return { hh: String(h), mm: mStr, ampm: "AM" };
-      if (h === 12) return { hh: "12", mm: mStr, ampm: "PM" };
-      return { hh: String(h - 12), mm: mStr, ampm: "PM" };
-    })();
-    const emit = (nh, nm, nap) => {
-      const ih = parseInt(nh, 10);
-      const im = nm === "" ? 0 : parseInt(nm, 10);
-      if (isNaN(ih) || ih < 1 || ih > 12 || isNaN(im) || im < 0 || im > 59) {
-        onChange("");
-        return;
-      }
-      let h24 = ih === 12 ? 0 : ih;
-      if (nap === "PM") h24 = (ih === 12) ? 12 : ih + 12;
-      onChange(`${String(h24).padStart(2, "0")}:${String(im).padStart(2, "0")}`);
-    };
-    return (
-      <div className="flex items-center gap-1.5">
-        <input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2}
-          value={parsed.hh} placeholder={hhPlaceholder}
-          onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); emit(v, parsed.mm, parsed.ampm); }}
-          className="w-11 text-center px-1 py-1.5 border rounded text-sm bg-white border-stone-200 focus:border-[#7a9a6e] outline-none" />
-        <span className="text-stone-700 font-semibold text-base select-none">:</span>
-        <input type="text" inputMode="numeric" pattern="[0-9]*" maxLength={2}
-          value={parsed.mm} placeholder={mmPlaceholder}
-          onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); emit(parsed.hh, v, parsed.ampm); }}
-          className="w-11 text-center px-1 py-1.5 border rounded text-sm bg-white border-stone-200 focus:border-[#7a9a6e] outline-none" />
-        <div className="inline-flex border border-stone-200 rounded overflow-hidden ml-1 text-[10px] font-semibold tracking-wider">
-          <button type="button" tabIndex={-1}
-            onMouseDown={e => e.preventDefault()}
-            onClick={() => emit(parsed.hh, parsed.mm, "AM")}
-            className={`px-2 py-1.5 transition ${parsed.ampm === "AM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>AM</button>
-          <button type="button" tabIndex={-1}
-            onMouseDown={e => e.preventDefault()}
-            onClick={() => emit(parsed.hh, parsed.mm, "PM")}
-            className={`px-2 py-1.5 transition ${parsed.ampm === "PM" ? "bg-[#5b7351] text-white" : "text-stone-500 bg-white hover:bg-stone-50"}`}>PM</button>
-        </div>
-      </div>
-    );
-  };
+  // TimePartInput has been hoisted to module scope (above PlannerModule)
+  // so it is NOT redefined on every render. Defining it inline here caused
+  // React to remount the HH/MM inputs whenever PlannerModule's state
+  // changed — which made the user lose focus / button taps mid-edit.
   // Returns true if hourLabel ("10:00 AM") falls in the task's [start, end)
   // half-open interval. End-equal-to-start is treated as a single 30-min slot.
   const taskCoversHour = (task, hourLabel) => {
@@ -9433,6 +9502,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         startTime: r.startTime || "",
         endTime: r.endTime || "",
         notes: r.notes || "",
+        colorId: r.colorId || "",
         done: !!(r.doneByDate && r.doneByDate[iso]),
         order: 100000 + (r.id || 0),
         _recurring: true,
@@ -9457,6 +9527,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (startTime) task.startTime = startTime;
     if (endTime) task.endTime = endTime;
     if (notes) task.notes = notes;
+    if (newTaskColorId) task.colorId = newTaskColorId;
     if (newTaskPriority && priorityCount < 3) {
       const usedOrders = dayTasks.filter(x => x.priority).map(x => x.priorityOrder || 0);
       const order = [1, 2, 3].find(n => !usedOrders.includes(n)) || 1;
@@ -10137,6 +10208,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     setNewEnd(task.endTime ? to24h(task.endTime) : "");
     setNewTaskNotes(task.notes || "");
     setNewTaskPriority(!!task.priority);
+    setNewTaskColorId(task.colorId || "g");
     // If this is a recurring rule's virtual occurrence, surface the rule's
     // recurrence type so the picker shows the right radio when opened.
     setNewRecurrence(task._recurring ? (task._recurrence || "daily") : "none");
@@ -10158,6 +10230,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (startTime) rule.startTime = startTime;
     if (endTime) rule.endTime = endTime;
     if (notes) rule.notes = notes;
+    if (newTaskColorId) rule.colorId = newTaskColorId;
     if (recurrence === "weekly") rule.weekday = dayOfWeekIdx(date);
     setRecurringTasks([...recurringTasks, rule]);
   };
@@ -10189,6 +10262,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         if (startTime) oneOff.startTime = startTime;
         if (endTime) oneOff.endTime = endTime;
         if (notes) oneOff.notes = notes;
+        if (newTaskColorId) oneOff.colorId = newTaskColorId;
         setData({
           ...data,
           tasks: [...allTasks, oneOff],
@@ -10202,6 +10276,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
           if (startTime) next.startTime = startTime; else delete next.startTime;
           if (endTime) next.endTime = endTime; else delete next.endTime;
           if (notes) next.notes = notes; else delete next.notes;
+          if (newTaskColorId) next.colorId = newTaskColorId; else delete next.colorId;
           if (newRecurrence === "weekly") next.weekday = dayOfWeekIdx(parsed.date);
           else delete next.weekday;
           return next;
@@ -10220,6 +10295,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       if (startTime) rule.startTime = startTime;
       if (endTime) rule.endTime = endTime;
       if (notes) rule.notes = notes;
+      if (newTaskColorId) rule.colorId = newTaskColorId;
       if (newRecurrence === "weekly") rule.weekday = dayOfWeekIdx(startDate);
       setData({
         ...data,
@@ -10234,6 +10310,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       if (startTime) next.startTime = startTime; else delete next.startTime;
       if (endTime) next.endTime = endTime; else delete next.endTime;
       if (notes) next.notes = notes; else delete next.notes;
+      if (newTaskColorId) next.colorId = newTaskColorId; else delete next.colorId;
       // Only flip the priority flag if the user changed it — preserve the
       // assigned priorityOrder slot when she just edited the title/time.
       if (newTaskPriority && !x.priority) {
@@ -10260,6 +10337,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     }
     setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false);
     setNewRecurrence("none");
+    setNewTaskColorId("g");
+    setEditingColorLabels(false);
     setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
@@ -10278,12 +10357,16 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     }
     setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false);
     setNewRecurrence("none");
+    setNewTaskColorId("g");
+    setEditingColorLabels(false);
     setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
   const cancelNewTask = () => {
     setNewTitle(""); setNewStart(""); setNewEnd(""); setNewTaskNotes(""); setNewTaskPriority(false);
     setNewRecurrence("none");
+    setNewTaskColorId("g");
+    setEditingColorLabels(false);
     setEditingTaskIdFromSchedule(null);
     setAddTaskModalOpen(false);
   };
@@ -10368,6 +10451,60 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
           </button>
           {!newTaskPriority && priorityCount >= 3 && (
             <span className="text-[10px] italic text-stone-400">{t("Max 3 priorities", lang)}</span>
+          )}
+        </div>
+
+        {/* Color category picker. The label under each swatch is whatever
+            the user wants the color to mean (Family, Personal, etc.) and
+            is stored in data.scheduleColors so it persists across sessions. */}
+        <div className="mt-3">
+          <div className="flex items-baseline justify-between mb-1.5 gap-2 flex-wrap">
+            <label className="text-[10px] tracking-[0.15em] uppercase text-stone-500">{t("Color category", lang)}</label>
+            <button type="button" onClick={() => setEditingColorLabels(v => !v)} className="text-[10px] text-[#5b7351] hover:underline">
+              {editingColorLabels ? t("Done", lang) : t("Rename categories", lang)}
+            </button>
+          </div>
+          {editingColorLabels ? (
+            <div className="space-y-1.5 rounded border border-stone-200 p-2 bg-stone-50">
+              {scheduleColors.map(c => (
+                <div key={c.id} className="flex items-center gap-2">
+                  <span aria-hidden className="w-4 h-4 rounded-full flex-shrink-0" style={{ background: c.color }} />
+                  <input
+                    value={c.label}
+                    onChange={e => renameColorLabel(c.id, e.target.value)}
+                    onKeyDown={e => { if (e.key === "Enter" || e.key === "Escape") setEditingColorLabels(false); }}
+                    placeholder={t("Label", lang)}
+                    className="flex-1 min-w-0 px-2 py-1 text-xs rounded border border-stone-200 bg-white focus:border-[#7a9a6e] outline-none"
+                    maxLength={24}
+                  />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-6 gap-1.5">
+              {scheduleColors.map(c => {
+                const picked = c.id === newTaskColorId;
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => setNewTaskColorId(c.id)}
+                    title={c.label}
+                    aria-label={c.label}
+                    className="flex flex-col items-center gap-0.5 group"
+                  >
+                    <span
+                      className="w-6 h-6 rounded-full transition"
+                      style={{
+                        background: c.color,
+                        boxShadow: picked ? `0 0 0 2px white, 0 0 0 4px ${c.color}` : "0 0 0 1px rgba(0,0,0,0.1)",
+                      }}
+                    />
+                    <span className={`text-[9px] truncate w-full text-center ${picked ? "text-stone-700 font-semibold" : "text-stone-500"}`}>{c.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           )}
         </div>
 
@@ -10534,10 +10671,20 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                 // scheduled for the week covers it — otherwise the block
                 // would visually clip mid-event.
                 const allCalEvents = data.calendarEvents || {};
+                const cellMin = timeToMin(hour);
+                const endsAtCell = (item) => item && item.endTime && timeToMin(item.endTime) === cellMin;
                 return weekDates.some(iso => {
                   if (allTasks.some(tk => tk && tk.date === iso && taskCoversHour(tk, hour))) return true;
+                  if (dayRecurringOccurrences(iso).some(rt => rt && taskCoversHour(rt, hour))) return true;
                   const evs = allCalEvents[iso] || [];
-                  return evs.some(ev => ev && taskCoversHour(ev, hour));
+                  if (evs.some(ev => ev && taskCoversHour(ev, hour))) return true;
+                  // Show the :30 divider when a task ENDS at that :30 mark
+                  // so a 5:00-5:30 task ends visually at 5:30 instead of
+                  // filling the whole 5:00 cell to look like a 60-min event.
+                  if (allTasks.some(tk => tk && tk.date === iso && endsAtCell(tk))) return true;
+                  if (dayRecurringOccurrences(iso).some(rt => endsAtCell(rt))) return true;
+                  if (evs.some(ev => endsAtCell(ev))) return true;
+                  return false;
                 });
               }).map(hour => {
                 const isHalf = hour.includes(":30");
@@ -10573,36 +10720,41 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                       const coveringItem = coveringTaskLike || coveringEvent;
                       const isTaskStart =
                         coveringItem && timeToMin(coveringItem.startTime) === timeToMin(hour);
+                      const blockColor = coveringTaskLike
+                        ? colorForId(coveringTaskLike.colorId).color
+                        : "#5b7351";
                       return (
                         <div key={cellKey} className="relative border-l border-stone-100">
+                          {/* Google-Calendar-style block: every covered cell
+                              gets a full-cell colored fill so a multi-row
+                              task reads as one continuous event. Only the
+                              start cell carries the title text. */}
                           {coveringItem && (
-                            <div
-                              className="absolute inset-x-0 top-0 bottom-0 pointer-events-none"
-                              style={{
-                                background: "var(--accent-pale)",
-                                opacity: 0.55,
-                                zIndex: 0,
-                              }}
-                            />
-                          )}
-                          {coveringItem && isTaskStart && (
                             coveringTaskLike ? (
                               <button
                                 type="button"
                                 onClick={(e) => { e.stopPropagation(); openTaskEditorFromSchedule(coveringTaskLike); }}
-                                className="absolute left-0.5 right-0.5 top-0.5 px-1 py-0.5 rounded text-[9px] font-semibold text-white truncate z-[6] text-left hover:opacity-90"
-                                style={{ background: "var(--accent-mid)" }}
+                                className="absolute left-0.5 right-0.5 top-0 bottom-0 rounded text-left hover:opacity-90 z-[6] overflow-hidden"
+                                style={{ background: blockColor }}
                                 title={`${t("Tap to edit", lang)} · ${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}${coveringRecurring ? " · " + t("permanent", lang) : ""}`}
                               >
-                                {coveringRecurring ? "↻ " : ""}{coveringItem.title}
+                                {isTaskStart && (
+                                  <span className="block px-1 py-0.5 text-[9px] font-semibold text-white truncate">
+                                    {coveringRecurring ? "↻ " : ""}{coveringItem.title}
+                                  </span>
+                                )}
                               </button>
                             ) : (
                               <div
-                                className="absolute left-0.5 right-0.5 top-0.5 px-1 py-0.5 rounded text-[9px] font-semibold text-white truncate pointer-events-none z-[5]"
-                                style={{ background: "var(--accent-mid)" }}
+                                className="absolute left-0.5 right-0.5 top-0 bottom-0 rounded pointer-events-none z-[5] overflow-hidden"
+                                style={{ background: blockColor }}
                                 title={`${coveringItem.title}${coveringItem.startTime ? ` · ${coveringItem.startTime}${coveringItem.endTime ? "–" + coveringItem.endTime : ""}` : ""}`}
                               >
-                                {coveringItem.title}
+                                {isTaskStart && (
+                                  <span className="block px-1 py-0.5 text-[9px] font-semibold text-white truncate">
+                                    {coveringItem.title}
+                                  </span>
+                                )}
                               </div>
                             )
                           )}
