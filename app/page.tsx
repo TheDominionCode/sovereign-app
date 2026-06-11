@@ -1392,6 +1392,31 @@ const landingCss = `
     .landing-root .lifestyle-cap .label{font-size:20px}
   }
 
+  /* Founder layout — portrait of Nataly on the left, letter on the right,
+     so the reader can put a face to the voice. Stacks vertically on
+     phones. */
+  .landing-root .founder-grid{
+    display:grid;grid-template-columns:0.85fr 1.15fr;
+    gap:60px;align-items:center;
+    max-width:1100px;margin:0 auto;
+  }
+  .landing-root .founder-portrait-img{
+    display:block;width:100%;max-width:420px;
+    aspect-ratio:3/4;object-fit:cover;
+    border-radius:18px;margin:0 auto;
+    box-shadow:0 30px 60px -20px rgba(26,24,22,0.28), 0 12px 24px -10px rgba(26,24,22,0.14);
+  }
+  .landing-root .founder-text-block{text-align:left}
+  .landing-root .founder-text-block .section-eyebrow{justify-content:flex-start}
+  @media (max-width:900px){
+    .landing-root .founder-grid{
+      grid-template-columns:1fr;gap:36px;
+    }
+    .landing-root .founder-portrait-img{max-width:340px}
+    .landing-root .founder-text-block{text-align:center}
+    .landing-root .founder-text-block .section-eyebrow{justify-content:center}
+  }
+
   /* =========================================================
      ADDITIONAL MOBILE POLISH — every section on phones
      Existing media queries handle big-ticket layout shifts;
@@ -2164,8 +2189,8 @@ export default function Home() {
               <div className="show-phone">
                 <div className="show-phone-notch"></div>
                 <img
-                  src="/images/landing/lifestyle-vision-screen.jpg"
-                  alt="Vision Board 2026 inside Sovereign"
+                  src="/images/sovereign-app-screen.png?v=3"
+                  alt="Sovereign app summary view"
                   className="show-phone-screen"
                 />
               </div>
@@ -2198,9 +2223,9 @@ export default function Home() {
                 the brand-pillar copy (numeral + name + description). */}
             {c.pillars.items.map((item, idx) => {
               const pillarImg = [
-                "/images/landing/lifestyle-flatlay.png", // Stillness — morning ritual
-                "/images/landing/lifestyle-habits.png",  // Strength  — daily rhythm
-                "/images/landing/lifestyle-menu.png",    // Sovereignty — all in one place
+                "/images/landing/lifestyle-flatlay.png",        // Stillness — morning ritual
+                "/images/landing/lifestyle-habits.png",         // Strength  — daily rhythm
+                "/images/landing/lifestyle-vision-screen.jpg",  // Sovereignty — the Vision Board screen
               ][idx] || "/images/landing/lifestyle-flatlay.png";
               return (
                 <div key={item.num} className="lifestyle-tile pillar">
@@ -2246,12 +2271,22 @@ export default function Home() {
       </section>
 
       <section className="founder">
-        <div className="container founder-container">
-          <div className="founder-text">
-            <div className="section-eyebrow center">{c.founder.eyebrow}</div>
-            <h2 className="founder-title center">{renderParts(c.founder.title)}</h2>
-            <p className="founder-body">{c.founder.body}</p>
-            <div className="founder-signoff">{c.founder.signoff}</div>
+        <div className="container">
+          <div className="founder-grid">
+            {/* Portrait of Nataly — the Bloom Pilates shot. Puts a face
+                to the founder letter so it doesn't read as anonymous. */}
+            <img
+              src="/images/landing/lifestyle-menu.png"
+              alt={lang === "es" ? "Nataly, fundadora de Sovereign" : "Nataly, founder of Sovereign"}
+              className="founder-portrait-img"
+              loading="lazy"
+            />
+            <div className="founder-text-block">
+              <div className="section-eyebrow">{c.founder.eyebrow}</div>
+              <h2 className="founder-title">{renderParts(c.founder.title)}</h2>
+              <p className="founder-body">{c.founder.body}</p>
+              <div className="founder-signoff">{c.founder.signoff}</div>
+            </div>
           </div>
         </div>
       </section>
