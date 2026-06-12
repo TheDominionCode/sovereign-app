@@ -1158,20 +1158,33 @@ const landingCss = `
   }
 
   .landing-root .testimonials{background:var(--cream)}
-  .landing-root .quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;margin-top:20px}
-  .landing-root .quote{
-    background:var(--ivory);padding:42px 32px;
-    border:1px solid var(--line);border-radius:4px;
+  /* Quote grid — auto-rows + align-items:start so each card hugs its own
+     content. CSS Grid's default is to stretch every card to match the
+     tallest in the row, which is what was producing the awkward empty
+     space below the shorter quotes. */
+  .landing-root .quote-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:32px;
+    margin-top:20px;align-items:start;
   }
-  .landing-root .stars{color:var(--gold);font-size:14px;letter-spacing:4px;margin-bottom:18px}
+  .landing-root .quote{
+    background:var(--ivory);padding:32px 28px;
+    border:1px solid var(--line);border-radius:8px;
+    display:flex;flex-direction:column;
+  }
+  .landing-root .stars{color:var(--gold);font-size:14px;letter-spacing:4px;margin-bottom:14px}
   .landing-root .quote p{
     font-family:'Cormorant Garamond',serif;
-    font-size:21px;line-height:1.5;font-style:italic;
-    color:var(--char);margin-bottom:24px;
+    font-size:19px;line-height:1.55;font-style:italic;
+    color:var(--char);margin-bottom:18px;
   }
   .landing-root .quote-author{
-    font-size:12px;letter-spacing:0.22em;
+    font-size:11.5px;letter-spacing:0.22em;
     text-transform:uppercase;color:var(--gold-deep);
+    margin-top:auto;
+  }
+  @media (max-width:560px){
+    .landing-root .quote{padding:26px 22px}
+    .landing-root .quote p{font-size:17px;line-height:1.55}
   }
 
   .landing-root .faq{background:var(--ivory)}
