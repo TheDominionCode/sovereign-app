@@ -1158,32 +1158,37 @@ const landingCss = `
   }
 
   .landing-root .testimonials{background:var(--cream)}
-  /* Quote grid — auto-rows + align-items:start so each card hugs its own
-     content. CSS Grid's default is to stretch every card to match the
-     tallest in the row, which is what was producing the awkward empty
-     space below the shorter quotes. */
+  /* Pinterest-style masonry via CSS multi-column. Cards stack down each
+     column based on their own height, with no forced row alignment and
+     no empty space. A tall quote takes vertical room only in ITS column
+     — the other columns keep flowing past it. */
   .landing-root .quote-grid{
-    display:grid;grid-template-columns:repeat(3,1fr);gap:32px;
-    margin-top:20px;align-items:start;
+    column-count:3;column-gap:24px;
+    margin-top:20px;
   }
   .landing-root .quote{
-    background:var(--ivory);padding:32px 28px;
-    border:1px solid var(--line);border-radius:8px;
-    display:flex;flex-direction:column;
+    background:var(--ivory);padding:28px 26px;
+    border:1px solid var(--line);border-radius:10px;
+    margin-bottom:24px;
+    break-inside:avoid;          /* don't split a card mid-card across columns */
+    display:inline-block;width:100%;
   }
-  .landing-root .stars{color:var(--gold);font-size:14px;letter-spacing:4px;margin-bottom:14px}
+  .landing-root .stars{color:var(--gold);font-size:13px;letter-spacing:4px;margin-bottom:12px}
   .landing-root .quote p{
     font-family:'Cormorant Garamond',serif;
-    font-size:19px;line-height:1.55;font-style:italic;
-    color:var(--char);margin-bottom:18px;
+    font-size:18px;line-height:1.55;font-style:italic;
+    color:var(--char);margin-bottom:16px;
   }
   .landing-root .quote-author{
-    font-size:11.5px;letter-spacing:0.22em;
+    font-size:11px;letter-spacing:0.22em;
     text-transform:uppercase;color:var(--gold-deep);
-    margin-top:auto;
+  }
+  @media (max-width:900px){
+    .landing-root .quote-grid{column-count:2;column-gap:20px}
   }
   @media (max-width:560px){
-    .landing-root .quote{padding:26px 22px}
+    .landing-root .quote-grid{column-count:1}
+    .landing-root .quote{padding:24px 22px;margin-bottom:18px}
     .landing-root .quote p{font-size:17px;line-height:1.55}
   }
 
