@@ -40,20 +40,25 @@ export async function POST(req: NextRequest) {
 
   const admin = createAdminClient();
 
-  // Idempotency: insert event id. Unique-violation means we already handled it.
-  const { error: dedupeErr } = await admin
+  // Idempotency check — has this event ALREADY been fully processed?
+  // We only treat it as a duplicate if the row is there; we don't insert
+  // here so a failed handler can be safely retried by Stripe. The insert
+  // happens at the very end, after the handler has actually succeeded.
+  const { data: existing } = await admin
     .from("stripe_events")
-    .insert({ id: event.id, type: event.type });
-
-  if (dedupeErr) {
-    if (dedupeErr.code === "23505") {
-      return NextResponse.json({ received: true, duplicate: true });
-    }
-    console.error("[stripe-webhook] dedupe insert failed", dedupeErr);
-    // Continue anyway; better to double-process than to lose state.
+    .select("id")
+    .eq("id", event.id)
+    .maybeSingle();
+  if (existing) {
+    return NextResponse.json({ received: true, duplicate: true });
   }
 
   if (!HANDLED_EVENTS.has(event.type)) {
+    // Still record so Stripe doesn't keep retrying ignored types.
+    await admin
+      .from("stripe_events")
+      .insert({ id: event.id, type: event.type })
+      .then(() => {}, () => {});
     return NextResponse.json({ received: true, ignored: true });
   }
 
@@ -102,12 +107,19 @@ export async function POST(req: NextRequest) {
     }
   } catch (err) {
     console.error("[stripe-webhook] handler failed", event.type, err);
+    // Don't record the event so Stripe will retry this delivery — that
+    // way a transient bug won't permanently lose the event.
     return NextResponse.json(
       { error: "Handler error", type: event.type },
       { status: 500 }
     );
   }
 
+  // Handler succeeded — NOW record so the next delivery is a no-op.
+  await admin
+    .from("stripe_events")
+    .insert({ id: event.id, type: event.type })
+    .then(() => {}, () => {});
   return NextResponse.json({ received: true });
 }
 
