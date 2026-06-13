@@ -29,17 +29,23 @@ export default async function AdminOverviewPage() {
 
   // Each tile requires the matching permission. The owner always sees them
   // all; a member admin only sees the sections she's been granted access to.
+  //
+  // "PAYING" reads from stats.active — Stripe only sets `active` AFTER
+  // the first post-trial charge actually succeeds. A trial whose final
+  // charge fails moves to `past_due` instead and shows in its own tile,
+  // so the paying count never overstates real revenue.
   const tiles = [
-    { href: "/admin",          label: "TOTAL SIGNUPS", value: String(stats.total),         hint: "all-time",          tone: "forest",  icon: "👥", visible: true },
-    { href: "/admin/active",   label: "ACTIVE SUBS",   value: String(stats.active),        hint: "currently paying",  tone: "emerald", icon: "✓", visible: canSee("active") },
-    { href: "/admin/trial",    label: "ON TRIAL",      value: String(stats.trialing),      hint: "3-day free",        tone: "amber",   icon: "⏳", visible: canSee("trial") },
-    { href: "/admin/canceled", label: "CANCELED",      value: String(stats.canceled),      hint: "lost",              tone: "rose",    icon: "✕", visible: canSee("canceled") },
-    { href: "/admin/revenue",  label: "MRR",           value: formatPrice(stats.mrrCents), hint: "monthly recurring", tone: "forest",  icon: "$", visible: canSeeMoney },
+    { href: "/admin",          label: "TOTAL SIGNUPS", value: String(stats.total),         hint: "all-time",              tone: "forest",  icon: "👥", visible: true },
+    { href: "/admin/active",   label: "PAYING",        value: String(stats.active),        hint: "card charged · live",   tone: "emerald", icon: "✓", visible: canSee("active") },
+    { href: "/admin/trial",    label: "ON TRIAL",      value: String(stats.trialing),      hint: "3-day free",            tone: "amber",   icon: "⏳", visible: canSee("trial") },
+    { href: "/admin/active?past_due=1", label: "PAST DUE", value: String(stats.pastDue),   hint: "charge failed",         tone: "rose",    icon: "!", visible: canSee("active") && stats.pastDue > 0 },
+    { href: "/admin/canceled", label: "CANCELED",      value: String(stats.canceled),      hint: "lost",                  tone: "rose",    icon: "✕", visible: canSee("canceled") },
+    { href: "/admin/revenue",  label: "MRR",           value: formatPrice(stats.mrrCents), hint: "monthly recurring",     tone: "forest",  icon: "$", visible: canSeeMoney },
   ].filter((t) => t.visible);
 
   return (
     <div>
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
         {tiles.map((t) => (
           <Link
             key={t.label}

@@ -232,7 +232,8 @@ export async function getAdmins(): Promise<AdminRow[]> {
 export type AdminStats = {
   total: number;
   trialing: number;
-  active: number;
+  active: number;       // PAYING — status === "active": trial converted AND charge succeeded
+  pastDue: number;      // card on file, charge attempted, FAILED (Stripe dunning)
   canceled: number;
   mrrCents: number;
   trialPipelineCents: number;
@@ -241,13 +242,17 @@ export type AdminStats = {
 export function computeStats(rows: CustomerRow[]): AdminStats {
   const total = rows.length;
   const trialing = rows.filter((r) => r.status === "trialing").length;
+  // "Paying" = Stripe `active` status, which Stripe only assigns once the
+  // first post-trial invoice has actually been PAID. A failed charge
+  // moves the row to `past_due` instead, so it correctly doesn't count.
   const active = rows.filter((r) => r.status === "active").length;
+  const pastDue = rows.filter((r) => r.status === "past_due" || r.status === "unpaid").length;
   const canceled = rows.filter((r) => r.canceled).length;
   const mrrCents = rows.reduce((sum, r) =>
     (r.status === "active" && r.plan ? sum + r.plan.monthlyEquivalentCents : sum), 0);
   const trialPipelineCents = rows.reduce((sum, r) =>
     (r.status === "trialing" && r.plan ? sum + r.plan.amountCents : sum), 0);
-  return { total, trialing, active, canceled, mrrCents, trialPipelineCents };
+  return { total, trialing, active, pastDue, canceled, mrrCents, trialPipelineCents };
 }
 
 export function fmtDate(iso: string | null | undefined): string {
