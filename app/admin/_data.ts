@@ -147,6 +147,24 @@ export type CustomerRow = {
 
 export const MAX_ADMINS = 5;
 
+// Public launch was Sunday Jun 7, 2026 (US Eastern). Anyone created BEFORE
+// this is a pre-launch test account from the build phase — exclude them
+// from the admin counts unless they later became a paying / trialing
+// customer (Stripe customer id present or any subscription row).
+//
+// Bumping this date hides more historical test accounts; lowering it
+// surfaces older ones. The check below treats the boundary as exclusive
+// of the start of the day so the launch day itself counts as "live."
+export const LAUNCH_DATE_ISO = "2026-06-07T00:00:00Z";
+
+function isPreLaunchTestAccount(row: CustomerRow): boolean {
+  if (row.createdAt >= LAUNCH_DATE_ISO) return false;
+  // Even if pre-launch, keep them if they ever became a real customer.
+  if (row.stripeCustomerId) return false;
+  if (row.status && row.status !== "—") return false;
+  return true;
+}
+
 export async function getCustomerRows(): Promise<CustomerRow[]> {
   const admin = createAdminClient();
   const [profilesRes, subsRes, usersRes] = await Promise.all([
@@ -192,9 +210,11 @@ export async function getCustomerRows(): Promise<CustomerRow[]> {
     };
   });
 
+  // Hide pre-launch test accounts that never became customers.
+  const filtered = rows.filter((r) => !isPreLaunchTestAccount(r));
   // Newest first.
-  rows.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
-  return rows;
+  filtered.sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+  return filtered;
 }
 
 export async function getAdmins(): Promise<AdminRow[]> {

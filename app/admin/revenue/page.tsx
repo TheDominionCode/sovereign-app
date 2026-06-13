@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { formatPrice, PLANS } from "@/lib/stripe/plans";
 import { getCustomerRows } from "../_data";
 import { requirePermission } from "../guard";
@@ -6,10 +7,32 @@ import { requirePermission } from "../guard";
 // members without it are bounced back to the overview before this page
 // renders. MRR by plan, trial pipeline, conversion rates, customer list.
 
-export default async function AdminRevenuePage() {
+type SearchParams = Promise<{ period?: string }>;
+
+// Start of the current calendar month in the server's local time. Used to
+// scope the Month-to-Date view: subscribers whose current period started
+// in this month (new starts + renewals) count toward MTD revenue.
+function startOfThisMonthIso(): string {
+  const d = new Date();
+  d.setDate(1);
+  d.setHours(0, 0, 0, 0);
+  return d.toISOString();
+}
+
+export default async function AdminRevenuePage({ searchParams }: { searchParams: SearchParams }) {
   await requirePermission("revenue");
+  const { period } = await searchParams;
+  const isMtd = period === "mtd";
   const all = await getCustomerRows();
-  const active = all.filter((r) => r.status === "active");
+  // MTD view scopes "active" to subscribers whose current period began
+  // this calendar month — that's a close proxy for "money this month"
+  // without round-tripping every Stripe invoice. Other counts (trialing,
+  // canceled) stay all-time because they aren't time-bound metrics.
+  const monthStart = startOfThisMonthIso();
+  const activeAll = all.filter((r) => r.status === "active");
+  const active = isMtd
+    ? activeAll.filter((r) => r.periodStart && r.periodStart >= monthStart)
+    : activeAll;
   const trialing = all.filter((r) => r.status === "trialing");
   const canceled = all.filter((r) => r.canceled);
 
@@ -39,8 +62,55 @@ export default async function AdminRevenuePage() {
   // ARPU = MRR / active.
   const arpuCents = active.length > 0 ? Math.round(mrrCents / active.length) : 0;
 
+  // MTD revenue = sum of plan amounts for subs whose period started this
+  // month. New starts + same-month renewals both count.
+  const mtdRevenueCents = isMtd
+    ? active.reduce((s, r) => s + (r.plan?.amountCents ?? 0), 0)
+    : 0;
+
   return (
     <div>
+      {/* Time-window toggle: All time vs Month to date. */}
+      <div className="flex items-center gap-2 mb-5">
+        <Link
+          href="/admin/revenue"
+          className={`px-3 py-1.5 text-xs rounded-full border transition ${
+            !isMtd
+              ? "bg-forest text-cream-bg border-forest"
+              : "border-stone-200 text-stone-600 hover:border-forest hover:text-forest"
+          }`}
+        >
+          All time
+        </Link>
+        <Link
+          href="/admin/revenue?period=mtd"
+          className={`px-3 py-1.5 text-xs rounded-full border transition ${
+            isMtd
+              ? "bg-forest text-cream-bg border-forest"
+              : "border-stone-200 text-stone-600 hover:border-forest hover:text-forest"
+          }`}
+        >
+          Month to date
+        </Link>
+        {isMtd && (
+          <span className="ml-2 text-[11px] italic text-stone-500">
+            since {new Date(monthStart).toLocaleDateString(undefined, { month: "long", day: "numeric" })}
+          </span>
+        )}
+      </div>
+
+      {/* MTD-only headline: dollars collected this month from new starts +
+          renewals — sits above the standard MRR/ARR row when MTD is on. */}
+      {isMtd && (
+        <div className="rounded-lg p-5 mb-3" style={{ background: "#3d5c34", color: "#f1ebda" }}>
+          <div className="text-[10px] tracking-[0.18em] uppercase">Revenue this month</div>
+          <div className="font-display text-4xl mt-1">{formatPrice(mtdRevenueCents)}</div>
+          <div className="text-[11px] italic mt-1 opacity-80">
+            new starts &amp; renewals whose billing cycle began on or after the 1st · {active.length} subs counted
+          </div>
+        </div>
+      )}
+
       {/* Top headline stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
         <div className="rounded-lg p-5" style={{ background: "#3d5c34", color: "#f1ebda" }}>
