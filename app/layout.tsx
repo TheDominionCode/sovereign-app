@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
+// metadataBase ensures Next.js builds ABSOLUTE URLs for the og:image and
+// other social-preview tags. Without this, iMessage / Instagram / Twitter
+// get a relative path they can't resolve, so the preview falls back to
+// scraping a random screenshot from the page.
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://sovereign-life.netlify.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "Sovereign — Build the Life",
   description:
     "An operating system for the woman behind everything. Goals, money, body, vision, language — all in one place.",
@@ -18,6 +25,35 @@ export const metadata: Metadata = {
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  // Open Graph — what iMessage, WhatsApp, Slack, Facebook, LinkedIn,
+  // Instagram DMs etc. all read when someone pastes a Sovereign link.
+  // We use the flatlay (phone + Sovereign coffee + lip tint) because it
+  // feels like a real morning ritual — much warmer than a raw screenshot.
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: "Sovereign",
+    title: "Sovereign — Build the Life",
+    description:
+      "An operating system for the woman behind everything. Goals, money, body, vision, language — all in one place.",
+    images: [
+      {
+        url: "/images/landing/lifestyle-flatlay.png",
+        width: 1206,
+        height: 1608,
+        alt: "Sovereign — calm, centered, in charge",
+      },
+    ],
+    locale: "en_US",
+  },
+  // Twitter / X uses its own card spec but reads many of the same fields.
+  twitter: {
+    card: "summary_large_image",
+    title: "Sovereign — Build the Life",
+    description:
+      "An operating system for the woman behind everything. Goals, money, body, vision, language — all in one place.",
+    images: ["/images/landing/lifestyle-flatlay.png"],
   },
 };
 
