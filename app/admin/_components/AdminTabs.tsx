@@ -14,8 +14,9 @@ const TABS: { href: string; label: string; perm: PermissionKey }[] = [
   { href: "/admin/analytics",    label: "Analytics",    perm: "analytics" },
   { href: "/admin/affiliates",   label: "Affiliates",   perm: "affiliates" },
   { href: "/admin/community",    label: "Community",    perm: "community" },
-  { href: "/admin/testimonials", label: "Testimonials", perm: "testimonials" },
-  { href: "/admin/admins",       label: "Admins",       perm: "admins" },
+  { href: "/admin/testimonials",  label: "Testimonials",  perm: "testimonials" },
+  { href: "/admin/announcements", label: "Announcements", perm: "announcements" },
+  { href: "/admin/admins",        label: "Admins",        perm: "admins" },
 ];
 
 export default function AdminTabs({

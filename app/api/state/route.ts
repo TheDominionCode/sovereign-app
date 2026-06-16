@@ -10,6 +10,34 @@ export const dynamic = "force-dynamic";
 
 type Entry = { key: string; value: string };
 
+// Bumps the user's last_active_at timestamp. Throttled so we only write
+// once every ~10 minutes per user (the planner makes lots of state reads;
+// we don't need every single one to hit the DB). Fire-and-forget: if the
+// update fails we still serve the page so the user never sees a slowdown.
+const ACTIVITY_THROTTLE_MS = 10 * 60 * 1000; // 10 minutes
+async function bumpLastActive(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  userId: string,
+): Promise<void> {
+  try {
+    const { data } = await supabase
+      .from("profiles")
+      .select("last_active_at")
+      .eq("id", userId)
+      .maybeSingle();
+    const last = (data as { last_active_at?: string | null } | null)?.last_active_at;
+    if (last && Date.now() - new Date(last).getTime() < ACTIVITY_THROTTLE_MS) {
+      return;
+    }
+    await supabase
+      .from("profiles")
+      .update({ last_active_at: new Date().toISOString() })
+      .eq("id", userId);
+  } catch {
+    /* silently ignore — never block the request on activity logging */
+  }
+}
+
 // GET /api/state -> { state: { [key]: value } }
 export async function GET() {
   const supabase = await createClient();
@@ -19,6 +47,9 @@ export async function GET() {
   if (!user) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
+
+  // Fire-and-forget activity bump.
+  void bumpLastActive(supabase, user.id);
 
   const { data, error } = await supabase
     .from("app_state")

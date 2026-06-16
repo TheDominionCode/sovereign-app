@@ -20,6 +20,39 @@ function statusBadge(status: string) {
   );
 }
 
+// Rich "Last active" cell — shows the actual date PLUS a green badge if
+// they've been around in the last 24h, an amber badge if 1-7 days ago,
+// and a rose badge if ≥ 8 days. Null = never been active since the
+// last_active_at column was added (will populate on their next visit).
+function lastActiveCell(iso: string | null | undefined) {
+  if (!iso) {
+    return <span className="italic text-stone-400">never</span>;
+  }
+  const ms = Date.now() - new Date(iso).getTime();
+  const hours = Math.floor(ms / (1000 * 60 * 60));
+  const days = Math.floor(hours / 24);
+  let label: string;
+  let tone: { bg: string; text: string };
+  if (hours < 1) {
+    label = "just now";
+    tone = { bg: "bg-emerald-50", text: "text-emerald-700" };
+  } else if (hours < 24) {
+    label = `${hours}h ago`;
+    tone = { bg: "bg-emerald-50", text: "text-emerald-700" };
+  } else if (days < 7) {
+    label = `${days}d ago`;
+    tone = { bg: "bg-amber-50", text: "text-amber-700" };
+  } else {
+    label = `${days}d ago`;
+    tone = { bg: "bg-rose-50", text: "text-rose-700" };
+  }
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${tone.bg} ${tone.text}`}>
+      {label}
+    </span>
+  );
+}
+
 type Variant = "default" | "active" | "trial" | "canceled";
 
 export default function CustomerTable({
@@ -60,7 +93,8 @@ export default function CustomerTable({
                 </>
               )}
               <th className="px-4 py-2 font-medium">Signed up</th>
-              <th className="px-4 py-2 font-medium">Last seen</th>
+              <th className="px-4 py-2 font-medium">Last active</th>
+              <th className="px-4 py-2 font-medium">Last sign-in</th>
             </tr>
           </thead>
           <tbody>
@@ -105,6 +139,7 @@ export default function CustomerTable({
                     </>
                   )}
                   <td className="px-4 py-2.5 text-stone-600 whitespace-nowrap">{fmtDate(r.createdAt)}</td>
+                  <td className="px-4 py-2.5 whitespace-nowrap">{lastActiveCell(r.lastActive)}</td>
                   <td className="px-4 py-2.5 text-stone-600 whitespace-nowrap">{fmtDate(r.lastSignIn)}</td>
                 </tr>
               );

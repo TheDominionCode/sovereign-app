@@ -15,6 +15,7 @@ export type PermissionKey =
   | "affiliates"
   | "community"
   | "testimonials"
+  | "announcements"
   | "admins";
 
 export type PermissionGroup = "customers" | "money" | "growth" | "people";
@@ -39,6 +40,7 @@ export const PERMISSIONS: PermissionDef[] = [
   { key: "affiliates",   label: "Affiliate moderation", hint: "Approve / reject affiliate program applications.", group: "growth" },
   { key: "community",    label: "Community moderation", hint: "Review + approve Wall-of-wins posts. Edit the heading quote + theme.", group: "growth" },
   { key: "testimonials", label: "Testimonials",       hint: "Review + approve testimonial submissions.", group: "growth" },
+  { key: "announcements",label: "Announcements",      hint: "Send in-app messages to every signed-in user (appears as a popup).", group: "growth" },
   { key: "admins",       label: "Manage admins",      hint: "Add / remove / re-permission other staff. Grant carefully.", group: "people" },
 ];
 

@@ -105,6 +105,7 @@ export type ProfileRow = {
   stripe_customer_id: string | null;
   beta_until: string | null;
   created_at: string;
+  last_active_at: string | null;
 };
 
 export type SubscriptionRow = {
@@ -143,6 +144,7 @@ export type CustomerRow = {
   betaUntil: string | null;
   createdAt: string;
   lastSignIn: string | null;
+  lastActive: string | null;
 };
 
 export const MAX_ADMINS = 5;
@@ -168,7 +170,7 @@ function isPreLaunchTestAccount(row: CustomerRow): boolean {
 export async function getCustomerRows(): Promise<CustomerRow[]> {
   const admin = createAdminClient();
   const [profilesRes, subsRes, usersRes] = await Promise.all([
-    admin.from("profiles").select("id,email,full_name,phone,stripe_customer_id,beta_until,created_at"),
+    admin.from("profiles").select("id,email,full_name,phone,stripe_customer_id,beta_until,created_at,last_active_at"),
     admin.from("subscriptions").select("user_id,status,price_id,current_period_start,current_period_end,cancel_at_period_end,trial_end,canceled_at"),
     admin.auth.admin.listUsers({ perPage: 200 }),
   ]);
@@ -207,6 +209,7 @@ export async function getCustomerRows(): Promise<CustomerRow[]> {
       betaUntil: p?.beta_until ?? null,
       createdAt: u.created_at,
       lastSignIn: u.last_sign_in_at ?? null,
+      lastActive: p?.last_active_at ?? null,
     };
   });
 

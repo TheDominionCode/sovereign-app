@@ -1891,6 +1891,7 @@ const TRANSLATIONS = {
     "Mon": "Mon", "Tue": "Tue", "Wed": "Wed", "Thu": "Thu", "Fri": "Fri", "Sat": "Sat", "Sun": "Sun",
     // Module page subtitles + extra headings
     "Profile, security, preferences, data": "Profile, security, preferences, data",
+    "Your Sovereign": "Your Sovereign",
     "Disclosures & Legal": "Disclosures & Legal",
     "Copyright, disclaimers, terms of use.": "Copyright, disclaimers, terms of use.",
     "your rhythm for today": "your rhythm for today",
@@ -2571,6 +2572,7 @@ const TRANSLATIONS = {
     "Mon": "Lun", "Tue": "Mar", "Wed": "Mié", "Thu": "Jue", "Fri": "Vie", "Sat": "Sáb", "Sun": "Dom",
     // Module page subtitles + extra headings — native Spanish
     "Profile, security, preferences, data": "Perfil, seguridad, preferencias, datos",
+    "Your Sovereign": "Tu Sovereign",
     "Disclosures & Legal": "Avisos legales",
     "Copyright, disclaimers, terms of use.": "Derechos de autor, descargos y términos de uso.",
     "your rhythm for today": "tu ritmo de hoy",
@@ -3073,6 +3075,18 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   const [collapsed, setCollapsed] = useState(() => typeof window !== "undefined" && window.innerWidth < 768);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
+  const [letterInboxOpen, setLetterInboxOpen] = useState(false);
+  // All active announcements the current user can see, with a `dismissed`
+  // flag per item. Loaded once on mount; refreshed whenever the popup
+  // dismisses an item so the unread badge stays accurate.
+  const [allAnnouncements, setAllAnnouncements] = useState([]);
+  const refreshAnnouncements = () => {
+    fetch("/api/announcement?all=1", { credentials: "same-origin" })
+      .then(r => r.ok ? r.json() : null)
+      .then(j => { if (j && Array.isArray(j.announcements)) setAllAnnouncements(j.announcements); })
+      .catch(() => {});
+  };
+  useEffect(() => { refreshAnnouncements(); }, []);
   const [navSearch, setNavSearch] = useState("");
   const searchRef = useRef(null);
 
@@ -3323,8 +3337,132 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
     "Stay signed in longer — no more daily re-login.",
   ];
 
+  // Owner-broadcast announcement — separate from the "What's new" release
+  // notes. Fetched from /api/announcement on mount; the API returns null
+  // if there's nothing for this user OR they already dismissed it. Tap
+  // "Got it" → we POST the dismissal back, the card slides away, and the
+  // server never sends it again for this user.
+  const [announcement, setAnnouncement] = useState(null);
+  useEffect(() => {
+    let cancelled = false;
+    fetch("/api/announcement", { credentials: "same-origin" })
+      .then(r => r.ok ? r.json() : null)
+      .then(j => { if (!cancelled && j && j.announcement) setAnnouncement(j.announcement); })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+  const dismissAnnouncement = () => {
+    if (!announcement) return;
+    fetch("/api/announcement", {
+      method: "POST",
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ announcement_id: announcement.id }),
+    })
+      .then(() => refreshAnnouncements())
+      .catch(() => {});
+    setAnnouncement(null);
+  };
+
   return (
     <div className={`min-h-screen ${themeBg} ${themeText} flex`} style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+      {/* Owner-broadcast announcement — soft popup. Renders on top of the
+          What's-New banner if both happen to be present so the broadcast
+          (which is fresh) reads first. */}
+      {/* Letter inbox — full-viewport modal on phone, anchored card on
+          desktop. Lives at the AppShell root so its fixed positioning
+          isn't clipped by the header. */}
+      {letterInboxOpen && (
+        <div
+          className="fixed inset-0 z-[55] flex items-end sm:items-start justify-center sm:justify-end bg-black/40 sm:bg-black/0 p-3 sm:p-0 sm:pt-16 sm:pr-4"
+          onClick={() => setLetterInboxOpen(false)}
+        >
+          <div
+            className="w-full sm:max-w-md max-h-[85dvh] sm:max-h-[75vh] overflow-y-auto bg-white border border-stone-200 rounded-2xl shadow-2xl"
+            style={{ paddingBottom: "max(0px, env(safe-area-inset-bottom))" }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="px-4 py-3 border-b border-stone-100 flex items-center justify-between sticky top-0 bg-white rounded-t-2xl">
+              <div>
+                <div className="text-[10px] tracking-[0.18em] uppercase text-[#5b7351] font-semibold">{lang === "es" ? "Mensajes" : "Messages"}</div>
+                <div className="font-serif text-base leading-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+                  {lang === "es" ? "Tu buzón" : "Your inbox"}
+                </div>
+              </div>
+              <button
+                onClick={() => setLetterInboxOpen(false)}
+                className="p-2 -mr-1 rounded text-stone-400 hover:text-stone-700 hover:bg-stone-100 touch-manipulation"
+                aria-label="Close"
+              >
+                <X className="w-5 h-5 sm:w-4 sm:h-4" />
+              </button>
+            </div>
+            {allAnnouncements.length === 0 ? (
+              <div className="px-4 py-12 text-center text-sm italic text-stone-400">
+                {lang === "es" ? "Aún sin mensajes." : "No messages yet."}
+              </div>
+            ) : (
+              <ul className="divide-y divide-stone-100">
+                {allAnnouncements.map(a => (
+                  <li key={a.id} className={`px-4 py-4 ${a.dismissed ? "opacity-70" : "bg-[#f4f7ee]/40"}`}>
+                    <div className="flex items-start gap-3">
+                      <div className="text-3xl sm:text-2xl flex-shrink-0 leading-none">{a.emoji || "📣"}</div>
+                      <div className="flex-1 min-w-0">
+                        {a.title && (
+                          <div className="text-[10px] tracking-[0.18em] uppercase text-[#5b7351] font-semibold mb-1.5">
+                            {a.title}
+                          </div>
+                        )}
+                        <div
+                          className="text-stone-800 whitespace-pre-wrap break-words leading-relaxed"
+                          style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "16px", lineHeight: 1.55 }}
+                        >
+                          {a.body}
+                        </div>
+                        <div className="text-[11px] italic text-stone-400 mt-2">
+                          {new Date(a.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })}
+                          {!a.dismissed && <span className="ml-2 text-[#5b7351] not-italic font-semibold">• {lang === "es" ? "nuevo" : "new"}</span>}
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
+      )}
+      {announcement && (
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/40 p-3 sm:p-4" onClick={dismissAnnouncement}>
+          <div
+            className="bg-white rounded-3xl sm:rounded-2xl shadow-2xl w-full sm:max-w-sm p-5 sm:p-6 border border-[#a8c090] max-h-[88dvh] overflow-y-auto"
+            onClick={e => e.stopPropagation()}
+            style={{ paddingBottom: "max(1.25rem, env(safe-area-inset-bottom))" }}
+          >
+            {announcement.emoji && (
+              <div className="text-5xl sm:text-4xl text-center mb-3 leading-none">{announcement.emoji}</div>
+            )}
+            {announcement.title && (
+              <div className="text-[11px] sm:text-[10px] tracking-[0.18em] uppercase text-[#5b7351] font-semibold text-center mb-3">
+                {announcement.title}
+              </div>
+            )}
+            <div
+              className="text-stone-800 text-center whitespace-pre-wrap break-words mb-5 sm:mb-6 px-1"
+              style={{ fontFamily: "'Cormorant Garamond', Georgia, serif", fontSize: "17px", lineHeight: 1.55 }}
+            >
+              {announcement.body}
+            </div>
+            <button
+              onClick={dismissAnnouncement}
+              className="w-full py-3.5 sm:py-3 rounded-xl text-sm sm:text-xs uppercase tracking-wider text-white font-semibold hover:opacity-90 active:opacity-80"
+              style={{ background: "#5b7351", minHeight: "48px" }}
+            >
+              {lang === "es" ? "Entendido 🤍" : "Got it 🤍"}
+            </button>
+          </div>
+        </div>
+      )}
       {whatsNewOpen && (
         <div className="fixed inset-x-3 bottom-3 sm:inset-auto sm:bottom-4 sm:right-4 sm:max-w-sm z-50">
           <div className="rounded-2xl border border-[#a8c090] bg-white shadow-2xl p-4 sm:p-5">
@@ -3450,6 +3588,36 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
             )}
           </div>
           <div className="ml-auto flex items-center gap-3">
+            {/* Letter-inbox button — lets the user re-open any past
+                broadcast announcement that they dismissed earlier. Tiny
+                heart badge appears when there's an unread one. */}
+            {(() => {
+              const unreadCount = allAnnouncements.filter(a => !a.dismissed).length;
+              return (
+                <div className="relative">
+                  <button
+                    onClick={() => setLetterInboxOpen(o => !o)}
+                    className="relative p-1.5 rounded hover:bg-stone-100 transition"
+                    title={lang === "es" ? "Mensajes" : "Messages"}
+                    aria-label={lang === "es" ? "Mensajes" : "Messages"}
+                  >
+                    <Mail className="w-4 h-4" />
+                    {/* Unread-count badge — same shape and color as the
+                        notifications bell so the two icons read as a
+                        family. Sage-green circle with a small white
+                        number when there's something unread. */}
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-[#7a9a6e] text-white text-[9px] font-bold rounded-full flex items-center justify-center leading-none">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  {/* Inbox panel moved to AppShell root so its fixed
+                      positioning isn't trapped by the header's flex/
+                      transform stack. Toggled by the button above. */}
+                </div>
+              );
+            })()}
             <NotificationsBell data={data} setData={setData} setActive={setActive} open={bellOpen} setOpen={setBellOpen} />
             <ProfileAvatar user={user} setUser={setUser} themeMuted={themeMuted} onLogout={onLogout} lang={lang} isAffiliate={isAffiliate} isPlannerAdmin={isPlannerAdmin} isOwner={isOwner} data={data} setData={setData} />
           </div>
@@ -3819,10 +3987,10 @@ function ConfettiBurst({ big = false, accent = "sage" }) {
 // ============================================================
 function PageHeader({ title, subtitle, action, dark }) {
   return (
-    <div className="flex items-start justify-between mb-6 gap-4">
+    <div className="flex items-start justify-between mb-8 sm:mb-10 gap-4">
       <div>
         <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{title}</h1>
-        {subtitle && <p className={`text-sm mt-1 ${dark ? "text-stone-400" : "text-stone-600"}`}>{subtitle}</p>}
+        {subtitle && <p className={`text-sm mt-2 ${dark ? "text-stone-400" : "text-stone-600"}`}>{subtitle}</p>}
       </div>
       {action}
     </div>
@@ -3953,7 +4121,50 @@ const ACCENT_PALETTES = {
   noir:     { id: "noir",     name: "Noir",     swatch: "#525252", primary: "#2d2d2d", mid: "#525252", light: "#9a9a9a", pale: "#d4d4d4", bg: "#f5f5f5" },
 };
 
-function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerConfetti, onLogout, dataKey, setData, data, accent, setAccent, lang, setLang }) {
+function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerConfetti, onLogout, dataKey, setData, data, accent, setAccent, lang, setLang, navigateTo }) {
+  // ----- Sovereign engagement % — soft nudge to explore the rest of the
+  // app. Each of the 15 sections counts as "used" once the user has put
+  // ANY real data into it. The percentage drives a friendly progress bar
+  // at the top of Settings; the names of unexplored sections become a
+  // gentle "try these next" suggestion. Not gamified, not pushy — quiet
+  // encouragement. ------------------------------------------------------
+  const engagementSections = (() => {
+    const plannersAny = data?.planners || {};
+    const anyPlannerVal = (key) =>
+      Object.values(plannersAny).some((p) => {
+        if (!p) return false;
+        if (key === "wins") return Array.isArray(p.wins) && p.wins.some((w) => w && (typeof w === "string" ? w.trim() : (w.text || "").trim()));
+        if (key === "gratitude") return (p.gratitude || "").trim().length > 0;
+        if (key === "waterGlasses") return (p.waterGlasses || 0) > 0;
+        return false;
+      });
+    return [
+      { id: "planner",    name: t("Daily Planner", lang),     used: Array.isArray(data?.tasks) && data.tasks.length > 0,                                target: "planner" },
+      { id: "habits",     name: t("Habits", lang),            used: (Array.isArray(data?.habitsCustom) && data.habitsCustom.length > 0) || anyPlannerVal("wins"), target: "habitsView" },
+      { id: "water",      name: t("Water", lang),             used: anyPlannerVal("waterGlasses"),                                                     target: "habitsView" },
+      { id: "wins",       name: t("Wins", lang),              used: anyPlannerVal("wins"),                                                             target: "planner" },
+      { id: "gratitude",  name: t("Gratitude", lang),         used: anyPlannerVal("gratitude"),                                                        target: "planner" },
+      { id: "calendar",   name: t("Calendar", lang),          used: data?.calendarEvents && Object.keys(data.calendarEvents).length > 0,               target: "calendarYear" },
+      { id: "goals",      name: t("Goals", lang),             used: Array.isArray(data?.goals) && data.goals.length > 0,                               target: "goals" },
+      { id: "finance",    name: t("Personal Finance", lang),  used: (() => { const pf = data?.personalFinance || {}; return (pf.income||[]).length + (pf.expenses||[]).length + (pf.savingsGoals||[]).length + (pf.subscriptions||[]).length > 0; })(), target: "personalFinance" },
+      { id: "cycle",      name: t("Cycle & Mood", lang),      used: data?.cycle && Array.isArray(data.cycle.entries) && data.cycle.entries.length > 0, target: "cycle" },
+      { id: "vision",     name: t("Vision Board", lang),      used: Array.isArray(data?.visionBoard) && data.visionBoard.length > 0,                   target: "vision" },
+      { id: "affirm",     name: t("Affirmations", lang),      used: Array.isArray(data?.affirmations) && data.affirmations.some(a => a && a.custom),   target: "affirmations" },
+      { id: "speak",      name: t("Speak Eloquently", lang),  used: Array.isArray(data?.elegantPhrases) && data.elegantPhrases.length > 0,             target: "scripts" },
+      { id: "boundaries", name: t("Boundaries", lang),        used: data?.boundaries && (
+        (Array.isArray(data.boundaries.with_self) && data.boundaries.with_self.length > 0) ||
+        (Array.isArray(data.boundaries.with_others) && data.boundaries.with_others.length > 0) ||
+        (Array.isArray(data.boundaries.dealbreakers) && data.boundaries.dealbreakers.length > 0)
+      ),                                                                                                                                              target: "scripts" },
+      { id: "notes",      name: t("Notes", lang),             used: Array.isArray(data?.notes) && data.notes.length > 0,                               target: "notes" },
+      { id: "logins",     name: t("Logins & Passwords", lang),used: Array.isArray(data?.logins) && data.logins.length > 0,                             target: "credentials" },
+    ];
+  })();
+  const engagementTotal = engagementSections.length;
+  const engagementUsed = engagementSections.filter((s) => s.used).length;
+  const engagementPct = Math.round((engagementUsed / engagementTotal) * 100);
+  const engagementUnused = engagementSections.filter((s) => !s.used).slice(0, 3);
+  const serifStyle = { fontFamily: "'Playfair Display', Georgia, serif" };
   const [profile, setProfile] = useState({ name: user.name || "" });
   const [pwd, setPwd] = useState({ current: "", next: "", confirm: "" });
   const [pwdMsg, setPwdMsg] = useState(null);
@@ -4011,6 +4222,50 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
   return (
     <div className="max-w-3xl">
       <PageHeader title={t("Settings", lang)} subtitle={t("Profile, security, preferences, data", lang)} dark={dark} />
+
+      {/* SOVEREIGN ENGAGEMENT — soft progress card showing how many of the
+          15 sections she's tried, plus a gentle "explore these next" hint
+          with the names of up to 3 unused sections she can tap into. */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-gradient-to-br from-[#f4f7ee] via-white to-white px-5 py-4 mb-6">
+        <div className="flex items-baseline justify-between gap-3 flex-wrap mb-2">
+          <div>
+            <div className="text-[10px] italic tracking-[0.18em] uppercase text-[#7a9a6e] font-semibold" style={serifStyle}>
+              {t("Your Sovereign", lang)}
+            </div>
+            <div className="text-sm sm:text-base text-stone-700 mt-0.5" style={serifStyle}>
+              {lang === "es"
+                ? `Has explorado ${engagementUsed} de ${engagementTotal} secciones`
+                : `You've explored ${engagementUsed} of ${engagementTotal} sections`}
+            </div>
+          </div>
+          <div className="text-3xl text-[#5b7351]" style={serifStyle}>{engagementPct}%</div>
+        </div>
+        <div className="h-1.5 rounded-full bg-stone-100 overflow-hidden">
+          <div
+            className="h-full transition-all duration-700"
+            style={{
+              width: `${engagementPct}%`,
+              background: "linear-gradient(90deg, #a8c090, #5b7351)",
+            }}
+          />
+        </div>
+        {engagementUnused.length > 0 && (
+          <div className="mt-3 flex items-center gap-2 flex-wrap">
+            <span className="text-[11px] italic text-stone-500">
+              {lang === "es" ? "Prueba esto:" : "Try this next:"}
+            </span>
+            {engagementUnused.map((s) => (
+              <button
+                key={s.id}
+                onClick={() => navigateTo && navigateTo(s.target)}
+                className="text-[11px] px-2.5 py-1 rounded-full border border-[#a8c090] text-[#5b7351] hover:bg-[#a8c090] hover:text-white transition"
+              >
+                {s.name}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* PROFILE */}
       <Panel title={t("Profile", lang)} dark={dark} className="mb-5">
@@ -5378,6 +5633,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const dateStr = fmtDate(todayISO());
   const hour = new Date().getHours();
   const timeGreeting = t(hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening", lang);
+
   const dayPhrase = t(
     hour < 12 ? "A quiet start. Let's set the tone."
     : hour < 17 ? "You're in the middle of it. Stay with yourself."
