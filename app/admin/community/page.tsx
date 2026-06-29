@@ -5,6 +5,8 @@ import { deletePostAction, moderatePostAction } from "./actions";
 import { requirePermission } from "../guard";
 import CommunitySettings from "./CommunitySettings";
 import AddToCommunityForm from "./AddToCommunityForm";
+import EditPostForm from "./EditPostForm";
+import SeedPostsButton from "./SeedPostsButton";
 
 export const dynamic = "force-dynamic";
 
@@ -114,6 +116,7 @@ function PostCard({ post }: { post: PostRow }) {
             Delete
           </button>
         </form>
+        <EditPostForm post={post} />
         <div className="ml-auto text-[10px] tracking-[0.18em] uppercase text-stone-500">
           {post.reaction_count.toLocaleString()} reactions
         </div>
@@ -156,6 +159,7 @@ export default async function AdminCommunityPage() {
           <h2 className="font-display text-xl text-forest-deep">Approved + archived</h2>
           <div className="text-xs italic text-stone">{others.length} total</div>
         </div>
+        {others.length === 0 && <div className="mb-4"><SeedPostsButton /></div>}
         {others.length === 0 ? (
           <div className="rounded-xl border border-stone-200 bg-white p-6 text-sm italic text-stone-500">
             Nothing decided yet.
