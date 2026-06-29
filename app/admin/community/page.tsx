@@ -4,6 +4,7 @@ import { getAllPosts, getCommunitySettings, type PostRow } from "@/lib/affiliate
 import { deletePostAction, moderatePostAction } from "./actions";
 import { requirePermission } from "../guard";
 import CommunitySettings from "./CommunitySettings";
+import AddToCommunityForm from "./AddToCommunityForm";
 
 export const dynamic = "force-dynamic";
 
@@ -129,6 +130,7 @@ export default async function AdminCommunityPage() {
 
   return (
     <div className="space-y-8">
+      <AddToCommunityForm />
       <CommunitySettings quote={settings.quote} theme={settings.theme} />
 
       <section>

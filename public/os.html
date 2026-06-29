@@ -5503,11 +5503,12 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const moveSummaryTask = (id, dir) => {
     const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return;
-    const target = idx + dir;
-    if (target < 0 || target >= sortedTodaysTasks.length) return;
     const cur = sortedTodaysTasks[idx];
+    if (cur._recurring) return;
+    let target = idx + dir;
+    while (target >= 0 && target < sortedTodaysTasks.length && sortedTodaysTasks[target]._recurring) target += dir;
+    if (target < 0 || target >= sortedTodaysTasks.length) return;
     const swap = sortedTodaysTasks[target];
-    if (cur._recurring || swap._recurring) return;
     if (!!cur.priority !== !!swap.priority) return;
     if (cur.priority && swap.priority) {
       setData({ ...data, tasks: tasks.map(x => {
@@ -5528,11 +5529,13 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const canMoveSummaryTask = (id, dir) => {
     const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return false;
-    const target = idx + dir;
+    const cur = sortedTodaysTasks[idx];
+    if (cur._recurring) return false;
+    let target = idx + dir;
+    while (target >= 0 && target < sortedTodaysTasks.length && sortedTodaysTasks[target]._recurring) target += dir;
     if (target < 0 || target >= sortedTodaysTasks.length) return false;
-    const a = sortedTodaysTasks[idx], b = sortedTodaysTasks[target];
-    if (a._recurring || b._recurring) return false;
-    return !!a.priority === !!b.priority;
+    const b = sortedTodaysTasks[target];
+    return !!cur.priority === !!b.priority;
   };
 
   // Summaries from each module
@@ -9968,11 +9971,12 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const moveTask = (id, dir) => {
     const idx = sortedDayTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return;
-    const target = idx + dir;
-    if (target < 0 || target >= sortedDayTasks.length) return;
     const cur = sortedDayTasks[idx];
+    if (cur._recurring) return;
+    let target = idx + dir;
+    while (target >= 0 && target < sortedDayTasks.length && sortedDayTasks[target]._recurring) target += dir;
+    if (target < 0 || target >= sortedDayTasks.length) return;
     const swap = sortedDayTasks[target];
-    if (cur._recurring || swap._recurring) return;
     if (!!cur.priority !== !!swap.priority) return;
     if (cur.priority && swap.priority) {
       setTasks(allTasks.map(x => {
@@ -9993,11 +9997,13 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const canMoveTask = (id, dir) => {
     const idx = sortedDayTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return false;
-    const target = idx + dir;
+    const cur = sortedDayTasks[idx];
+    if (cur._recurring) return false;
+    let target = idx + dir;
+    while (target >= 0 && target < sortedDayTasks.length && sortedDayTasks[target]._recurring) target += dir;
     if (target < 0 || target >= sortedDayTasks.length) return false;
-    const a = sortedDayTasks[idx], b = sortedDayTasks[target];
-    if (a._recurring || b._recurring) return false;
-    return !!a.priority === !!b.priority;
+    const b = sortedDayTasks[target];
+    return !!cur.priority === !!b.priority;
   };
   const toggleTask = (id) => {
     if (isVirtualTaskId(id)) {

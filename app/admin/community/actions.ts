@@ -51,3 +51,39 @@ export async function deletePostAction(formData: FormData) {
   revalidatePath("/admin/community");
   revalidatePath("/affiliate/community");
 }
+
+// Manually grant community access to a user by email, bypassing the apply
+// flow. Creates or updates their affiliate_applications row to approved.
+export async function addToCommunityAction(formData: FormData): Promise<{ error?: string; success?: string }> {
+  const me = await requireAdmin();
+  const email = String(formData.get("email") ?? "").trim().toLowerCase();
+  if (!email) return { error: "Email is required." };
+
+  const admin = createAdminClient();
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("id, email")
+    .eq("email", email)
+    .maybeSingle();
+
+  if (!profile) return { error: `No account found for ${email}. They need to sign up first.` };
+
+  await admin
+    .from("affiliate_applications")
+    .upsert(
+      {
+        user_id: profile.id,
+        email: profile.email,
+        message: `Added directly by admin (${me.email})`,
+        status: "approved",
+        applied_at: new Date().toISOString(),
+        decided_at: new Date().toISOString(),
+        decided_by: me.email,
+      },
+      { onConflict: "user_id" }
+    );
+
+  revalidatePath("/admin/community");
+  return { success: `${email} now has community access.` };
+}
