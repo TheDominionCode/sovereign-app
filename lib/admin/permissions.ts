@@ -16,6 +16,7 @@ export type PermissionKey =
   | "community"
   | "testimonials"
   | "announcements"
+  | "daily_experience"
   | "admins";
 
 export type PermissionGroup = "customers" | "money" | "growth" | "people";
@@ -40,8 +41,9 @@ export const PERMISSIONS: PermissionDef[] = [
   { key: "affiliates",   label: "Affiliate moderation", hint: "Approve / reject affiliate program applications.", group: "growth" },
   { key: "community",    label: "Community moderation", hint: "Review + approve Wall-of-wins posts. Edit the heading quote + theme.", group: "growth" },
   { key: "testimonials", label: "Testimonials",       hint: "Review + approve testimonial submissions.", group: "growth" },
-  { key: "announcements",label: "Announcements",      hint: "Send in-app messages to every signed-in user (appears as a popup).", group: "growth" },
-  { key: "admins",       label: "Manage admins",      hint: "Add / remove / re-permission other staff. Grant carefully.", group: "people" },
+  { key: "announcements",    label: "Announcements",      hint: "Send in-app messages to every signed-in user (appears as a popup).", group: "growth" },
+  { key: "daily_experience", label: "Daily Experience",   hint: "Manage daily principles, reflections, questions, and intentions shown in the app.", group: "growth" },
+  { key: "admins",           label: "Manage admins",      hint: "Add / remove / re-permission other staff. Grant carefully.", group: "people" },
 ];
 
 export const GROUP_LABELS: Record<PermissionGroup, string> = {

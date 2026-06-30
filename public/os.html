@@ -1939,6 +1939,34 @@ const TRANSLATIONS = {
     "All closed": "All closed",
     "Remember": "Remember",
     "Last state": "Last state",
+    // Sprint 3 — Daily Experience Engine
+    "Today's Principle": "Today's Principle",
+    "Today's Reflection": "Today's Reflection",
+    "Today's Question": "Today's Question",
+    "Today's Intention": "Today's Intention",
+    "Evidence that you're becoming who you said you'd be.": "Evidence that you're becoming who you said you'd be.",
+    "Every yes protects something. Every no protects someone.": "Every yes protects something. Every no protects someone.",
+    "Your words shape your relationships.": "Your words shape your relationships.",
+    "Listen to your body before demanding more from it.": "Listen to your body before demanding more from it.",
+    "Repeat what you want your mind to believe.": "Repeat what you want your mind to believe.",
+    "Capture what you never want to forget.": "Capture what you never want to forget.",
+    "Stewardship creates freedom.": "Stewardship creates freedom.",
+    "Every vision deserves today's action.": "Every vision deserves today's action.",
+    "Know yourself better one day at a time.": "Know yourself better one day at a time.",
+    "Today's reflection prompts": "Today's reflection prompts",
+    "What am I proud of today?": "What am I proud of today?",
+    "What challenged me today?": "What challenged me today?",
+    "What did I learn today?": "What did I learn today?",
+    "What promise did I keep today?": "What promise did I keep today?",
+    "What deserves my attention tomorrow?": "What deserves my attention tomorrow?",
+    "Be fully present": "Be fully present",
+    "Lead with courage": "Lead with courage",
+    "Grow one percent": "Grow one percent",
+    "Serve with excellence": "Serve with excellence",
+    "Honor my rest": "Honor my rest",
+    "Stay focused": "Stay focused",
+    "Practice gratitude": "Practice gratitude",
+    "Build my future self": "Build my future self",
     "STAT CIRCLES": "STAT CIRCLES",
     "Pick what shows in the row of circles.": "Pick what shows in the row of circles.",
     "Tasks left": "Tasks left",
@@ -2676,6 +2704,34 @@ const TRANSLATIONS = {
     "All closed": "Todo cerrado",
     "Remember": "Recordar",
     "Last state": "Último estado",
+    // Sprint 3 — Daily Experience Engine
+    "Today's Principle": "Principio de hoy",
+    "Today's Reflection": "Reflexión de hoy",
+    "Today's Question": "Pregunta de hoy",
+    "Today's Intention": "Intención de hoy",
+    "Evidence that you're becoming who you said you'd be.": "Evidencia de que te estás convirtiendo en quien dijiste que serías.",
+    "Every yes protects something. Every no protects someone.": "Cada sí protege algo. Cada no protege a alguien.",
+    "Your words shape your relationships.": "Tus palabras dan forma a tus relaciones.",
+    "Listen to your body before demanding more from it.": "Escucha a tu cuerpo antes de exigirle más.",
+    "Repeat what you want your mind to believe.": "Repite lo que quieres que tu mente crea.",
+    "Capture what you never want to forget.": "Captura lo que nunca quieres olvidar.",
+    "Stewardship creates freedom.": "La administración crea libertad.",
+    "Every vision deserves today's action.": "Cada visión merece la acción de hoy.",
+    "Know yourself better one day at a time.": "Conócete mejor un día a la vez.",
+    "Today's reflection prompts": "Preguntas de reflexión de hoy",
+    "What am I proud of today?": "¿De qué estoy orgullosa hoy?",
+    "What challenged me today?": "¿Qué me desafió hoy?",
+    "What did I learn today?": "¿Qué aprendí hoy?",
+    "What promise did I keep today?": "¿Qué promesa cumplí hoy?",
+    "What deserves my attention tomorrow?": "¿Qué merece mi atención mañana?",
+    "Be fully present": "Estar completamente presente",
+    "Lead with courage": "Liderar con valentía",
+    "Grow one percent": "Crecer un uno por ciento",
+    "Serve with excellence": "Servir con excelencia",
+    "Honor my rest": "Honrar mi descanso",
+    "Stay focused": "Mantenerme enfocada",
+    "Practice gratitude": "Practicar la gratitud",
+    "Build my future self": "Construir mi yo del futuro",
     "STAT CIRCLES": "CÍRCULOS DEL DÍA",
     "Pick what shows in the row of circles.": "Elige qué se muestra en la fila de círculos.",
     "Tasks left": "Tareas pendientes",
@@ -5064,7 +5120,7 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
     <div>
       <div className="mb-6">
         <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Personal Finance", lang)}</h1>
-        <p className={`text-sm mt-1 ${themeMuted}`}>{t("Your income, expenses, bills, and savings goals. Saved privately on this device only.", lang)}</p>
+        <p className={`text-sm mt-1 ${themeMuted} italic`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Stewardship creates freedom.", lang)}</p>
       </div>
 
       {/* YEAR-TO-DATE LITTLE BOXES */}
@@ -5671,6 +5727,84 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
 // ============================================================
 // PERSONAL SUMMARY (HOME) MODULE — checklist hero
 // ============================================================
+// Sprint 3 — Daily Experience Engine: rotating bilingual content pools
+const DAILY_PRINCIPLES = [
+  { en: "You were created for consistency, not convenience.", es: "Fuiste creada para la consistencia, no para la conveniencia." },
+  { en: "Small actions taken daily become the legacy of a lifetime.", es: "Las acciones pequeñas tomadas a diario se convierten en el legado de una vida." },
+  { en: "Discipline is not punishment — it is devotion to who you are becoming.", es: "La disciplina no es castigo — es devoción a quien estás llegando a ser." },
+  { en: "Your habits are your autobiography. Write it with intention.", es: "Tus hábitos son tu autobiografía. Escríbela con intención." },
+  { en: "The version of you that you want to be is already on the other side of your excuses.", es: "La versión de ti que quieres ser ya está del otro lado de tus excusas." },
+  { en: "You don't need permission to grow. You need practice.", es: "No necesitas permiso para crecer. Necesitas práctica." },
+  { en: "Rest is not retreat. It is fuel for the next move.", es: "El descanso no es retroceso. Es combustible para el próximo movimiento." },
+  { en: "The way you do one thing is the way you do everything.", es: "La forma en que haces una cosa es la forma en que haces todo." },
+  { en: "Clarity comes from action, not thought alone.", es: "La claridad viene de la acción, no solo del pensamiento." },
+  { en: "Every morning is a new agreement with who you choose to be.", es: "Cada mañana es un nuevo acuerdo con quien eliges ser." },
+  { en: "Build so well that your work speaks before you do.", es: "Construye tan bien que tu trabajo hable antes que tú." },
+  { en: "Comparison is the thief of your specific calling.", es: "La comparación es el ladrón de tu llamado específico." },
+  { en: "Your standards protect your energy. Hold them.", es: "Tus estándares protegen tu energía. Mantenlos." },
+  { en: "Discomfort is just the address where growth lives.", es: "La incomodidad es simplemente la dirección donde vive el crecimiento." },
+  { en: "Gratitude is not a feeling — it is a practice that rewires your mind.", es: "La gratitud no es un sentimiento — es una práctica que recablea tu mente." },
+  { en: "What you feed your mind shapes what you manifest.", es: "Lo que alimentas a tu mente da forma a lo que manifiestas." },
+  { en: "The best investment you will ever make is in the person you are becoming.", es: "La mejor inversión que jamás harás es en la persona en la que te estás convirtiendo." },
+  { en: "Urgency without clarity is just noise. Get clear first.", es: "La urgencia sin claridad es solo ruido. Primero aclara." },
+  { en: "You are not behind. You are exactly where your next step begins.", es: "No estás atrasada. Estás exactamente donde comienza tu próximo paso." },
+  { en: "Honor every version of yourself — especially the one that is still learning.", es: "Honra cada versión de ti misma — especialmente la que todavía está aprendiendo." },
+];
+const DAILY_REFLECTIONS = [
+  { en: "Growth is rarely loud. Most days it looks like showing up, choosing again, and trusting the process when you cannot yet see the result.", es: "El crecimiento rara vez es ruidoso. La mayoría de los días parece presentarse, elegir de nuevo y confiar en el proceso cuando aún no puedes ver el resultado." },
+  { en: "The woman you are becoming is watching every choice you make today. She is cheering for every small act of discipline you choose over comfort.", es: "La mujer en la que te estás convirtiendo está observando cada elección que haces hoy. Ella anima cada pequeño acto de disciplina que eliges sobre la comodidad." },
+  { en: "Seasons of slowness are not signs of failure. They are the quiet work that makes the breakthrough visible.", es: "Las temporadas de lentitud no son señales de fracaso. Son el trabajo silencioso que hace visible el avance." },
+  { en: "You were not built to shrink. Every time you play small, you delay the very thing the world is waiting for from you.", es: "No fuiste construida para encogerte. Cada vez que juegas pequeño, retransas lo que el mundo está esperando de ti." },
+  { en: "The most powerful thing you can do is decide — and then act as though the outcome is already certain.", es: "Lo más poderoso que puedes hacer es decidir — y luego actuar como si el resultado ya fuera cierto." },
+  { en: "Integrity means the same level of care whether someone is watching or not. That is where real character is built.", es: "La integridad significa el mismo nivel de cuidado ya sea que alguien esté mirando o no. Ahí es donde se construye el carácter real." },
+  { en: "Your peace is not dependent on your circumstances. It is a practice you choose in the middle of them.", es: "Tu paz no depende de tus circunstancias. Es una práctica que eliges en medio de ellas." },
+  { en: "The story you tell yourself every morning before you rise sets the tone for everything that follows. Choose it carefully.", es: "La historia que te cuentas cada mañana antes de levantarte establece el tono para todo lo que sigue. Elígela cuidadosamente." },
+  { en: "Momentum is built through small, boring, repeated decisions. That is the secret that looks like luck from the outside.", es: "El impulso se construye a través de pequeñas y aburridas decisiones repetidas. Ese es el secreto que parece suerte desde afuera." },
+  { en: "You are not waiting for the right time. The right time is always now — right where you are, with what you already have.", es: "No estás esperando el momento correcto. El momento correcto es siempre ahora — justo donde estás, con lo que ya tienes." },
+  { en: "Rest is productive. A rested woman makes better decisions, shows up more fully, and serves from a place of overflow, not depletion.", es: "El descanso es productivo. Una mujer descansada toma mejores decisiones y sirve desde un lugar de abundancia, no de agotamiento." },
+  { en: "Faith is not the absence of doubt. It is moving forward in spite of it. Trust the process you have set in motion.", es: "La fe no es la ausencia de duda. Es avanzar a pesar de ella. Confía en el proceso que has puesto en movimiento." },
+  { en: "The boundaries you hold are not walls — they are declarations of what you value and who you intend to become.", es: "Los límites que mantienes no son muros — son declaraciones de lo que valoras y de quien pretendes llegar a ser." },
+  { en: "Everything you are building today is the foundation someone you love will one day stand on. Build it with care.", es: "Todo lo que estás construyendo hoy es el cimiento sobre el que alguien a quien amas algún día se parará. Constrúyelo con cuidado." },
+  { en: "You do not need to have everything figured out. You only need to take the next right step, and then the next.", es: "No necesitas tener todo resuelto. Solo necesitas dar el siguiente paso correcto, y luego el siguiente." },
+  { en: "Your emotions are information, not instructions. Notice them. Name them. Then choose how you want to respond.", es: "Tus emociones son información, no instrucciones. Obsérvelas. Nómbralas. Luego elige cómo quieres responder." },
+  { en: "Wealth is built in the margins — the extra call, the early hour, the decision to reinvest before you spend.", es: "La riqueza se construye en los márgenes — la llamada extra, la hora temprana, la decisión de reinvertir antes de gastar." },
+  { en: "Comparison steals your present. The woman next to you is running a different race on a different track. Run your own.", es: "La comparación roba tu presente. La mujer a tu lado corre una carrera diferente en una pista diferente. Corre la tuya." },
+  { en: "Every win — no matter how small — is evidence that you are capable. Collect that evidence. It becomes your certainty.", es: "Cada victoria — sin importar cuán pequeña — es evidencia de que eres capaz. Recopila esa evidencia. Se convierte en tu certeza." },
+  { en: "The version of you that shows up consistently is far more powerful than the version that shows up perfectly once.", es: "La versión de ti que se presenta consistentemente es mucho más poderosa que la que se presenta perfectamente una sola vez." },
+];
+const DAILY_QUESTIONS = [
+  { en: "What deserves your best attention today?", es: "¿Qué merece tu mejor atención hoy?" },
+  { en: "What promise will you keep today?", es: "¿Qué promesa cumplirás hoy?" },
+  { en: "Who are you becoming today?", es: "¿En quién te estás convirtiendo hoy?" },
+  { en: "What would make today meaningful?", es: "¿Qué haría que hoy fuera significativo?" },
+  { en: "What distraction can you release today?", es: "¿Qué distracción puedes liberar hoy?" },
+  { en: "What one thing, if done well today, would make everything else easier?", es: "¿Qué única cosa, si se hace bien hoy, haría todo lo demás más fácil?" },
+  { en: "Who needs you to show up fully today?", es: "¿Quién necesita que te presentes plenamente hoy?" },
+  { en: "What habit are you building one rep at a time right now?", es: "¿Qué hábito estás construyendo una repetición a la vez ahora mismo?" },
+  { en: "What would the best version of you do in the next hour?", es: "¿Qué haría la mejor versión de ti en la próxima hora?" },
+  { en: "What are you tolerating that you need to stop tolerating?", es: "¿Qué estás tolerando que necesitas dejar de tolerar?" },
+  { en: "What part of your vision will today move forward?", es: "¿Qué parte de tu visión hará avanzar hoy?" },
+  { en: "What conversation have you been avoiding that would change everything?", es: "¿Qué conversación has estado evitando que lo cambiaría todo?" },
+  { en: "What does rest and recovery look like for you today?", es: "¿Cómo se ve el descanso y la recuperación para ti hoy?" },
+  { en: "What belief is holding you back that you are ready to release?", es: "¿Qué creencia te está frenando y estás lista para liberar?" },
+  { en: "How will you celebrate a small win today?", es: "¿Cómo celebrarás una pequeña victoria hoy?" },
+  { en: "Who in your life needs your gratitude today?", es: "¿Quién en tu vida necesita tu gratitud hoy?" },
+  { en: "What are you building that your future self will thank you for?", es: "¿Qué estás construyendo por lo que tu yo futuro te agradecerá?" },
+  { en: "What boundary do you need to hold — or set — today?", es: "¿Qué límite necesitas mantener — o establecer — hoy?" },
+  { en: "What would it mean to show up with full presence today?", es: "¿Qué significaría presentarte con plena presencia hoy?" },
+  { en: "What are you most afraid of doing today — and why might that be the exact thing to do?", es: "¿Qué es lo que más temes hacer hoy — y por qué podría ser exactamente lo que deberías hacer?" },
+];
+const DAILY_INTENTIONS = [
+  { id: "present",   label: "Be fully present",    es: "Estar completamente presente" },
+  { id: "lead",      label: "Lead with courage",   es: "Liderar con valentía" },
+  { id: "grow",      label: "Grow one percent",    es: "Crecer un uno por ciento" },
+  { id: "serve",     label: "Serve with excellence", es: "Servir con excelencia" },
+  { id: "rest",      label: "Honor my rest",       es: "Honrar mi descanso" },
+  { id: "focus",     label: "Stay focused",        es: "Mantenerme enfocada" },
+  { id: "gratitude", label: "Practice gratitude",  es: "Practicar la gratitud" },
+  { id: "build",     label: "Build my future self", es: "Construir mi yo del futuro" },
+];
+
 function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted, triggerConfetti, setActive, navigateTo, lang }) {
   const today = todayISO();
   const tasks = data.tasks || [];
@@ -5941,6 +6075,19 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const firstName = (user.name || "").split(" ")[0];
   const serifStyle = { fontFamily: "'Playfair Display', Georgia, serif" };
 
+  // Sprint 3 — daily rotating content
+  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  const todayPrincipleObj = DAILY_PRINCIPLES[dayOfYear % DAILY_PRINCIPLES.length] || DAILY_PRINCIPLES[0];
+  const todayReflectionObj = DAILY_REFLECTIONS[dayOfYear % DAILY_REFLECTIONS.length] || DAILY_REFLECTIONS[0];
+  const todayQuestionObj = DAILY_QUESTIONS[dayOfYear % DAILY_QUESTIONS.length] || DAILY_QUESTIONS[0];
+  const todayPrinciple = (lang === "es" ? todayPrincipleObj.es : null) || todayPrincipleObj.en;
+  const todayReflection = (lang === "es" ? todayReflectionObj.es : null) || todayReflectionObj.en;
+  const todayQuestion = (lang === "es" ? todayQuestionObj.es : null) || todayQuestionObj.en;
+  const todayIntentionId = (data.dailyIntentions || {})[today] || null;
+  const setTodayIntention = (id) => {
+    setData({ ...data, dailyIntentions: { ...(data.dailyIntentions || {}), [today]: todayIntentionId === id ? null : id } });
+  };
+
   // ----- Priority editing on the summary card -----
   // We read from today's priority TASKS (modern model). Each priority slot
   // 1/2/3 maps to a task whose .priorityOrder matches. Empty slots show an
@@ -6079,6 +6226,44 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           className="px-3 py-1.5 rounded-full border border-stone-200 text-[11px] tracking-wider uppercase text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee] hover:text-[#5b7351] transition flex-shrink-0">
           {t("Customize", lang)}
         </button>
+      </div>
+
+      {/* SPRINT 3 — DAILY EXPERIENCE ENGINE */}
+      {/* Today's Principle */}
+      <div className="rounded-2xl bg-gradient-to-r from-[#5b7351]/10 to-[#f4f7ee]/40 border border-[#d3e0c5] px-5 py-4 mb-4">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Principle", lang)}</div>
+        <p className="font-serif text-base italic text-stone-800 leading-snug" style={serifStyle}>{todayPrinciple}</p>
+      </div>
+
+      {/* Today's Reflection */}
+      <div className="rounded-2xl border border-stone-200 px-5 py-4 mb-4 bg-white/70">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 mb-1.5 font-semibold" style={serifStyle}>{t("Today's Reflection", lang)}</div>
+        <p className="text-sm text-stone-700 leading-relaxed italic" style={serifStyle}>{todayReflection}</p>
+      </div>
+
+      {/* Today's Question */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/50 px-5 py-4 mb-4">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Question", lang)}</div>
+        <p className="font-serif text-lg italic text-stone-800 leading-snug" style={serifStyle}>{todayQuestion}</p>
+      </div>
+
+      {/* Today's Intention — selector */}
+      <div className="rounded-2xl border border-stone-200 bg-white/70 px-5 py-4 mb-6">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 mb-3 font-semibold" style={serifStyle}>{t("Today's Intention", lang)}</div>
+        <div className="flex flex-wrap gap-2">
+          {DAILY_INTENTIONS.map((intent) => {
+            const isSelected = todayIntentionId === intent.id;
+            const label = lang === "es" ? intent.es : intent.label;
+            return (
+              <button key={intent.id}
+                onClick={() => setTodayIntention(intent.id)}
+                className={`px-3 py-1.5 rounded-full text-xs italic transition border ${isSelected ? "text-white border-[#5b7351] font-semibold" : "bg-white text-stone-600 border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
+                style={{ background: isSelected ? "#5b7351" : undefined, fontFamily: "'Playfair Display', Georgia, serif" }}>
+                {label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* AFFIRMATION HERO — pick your own for today */}
@@ -6991,12 +7176,31 @@ function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, trigger
 
   return (
     <div>
-      <PageHeader title={t("Growth & Self", lang)} subtitle={t("Know your strengths. Own your growth. Manage habits on the Daily Planner.", lang)} dark={dark}
+      <PageHeader title={t("Growth & Self", lang)} subtitle={t("Know yourself better one day at a time.", lang)} dark={dark}
         action={
           <button onClick={addCustomPanel} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> {t("New section", lang)}
           </button>
         } />
+
+      {/* Sprint 3 — Today's 5 Reflection Prompts */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/40 px-5 py-4 mb-6">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-3 font-semibold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Today's reflection prompts", lang)}</div>
+        <ol className="space-y-2">
+          {[
+            t("What am I proud of today?", lang),
+            t("What challenged me today?", lang),
+            t("What did I learn today?", lang),
+            t("What promise did I keep today?", lang),
+            t("What deserves my attention tomorrow?", lang),
+          ].map((prompt, i) => (
+            <li key={i} className="flex items-start gap-2.5">
+              <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white mt-0.5" style={{ background: "#7a9a6e" }}>{i + 1}</span>
+              <p className="text-sm italic text-stone-700 leading-snug" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{prompt}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-5">
         <ReflectionPanel
@@ -7213,7 +7417,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 
   return (
     <div>
-      <PageHeader title={t("Cycle & Mood", lang)} subtitle={t("Track your flow. Honor how you feel. Notice the patterns.", lang)} dark={dark}
+      <PageHeader title={t("Cycle & Mood", lang)} subtitle={t("Listen to your body before demanding more from it.", lang)} dark={dark}
         action={
           <button onClick={clearAll} className="px-3 py-2 border border-stone-300 hover:border-rose-400 hover:text-rose-600 hover:bg-rose-50 text-sm rounded flex items-center gap-1.5"><RefreshCw className="w-4 h-4" /> {t("Clear all", lang)}</button>
         } />
@@ -7901,7 +8105,7 @@ function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, tri
 
   return (
     <div>
-      <PageHeader title={t("Speak Eloquently", lang)} subtitle={t("Refine your language. Grow your authority. The way you speak becomes the woman you are.", lang)} dark={dark}
+      <PageHeader title={t("Speak Eloquently", lang)} subtitle={t("Your words shape your relationships.", lang)} dark={dark}
         action={<button onClick={() => setOpen(true)} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5"><Plus className="w-4 h-4" /> {t("Add phrase", lang)}</button>} />
 
       <div className="mb-5">
@@ -8061,7 +8265,7 @@ function BoundariesModule({ data, setData, dark, themePanel, themeMuted, trigger
 
   return (
     <div>
-      <PageHeader title={t("Boundaries", lang)} subtitle={t("What you accept. What you don't. The line you don't cross.", lang)} dark={dark}
+      <PageHeader title={t("Boundaries", lang)} subtitle={t("Every yes protects something. Every no protects someone.", lang)} dark={dark}
         action={
           <button onClick={addCustomBoundary} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> {t("New section", lang)}
@@ -10789,6 +10993,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S WINS", lang)}</h2>
+          <p className="text-[10px] italic text-stone-400 mt-0.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Evidence that you're becoming who you said you'd be.", lang)}</p>
           <button onClick={() => setAddWinModalOpen(true)}
             className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
             style={{ background: "var(--accent-mid)" }}
@@ -13253,7 +13458,7 @@ function NotesModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 
   return (
     <div>
-      <PageHeader title={t("Notes", lang)} subtitle={t("Brain dump. Tag. Pin. Find later.", lang)} dark={dark}
+      <PageHeader title={t("Notes", lang)} subtitle={t("Capture what you never want to forget.", lang)} dark={dark}
         action={<AddButton onClick={() => { setForm(blank); setEditing(null); setOpen(true); }} label={t("Add Note", lang)} dark={dark} />} />
 
       <div className={`flex items-center gap-2 px-3 py-2 rounded border ${dark ? "bg-white border-stone-200" : "bg-white border-stone-300"} mb-4`}>
@@ -13918,7 +14123,7 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
 
   return (
     <div>
-      <PageHeader title={t("Affirmations", lang)} subtitle={t("Words become beliefs. Beliefs become reality.", lang)} dark={dark}
+      <PageHeader title={t("Affirmations", lang)} subtitle={t("Repeat what you want your mind to believe.", lang)} dark={dark}
         action={<AddButton onClick={() => setOpen(true)} label={t("Add", lang)} dark={dark} />} />
 
       {/* Daily affirmation hero — mobile friendly */}
@@ -14117,7 +14322,8 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
             <span className="text-xs tracking-[0.2em] font-bold text-[#5b3a1e]">{meta.topVerse}</span>
           </div>
         </div>
-        <p className="text-sm font-bold tracking-wider mt-2 italic text-[#5b3a1e] max-w-4xl uppercase" style={{ fontFamily: "Georgia, serif" }}>
+        <p className="text-xs italic text-[#7a9a6e] mt-1 mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Every vision deserves today's action.", lang)}</p>
+        <p className="text-sm font-bold tracking-wider mt-1 italic text-[#5b3a1e] max-w-4xl uppercase" style={{ fontFamily: "Georgia, serif" }}>
           "{meta.statement}"
         </p>
       </div>
