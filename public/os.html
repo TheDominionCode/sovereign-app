@@ -1661,87 +1661,53 @@ const PERSONAL_NAV = [
   { id: "boundaries",   label: "Boundaries",          icon: Shield },
   { id: "vision",       label: "Vision",              icon: ImageIcon },
   { id: "notes",        label: "Notes",               icon: StickyNote },
-  { id: "credentials",  label: "Logins & Passwords",  icon: Lock },
 ];
 
 const SHARED_NAV = [
-  { id: "settings", label: "Settings", icon: Settings },
+  { id: "credentials", label: "Logins & Passwords", icon: Lock },
+  { id: "settings",    label: "Settings",            icon: Settings },
 ];
 
-// Sidebar pillar structure — six life pillars + resources.
-// Items with soon:true render as dimmed placeholders (no navigation).
-// Items with id:null and soon:true are not yet built.
+// Sidebar pillar structure — only shows built, functional modules.
 const PERSONAL_NAV_PILLARS = [
   {
     id: "purpose", label: "Purpose", icon: Target,
     items: [
-      { id: "planner",      label: "Today's Focus",   icon: BookOpen },
-      { id: "calendarYear", label: "Calendar",         icon: Calendar },
-      { id: null,           label: "Tasks",            icon: CheckSquare, soon: true },
-      { id: "goals",        label: "Goals",            icon: Target },
-      { id: "vision",       label: "Vision",           icon: ImageIcon },
+      { id: "planner",         label: "Today's Focus",   icon: BookOpen },
+      { id: "calendarYear",    label: "Calendar",         icon: Calendar },
+      { id: "goals",           label: "Goals",            icon: Target },
+      { id: "vision",          label: "Vision",           icon: ImageIcon },
     ],
   },
   {
     id: "mind", label: "Mind", icon: Lightbulb,
     items: [
-      { id: "speak",        label: "Speak Eloquently", icon: MessageCircle },
-      { id: "affirmations", label: "Affirmations",     icon: Sparkles },
-      { id: null,           label: "Journal",          icon: AlignLeft,   soon: true },
-      { id: null,           label: "Brain Dump",       icon: Zap,         soon: true },
-      { id: "notes",        label: "Notes",            icon: StickyNote },
-      { id: null,           label: "Gratitude",        icon: Heart,       soon: true },
-    ],
-  },
-  {
-    id: "spirit", label: "Spirit", icon: null,
-    items: [
-      { id: null,           label: "Prayer",           icon: Moon,        soon: true },
-      { id: null,           label: "Bible",            icon: BookOpen,    soon: true },
-      { id: null,           label: "Scripture",        icon: Quote,       soon: true },
-      { id: "habits",       label: "Reflection",       icon: Lightbulb },
+      { id: "affirmations",    label: "Affirmations",     icon: Sparkles },
+      { id: "speak",           label: "Speak Eloquently", icon: MessageCircle },
+      { id: "habits",          label: "Reflection",       icon: Lightbulb },
+      { id: "notes",           label: "Notes",            icon: StickyNote },
     ],
   },
   {
     id: "body", label: "Body", icon: Activity,
     items: [
-      { id: "habitsView",   label: "Habits",           icon: Activity },
-      { id: null,           label: "Water",            icon: Clock,       soon: true },
-      { id: null,           label: "Sleep",            icon: Moon,        soon: true },
-      { id: null,           label: "Movement",         icon: Zap,         soon: true },
-      { id: "cycle",        label: "Cycle",            icon: Heart },
-      { id: "cycle",        label: "Mood",             icon: Sun },
+      { id: "habitsView",      label: "Habits",           icon: Activity },
+      { id: "cycle",           label: "Cycle & Mood",     icon: Heart },
     ],
   },
   {
     id: "wealth", label: "Wealth", icon: DollarSign,
     items: [
-      { id: "personalFinance", label: "Finances",      icon: DollarSign },
-      { id: null,           label: "Budget",           icon: Calculator,  soon: true },
-      { id: null,           label: "Net Worth",        icon: TrendingUp,  soon: true },
-      { id: null,           label: "Investments",      icon: BarChart3,   soon: true },
+      { id: "personalFinance", label: "Finances",         icon: DollarSign },
     ],
   },
   {
     id: "relationships", label: "Relationships", icon: Users,
     items: [
-      { id: "boundaries",   label: "Boundaries",       icon: Shield },
-      { id: null,           label: "Family",           icon: Users,       soon: true },
-      { id: null,           label: "Marriage",         icon: Heart,       soon: true },
-      { id: null,           label: "Community",        icon: Globe,       soon: true },
+      { id: "boundaries",      label: "Boundaries",       icon: Shield },
     ],
   },
 ];
-
-const RESOURCES_PILLAR = {
-  id: "resources", label: "Resources", icon: Layers,
-  items: [
-    { id: null,            label: "Resource Library",  icon: BookOpen,    soon: true },
-    { id: null,            label: "Courses",           icon: PlayCircle,  soon: true },
-    { id: null,            label: "Downloads",         icon: FileText,    soon: true },
-    { id: "credentials",   label: "Logins & Passwords", icon: Lock },
-  ],
-};
 
 // ============================================================
 // LANGUAGE / I18N — English & Spanish
@@ -1965,12 +1931,14 @@ const TRANSLATIONS = {
     "REFLECTION": "REFLECTION",
     "PREPARE TOMORROW": "PREPARE TOMORROW",
     "What made today meaningful?": "What made today meaningful?",
-    "Sidebar layout": "Sidebar layout",
-    "See everything at once, or group by section.": "See everything at once, or group by section.",
-    "Grouped": "Grouped",
-    "Collapsible sections": "Collapsible sections",
-    "All visible": "All visible",
-    "Everything shown": "Everything shown",
+    "Sidebar default view": "Sidebar default view",
+    "How sections appear when you open the app.": "How sections appear when you open the app.",
+    "Expanded": "Expanded",
+    "All open": "All open",
+    "Collapsed": "Collapsed",
+    "All closed": "All closed",
+    "Remember": "Remember",
+    "Last state": "Last state",
     "STAT CIRCLES": "STAT CIRCLES",
     "Pick what shows in the row of circles.": "Pick what shows in the row of circles.",
     "Tasks left": "Tasks left",
@@ -2700,12 +2668,14 @@ const TRANSLATIONS = {
     "REFLECTION": "REFLEXIÓN",
     "PREPARE TOMORROW": "PREPARAR MAÑANA",
     "What made today meaningful?": "¿Qué hizo que hoy fuera significativo?",
-    "Sidebar layout": "Disposición del menú",
-    "See everything at once, or group by section.": "Ve todo a la vez, o agrupa por sección.",
-    "Grouped": "Agrupado",
-    "Collapsible sections": "Secciones desplegables",
-    "All visible": "Todo visible",
-    "Everything shown": "Todo mostrado",
+    "Sidebar default view": "Vista predeterminada del menú",
+    "How sections appear when you open the app.": "Cómo aparecen las secciones al abrir la app.",
+    "Expanded": "Expandido",
+    "All open": "Todo abierto",
+    "Collapsed": "Colapsado",
+    "All closed": "Todo cerrado",
+    "Remember": "Recordar",
+    "Last state": "Último estado",
     "STAT CIRCLES": "CÍRCULOS DEL DÍA",
     "Pick what shows in the row of circles.": "Elige qué se muestra en la fila de círculos.",
     "Tasks left": "Tareas pendientes",
@@ -3255,9 +3225,21 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   const [collapsed, setCollapsed] = useState(() => typeof window !== "undefined" && window.innerWidth < 768);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openPillars, setOpenPillars] = useState(() => {
-    const defaults = {};
-    [...PERSONAL_NAV_PILLARS, RESOURCES_PILLAR].forEach(p => { defaults[p.id] = true; });
-    return defaults;
+    try {
+      const savedData = storage.get(`dom_data_${user.username}`, {});
+      const defaultView = savedData?.sidebarDefaultView ?? "expanded";
+      if (defaultView === "remember" && savedData?.sidebarOpenState) {
+        return savedData.sidebarOpenState;
+      }
+      const allOpen = defaultView !== "collapsed";
+      const defaults = {};
+      PERSONAL_NAV_PILLARS.forEach(p => { defaults[p.id] = allOpen; });
+      return defaults;
+    } catch {
+      const defaults = {};
+      PERSONAL_NAV_PILLARS.forEach(p => { defaults[p.id] = true; });
+      return defaults;
+    }
   });
   const [bellOpen, setBellOpen] = useState(false);
   const [letterInboxOpen, setLetterInboxOpen] = useState(false);
@@ -3486,6 +3468,26 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
 
   const moduleProps = { data, setData, user, dark, triggerConfetti, themePanel, themeMuted, themeText, accent, setAccent, lang, setLang, navigateTo };
 
+  const togglePillar = (pillarId) => {
+    setOpenPillars(prev => {
+      const next = { ...prev, [pillarId]: !prev[pillarId] };
+      if (data?.sidebarDefaultView === "remember") {
+        setData(d => ({ ...d, sidebarOpenState: next }));
+      }
+      return next;
+    });
+  };
+  const applySidebarDefaultView = (view) => {
+    const next = {};
+    if (view === "expanded") {
+      PERSONAL_NAV_PILLARS.forEach(p => { next[p.id] = true; });
+      setOpenPillars(next);
+    } else if (view === "collapsed") {
+      PERSONAL_NAV_PILLARS.forEach(p => { next[p.id] = false; });
+      setOpenPillars(next);
+    }
+  };
+
   // "What's new" pop-out — shows once after each release so trial users
   // see what changed when they open the app. Bumping WHATS_NEW_VERSION
   // here surfaces it again to everyone. Storage key is per-device so the
@@ -3710,7 +3712,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
                 title={t("Today", lang)}>
                 <Home className="w-4 h-4" />
               </button>
-              {[...PERSONAL_NAV_PILLARS, RESOURCES_PILLAR]
+              {PERSONAL_NAV_PILLARS
                 .flatMap(p => p.items.filter(i => i.id && !i.soon))
                 .filter((item, idx, arr) => arr.findIndex(x => x.id === item.id) === idx)
                 .map((item, idx) => (
@@ -3729,7 +3731,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
                 </button>
               ))}
             </>
-          ) : !data.sidebarFlat ? (
+          ) : (
             // EXPANDED: grouped by pillar with collapsible sections
             <>
               {/* Today — standalone top link */}
@@ -3743,15 +3745,15 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
                 <span>{t("Today", lang)}</span>
               </button>
 
-              {/* Six pillars + Resources */}
-              {[...PERSONAL_NAV_PILLARS, RESOURCES_PILLAR].map(pillar => {
+              {/* Pillars */}
+              {PERSONAL_NAV_PILLARS.map(pillar => {
                 const isOpen = openPillars[pillar.id] !== false;
                 const pillarHasActive = pillar.items.some(item => item.id && active === item.id);
                 const PillarIcon = pillar.icon;
                 return (
                   <div key={pillar.id}>
                     <button
-                      onClick={() => setOpenPillars(prev => ({ ...prev, [pillar.id]: !isOpen }))}
+                      onClick={() => togglePillar(pillar.id)}
                       className={`w-full flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition border-l-2 border-transparent ${
                         pillarHasActive ? "text-[#5b7351]" : "text-stone-400 hover:text-stone-500"
                       }`}>
@@ -3802,63 +3804,6 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
                         : "border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900"
                     }`}>
                     <IconComp className="w-4 h-4 flex-shrink-0" />
-                    <span>{t(item.label, lang)}</span>
-                  </button>
-                );
-              })}
-            </>
-          ) : (
-            // EXPANDED + FLAT: all items visible without grouping
-            <>
-              <button onClick={() => { setActive("personalHome"); setMobileMenuOpen(false); }}
-                className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition border-l-2 ${
-                  active === "personalHome"
-                    ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351] font-medium"
-                    : "border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900"
-                }`}>
-                <Home className="w-4 h-4 flex-shrink-0" />
-                <span>{t("Today", lang)}</span>
-              </button>
-              {[...PERSONAL_NAV_PILLARS, RESOURCES_PILLAR].flatMap(p => p.items)
-                .filter((item, idx, arr) => arr.findIndex(x => x.id === item.id && x.label === item.label) === idx)
-                .map((item, idx) => {
-                  if (item.soon) {
-                    return (
-                      <div key={`flat-${item.label}-${idx}`}
-                        className="flex items-center gap-3 px-4 py-1.5 text-sm text-stone-300 cursor-default select-none">
-                        <item.icon className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span className="flex-1">{t(item.label, lang)}</span>
-                        <span className="text-[9px] tracking-wider uppercase font-medium text-stone-300">soon</span>
-                      </div>
-                    );
-                  }
-                  const isItemActive = active === item.id;
-                  const flatLabel = item.id === "calendarYear" && data.calendarLabel ? data.calendarLabel : t(item.label, lang);
-                  return (
-                    <button key={`flat-${item.id}-${item.label}-${idx}`}
-                      onClick={() => { setActive(item.id); setMobileMenuOpen(false); }}
-                      className={`w-full flex items-center gap-3 px-4 py-2 text-sm transition border-l-2 ${
-                        isItemActive
-                          ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351] font-medium"
-                          : "border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900"
-                      }`}>
-                      <item.icon className="w-3.5 h-3.5 flex-shrink-0" />
-                      <span>{flatLabel}</span>
-                    </button>
-                  );
-                })
-              }
-              {SHARED_NAV.map(item => {
-                const isItemActive = active === item.id;
-                const FlatIcon = item.icon;
-                return (
-                  <button key={`flat-shared-${item.id}`} onClick={() => { setActive(item.id); setMobileMenuOpen(false); }}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition border-l-2 ${
-                      isItemActive
-                        ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351] font-medium"
-                        : "border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900"
-                    }`}>
-                    <FlatIcon className="w-4 h-4 flex-shrink-0" />
                     <span>{t(item.label, lang)}</span>
                   </button>
                 );
@@ -3983,7 +3928,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           {active === "cycle" && <CycleModule {...moduleProps} />}
           {active === "speak" && <SpeakElegantlyModule {...moduleProps} />}
           {active === "boundaries" && <BoundariesModule {...moduleProps} />}
-          {active === "settings" && <SettingsModule {...moduleProps} setUser={setUser} onLogout={onLogout} dataKey={dataKey} />}
+          {active === "settings" && <SettingsModule {...moduleProps} setUser={setUser} onLogout={onLogout} dataKey={dataKey} applySidebarDefaultView={applySidebarDefaultView} />}
           {active === "disclosures" && (
             <div className="max-w-4xl">
               <PageHeader title={t("Disclosures & Legal", lang)} subtitle={t("Copyright, disclaimers, terms of use.", lang)} dark={dark} />
@@ -4453,7 +4398,7 @@ const ACCENT_PALETTES = {
   noir:     { id: "noir",     name: "Noir",     swatch: "#525252", primary: "#2d2d2d", mid: "#525252", light: "#9a9a9a", pale: "#d4d4d4", bg: "#f5f5f5" },
 };
 
-function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerConfetti, onLogout, dataKey, setData, data, accent, setAccent, lang, setLang, navigateTo }) {
+function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerConfetti, onLogout, dataKey, setData, data, accent, setAccent, lang, setLang, navigateTo, applySidebarDefaultView }) {
   // ----- Sovereign engagement % — soft nudge to explore the rest of the
   // app. Each of the 15 sections counts as "used" once the user has put
   // ANY real data into it. The percentage drives a friendly progress bar
@@ -4684,19 +4629,23 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
           </div>
           <div className="p-3 rounded border border-stone-200">
             <div className="mb-2">
-              <div className="text-sm font-medium">{t("Sidebar layout", lang)}</div>
-              <div className="text-xs text-stone-500">{t("See everything at once, or group by section.", lang)}</div>
+              <div className="text-sm font-medium">{t("Sidebar default view", lang)}</div>
+              <div className="text-xs text-stone-500">{t("How sections appear when you open the app.", lang)}</div>
             </div>
             <div className="flex gap-2">
               {[
-                { id: false, label: t("Grouped", lang), desc: t("Collapsible sections", lang) },
-                { id: true,  label: t("All visible", lang), desc: t("Everything shown", lang) },
+                { id: "expanded",  label: t("Expanded", lang),  desc: t("All open", lang) },
+                { id: "collapsed", label: t("Collapsed", lang), desc: t("All closed", lang) },
+                { id: "remember",  label: t("Remember", lang),  desc: t("Last state", lang) },
               ].map(opt => {
-                const isActive = (data.sidebarFlat ?? false) === opt.id;
+                const isActive = (data.sidebarDefaultView ?? "expanded") === opt.id;
                 return (
                   <button
-                    key={String(opt.id)}
-                    onClick={() => setData(d => ({ ...d, sidebarFlat: opt.id }))}
+                    key={opt.id}
+                    onClick={() => {
+                      setData(d => ({ ...d, sidebarDefaultView: opt.id }));
+                      if (applySidebarDefaultView) applySidebarDefaultView(opt.id);
+                    }}
                     className={`flex-1 py-2 px-3 rounded-lg border text-xs text-center transition ${isActive ? "bg-[#5b7351] text-white border-[#5b7351] font-semibold" : "bg-white text-stone-600 border-stone-200 hover:border-stone-400"}`}
                   >
                     <div className="font-medium">{opt.label}</div>
