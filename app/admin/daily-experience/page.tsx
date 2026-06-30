@@ -4,18 +4,21 @@ import { createEntryAction, updateEntryAction, deleteEntryAction, toggleActiveAc
 
 export const dynamic = "force-dynamic";
 
-type Row = { id: number; content_en: string; content_es: string; active: boolean; display_date?: string | null; sort_order?: number; created_at: string };
+type Row = {
+  id: number;
+  content_en: string;
+  content_es: string;
+  active: boolean;
+  display_date?: string | null;
+  sort_order?: number | null;
+  created_at: string;
+};
 type Table = "daily_principles" | "daily_reflections" | "daily_questions" | "daily_intentions";
 
 async function fetchAll(table: Table): Promise<Row[]> {
   const admin = createAdminClient();
   const { data } = await admin.from(table).select("*").order("id");
   return (data ?? []) as Row[];
-}
-
-function fmt(iso: string | null | undefined): string {
-  if (!iso) return "—";
-  return new Date(iso).toLocaleDateString();
 }
 
 function SectionManager({
@@ -31,20 +34,16 @@ function SectionManager({
   hasDate?: boolean;
   hasOrder?: boolean;
 }) {
-  const create = createEntryAction.bind(null, table);
-  const update = updateEntryAction.bind(null, table);
-  const del = deleteEntryAction.bind(null, table);
-  const toggle = toggleActiveAction.bind(null, table);
-
   return (
     <section className="space-y-4">
       <h2 className="font-display text-xl text-forest-deep">{title}</h2>
 
       {/* Create form */}
       <form
-        action={create}
+        action={createEntryAction}
         className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm space-y-3"
       >
+        <input type="hidden" name="_table" value={table} />
         <div className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1">Add new</div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
@@ -104,17 +103,18 @@ function SectionManager({
                     {row.active ? "Active" : "Inactive"}
                   </span>
                   {hasDate && row.display_date && (
-                    <span className="text-[10px] text-stone-400">{fmt(row.display_date)}</span>
+                    <span className="text-[10px] text-stone-400">{row.display_date}</span>
                   )}
-                  {hasOrder && (
-                    <span className="text-[10px] text-stone-400">order {row.sort_order ?? 0}</span>
+                  {hasOrder && row.sort_order != null && (
+                    <span className="text-[10px] text-stone-400">order {row.sort_order}</span>
                   )}
                 </div>
               </div>
 
               <details className="mb-3">
                 <summary className="text-xs text-stone-500 cursor-pointer hover:text-stone-700">Edit</summary>
-                <form action={update} className="mt-3 space-y-3">
+                <form action={updateEntryAction} className="mt-3 space-y-3">
+                  <input type="hidden" name="_table" value={table} />
                   <input type="hidden" name="id" value={row.id} />
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
@@ -149,7 +149,8 @@ function SectionManager({
               </details>
 
               <div className="flex items-center gap-2">
-                <form action={toggle}>
+                <form action={toggleActiveAction}>
+                  <input type="hidden" name="_table" value={table} />
                   <input type="hidden" name="id" value={row.id} />
                   <input type="hidden" name="active" value={String(row.active)} />
                   <button type="submit"
@@ -158,7 +159,8 @@ function SectionManager({
                     {row.active ? "Deactivate" : "Activate"}
                   </button>
                 </form>
-                <form action={del}>
+                <form action={deleteEntryAction}>
+                  <input type="hidden" name="_table" value={table} />
                   <input type="hidden" name="id" value={row.id} />
                   <button type="submit"
                     className="px-3 py-1.5 text-xs font-semibold rounded"
