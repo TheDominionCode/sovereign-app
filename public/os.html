@@ -5800,10 +5800,9 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   // shows the same sequence — priorities first by slot, then by manual
   // `order` (defaulting to id for legacy tasks without one).
   const sortedTodaysTasks = [...todaysTasks].sort((a, b) => {
-    const ap = a.priority ? (a.priorityOrder || 99) : 1000;
-    const bp = b.priority ? (b.priorityOrder || 99) : 1000;
-    if (ap !== bp) return ap - bp;
-    return ((a.order ?? a.id) || 0) - ((b.order ?? b.id) || 0);
+    const aOrder = a.order ?? (a.priority ? (a.priorityOrder || 99) : 1000 + (a.id || 0));
+    const bOrder = b.order ?? (b.priority ? (b.priorityOrder || 99) : 1000 + (b.id || 0));
+    return aOrder - bOrder;
   });
   const moveSummaryTask = (id, dir) => {
     const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
@@ -5814,20 +5813,12 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     while (target >= 0 && target < sortedTodaysTasks.length && sortedTodaysTasks[target]._recurring) target += dir;
     if (target < 0 || target >= sortedTodaysTasks.length) return;
     const swap = sortedTodaysTasks[target];
-    if (!!cur.priority !== !!swap.priority) return;
-    if (cur.priority && swap.priority) {
-      setData({ ...data, tasks: tasks.map(x => {
-        if (!x) return x;
-        if (x.id === cur.id) return { ...x, priorityOrder: swap.priorityOrder };
-        if (x.id === swap.id) return { ...x, priorityOrder: cur.priorityOrder };
-        return x;
-      }) });
-      return;
-    }
+    const curOrder = cur.order ?? (idx * 1000);
+    const swapOrder = swap.order ?? (target * 1000);
     setData({ ...data, tasks: tasks.map(x => {
       if (!x) return x;
-      if (x.id === cur.id) return { ...x, order: swap.order ?? swap.id };
-      if (x.id === swap.id) return { ...x, order: cur.order ?? cur.id };
+      if (x.id === cur.id) return { ...x, order: swapOrder };
+      if (x.id === swap.id) return { ...x, order: curOrder };
       return x;
     }) });
   };
@@ -5838,9 +5829,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     if (cur._recurring) return false;
     let target = idx + dir;
     while (target >= 0 && target < sortedTodaysTasks.length && sortedTodaysTasks[target]._recurring) target += dir;
-    if (target < 0 || target >= sortedTodaysTasks.length) return false;
-    const b = sortedTodaysTasks[target];
-    return !!cur.priority === !!b.priority;
+    return target >= 0 && target < sortedTodaysTasks.length;
   };
 
   // Summaries from each module
@@ -10264,15 +10253,11 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   // Render-order: priorities first by their order slot, then the rest by
   // manual `order` (defaults to id so existing tasks keep the same position).
   const sortedDayTasks = [...dayTasks].sort((a, b) => {
-    const ap = a.priority ? (a.priorityOrder || 99) : 1000;
-    const bp = b.priority ? (b.priorityOrder || 99) : 1000;
-    if (ap !== bp) return ap - bp;
-    return ((a.order ?? a.id) || 0) - ((b.order ?? b.id) || 0);
+    const aOrder = a.order ?? (a.priority ? (a.priorityOrder || 99) : 1000 + (a.id || 0));
+    const bOrder = b.order ?? (b.priority ? (b.priorityOrder || 99) : 1000 + (b.id || 0));
+    return aOrder - bOrder;
   });
 
-  // Move a task up (-1) or down (+1) within its band — won't cross the
-  // priority/non-priority boundary, since priorities are pinned to slots
-  // 1/2/3 and live in their own visual zone.
   const moveTask = (id, dir) => {
     const idx = sortedDayTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return;
@@ -10282,20 +10267,12 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     while (target >= 0 && target < sortedDayTasks.length && sortedDayTasks[target]._recurring) target += dir;
     if (target < 0 || target >= sortedDayTasks.length) return;
     const swap = sortedDayTasks[target];
-    if (!!cur.priority !== !!swap.priority) return;
-    if (cur.priority && swap.priority) {
-      setTasks(allTasks.map(x => {
-        if (!x) return x;
-        if (x.id === cur.id) return { ...x, priorityOrder: swap.priorityOrder };
-        if (x.id === swap.id) return { ...x, priorityOrder: cur.priorityOrder };
-        return x;
-      }));
-      return;
-    }
+    const curOrder = cur.order ?? (idx * 1000);
+    const swapOrder = swap.order ?? (target * 1000);
     setTasks(allTasks.map(x => {
       if (!x) return x;
-      if (x.id === cur.id) return { ...x, order: swap.order ?? swap.id };
-      if (x.id === swap.id) return { ...x, order: cur.order ?? cur.id };
+      if (x.id === cur.id) return { ...x, order: swapOrder };
+      if (x.id === swap.id) return { ...x, order: curOrder };
       return x;
     }));
   };
@@ -10306,9 +10283,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (cur._recurring) return false;
     let target = idx + dir;
     while (target >= 0 && target < sortedDayTasks.length && sortedDayTasks[target]._recurring) target += dir;
-    if (target < 0 || target >= sortedDayTasks.length) return false;
-    const b = sortedDayTasks[target];
-    return !!cur.priority === !!b.priority;
+    return target >= 0 && target < sortedDayTasks.length;
   };
   const toggleTask = (id) => {
     if (isVirtualTaskId(id)) {
