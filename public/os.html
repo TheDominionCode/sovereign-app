@@ -2212,6 +2212,14 @@ const TRANSLATIONS = {
     "Reopen": "Reopen",
     "Mark done — move to Done": "Mark done — move to Done",
     "Reopen — move back to Active": "Reopen — move back to Active",
+    "Up": "Up",
+    "Down": "Down",
+    "Word of the Day": "Word of the Day",
+    "Let this word guide who you are today.": "Let this word guide who you are today.",
+    "Today's Commitment": "Today's Commitment",
+    "What promise will you keep today?": "What promise will you keep today?",
+    "How do you choose to show up today?": "How do you choose to show up today?",
+    "Take a moment to close the day with intention.": "Take a moment to close the day with intention.",
     "by {date}": "by {date}",
     "none yet": "none yet",
     "{n} of {m} ✓": "{n} of {m} ✓",
@@ -3001,6 +3009,14 @@ const TRANSLATIONS = {
     "Reopen": "Reabrir",
     "Mark done — move to Done": "Marcar hecho — mover a Hechas",
     "Reopen — move back to Active": "Reabrir — volver a Activas",
+    "Up": "Arriba",
+    "Down": "Abajo",
+    "Word of the Day": "Palabra del día",
+    "Let this word guide who you are today.": "Deja que esta palabra guíe quien eres hoy.",
+    "Today's Commitment": "Compromiso de hoy",
+    "What promise will you keep today?": "¿Qué promesa cumplirás hoy?",
+    "How do you choose to show up today?": "¿Cómo eliges presentarte hoy?",
+    "Take a moment to close the day with intention.": "Tómate un momento para cerrar el día con intención.",
     "by {date}": "para el {date}",
     "none yet": "ninguno aún",
     "{n} of {m} ✓": "{n} de {m} ✓",
@@ -6285,10 +6301,16 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const activeIntentions = (dbDailyContent?.intentions?.length > 0)
     ? dbDailyContent.intentions.map(i => ({ id: i.id, label: i.en, es: i.es }))
     : DAILY_INTENTIONS;
+  // Word of the Day — one intention word rotated daily by admin/DB
+  const wordOfDayObj = activeIntentions[dayOfYear % activeIntentions.length] || activeIntentions[0];
+  const wordOfDay = lang === "es" ? wordOfDayObj.es : wordOfDayObj.label;
   const todayIntentionId = (data.dailyIntentions || {})[today] || null;
   const setTodayIntention = (id) => {
     setData({ ...data, dailyIntentions: { ...(data.dailyIntentions || {}), [today]: todayIntentionId === id ? null : id } });
   };
+  // Today's Commitment — user types their daily promise
+  const todayCommitment = ((data.dailyCommitments || {})[today]) || "";
+  const setTodayCommitment = (val) => setData({ ...data, dailyCommitments: { ...(data.dailyCommitments || {}), [today]: val } });
 
   // ----- Daily content inline editing -----
   // Stores user overrides per day: data.dailyContentOverrides = { principle: { [today]: "..." }, ... }
@@ -6450,99 +6472,22 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         </button>
       </div>
 
-      {/* SPRINT 3 / 4 — DAILY EXPERIENCE ENGINE */}
-      {/* Today's Principle */}
+      {/* ── SPRINT 4: DAILY RITUAL FLOW ── Identity → Mindset → Intention → Commitment → Reflection */}
+
+      {/* 2. TODAY'S PRINCIPLE — display only, from Admin */}
       <div className="rounded-2xl bg-gradient-to-r from-[#5b7351]/10 to-[#f4f7ee]/40 border border-[#d3e0c5] px-5 py-4 mb-4">
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] font-semibold" style={serifStyle}>{t("Today's Principle", lang)}</div>
-          <button onClick={() => startEditDaily("principle", displayPrinciple)}
-            className="text-[10px] italic text-stone-400 hover:text-[#5b7351] transition ml-2 flex-shrink-0"
-            style={serifStyle} title={t("Edit", lang)}>✏ {t("edit", lang)}</button>
-        </div>
-        {editingDailyField === "principle" ? (
-          <div>
-            <textarea autoFocus rows={3} value={editingDailyText} onChange={e => setEditingDailyText(e.target.value)}
-              onKeyDown={e => { if (e.key === "Escape") setEditingDailyField(null); }}
-              className="block w-full px-2 py-1.5 border rounded text-sm outline-none resize-none bg-white border-[#d3e0c5] focus:border-[#7a9a6e] font-serif italic"
-              style={{ ...serifStyle, minHeight: "60px" }} />
-            <div className="flex gap-2 mt-2">
-              <button onClick={saveEditDaily} className="px-3 py-1 text-xs text-white rounded hover:opacity-90" style={{ background: "var(--accent-mid)" }}>{t("Save", lang)}</button>
-              <button onClick={() => setEditingDailyField(null)} className="px-3 py-1 text-xs text-stone-500 hover:text-stone-700">{t("Cancel", lang)}</button>
-            </div>
-          </div>
-        ) : (
-          <p className="font-serif text-base italic text-stone-800 leading-snug" style={serifStyle}>{displayPrinciple}</p>
-        )}
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Principle", lang)}</div>
+        <p className="font-serif text-base italic text-stone-800 leading-snug" style={serifStyle}>{displayPrinciple}</p>
       </div>
 
-      {/* Today's Reflection */}
-      <div className="rounded-2xl border border-stone-200 px-5 py-4 mb-4 bg-white/70">
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 font-semibold" style={serifStyle}>{t("Today's Reflection", lang)}</div>
-          <button onClick={() => startEditDaily("reflection", displayReflection)}
-            className="text-[10px] italic text-stone-400 hover:text-[#5b7351] transition ml-2 flex-shrink-0"
-            style={serifStyle} title={t("Edit", lang)}>✏ {t("edit", lang)}</button>
-        </div>
-        {editingDailyField === "reflection" ? (
-          <div>
-            <textarea autoFocus rows={5} value={editingDailyText} onChange={e => setEditingDailyText(e.target.value)}
-              onKeyDown={e => { if (e.key === "Escape") setEditingDailyField(null); }}
-              className="block w-full px-2 py-1.5 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e] italic"
-              style={{ ...serifStyle, minHeight: "80px" }} />
-            <div className="flex gap-2 mt-2">
-              <button onClick={saveEditDaily} className="px-3 py-1 text-xs text-white rounded hover:opacity-90" style={{ background: "var(--accent-mid)" }}>{t("Save", lang)}</button>
-              <button onClick={() => setEditingDailyField(null)} className="px-3 py-1 text-xs text-stone-500 hover:text-stone-700">{t("Cancel", lang)}</button>
-            </div>
-          </div>
-        ) : (
-          <p className="text-sm text-stone-700 leading-relaxed italic" style={serifStyle}>{displayReflection}</p>
-        )}
+      {/* 3. WORD OF THE DAY — prominent identity anchor from Daily Experiences */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/60 px-5 py-5 mb-4 text-center">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-3 font-semibold" style={serifStyle}>{t("Word of the Day", lang)}</div>
+        <p className="font-serif text-4xl sm:text-5xl italic font-bold text-[#5b7351] leading-none tracking-tight" style={serifStyle}>{wordOfDay}</p>
+        <p className="text-[11px] italic text-stone-400 mt-2" style={serifStyle}>{t("Let this word guide who you are today.", lang)}</p>
       </div>
 
-      {/* Today's Question */}
-      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/50 px-5 py-4 mb-4">
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] font-semibold" style={serifStyle}>{t("Today's Question", lang)}</div>
-          <button onClick={() => startEditDaily("question", displayQuestion)}
-            className="text-[10px] italic text-stone-400 hover:text-[#5b7351] transition ml-2 flex-shrink-0"
-            style={serifStyle} title={t("Edit", lang)}>✏ {t("edit", lang)}</button>
-        </div>
-        {editingDailyField === "question" ? (
-          <div>
-            <textarea autoFocus rows={2} value={editingDailyText} onChange={e => setEditingDailyText(e.target.value)}
-              onKeyDown={e => { if (e.key === "Escape") setEditingDailyField(null); }}
-              className="block w-full px-2 py-1.5 border rounded text-sm outline-none resize-none bg-white border-[#d3e0c5] focus:border-[#7a9a6e] font-serif italic"
-              style={{ ...serifStyle, minHeight: "50px" }} />
-            <div className="flex gap-2 mt-2">
-              <button onClick={saveEditDaily} className="px-3 py-1 text-xs text-white rounded hover:opacity-90" style={{ background: "var(--accent-mid)" }}>{t("Save", lang)}</button>
-              <button onClick={() => setEditingDailyField(null)} className="px-3 py-1 text-xs text-stone-500 hover:text-stone-700">{t("Cancel", lang)}</button>
-            </div>
-          </div>
-        ) : (
-          <p className="font-serif text-lg italic text-stone-800 leading-snug" style={serifStyle}>{displayQuestion}</p>
-        )}
-      </div>
-
-      {/* Today's Intention — selector */}
-      <div className="rounded-2xl border border-stone-200 bg-white/70 px-5 py-4 mb-6">
-        <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 mb-3 font-semibold" style={serifStyle}>{t("Today's Intention", lang)}</div>
-        <div className="flex flex-wrap gap-2">
-          {DAILY_INTENTIONS.map((intent) => {
-            const isSelected = todayIntentionId === intent.id;
-            const label = lang === "es" ? intent.es : intent.label;
-            return (
-              <button key={intent.id}
-                onClick={() => setTodayIntention(intent.id)}
-                className={`px-3 py-1.5 rounded-full text-xs italic transition border ${isSelected ? "text-white border-[#5b7351] font-semibold" : "bg-white text-stone-600 border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
-                style={{ background: isSelected ? "#5b7351" : undefined, fontFamily: "'Playfair Display', Georgia, serif" }}>
-                {label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* AFFIRMATION HERO — pick your own for today */}
+      {/* 4. DAILY AFFIRMATION — pick your own, display prominently */}
       {summaryPrefs.affirmation && (allAffs.length > 0 ? (
         <div className="rounded-2xl bg-gradient-to-br from-[#f4f7ee] via-white to-[#f4f7ee]/50 border border-[#d3e0c5] px-6 py-6 mb-6 text-center relative">
           <div className="text-[10px] italic tracking-[0.2em] text-[#7a9a6e] mb-3" style={serifStyle}>{t("a word for today", lang)}</div>
@@ -6620,6 +6565,45 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           </div>
         </div>
       )}
+
+      {/* 5. TODAY'S INTENTION — user picks one identity word */}
+      <div className="rounded-2xl border border-stone-200 bg-white/70 px-5 py-4 mb-4">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 mb-3 font-semibold" style={serifStyle}>{t("Today's Intention", lang)}</div>
+        <p className="text-[11px] italic text-stone-400 mb-3" style={serifStyle}>{t("How do you choose to show up today?", lang)}</p>
+        <div className="flex flex-wrap gap-2">
+          {activeIntentions.map((intent) => {
+            const isSelected = todayIntentionId === intent.id;
+            const label = lang === "es" ? intent.es : intent.label;
+            return (
+              <button key={intent.id}
+                onClick={() => setTodayIntention(intent.id)}
+                className={`px-3 py-1.5 rounded-full text-xs italic transition border ${isSelected ? "text-white border-[#5b7351] font-semibold" : "bg-white text-stone-600 border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
+                style={{ background: isSelected ? "#5b7351" : undefined, fontFamily: "'Playfair Display', Georgia, serif" }}>
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 6. TODAY'S COMMITMENT — user writes one promise for the day */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/50 px-5 py-4 mb-4">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Commitment", lang)}</div>
+        <p className="font-serif text-base italic text-stone-600 mb-3 leading-snug" style={serifStyle}>{t("What promise will you keep today?", lang)}</p>
+        <textarea
+          rows={2}
+          value={todayCommitment}
+          onChange={e => setTodayCommitment(e.target.value)}
+          placeholder={t("I will…", lang)}
+          className="block w-full px-3 py-2 rounded-xl border border-[#d3e0c5] bg-white text-sm text-stone-700 outline-none resize-none focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20"
+          style={{ fontFamily: "'Playfair Display', Georgia, serif", minHeight: "56px", maxHeight: "120px" }} />
+      </div>
+
+      {/* 7. TODAY'S REFLECTION — display only, from Admin */}
+      <div className="rounded-2xl border border-stone-200 px-5 py-4 mb-6 bg-white/70">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 mb-1.5 font-semibold" style={serifStyle}>{t("Today's Reflection", lang)}</div>
+        <p className="text-sm text-stone-700 leading-relaxed italic" style={serifStyle}>{displayReflection}</p>
+      </div>
 
       {/* TODAY CHECKLIST — circles, not boxes */}
       {summaryPrefs.circles && (() => {
@@ -7099,6 +7083,47 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                 )}
               </div>
             )}
+          </div>
+        );
+      })()}
+
+      {/* REFLECTION QUESTIONS — evening check-in, 5 prompts at bottom of Today page */}
+      {(() => {
+        const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+        const reflectionAnswers = data.reflectionAnswers || {};
+        const todayAnswers = reflectionAnswers[today] || {};
+        const setAnswer = (idx, val) => {
+          const next = { ...reflectionAnswers, [today]: { ...todayAnswers, [idx]: val } };
+          setData({ ...data, reflectionAnswers: next });
+        };
+        const prompts = [
+          t("What am I proud of today?", lang),
+          t("What challenged me today?", lang),
+          t("What did I learn today?", lang),
+          t("What promise did I keep today?", lang),
+          t("What deserves my attention tomorrow?", lang),
+        ];
+        return (
+          <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/40 px-5 py-5 mt-5 mb-2">
+            <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1 font-semibold" style={serif}>{t("Reflection Questions", lang)}</div>
+            <p className="text-[11px] italic text-stone-400 mb-4" style={serif}>{t("Take a moment to close the day with intention.", lang)}</p>
+            <ol className="space-y-4">
+              {prompts.map((prompt, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white mt-0.5" style={{ background: "#7a9a6e" }}>{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm italic text-stone-700 leading-snug mb-1.5" style={serif}>{prompt}</p>
+                    <textarea
+                      rows={2}
+                      value={todayAnswers[i] || ""}
+                      onChange={e => setAnswer(i, e.target.value)}
+                      placeholder={t("Write your answer…", lang)}
+                      className="block w-full px-2.5 py-2 border rounded-lg text-xs sm:text-sm outline-none resize-none bg-white/80 border-[#d3e0c5] focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20 text-stone-700"
+                      style={{ ...serif, minHeight: "56px", maxHeight: "120px" }} />
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         );
       })()}
@@ -11016,10 +11041,10 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
               const meta = timeRange ? timeRange.toUpperCase() : null;
               const isLast = idx === visibleTasks.length - 1;
               return (
-                <li key={task.id} className={`flex items-start gap-1.5 sm:gap-2 px-1 py-2 sm:py-2.5 group ${isLast ? "" : "border-b border-stone-100"}`}>
+                <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-2 sm:py-2.5 group min-h-[44px] ${isLast ? "" : "border-b border-stone-100"}`}>
                   {/* Done circle */}
                   <button onClick={() => toggleTask(task.id)}
-                    className={`w-5 h-5 mt-0.5 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border hover:bg-stone-50"}`}
+                    className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border hover:bg-stone-50"}`}
                     style={task.done
                       ? { background: "var(--accent-mid)" }
                       : { borderColor: "var(--accent-mid)", opacity: 0.55 }}
@@ -14113,8 +14138,9 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
   const BUSINESS_CATS = ["Business", "Income", "Sales", "Recruiting", "Production"];
   const allGoals = data.goals || [];
   const goals = allGoals.filter(g => !BUSINESS_CATS.includes(g.category));
-  const active = goals.filter(g => g.progress < 100);
-  const achieved = goals.filter(g => g.progress >= 100);
+  const sortByOrder = (arr) => [...arr].sort((a, b) => (a.sort_order ?? (a.id || 0)) - (b.sort_order ?? (b.id || 0)));
+  const active = sortByOrder(goals.filter(g => g.progress < 100));
+  const achieved = sortByOrder(goals.filter(g => g.progress >= 100));
   const list = tab === "active" ? active : achieved;
 
   const save = () => {
@@ -14144,6 +14170,30 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
       return m.includes("✓") ? m.replace(/\s*✓\s*$/, "").trim() : `${m} ✓`;
     });
     updateGoalField(goalId, { milestones });
+  };
+
+  // Reorder goals by swapping adjacent items
+  const moveGoal = (id, dir) => {
+    const idx = list.findIndex(g => g.id === id);
+    if (idx === -1) return;
+    const target = idx + dir;
+    if (target < 0 || target >= list.length) return;
+    const a = list[idx];
+    const b = list[target];
+    // Assign/swap sort_order field
+    const aOrder = a.sort_order ?? idx * 10;
+    const bOrder = b.sort_order ?? target * 10;
+    setData({ ...data, goals: allGoals.map(g => {
+      if (g.id === a.id) return { ...g, sort_order: bOrder };
+      if (g.id === b.id) return { ...g, sort_order: aOrder };
+      return g;
+    }) });
+  };
+  const canMoveGoal = (id, dir) => {
+    const idx = list.findIndex(g => g.id === id);
+    if (idx === -1) return false;
+    const target = idx + dir;
+    return target >= 0 && target < list.length;
   };
 
   // Toggle a goal between done and active (no percentages)
@@ -14218,6 +14268,22 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                 <span className={`text-xs ${themeMuted} font-mono`}>{g.deadline || "—"}</span>
                 <span className="text-xs text-stone-500">{totalMs > 0 ? t("{n} of {m} ✓", lang, { n: completedMs, m: totalMs }) : <span className="italic text-stone-400">{t("none yet", lang)}</span>}</span>
                 <div className="flex items-center gap-1 justify-end">
+                  <div className="flex gap-0.5 flex-shrink-0 mr-1">
+                    <button
+                      type="button"
+                      onClick={() => moveGoal(g.id, -1)}
+                      disabled={!canMoveGoal(g.id, -1)}
+                      className="w-6 h-6 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                      title={t("Move up", lang)} aria-label={t("Move up", lang)}
+                    ><ChevronUp className="w-3.5 h-3.5" /></button>
+                    <button
+                      type="button"
+                      onClick={() => moveGoal(g.id, 1)}
+                      disabled={!canMoveGoal(g.id, 1)}
+                      className="w-6 h-6 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                      title={t("Move down", lang)} aria-label={t("Move down", lang)}
+                    ><ChevronDown className="w-3.5 h-3.5" /></button>
+                  </div>
                   {/* The ONLY way to move a goal to Done is this explicit button */}
                   {!isDone ? (
                     <button
@@ -14262,7 +14328,19 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                 >
                   {isDone ? <><RefreshCw className="w-4 h-4" /> {t("Reopen — move back to Active", lang)}</> : <><CheckCircle2 className="w-4 h-4" /> {t("Mark done — move to Done", lang)}</>}
                 </button>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-4 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => moveGoal(g.id, -1)}
+                    disabled={!canMoveGoal(g.id, -1)}
+                    className="py-2 text-xs font-medium border border-stone-200 text-stone-600 rounded-lg active:bg-stone-100 disabled:opacity-30 flex items-center justify-center gap-1 touch-manipulation"
+                  ><ChevronUp className="w-4 h-4" /> {t("Up", lang)}</button>
+                  <button
+                    type="button"
+                    onClick={() => moveGoal(g.id, 1)}
+                    disabled={!canMoveGoal(g.id, 1)}
+                    className="py-2 text-xs font-medium border border-stone-200 text-stone-600 rounded-lg active:bg-stone-100 disabled:opacity-30 flex items-center justify-center gap-1 touch-manipulation"
+                  ><ChevronDown className="w-4 h-4" /> {t("Down", lang)}</button>
                   <button
                     onClick={() => { setForm(g); setEditing(g.id); setMilestonesText((g.milestones || []).join("\n")); setOpen(true); }}
                     className="py-2 text-xs font-medium border border-stone-200 text-stone-700 rounded-lg active:bg-stone-50 flex items-center justify-center gap-1.5"
