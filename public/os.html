@@ -2353,6 +2353,9 @@ const TRANSLATIONS = {
     "Write a note from future-you who's already living this. What does it feel like? Who are you? What changed?": "Write a note from future-you who's already living this. What does it feel like? Who are you? What changed?",
     "Save changes": "Save changes",
     "Add to board": "Add to board",
+    "Edit title": "Edit title",
+    "Edit Title & Header": "Edit Title & Header",
+    "Board name (e.g. Vision Board, Prayer Board, Dream Board)": "Board name (e.g. Vision Board, Prayer Board, Dream Board)",
     "Edit Header": "Edit Header",
     "Year": "Year",
     "Top-right verse / reference": "Top-right verse / reference",
@@ -3152,6 +3155,9 @@ const TRANSLATIONS = {
     "Write a note from future-you who's already living this. What does it feel like? Who are you? What changed?": "Escribe una nota desde la tú-del-futuro que ya está viviendo esto. ¿Cómo se siente? ¿Quién eres? ¿Qué cambió?",
     "Save changes": "Guardar cambios",
     "Add to board": "Añadir al tablero",
+    "Edit title": "Editar título",
+    "Edit Title & Header": "Editar título y encabezado",
+    "Board name (e.g. Vision Board, Prayer Board, Dream Board)": "Nombre del tablero (ej. Tablero de Visión, Tablero de Oración, Tablero de Sueños)",
     "Edit Header": "Editar encabezado",
     "Year": "Año",
     "Top-right verse / reference": "Versículo superior derecho",
@@ -14716,13 +14722,10 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
   return (
     <div>
       {/* HEADER — magazine style */}
-      <div className="mb-6 group relative">
-        <button onClick={() => { setMetaForm(meta); setHeaderOpen(true); }} className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 p-1.5 rounded border border-stone-200 bg-white hover:border-[#7a9a6e] transition" title="Edit header">
-          <Edit2 className="w-3.5 h-3.5 text-stone-500" />
-        </button>
+      <div className="mb-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <h1 className="font-serif text-5xl tracking-tight text-[#5b3a1e]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
-            {t("Vision Board", lang)} <span className="text-stone-700">{meta.year}</span>
+            {meta.boardName || t("Vision Board", lang)} <span className="text-stone-700">{meta.year}</span>
           </h1>
           <div className="text-right">
             <span className="text-xs tracking-[0.2em] font-bold text-[#5b3a1e]">{meta.topVerse}</span>
@@ -14734,15 +14737,20 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
         </p>
       </div>
 
-      {/* TABS + ADD */}
+      {/* TABS + ADD + EDIT HEADER */}
       <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
         <div className="flex gap-1">
           <button onClick={() => setTab("board")} className={`px-3 py-1.5 text-sm rounded transition ${tab === "board" ? "bg-[#7a9a6e] text-white font-medium" : "bg-white border border-stone-200 text-stone-600 hover:border-[#7a9a6e]"}`}>{t("The Board ({n})", lang, { n: items.filter(x => !x.achieved).length })}</button>
           <button onClick={() => setTab("wins")} className={`px-3 py-1.5 text-sm rounded transition ${tab === "wins" ? "bg-[#7a9a6e] text-white font-medium" : "bg-white border border-stone-200 text-stone-600 hover:border-[#7a9a6e]"}`}>{t("Wall of Wins ({n})", lang, { n: items.filter(x => x.achieved).length })}</button>
         </div>
-        <button onClick={() => { setForm(blank); setEditing(null); setOpen(true); }} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
-          <Plus className="w-4 h-4" /> {t("Add card", lang)}
-        </button>
+        <div className="flex items-center gap-2">
+          <button onClick={() => { setMetaForm(meta); setHeaderOpen(true); }} className="px-3 py-2 border border-stone-200 bg-white text-stone-600 text-sm rounded hover:border-[#7a9a6e] hover:text-[#5b7351] flex items-center gap-1.5 transition">
+            <Edit2 className="w-3.5 h-3.5" /> {t("Edit title", lang)}
+          </button>
+          <button onClick={() => { setForm(blank); setEditing(null); setOpen(true); }} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
+            <Plus className="w-4 h-4" /> {t("Add card", lang)}
+          </button>
+        </div>
       </div>
 
       {/* GRID — smaller Pinterest-style with verse caption overlay */}
@@ -14884,15 +14892,16 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
       </Modal>
 
       {/* HEADER EDIT MODAL */}
-      <Modal open={headerOpen} onClose={() => setHeaderOpen(false)} title={t("Edit Header", lang)} dark={dark}>
+      <Modal open={headerOpen} onClose={() => setHeaderOpen(false)} title={t("Edit Title & Header", lang)} dark={dark}>
         <div className="space-y-3">
+          <TextField label={t("Board name (e.g. Vision Board, Prayer Board, Dream Board)", lang)} value={metaForm.boardName || ""} onChange={v => setMetaForm({ ...metaForm, boardName: v })} dark={dark} placeholder={t("Vision Board", lang)} />
           <TextField label={t("Year", lang)} value={metaForm.year} onChange={v => setMetaForm({ ...metaForm, year: v })} dark={dark} />
           <TextField label={t("Top-right verse / reference", lang)} value={metaForm.topVerse} onChange={v => setMetaForm({ ...metaForm, topVerse: v })} dark={dark} placeholder="HABAKKUK 2:2" />
           <div>
             <label className={`text-xs ${themeMuted}`}>{t("Vision statement (subtitle, in quotes)", lang)}</label>
             <textarea value={metaForm.statement} onChange={e => setMetaForm({ ...metaForm, statement: e.target.value })} rows={3} className="mt-1 w-full px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white" />
           </div>
-          <button onClick={saveMeta} className="w-full py-2 bg-[#7a9a6e] text-white font-medium rounded hover:bg-[#5b7351]">{t("Save header", lang)}</button>
+          <button onClick={saveMeta} className="w-full py-2 bg-[#7a9a6e] text-white font-medium rounded hover:bg-[#5b7351]">{t("Save", lang)}</button>
         </div>
       </Modal>
     </div>
