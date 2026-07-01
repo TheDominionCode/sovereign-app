@@ -32,18 +32,22 @@ export default function AdminTabs({
   const visibleTabs = TABS.filter((t) => hasPermission(me, t.perm));
 
   return (
-    <nav className="flex gap-1 border-b border-stone-200 -mx-6 px-6 overflow-x-auto scrollbar-hide">
+    <nav
+      className="flex border-t border-stone-100 overflow-x-auto"
+      style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" }}
+    >
       {visibleTabs.map((t) => {
-        const active = path === t.href || (t.href !== "/admin" && path.startsWith(t.href));
-        const isOverviewActive = t.href === "/admin" && path === "/admin";
-        const isActive = active || isOverviewActive;
+        const isActive =
+          t.href === "/admin"
+            ? path === "/admin"
+            : path === t.href || path.startsWith(t.href + "/");
         return (
           <Link
             key={t.href}
             href={t.href}
-            className={`px-4 py-2.5 text-sm border-b-2 -mb-px transition-colors ${
+            className={`flex-shrink-0 px-4 py-2.5 text-[13px] border-b-2 transition-colors whitespace-nowrap ${
               isActive
-                ? "border-forest text-forest-deep font-medium"
+                ? "border-forest text-forest-deep font-semibold"
                 : "border-transparent text-stone hover:text-forest"
             }`}
           >

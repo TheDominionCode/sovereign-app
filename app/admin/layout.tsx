@@ -9,25 +9,25 @@ export default async function AdminLayout({
   const me = await requireAdmin();
   return (
     <div className="min-h-screen bg-cream-bg">
-      <header className="border-b border-stone-200 bg-white px-4 sm:px-6 pt-3 pb-0">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex items-center justify-between gap-3 mb-2 flex-wrap">
-            <h1 className="font-display text-xl sm:text-2xl text-forest-deep leading-tight">
-              <span className="text-[10px] tracking-[0.3em] uppercase text-sage block">Admin</span>
-              Sovereign
-            </h1>
-            <a
-              href="/app"
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-sage-pale/60 text-forest-deep text-xs font-medium hover:bg-sage-pale transition-colors flex-shrink-0"
-              title="Switch to your own Sovereign workspace"
-            >
-              Open app →
-            </a>
+      <header className="border-b border-stone-200 bg-white sticky top-0 z-30">
+        {/* Top bar — one tight row on mobile */}
+        <div className="flex items-center justify-between gap-2 px-4 py-2.5">
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="text-[9px] tracking-[0.3em] uppercase text-sage font-semibold flex-shrink-0">Admin</span>
+            <span className="text-stone-300 text-xs flex-shrink-0">·</span>
+            <span className="font-display text-base text-forest-deep truncate">Sovereign</span>
           </div>
-          <AdminTabs role={me.role} permissions={me.permissions} />
+          <a
+            href="/app"
+            className="flex-shrink-0 px-3 py-1 rounded-full bg-sage-pale/70 text-forest-deep text-[11px] font-medium hover:bg-sage-pale transition-colors whitespace-nowrap"
+          >
+            Open app →
+          </a>
         </div>
+        {/* Tabs — single row, horizontal scroll, no wrap */}
+        <AdminTabs role={me.role} permissions={me.permissions} />
       </header>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">{children}</main>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-8">{children}</main>
     </div>
   );
 }
