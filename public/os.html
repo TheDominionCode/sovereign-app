@@ -1648,7 +1648,7 @@ const BUSINESS_NAV = [
 ];
 
 const PERSONAL_NAV = [
-  { id: "personalHome", label: "Today",              icon: Home },
+  { id: "personalHome", label: "Summary",              icon: Home },
   { id: "sovereignOS",  label: "Sovereign OS",       icon: Sparkles },
   { id: "planner",      label: "Today's Focus",      icon: BookOpen },
   { id: "calendarYear", label: "Calendar",            icon: Calendar },
@@ -3833,7 +3833,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
             <>
               <button onClick={() => { setActive("personalHome"); }}
                 className={`w-full flex items-center justify-center px-4 py-2.5 transition border-l-2 ${active === "personalHome" ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351]" : "border-transparent text-stone-600 hover:bg-stone-50"}`}
-                title={t("Today", lang)}>
+                title={t("Summary", lang)}>
                 <Home className="w-4 h-4" />
               </button>
               {PERSONAL_NAV_PILLARS
@@ -3858,7 +3858,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           ) : (
             // EXPANDED: grouped by pillar with collapsible sections
             <>
-              {/* Today — standalone top link */}
+              {/* Summary — standalone top link */}
               <button onClick={() => { setActive("personalHome"); setMobileMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition border-l-2 ${
                   active === "personalHome"
@@ -3866,7 +3866,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
                     : "border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900"
                 }`}>
                 <Home className="w-4 h-4 flex-shrink-0" />
-                <span>{t("Today", lang)}</span>
+                <span>{t("Summary", lang)}</span>
               </button>
 
               {/* Pillars */}
@@ -6150,14 +6150,19 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     while (target >= 0 && target < sortedTodaysTasks.length && sortedTodaysTasks[target]._recurring) target += dir;
     if (target < 0 || target >= sortedTodaysTasks.length) return;
     const swap = sortedTodaysTasks[target];
-    const curOrder = cur.order ?? (idx * 1000);
-    const swapOrder = swap.order ?? (target * 1000);
-    setData({ ...data, tasks: tasks.map(x => {
+    // Normalize ALL today's real tasks to explicit order values based on
+    // their current position, then swap cur and swap. Avoids inconsistency
+    // between the sort fallback (1000+id) and the swap fallback (idx*1000).
+    const updatedTasks = tasks.map(x => {
       if (!x) return x;
-      if (x.id === cur.id) return { ...x, order: swapOrder };
-      if (x.id === swap.id) return { ...x, order: curOrder };
-      return x;
-    }) });
+      const si = sortedTodaysTasks.findIndex(s => s && s.id === x.id);
+      if (si < 0) return x; // not in today's list — leave untouched
+      const baseOrder = (si + 1) * 10;
+      if (x.id === cur.id) return { ...x, order: (target + 1) * 10 };
+      if (x.id === swap.id) return { ...x, order: (idx + 1) * 10 };
+      return { ...x, order: baseOrder };
+    });
+    setData({ ...data, tasks: updatedTasks });
   };
   const canMoveSummaryTask = (id, dir) => {
     const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
@@ -6472,22 +6477,9 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         </button>
       </div>
 
-      {/* ── SPRINT 4: DAILY RITUAL FLOW ── Identity → Mindset → Intention → Commitment → Reflection */}
+      {/* ── DAILY RITUAL FLOW ── */}
 
-      {/* 2. TODAY'S PRINCIPLE — display only, from Admin */}
-      <div className="rounded-2xl bg-gradient-to-r from-[#5b7351]/10 to-[#f4f7ee]/40 border border-[#d3e0c5] px-5 py-4 mb-4">
-        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Principle", lang)}</div>
-        <p className="font-serif text-base italic text-stone-800 leading-snug" style={serifStyle}>{displayPrinciple}</p>
-      </div>
-
-      {/* 3. WORD OF THE DAY — prominent identity anchor from Daily Experiences */}
-      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/60 px-5 py-5 mb-4 text-center">
-        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-3 font-semibold" style={serifStyle}>{t("Word of the Day", lang)}</div>
-        <p className="font-serif text-4xl sm:text-5xl italic font-bold text-[#5b7351] leading-none tracking-tight" style={serifStyle}>{wordOfDay}</p>
-        <p className="text-[11px] italic text-stone-400 mt-2" style={serifStyle}>{t("Let this word guide who you are today.", lang)}</p>
-      </div>
-
-      {/* 4. DAILY AFFIRMATION — pick your own, display prominently */}
+      {/* 1. DAILY AFFIRMATION — your word for the day */}
       {summaryPrefs.affirmation && (allAffs.length > 0 ? (
         <div className="rounded-2xl bg-gradient-to-br from-[#f4f7ee] via-white to-[#f4f7ee]/50 border border-[#d3e0c5] px-6 py-6 mb-6 text-center relative">
           <div className="text-[10px] italic tracking-[0.2em] text-[#7a9a6e] mb-3" style={serifStyle}>{t("a word for today", lang)}</div>
@@ -6566,7 +6558,89 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         </div>
       )}
 
-      {/* 5. TODAY'S INTENTION — user picks one identity word */}
+      {/* 2. WORD OF THE DAY — prominent identity anchor */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/60 px-5 py-5 mb-4 text-center">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-3 font-semibold" style={serifStyle}>{t("Word of the Day", lang)}</div>
+        <p className="font-serif text-4xl sm:text-5xl italic font-bold text-[#5b7351] leading-none tracking-tight" style={serifStyle}>{wordOfDay}</p>
+        <p className="text-[11px] italic text-stone-400 mt-2" style={serifStyle}>{t("Let this word guide who you are today.", lang)}</p>
+      </div>
+
+      {/* STAT CIRCLES */}
+      {summaryPrefs.circles && (() => {
+        const tasksLeft = todayTotal - todayDone;
+        const todayPriorityTasks = todaysTasks.filter(t => t && t.priority);
+        const prioritiesSet = todayPriorityTasks.length;
+        const habitsLeft = habitTotal - habitDone;
+        const vitaminsLeft = vitaminsList.length - vitaminsTakenToday;
+        const waterLeft = Math.max(0, 8 - water);
+        const moodLogged = !!todayMoodEmoji;
+        const ProgressCircle = ({ done, total, valueLabel, doneIcon }) => {
+          const size = 84, stroke = 5;
+          const r = (size - stroke) / 2;
+          const c = 2 * Math.PI * r;
+          const pct = total > 0 ? Math.min(1, done / total) : 0;
+          const offset = c - pct * c;
+          return (
+            <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
+              <svg width={size} height={size} className="-rotate-90">
+                <circle cx={size / 2} cy={size / 2} r={r} stroke="#e7e5e4" strokeWidth={stroke} fill="none" />
+                <circle cx={size / 2} cy={size / 2} r={r} stroke="var(--accent-mid)" strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "stroke-dashoffset 0.6s ease" }} />
+              </svg>
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="font-serif text-xl text-[#5b7351]" style={serifStyle}>{pct === 1 && total > 0 ? (doneIcon || "✓") : valueLabel}</span>
+              </div>
+            </div>
+          );
+        };
+        const todaysEventsCount = ((data.calendarEvents || {})[today] || []).length;
+        const todaysWinsCount = (dailyPlan.wins || [])
+          .map(w => typeof w === "string" ? { text: w } : w)
+          .filter(w => w && w.text && String(w.text).trim()).length;
+        const fmtMoneyShort = (n) => {
+          const abs = Math.abs(n);
+          if (abs >= 1000) return `${n < 0 ? "-" : ""}$${(abs / 1000).toFixed(abs >= 10000 ? 0 : 1)}k`;
+          return `${n < 0 ? "-" : ""}$${abs}`;
+        };
+        const allCircleDefs = [
+          { key: "tasks",    onClick: () => navigateTo("planner", "section-todo"),         label: "tasks left", sub: todayTotal > 0 ? (tasksLeft > 0 ? t("of {n} today", lang, { n: todayTotal }) : t("all done — well done", lang)) : t("no tasks yet", lang), done: todayDone, total: todayTotal, valueLabel: `${tasksLeft || 0}` },
+          { key: "top3",     onClick: () => navigateTo("planner", "section-top3"),         label: "top 3",      sub: prioritiesSet === 3 ? t("you know your why", lang) : t("set today's priorities", lang), done: prioritiesSet, total: 3, valueLabel: `${prioritiesSet}/3` },
+          { key: "habits",   onClick: () => navigateTo("habitsView", "section-habits"),    label: "habits",     sub: habitTotal > 0 ? (habitsLeft > 0 ? t("{n} of {m} left", lang, { n: habitsLeft, m: habitTotal }) : t("rhythm kept", lang)) : t("add habits to begin", lang), done: habitDone, total: habitTotal, valueLabel: `${habitDone}/${habitTotal}` },
+          { key: "water",    onClick: () => navigateTo("habitsView", "section-water"),     label: "water",      sub: waterLeft > 0 ? t(waterLeft === 1 ? "{n} glass to go" : "{n} glasses to go", lang, { n: waterLeft }) : t("hydrated · 8/8", lang), done: water, total: 8, valueLabel: `${water}/8` },
+          { key: "vitamins", onClick: () => navigateTo("cycle",   "section-vitamins"),     label: "vitamins",   sub: vitaminsList.length > 0 ? (vitaminsLeft > 0 ? t("left to take", lang) : t("{n}/{m} taken", lang, { n: vitaminsList.length, m: vitaminsList.length })) : t("add vitamins to begin", lang), done: vitaminsTakenToday, total: vitaminsList.length, valueLabel: vitaminsList.length > 0 ? `${vitaminsTakenToday}/${vitaminsList.length}` : "—" },
+          { key: "mood",     onClick: () => navigateTo("cycle",   "section-mood"),         label: "mood",       sub: moodLogged ? t("feeling {mood}", lang, { mood: t(todayMoodLabel || "okay", lang) }) : t("how am I today?", lang), done: moodLogged ? 1 : 0, total: 1, valueLabel: moodLogged ? todayMoodEmoji : "?", doneIcon: todayMoodEmoji },
+          { key: "goals",    onClick: () => navigateTo("goals"),                            label: "goals",      sub: activeGoals.length > 0 ? t("avg across active", lang) : t("add a goal to begin", lang), done: goalAvg, total: 100, valueLabel: `${goalAvg}%` },
+          { key: "wins",     onClick: () => navigateTo("planner", "section-wins"),         label: "wins",       sub: todaysWinsCount > 0 ? t("logged today", lang) : t("log a win", lang), done: Math.min(todaysWinsCount, 3), total: 3, valueLabel: `${todaysWinsCount}` },
+          { key: "events",   onClick: () => navigateTo("calendarYear"),                     label: "events",     sub: todaysEventsCount > 0 ? t("on the calendar", lang) : t("nothing scheduled", lang), done: todaysEventsCount > 0 ? 1 : 0, total: 1, valueLabel: `${todaysEventsCount}` },
+          { key: "money",    onClick: () => navigateTo("finance"),                          label: "money",      sub: t("net this month", lang), done: net >= 0 ? 1 : 0, total: 1, valueLabel: fmtMoneyShort(net) },
+          { key: "vision",   onClick: () => navigateTo("vision"),                           label: "vision",     sub: visionItems.length > 0 ? t("{n} achieved", lang, { n: visionAchieved }) : t("add to vision board", lang), done: visionAchieved, total: Math.max(1, visionItems.length), valueLabel: visionItems.length > 0 ? `${visionAchieved}/${visionItems.length}` : "—" },
+        ];
+        const enabledCircles = allCircleDefs.filter(c => enabledCircleKeys.includes(c.key));
+        if (enabledCircles.length === 0) return null;
+        const smCols = {
+          1: "sm:grid-cols-1", 2: "sm:grid-cols-2", 3: "sm:grid-cols-3",
+          4: "sm:grid-cols-4", 5: "sm:grid-cols-5", 6: "sm:grid-cols-6",
+        }[Math.min(6, enabledCircles.length)] || "sm:grid-cols-6";
+        return (
+          <div className={`grid gap-2 mb-6 grid-cols-3 ${smCols}`}>
+            {enabledCircles.map((c) => (
+              <button key={c.key} onClick={c.onClick}
+                className="flex flex-col items-center text-center rounded-2xl px-2 py-3 transition hover:bg-[#f4f7ee]/40">
+                <ProgressCircle done={c.done} total={c.total} valueLabel={c.valueLabel} doneIcon={c.doneIcon} />
+                <div className="font-serif italic text-sm text-stone-800 mt-2 leading-tight" style={serifStyle}>{t(c.label, lang)}</div>
+                <div className="text-[10px] text-stone-400 italic mt-0.5 leading-tight" style={serifStyle}>{c.sub}</div>
+              </button>
+            ))}
+          </div>
+        );
+      })()}
+
+      {/* TODAY'S PRINCIPLE — from Admin */}
+      <div className="rounded-2xl bg-gradient-to-r from-[#5b7351]/10 to-[#f4f7ee]/40 border border-[#d3e0c5] px-5 py-4 mb-4">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Principle", lang)}</div>
+        <p className="font-serif text-base italic text-stone-800 leading-snug" style={serifStyle}>{displayPrinciple}</p>
+      </div>
+
+      {/* TODAY'S INTENTION — user picks one identity word */}
       <div className="rounded-2xl border border-stone-200 bg-white/70 px-5 py-4 mb-4">
         <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 mb-3 font-semibold" style={serifStyle}>{t("Today's Intention", lang)}</div>
         <p className="text-[11px] italic text-stone-400 mb-3" style={serifStyle}>{t("How do you choose to show up today?", lang)}</p>
@@ -6605,90 +6679,6 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         <p className="text-sm text-stone-700 leading-relaxed italic" style={serifStyle}>{displayReflection}</p>
       </div>
 
-      {/* TODAY CHECKLIST — circles, not boxes */}
-      {summaryPrefs.circles && (() => {
-        const tasksLeft = todayTotal - todayDone;
-        // Priority tasks = anything in today's tasks marked with .priority
-        // (replaces the old standalone Top 3 array, which has been folded
-        // into the unified To-Do list with star toggles).
-        const todayPriorityTasks = todaysTasks.filter(t => t && t.priority);
-        const prioritiesSet = todayPriorityTasks.length;
-        const habitsLeft = habitTotal - habitDone;
-        const vitaminsLeft = vitaminsList.length - vitaminsTakenToday;
-        const waterLeft = Math.max(0, 8 - water);
-        const moodLogged = !!todayMoodEmoji;
-        const ProgressCircle = ({ done, total, valueLabel, doneIcon }) => {
-          const size = 84, stroke = 5;
-          const r = (size - stroke) / 2;
-          const c = 2 * Math.PI * r;
-          const pct = total > 0 ? Math.min(1, done / total) : 0;
-          const offset = c - pct * c;
-          return (
-            <div className="relative flex-shrink-0" style={{ width: size, height: size }}>
-              <svg width={size} height={size} className="-rotate-90">
-                <circle cx={size / 2} cy={size / 2} r={r} stroke="#e7e5e4" strokeWidth={stroke} fill="none" />
-                <circle cx={size / 2} cy={size / 2} r={r} stroke="var(--accent-mid)" strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "stroke-dashoffset 0.6s ease" }} />
-              </svg>
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-serif text-xl text-[#5b7351]" style={serifStyle}>{pct === 1 && total > 0 ? (doneIcon || "✓") : valueLabel}</span>
-              </div>
-            </div>
-          );
-        };
-        // Live data used by the new opt-in circles (so they reflect the same
-        // numbers shown elsewhere on the summary).
-        const todaysEventsCount = ((data.calendarEvents || {})[today] || []).length;
-        const todaysWinsCount = (dailyPlan.wins || [])
-          .map(w => typeof w === "string" ? { text: w } : w)
-          .filter(w => w && w.text && String(w.text).trim()).length;
-        // Compact money formatter for the "money" circle (-$12k / +$3.4k / $0)
-        const fmtMoneyShort = (n) => {
-          const abs = Math.abs(n);
-          if (abs >= 1000) return `${n < 0 ? "-" : ""}$${(abs / 1000).toFixed(abs >= 10000 ? 0 : 1)}k`;
-          return `${n < 0 ? "-" : ""}$${abs}`;
-        };
-        // Canonical circle library. Each entry knows its data, target, label,
-        // sub-line, and the module to jump to on tap. The user picks which to
-        // show via the Customize modal (data.summaryCircles).
-        const allCircleDefs = [
-          { key: "tasks",    onClick: () => navigateTo("planner", "section-todo"),         label: "tasks left", sub: todayTotal > 0 ? (tasksLeft > 0 ? t("of {n} today", lang, { n: todayTotal }) : t("all done — well done", lang)) : t("no tasks yet", lang), done: todayDone, total: todayTotal, valueLabel: `${tasksLeft || 0}` },
-          { key: "top3",     onClick: () => navigateTo("planner", "section-top3"),         label: "top 3",      sub: prioritiesSet === 3 ? t("you know your why", lang) : t("set today's priorities", lang), done: prioritiesSet, total: 3, valueLabel: `${prioritiesSet}/3` },
-          { key: "habits",   onClick: () => navigateTo("habitsView", "section-habits"),    label: "habits",     sub: habitTotal > 0 ? (habitsLeft > 0 ? t("{n} of {m} left", lang, { n: habitsLeft, m: habitTotal }) : t("rhythm kept", lang)) : t("add habits to begin", lang), done: habitDone, total: habitTotal, valueLabel: `${habitDone}/${habitTotal}` },
-          { key: "water",    onClick: () => navigateTo("habitsView", "section-water"),     label: "water",      sub: waterLeft > 0 ? t(waterLeft === 1 ? "{n} glass to go" : "{n} glasses to go", lang, { n: waterLeft }) : t("hydrated · 8/8", lang), done: water, total: 8, valueLabel: `${water}/8` },
-          { key: "vitamins", onClick: () => navigateTo("cycle",   "section-vitamins"),     label: "vitamins",   sub: vitaminsList.length > 0 ? (vitaminsLeft > 0 ? t("left to take", lang) : t("{n}/{m} taken", lang, { n: vitaminsList.length, m: vitaminsList.length })) : t("add vitamins to begin", lang), done: vitaminsTakenToday, total: vitaminsList.length, valueLabel: vitaminsList.length > 0 ? `${vitaminsTakenToday}/${vitaminsList.length}` : "—" },
-          { key: "mood",     onClick: () => navigateTo("cycle",   "section-mood"),         label: "mood",       sub: moodLogged ? t("feeling {mood}", lang, { mood: t(todayMoodLabel || "okay", lang) }) : t("how am I today?", lang), done: moodLogged ? 1 : 0, total: 1, valueLabel: moodLogged ? todayMoodEmoji : "?", doneIcon: todayMoodEmoji },
-          { key: "goals",    onClick: () => navigateTo("goals"),                            label: "goals",      sub: activeGoals.length > 0 ? t("avg across active", lang) : t("add a goal to begin", lang), done: goalAvg, total: 100, valueLabel: `${goalAvg}%` },
-          { key: "wins",     onClick: () => navigateTo("planner", "section-wins"),         label: "wins",       sub: todaysWinsCount > 0 ? t("logged today", lang) : t("log a win", lang), done: Math.min(todaysWinsCount, 3), total: 3, valueLabel: `${todaysWinsCount}` },
-          { key: "events",   onClick: () => navigateTo("calendarYear"),                     label: "events",     sub: todaysEventsCount > 0 ? t("on the calendar", lang) : t("nothing scheduled", lang), done: todaysEventsCount > 0 ? 1 : 0, total: 1, valueLabel: `${todaysEventsCount}` },
-          { key: "money",    onClick: () => navigateTo("finance"),                          label: "money",      sub: t("net this month", lang), done: net >= 0 ? 1 : 0, total: 1, valueLabel: fmtMoneyShort(net) },
-          { key: "vision",   onClick: () => navigateTo("vision"),                           label: "vision",     sub: visionItems.length > 0 ? t("{n} achieved", lang, { n: visionAchieved }) : t("add to vision board", lang), done: visionAchieved, total: Math.max(1, visionItems.length), valueLabel: visionItems.length > 0 ? `${visionAchieved}/${visionItems.length}` : "—" },
-        ];
-        // enabledCircleKeys is computed at component scope above so the
-        // Customize modal and this render path use the same source of truth.
-        const enabledCircles = allCircleDefs.filter(c => enabledCircleKeys.includes(c.key));
-        if (enabledCircles.length === 0) return null;
-        // Tailwind needs static class names — map circle count to a fixed
-        // sm:grid-cols-N class. Anything beyond 6 wraps onto a 2nd row.
-        const smCols = {
-          1: "sm:grid-cols-1", 2: "sm:grid-cols-2", 3: "sm:grid-cols-3",
-          4: "sm:grid-cols-4", 5: "sm:grid-cols-5", 6: "sm:grid-cols-6",
-        }[Math.min(6, enabledCircles.length)] || "sm:grid-cols-6";
-        return (
-          <div className={`grid gap-2 mb-6 grid-cols-3 ${smCols}`}>
-            {enabledCircles.map((c) => (
-              <button
-                key={c.key}
-                onClick={c.onClick}
-                className="flex flex-col items-center text-center rounded-2xl px-2 py-3 transition hover:bg-[#f4f7ee]/40"
-              >
-                <ProgressCircle done={c.done} total={c.total} valueLabel={c.valueLabel} doneIcon={c.doneIcon} />
-                <div className="font-serif italic text-sm text-stone-800 mt-2 leading-tight" style={serifStyle}>{t(c.label, lang)}</div>
-                <div className="text-[10px] text-stone-400 italic mt-0.5 leading-tight" style={serifStyle}>{c.sub}</div>
-              </button>
-            ))}
-          </div>
-        );
-      })()}
 
       {(summaryPrefs.today || summaryPrefs.why) && (
       <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[repeat(3,minmax(0,1fr))] gap-5">
@@ -6702,8 +6692,8 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
               actual editing, instead of opening a modal here. */}
           {(() => {
             const summaryPriorityCount = sortedTodaysTasks.filter(t => t && (t.priority === "high" || t.priority === "critical")).length;
-            const visibleSummaryTasks = sortedTodaysTasks.slice(0, 5);
-            const hiddenSummaryCount = Math.max(0, sortedTodaysTasks.length - 5);
+            const visibleSummaryTasks = sortedTodaysTasks;
+            const hiddenSummaryCount = 0;
             return (
               <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
                 <div className="flex items-center justify-between mb-2 gap-3">
