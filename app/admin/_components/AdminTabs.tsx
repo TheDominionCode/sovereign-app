@@ -32,7 +32,7 @@ export default function AdminTabs({
   const visibleTabs = TABS.filter((t) => hasPermission(me, t.perm));
 
   return (
-    <nav className="flex flex-wrap gap-1 border-b border-stone-200 -mx-6 px-6">
+    <nav className="flex gap-1 border-b border-stone-200 -mx-6 px-6 overflow-x-auto scrollbar-hide">
       {visibleTabs.map((t) => {
         const active = path === t.href || (t.href !== "/admin" && path.startsWith(t.href));
         const isOverviewActive = t.href === "/admin" && path === "/admin";
