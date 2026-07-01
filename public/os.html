@@ -1851,6 +1851,7 @@ const TRANSLATIONS = {
     "Edit task": "Edit task",
     "TO DO LIST": "TO DO LIST",
     "TODAY'S COMMITMENTS": "TODAY'S COMMITMENTS",
+    "TODAY'S PROMISES": "TODAY'S PROMISES",
     "PRIORITY": "PRIORITY",
     "clear done": "clear done",
     "Clear completed": "Clear completed",
@@ -2649,6 +2650,7 @@ const TRANSLATIONS = {
     "Edit task": "Editar tarea",
     "TO DO LIST": "LISTA DE TAREAS",
     "TODAY'S COMMITMENTS": "MIS COMPROMISOS DE HOY",
+    "TODAY'S PROMISES": "MIS PROMESAS DE HOY",
     "PRIORITY": "PRIORIDAD",
     "clear done": "limpiar hechas",
     "Clear completed": "Limpiar completadas",
@@ -6682,7 +6684,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
               <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
                 <div className="flex items-center justify-between mb-2 gap-3">
                   <div className="flex items-center gap-2 min-w-0">
-                    <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S COMMITMENTS", lang)}</h2>
+                    <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S PROMISES", lang)}</h2>
                     <button onClick={() => navigateTo("planner", "section-todo")}
                       className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
                       style={{ background: "var(--accent-mid)" }}
@@ -10755,37 +10757,31 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   };
   // Render-order: priorities first by their order slot, then the rest by
   // manual `order` (defaults to id so existing tasks keep the same position).
-  const sortedDayTasks = [...dayTasks].sort((a, b) => {
-    const aOrder = a.order ?? (a.priority ? (a.priorityOrder || 99) : 1000 + (a.id || 0));
-    const bOrder = b.order ?? (b.priority ? (b.priorityOrder || 99) : 1000 + (b.id || 0));
-    return aOrder - bOrder;
-  });
+  // plannerOrder is a per-day map so reorder works for recurring tasks too
+  const plannerOrderMap = (data.plannerOrder || {})[date] || {};
+  const getPlannerPos = (t) => {
+    if (plannerOrderMap[t.id] != null) return plannerOrderMap[t.id];
+    return t.order ?? (t.priority ? (t.priorityOrder || 99) : 1000 + (t.id || 0));
+  };
+  const sortedDayTasks = [...dayTasks].sort((a, b) => getPlannerPos(a) - getPlannerPos(b));
 
   const moveTask = (id, dir) => {
     const idx = sortedDayTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return;
-    const cur = sortedDayTasks[idx];
-    if (cur._recurring) return;
-    let target = idx + dir;
-    while (target >= 0 && target < sortedDayTasks.length && sortedDayTasks[target]._recurring) target += dir;
+    const target = idx + dir;
     if (target < 0 || target >= sortedDayTasks.length) return;
-    const swap = sortedDayTasks[target];
-    const curOrder = cur.order ?? (idx * 1000);
-    const swapOrder = swap.order ?? (target * 1000);
-    setTasks(allTasks.map(x => {
-      if (!x) return x;
-      if (x.id === cur.id) return { ...x, order: swapOrder };
-      if (x.id === swap.id) return { ...x, order: curOrder };
-      return x;
-    }));
+    const newMap = {};
+    sortedDayTasks.forEach((t, i) => { newMap[t.id] = (i + 1) * 10; });
+    const curPos = newMap[id];
+    const swapId = sortedDayTasks[target].id;
+    newMap[id] = newMap[swapId];
+    newMap[swapId] = curPos;
+    setData({ ...data, plannerOrder: { ...(data.plannerOrder || {}), [date]: newMap } });
   };
   const canMoveTask = (id, dir) => {
     const idx = sortedDayTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return false;
-    const cur = sortedDayTasks[idx];
-    if (cur._recurring) return false;
-    let target = idx + dir;
-    while (target >= 0 && target < sortedDayTasks.length && sortedDayTasks[target]._recurring) target += dir;
+    const target = idx + dir;
     return target >= 0 && target < sortedDayTasks.length;
   };
   const toggleTask = (id) => {
@@ -10952,7 +10948,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       {/* Header — title + (+) add button on the left, SEE MORE on the right */}
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO DO LIST", lang)}</h2>
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S PROMISES", lang)}</h2>
           <button onClick={() => setAddTaskModalOpen(true)}
             className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
             style={{ background: "var(--accent-mid)" }}
