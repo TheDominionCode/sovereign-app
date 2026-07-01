@@ -261,6 +261,43 @@ export default function AnalyticsCharts({
 
   return (
     <div className="space-y-6">
+      {/* Exclude-my-device toggle — pinned to the TOP so it's the first thing
+          seen. Click once on each device (phone + computer) to stop counting
+          your own visits. The cookie lasts 10 years. */}
+      <div className={`rounded-xl border p-4 shadow-sm flex items-center justify-between gap-3 flex-wrap ${excluded ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"}`}>
+        <div className="min-w-0">
+          <div className={`text-sm font-semibold ${excluded ? "text-emerald-800" : "text-amber-800"}`}>
+            {excluded ? "✓ Your visits are NOT being counted" : "⚠ Your visits ARE being counted"}
+          </div>
+          <div className="text-xs italic text-stone-500 mt-0.5">
+            {excluded
+              ? "This device is excluded. Do the same on every other phone/computer you use."
+              : "Click to stop counting your own visits on this device. Do this on every phone and computer you use."}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            startReset(async () => {
+              if (excluded) {
+                await includeMyDeviceAction();
+              } else {
+                await excludeMyDeviceAction();
+              }
+              window.location.reload();
+            });
+          }}
+          disabled={isResetting}
+          className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
+            excluded
+              ? "bg-stone-200 text-stone-700 hover:bg-stone-300"
+              : "bg-amber-600 text-white hover:bg-amber-700"
+          }`}
+        >
+          {excluded ? "Start counting again" : "Don't count my visits"}
+        </button>
+      </div>
+
       {/* Headline stat cards — Today uses the admin's browser-local midnight
           so the number matches her actual "today." */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -384,49 +421,6 @@ export default function AnalyticsCharts({
           visits · <span className="font-semibold text-[#5b7351]">{uniqueIps.toLocaleString()}</span>{" "}
           unique IPs (last {windowDays} days)
         </div>
-      </div>
-
-      {/* Exclude-my-device toggle. Calls a server action that:
-          1. Sets a 10-year sov-internal cookie so future visits from this
-             device are dropped at /api/visit before the row is inserted.
-          2. Deletes the most recent visit row matching this device's IP —
-             which removes the visit she just made loading this very page
-             (it got counted before she could click the button).
-          The page reloads after so the stat cards reflect the deletion. */}
-      <div className="rounded-xl border border-stone-200 bg-white p-4 shadow-sm flex items-center justify-between gap-3 flex-wrap">
-        <div className="min-w-0">
-          <div className="text-sm font-medium text-stone-800">
-            {excluded
-              ? "This device is NOT being counted"
-              : "This device IS being counted"}
-          </div>
-          <div className="text-xs italic text-stone-500 mt-0.5">
-            Click below to stop counting your own visits from this browser — permanently,
-            on this device, until you toggle it back. Your most recent visit
-            from this IP gets cleaned out too. Do this once on each phone/computer.
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={() => {
-            startReset(async () => {
-              if (excluded) {
-                await includeMyDeviceAction();
-              } else {
-                await excludeMyDeviceAction();
-              }
-              window.location.reload();
-            });
-          }}
-          disabled={isResetting}
-          className={`px-4 py-2 text-xs font-medium rounded-lg transition-colors flex-shrink-0 disabled:opacity-50 disabled:cursor-not-allowed ${
-            excluded
-              ? "bg-stone-200 text-stone-700 hover:bg-stone-300"
-              : "bg-[#5b7351] text-white hover:bg-[#4a5e42]"
-          }`}
-        >
-          {excluded ? "Start counting again" : "Don't count my visits"}
-        </button>
       </div>
 
       {/* Daily chart */}

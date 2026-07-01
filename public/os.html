@@ -1648,24 +1648,67 @@ const BUSINESS_NAV = [
 ];
 
 const PERSONAL_NAV = [
-  { id: "personalHome", label: "Summary", icon: Home },
-  { id: "planner", label: "Daily Planner", icon: BookOpen },
-  { id: "calendarYear", label: "Calendar", icon: Calendar },
-  { id: "habitsView", label: "Habits", icon: Activity },
-  { id: "goals", label: "Goals", icon: Target },
-  { id: "habits", label: "Growth & Self", icon: Zap },
-  { id: "personalFinance", label: "Personal Finance", icon: DollarSign },
-  { id: "cycle", label: "Cycle & Mood", icon: Heart },
-  { id: "speak", label: "Speak Eloquently", icon: MessageCircle },
-  { id: "affirmations", label: "Affirmations", icon: Sparkles },
-  { id: "boundaries", label: "Boundaries", icon: Shield },
-  { id: "vision", label: "Vision Board", icon: ImageIcon },
-  { id: "notes", label: "Notes", icon: StickyNote },
-  { id: "credentials", label: "Logins & Passwords", icon: Lock },
+  { id: "personalHome", label: "Summary",              icon: Home },
+  { id: "sovereignOS",  label: "Sovereign",           icon: Sparkles },
+  { id: "planner",      label: "Today's Focus",      icon: BookOpen },
+  { id: "calendarYear", label: "Calendar",            icon: Calendar },
+  { id: "habitsView",   label: "Habits",              icon: Activity },
+  { id: "goals",        label: "Goals",               icon: Target },
+  { id: "habits",       label: "Reflection",          icon: Lightbulb },
+  { id: "personalFinance", label: "Finances",         icon: DollarSign },
+  { id: "cycle",        label: "Cycle & Mood",        icon: Heart },
+  { id: "speak",        label: "Speak Eloquently",    icon: MessageCircle },
+  { id: "affirmations", label: "Affirmations",        icon: Sparkles },
+  { id: "boundaries",   label: "Boundaries",          icon: Shield },
+  { id: "vision",       label: "Vision",              icon: ImageIcon },
+  { id: "notes",        label: "Notes",               icon: StickyNote },
 ];
 
 const SHARED_NAV = [
-  { id: "settings", label: "Settings", icon: Settings },
+  { id: "credentials", label: "Logins & Passwords", icon: Lock },
+  { id: "settings",    label: "Settings",            icon: Settings },
+];
+
+// Sidebar pillar structure — only shows built, functional modules.
+const PERSONAL_NAV_PILLARS = [
+  {
+    id: "purpose", label: "Purpose", icon: Target,
+    items: [
+      { id: "planner",         label: "Today's Focus",   icon: BookOpen },
+      { id: "calendarYear",    label: "Calendar",         icon: Calendar },
+      { id: "goals",           label: "Goals",            icon: Target },
+      { id: "vision",          label: "Vision",           icon: ImageIcon },
+    ],
+  },
+  {
+    id: "mind", label: "Mind", icon: Lightbulb,
+    items: [
+      { id: "sovereignOS",     label: "Sovereign",         icon: Sparkles },
+      { id: "affirmations",    label: "Affirmations",     icon: Sparkles },
+      { id: "speak",           label: "Speak Eloquently", icon: MessageCircle },
+      { id: "habits",          label: "Reflection",       icon: Lightbulb },
+      { id: "notes",           label: "Notes",            icon: StickyNote },
+    ],
+  },
+  {
+    id: "body", label: "Body", icon: Activity,
+    items: [
+      { id: "habitsView",      label: "Habits",           icon: Activity },
+      { id: "cycle",           label: "Cycle & Mood",     icon: Heart },
+    ],
+  },
+  {
+    id: "wealth", label: "Wealth", icon: DollarSign,
+    items: [
+      { id: "personalFinance", label: "Finances",         icon: DollarSign },
+    ],
+  },
+  {
+    id: "relationships", label: "Relationships", icon: Users,
+    items: [
+      { id: "boundaries",      label: "Boundaries",       icon: Shield },
+    ],
+  },
 ];
 
 // ============================================================
@@ -1673,23 +1716,60 @@ const SHARED_NAV = [
 // ============================================================
 const TRANSLATIONS = {
   en: {
-    // Sidebar nav
-    "Summary": "Summary",
-    "Daily Planner": "Daily Planner",
+    // Sidebar nav — updated labels
+    "Today": "Today",
+    "Sovereign OS": "Sovereign",
+    "Today's Focus": "Today's Focus",
     "Calendar": "Calendar",
-    "Personal Finance": "Personal Finance",
+    "Finances": "Finances",
     "Goals": "Goals",
-    "Growth & Self": "Growth & Self",
+    "Reflection": "Reflection",
     "Cycle & Mood": "Cycle & Mood",
     "Speak Eloquently": "Speak Eloquently",
     "Affirmations": "Affirmations",
     "Boundaries": "Boundaries",
-    "Vision Board": "Vision Board",
+    "Vision": "Vision",
     "Notes": "Notes",
     "Logins & Passwords": "Logins & Passwords",
     "Settings": "Settings",
     "Sign out": "Sign out",
     "Habits": "Habits",
+    // Legacy keys kept so existing translated strings still resolve
+    "Summary": "Summary",
+    "Daily Planner": "Daily Planner",
+    "Personal Finance": "Personal Finance",
+    "Vision Board": "Vision Board",
+    "Growth & Self": "Growth & Self",
+    // Pillar labels
+    "Purpose": "Purpose",
+    "Mind": "Mind",
+    "Spirit": "Spirit",
+    "Body": "Body",
+    "Wealth": "Wealth",
+    "Relationships": "Relationships",
+    "Resources": "Resources",
+    // Coming-soon nav items
+    "Tasks": "Tasks",
+    "Journal": "Journal",
+    "Brain Dump": "Brain Dump",
+    "Gratitude": "Gratitude",
+    "Prayer": "Prayer",
+    "Bible": "Bible",
+    "Scripture": "Scripture",
+    "Water": "Water",
+    "Sleep": "Sleep",
+    "Movement": "Movement",
+    "Cycle": "Cycle",
+    "Mood": "Mood",
+    "Budget": "Budget",
+    "Net Worth": "Net Worth",
+    "Investments": "Investments",
+    "Family": "Family",
+    "Marriage": "Marriage",
+    "Community": "Community",
+    "Resource Library": "Resource Library",
+    "Courses": "Courses",
+    "Downloads": "Downloads",
     // Greetings
     "Good morning": "Good morning",
     "Good afternoon": "Good afternoon",
@@ -1697,6 +1777,9 @@ const TRANSLATIONS = {
     "A quiet start. Let's set the tone.": "A quiet start. Let's set the tone.",
     "You're in the middle of it. Stay with yourself.": "You're in the middle of it. Stay with yourself.",
     "Soft landing. Honor what you did today.": "Soft landing. Honor what you did today.",
+    "Today is another opportunity to become the person you're building.": "Today is another opportunity to become the person you're building.",
+    "You are in the middle of building something real. Stay the course.": "You are in the middle of building something real. Stay the course.",
+    "Rest well. Every effort today was evidence of who you're becoming.": "Rest well. Every effort today was evidence of who you're becoming.",
     // Tagline
     "Calm, centered, in charge.": "Calm, centered, in charge.",
     // Common labels on Summary
@@ -1767,6 +1850,8 @@ const TRANSLATIONS = {
     "Delete task": "Delete task",
     "Edit task": "Edit task",
     "TO DO LIST": "TO DO LIST",
+    "TODAY'S COMMITMENTS": "TODAY'S COMMITMENTS",
+    "TODAY'S PROMISES": "TODAY'S PROMISES",
     "PRIORITY": "PRIORITY",
     "clear done": "clear done",
     "Clear completed": "Clear completed",
@@ -1845,6 +1930,72 @@ const TRANSLATIONS = {
     "No active goals yet. Tap + to add.": "No active goals yet. Tap + to add.",
     "Your vision board is empty. Tap + to add.": "Your vision board is empty. Tap + to add.",
     "No wins logged yet. Tap + to add.": "No wins logged yet. Tap + to add.",
+    "Every small win is evidence of who you're becoming. Tap + to log it.": "Every small win is evidence of who you're becoming. Tap + to log it.",
+    "TODAY'S COMMITMENTS": "TODAY'S COMMITMENTS",
+    "REFLECTION": "REFLECTION",
+    "PREPARE TOMORROW": "PREPARE TOMORROW",
+    "What made today meaningful?": "What made today meaningful?",
+    "Sidebar default view": "Sidebar default view",
+    "How sections appear when you open the app.": "How sections appear when you open the app.",
+    "Expanded": "Expanded",
+    "All open": "All open",
+    "Collapsed": "Collapsed",
+    "All closed": "All closed",
+    "Remember": "Remember",
+    "Last state": "Last state",
+    // Sprint 3 — Daily Experience Engine
+    "Today's Principle": "Today's Principle",
+    "Today's Reflection": "Today's Reflection",
+    "Today's Question": "Today's Question",
+    "Today's Intention": "Today's Intention",
+    "Evidence that you're becoming who you said you'd be.": "Evidence that you're becoming who you said you'd be.",
+    "Every yes protects something. Every no protects someone.": "Every yes protects something. Every no protects someone.",
+    "Your words shape your relationships.": "Your words shape your relationships.",
+    "Listen to your body before demanding more from it.": "Listen to your body before demanding more from it.",
+    "Repeat what you want your mind to believe.": "Repeat what you want your mind to believe.",
+    "Capture what you never want to forget.": "Capture what you never want to forget.",
+    "Stewardship creates freedom.": "Stewardship creates freedom.",
+    "Every vision deserves today's action.": "Every vision deserves today's action.",
+    "Know yourself better one day at a time.": "Know yourself better one day at a time.",
+    "Today's reflection prompts": "Today's reflection prompts",
+    "What am I proud of today?": "What am I proud of today?",
+    "What challenged me today?": "What challenged me today?",
+    "What did I learn today?": "What did I learn today?",
+    "What promise did I keep today?": "What promise did I keep today?",
+    "How did I grow today?": "How did I grow today?",
+    "What deserves my attention tomorrow?": "What deserves my attention tomorrow?",
+    "Welcome back. Let's build today with intention.": "Welcome back. Let's build today with intention.",
+    "Give tomorrow one clear direction before you rest.": "Give tomorrow one clear direction before you rest.",
+    "Every promise you keep becomes evidence that you can trust yourself.": "Every promise you keep becomes evidence that you can trust yourself.",
+    "Every promise kept. Champion day.": "Every promise kept. Champion day.",
+    "One step closer to the life you're building.": "One step closer to the life you're building.",
+    "Write your answer…": "Write your answer…",
+    "edit": "edit",
+    "Sovereign OS": "Sovereign",
+    "Who am I becoming today?": "Who am I becoming today?",
+    "Let this guide every decision you make today.": "Let this guide every decision you make today.",
+    "Reflection Questions": "Reflection Questions",
+    "Evening check-in, 5 prompts": "Evening check-in, 5 prompts",
+    "Today's One Promise": "Today's One Promise",
+    "One small commitment that rebuilds self-trust.": "One small commitment that rebuilds self-trust.",
+    "I will…": "I will…",
+    "Drink one extra glass of water.": "Drink one extra glass of water.",
+    "Finish one unfinished task.": "Finish one unfinished task.",
+    "Read one page.": "Read one page.",
+    "Take a 10-minute walk.": "Take a 10-minute walk.",
+    "Evening Reflection": "Evening Reflection",
+    "What evidence did you give yourself today that you can trust yourself?": "What evidence did you give yourself today that you can trust yourself?",
+    "Today I showed up by…": "Today I showed up by…",
+    "Rest. Tomorrow continues what today began.": "Rest. Tomorrow continues what today began.",
+    "Present": "Present",
+    "Focused": "Focused",
+    "Peaceful": "Peaceful",
+    "Disciplined": "Disciplined",
+    "Joyful": "Joyful",
+    "Patient": "Patient",
+    "Courageous": "Courageous",
+    "Intentional": "Intentional",
+    "Grateful": "Grateful",
     "STAT CIRCLES": "STAT CIRCLES",
     "Pick what shows in the row of circles.": "Pick what shows in the row of circles.",
     "Tasks left": "Tasks left",
@@ -2063,6 +2214,14 @@ const TRANSLATIONS = {
     "Reopen": "Reopen",
     "Mark done — move to Done": "Mark done — move to Done",
     "Reopen — move back to Active": "Reopen — move back to Active",
+    "Up": "Up",
+    "Down": "Down",
+    "Word of the Day": "Word of the Day",
+    "Let this word guide who you are today.": "Let this word guide who you are today.",
+    "Today's Commitment": "Today's Commitment",
+    "What promise will you keep today?": "What promise will you keep today?",
+    "How do you choose to show up today?": "How do you choose to show up today?",
+    "Take a moment to close the day with intention.": "Take a moment to close the day with intention.",
     "by {date}": "by {date}",
     "none yet": "none yet",
     "{n} of {m} ✓": "{n} of {m} ✓",
@@ -2354,23 +2513,60 @@ const TRANSLATIONS = {
     "love": "love",
   },
   es: {
-    // Sidebar nav
-    "Summary": "Resumen",
-    "Daily Planner": "Planificador Diario",
+    // Sidebar nav — updated labels
+    "Today": "Hoy",
+    "Sovereign OS": "Sovereign",
+    "Today's Focus": "Mi Enfoque de Hoy",
     "Calendar": "Calendario",
-    "Personal Finance": "Finanzas Personales",
+    "Finances": "Finanzas",
     "Goals": "Metas",
-    "Growth & Self": "Crecimiento y Yo",
+    "Reflection": "Reflexión",
     "Cycle & Mood": "Ciclo y Ánimo",
     "Speak Eloquently": "Hablar con Elocuencia",
     "Affirmations": "Afirmaciones",
     "Boundaries": "Límites",
-    "Vision Board": "Tablero de Visión",
+    "Vision": "Visión",
     "Notes": "Notas",
     "Logins & Passwords": "Accesos y Contraseñas",
     "Settings": "Configuración",
     "Sign out": "Cerrar sesión",
     "Habits": "Hábitos",
+    // Legacy keys kept so existing translated strings still resolve
+    "Summary": "Resumen",
+    "Daily Planner": "Planificador Diario",
+    "Personal Finance": "Finanzas Personales",
+    "Vision Board": "Tablero de Visión",
+    "Growth & Self": "Crecimiento y Yo",
+    // Pillar labels
+    "Purpose": "Propósito",
+    "Mind": "Mente",
+    "Spirit": "Espíritu",
+    "Body": "Cuerpo",
+    "Wealth": "Riqueza",
+    "Relationships": "Relaciones",
+    "Resources": "Recursos",
+    // Coming-soon nav items
+    "Tasks": "Tareas",
+    "Journal": "Diario",
+    "Brain Dump": "Vaciado Mental",
+    "Gratitude": "Gratitud",
+    "Prayer": "Oración",
+    "Bible": "Biblia",
+    "Scripture": "Escritura",
+    "Water": "Agua",
+    "Sleep": "Sueño",
+    "Movement": "Movimiento",
+    "Cycle": "Ciclo",
+    "Mood": "Estado de Ánimo",
+    "Budget": "Presupuesto",
+    "Net Worth": "Patrimonio Neto",
+    "Investments": "Inversiones",
+    "Family": "Familia",
+    "Marriage": "Matrimonio",
+    "Community": "Comunidad",
+    "Resource Library": "Biblioteca de Recursos",
+    "Courses": "Cursos",
+    "Downloads": "Descargas",
     // Greetings
     "Good morning": "Buenos días",
     "Good afternoon": "Buenas tardes",
@@ -2378,6 +2574,9 @@ const TRANSLATIONS = {
     "A quiet start. Let's set the tone.": "Un comienzo tranquilo. Vamos a marcar el tono.",
     "You're in the middle of it. Stay with yourself.": "Estás en medio de todo. Quédate contigo.",
     "Soft landing. Honor what you did today.": "Aterrizaje suave. Honra lo que hiciste hoy.",
+    "Today is another opportunity to become the person you're building.": "Hoy es otra oportunidad de convertirte en la persona que estás construyendo.",
+    "You are in the middle of building something real. Stay the course.": "Estás en medio de construir algo real. Mantén el rumbo.",
+    "Rest well. Every effort today was evidence of who you're becoming.": "Descansa bien. Cada esfuerzo de hoy fue evidencia de quien te estás convirtiendo.",
     // Tagline
     "Calm, centered, in charge.": "Calma, centrada, en control.",
     // Summary labels
@@ -2417,6 +2616,8 @@ const TRANSLATIONS = {
     "GRATITUDE": "GRATITUD",
     "MY NOTES": "MIS NOTAS",
     "TOMORROW": "MAÑANA",
+    "REFLECTION": "REFLEXIÓN",
+    "PREPARE TOMORROW": "PREPARAR MAÑANA",
     "WEEKLY SCHEDULE": "HORARIO SEMANAL",
     "The thing that matters most…": "Lo que más importa…",
     "Second priority": "Segunda prioridad",
@@ -2437,6 +2638,7 @@ const TRANSLATIONS = {
     "Win two": "Logro dos",
     "Win three": "Logro tres",
     "What did you appreciate today?": "¿Qué agradeciste hoy?",
+    "What made today meaningful?": "¿Qué hizo que hoy fuera significativo?",
     "Free-form journal for the day…": "Diario libre para el día…",
     "What's the first thing tomorrow needs from you?": "¿Qué es lo primero que mañana necesita de ti?",
     "no tasks": "sin tareas",
@@ -2448,6 +2650,8 @@ const TRANSLATIONS = {
     "Delete task": "Eliminar tarea",
     "Edit task": "Editar tarea",
     "TO DO LIST": "LISTA DE TAREAS",
+    "TODAY'S COMMITMENTS": "MIS COMPROMISOS DE HOY",
+    "TODAY'S PROMISES": "MIS PROMESAS DE HOY",
     "PRIORITY": "PRIORIDAD",
     "clear done": "limpiar hechas",
     "Clear completed": "Limpiar completadas",
@@ -2526,6 +2730,72 @@ const TRANSLATIONS = {
     "No active goals yet. Tap + to add.": "Sin metas activas. Toca + para añadir.",
     "Your vision board is empty. Tap + to add.": "Tu tablero está vacío. Toca + para añadir.",
     "No wins logged yet. Tap + to add.": "Sin logros aún. Toca + para añadir.",
+    "Every small win is evidence of who you're becoming. Tap + to log it.": "Cada pequeño logro es evidencia de quien te estás convirtiendo. Toca + para registrarlo.",
+    "TODAY'S COMMITMENTS": "MIS COMPROMISOS DE HOY",
+    "REFLECTION": "REFLEXIÓN",
+    "PREPARE TOMORROW": "PREPARAR MAÑANA",
+    "What made today meaningful?": "¿Qué hizo que hoy fuera significativo?",
+    "Sidebar default view": "Vista predeterminada del menú",
+    "How sections appear when you open the app.": "Cómo aparecen las secciones al abrir la app.",
+    "Expanded": "Expandido",
+    "All open": "Todo abierto",
+    "Collapsed": "Colapsado",
+    "All closed": "Todo cerrado",
+    "Remember": "Recordar",
+    "Last state": "Último estado",
+    // Sprint 3 — Daily Experience Engine
+    "Today's Principle": "Principio de hoy",
+    "Today's Reflection": "Reflexión de hoy",
+    "Today's Question": "Pregunta de hoy",
+    "Today's Intention": "Intención de hoy",
+    "Evidence that you're becoming who you said you'd be.": "Evidencia de que te estás convirtiendo en quien dijiste que serías.",
+    "Every yes protects something. Every no protects someone.": "Cada sí protege algo. Cada no protege a alguien.",
+    "Your words shape your relationships.": "Tus palabras dan forma a tus relaciones.",
+    "Listen to your body before demanding more from it.": "Escucha a tu cuerpo antes de exigirle más.",
+    "Repeat what you want your mind to believe.": "Repite lo que quieres que tu mente crea.",
+    "Capture what you never want to forget.": "Captura lo que nunca quieres olvidar.",
+    "Stewardship creates freedom.": "La administración crea libertad.",
+    "Every vision deserves today's action.": "Cada visión merece la acción de hoy.",
+    "Know yourself better one day at a time.": "Conócete mejor un día a la vez.",
+    "Today's reflection prompts": "Preguntas de reflexión de hoy",
+    "What am I proud of today?": "¿De qué estoy orgullosa hoy?",
+    "What challenged me today?": "¿Qué me desafió hoy?",
+    "What did I learn today?": "¿Qué aprendí hoy?",
+    "What promise did I keep today?": "¿Qué promesa cumplí hoy?",
+    "How did I grow today?": "¿Cómo crecí hoy?",
+    "What deserves my attention tomorrow?": "¿Qué merece mi atención mañana?",
+    "Welcome back. Let's build today with intention.": "Bienvenida de nuevo. Construyamos el día con intención.",
+    "Give tomorrow one clear direction before you rest.": "Dale a mañana una dirección clara antes de descansar.",
+    "Every promise you keep becomes evidence that you can trust yourself.": "Cada promesa que cumples se convierte en evidencia de que puedes confiar en ti misma.",
+    "Every promise kept. Champion day.": "Cada promesa cumplida. Día de campeona.",
+    "One step closer to the life you're building.": "Un paso más cerca de la vida que estás construyendo.",
+    "Write your answer…": "Escribe tu respuesta…",
+    "edit": "editar",
+    "Sovereign OS": "Sovereign",
+    "Who am I becoming today?": "¿En quién me estoy convirtiendo hoy?",
+    "Let this guide every decision you make today.": "Deja que esto guíe cada decisión que tomes hoy.",
+    "Reflection Questions": "Preguntas de reflexión",
+    "Evening check-in, 5 prompts": "Revisión nocturna, 5 preguntas",
+    "Today's One Promise": "Mi promesa de hoy",
+    "One small commitment that rebuilds self-trust.": "Un pequeño compromiso que reconstruye la confianza propia.",
+    "I will…": "Voy a…",
+    "Drink one extra glass of water.": "Beber un vaso extra de agua.",
+    "Finish one unfinished task.": "Terminar una tarea pendiente.",
+    "Read one page.": "Leer una página.",
+    "Take a 10-minute walk.": "Dar un paseo de 10 minutos.",
+    "Evening Reflection": "Reflexión vespertina",
+    "What evidence did you give yourself today that you can trust yourself?": "¿Qué evidencia te diste hoy de que puedes confiar en ti misma?",
+    "Today I showed up by…": "Hoy me presenté al…",
+    "Rest. Tomorrow continues what today began.": "Descansa. Mañana continúa lo que hoy comenzó.",
+    "Present": "Presente",
+    "Focused": "Enfocada",
+    "Peaceful": "En paz",
+    "Disciplined": "Disciplinada",
+    "Joyful": "Con alegría",
+    "Patient": "Paciente",
+    "Courageous": "Con valentía",
+    "Intentional": "Intencional",
+    "Grateful": "Agradecida",
     "STAT CIRCLES": "CÍRCULOS DEL DÍA",
     "Pick what shows in the row of circles.": "Elige qué se muestra en la fila de círculos.",
     "Tasks left": "Tareas pendientes",
@@ -2743,6 +3013,14 @@ const TRANSLATIONS = {
     "Reopen": "Reabrir",
     "Mark done — move to Done": "Marcar hecho — mover a Hechas",
     "Reopen — move back to Active": "Reabrir — volver a Activas",
+    "Up": "Arriba",
+    "Down": "Abajo",
+    "Word of the Day": "Palabra del día",
+    "Let this word guide who you are today.": "Deja que esta palabra guíe quien eres hoy.",
+    "Today's Commitment": "Compromiso de hoy",
+    "What promise will you keep today?": "¿Qué promesa cumplirás hoy?",
+    "How do you choose to show up today?": "¿Cómo eliges presentarte hoy?",
+    "Take a moment to close the day with intention.": "Tómate un momento para cerrar el día con intención.",
     "by {date}": "para el {date}",
     "none yet": "ninguno aún",
     "{n} of {m} ✓": "{n} de {m} ✓",
@@ -3074,6 +3352,23 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   // mode is locked to personal in this build
   const [collapsed, setCollapsed] = useState(() => typeof window !== "undefined" && window.innerWidth < 768);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openPillars, setOpenPillars] = useState(() => {
+    try {
+      const savedData = storage.get(`dom_data_${user.username}`, {});
+      const defaultView = savedData?.sidebarDefaultView ?? "expanded";
+      if (defaultView === "remember" && savedData?.sidebarOpenState) {
+        return savedData.sidebarOpenState;
+      }
+      const allOpen = defaultView !== "collapsed";
+      const defaults = {};
+      PERSONAL_NAV_PILLARS.forEach(p => { defaults[p.id] = allOpen; });
+      return defaults;
+    } catch {
+      const defaults = {};
+      PERSONAL_NAV_PILLARS.forEach(p => { defaults[p.id] = true; });
+      return defaults;
+    }
+  });
   const [bellOpen, setBellOpen] = useState(false);
   const [letterInboxOpen, setLetterInboxOpen] = useState(false);
   // All active announcements the current user can see, with a `dismissed`
@@ -3287,7 +3582,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   useEffect(() => { storage.set("dom_active", active); }, [active]);
 
   const [confettiBig, setConfettiBig] = useState(false);
-  const triggerConfetti = (msg = "✓ Crushed it!", big = false) => {
+  const triggerConfetti = (msg = "Another promise kept.", big = false) => {
     setConfetti(true); setConfettiBig(big); setToast(msg);
     const dur = big ? 6500 : 3200;
     setTimeout(() => { setConfetti(false); setConfettiBig(false); }, dur);
@@ -3300,6 +3595,26 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   const themeMuted = dark ? "text-stone-400" : "text-stone-600";
 
   const moduleProps = { data, setData, user, dark, triggerConfetti, themePanel, themeMuted, themeText, accent, setAccent, lang, setLang, navigateTo };
+
+  const togglePillar = (pillarId) => {
+    setOpenPillars(prev => {
+      const next = { ...prev, [pillarId]: !prev[pillarId] };
+      if (data?.sidebarDefaultView === "remember") {
+        setData(d => ({ ...d, sidebarOpenState: next }));
+      }
+      return next;
+    });
+  };
+  const applySidebarDefaultView = (view) => {
+    const next = {};
+    if (view === "expanded") {
+      PERSONAL_NAV_PILLARS.forEach(p => { next[p.id] = true; });
+      setOpenPillars(next);
+    } else if (view === "collapsed") {
+      PERSONAL_NAV_PILLARS.forEach(p => { next[p.id] = false; });
+      setOpenPillars(next);
+    }
+  };
 
   // "What's new" pop-out — shows once after each release so trial users
   // see what changed when they open the app. Bumping WHATS_NEW_VERSION
@@ -3517,22 +3832,112 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
         </div>
 
         <nav className="flex-1 overflow-y-auto py-2">
-          {allNav.map(item => {
-            const isActive = active === item.id;
-            // Use the user's custom calendar label if they renamed it; otherwise translate the default label
-            const itemLabel = item.id === "calendarYear" && data.calendarLabel ? data.calendarLabel : t(item.label, lang);
-            return (
-              <button key={item.id} onClick={() => { setActive(item.id); setMobileMenuOpen(false); }}
+          {collapsed && !mobileMenuOpen ? (
+            // COLLAPSED: flat icon list — only navigable (non-soon) items, deduplicated
+            <>
+              <button onClick={() => { setActive("personalHome"); }}
+                className={`w-full flex items-center justify-center px-4 py-2.5 transition border-l-2 ${active === "personalHome" ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351]" : "border-transparent text-stone-600 hover:bg-stone-50"}`}
+                title={t("Summary", lang)}>
+                <Home className="w-4 h-4" />
+              </button>
+              {PERSONAL_NAV_PILLARS
+                .flatMap(p => p.items.filter(i => i.id && !i.soon))
+                .filter((item, idx, arr) => arr.findIndex(x => x.id === item.id) === idx)
+                .map((item, idx) => (
+                  <button key={`col-${item.id}-${idx}`} onClick={() => { setActive(item.id); }}
+                    className={`w-full flex items-center justify-center px-4 py-2.5 transition border-l-2 ${active === item.id ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351]" : "border-transparent text-stone-600 hover:bg-stone-50"}`}
+                    title={t(item.label, lang)}>
+                    <item.icon className="w-4 h-4" />
+                  </button>
+                ))
+              }
+              {SHARED_NAV.map(item => (
+                <button key={`col-shared-${item.id}`} onClick={() => { setActive(item.id); }}
+                  className={`w-full flex items-center justify-center px-4 py-2.5 transition border-l-2 ${active === item.id ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351]" : "border-transparent text-stone-600 hover:bg-stone-50"}`}
+                  title={t(item.label, lang)}>
+                  <item.icon className="w-4 h-4" />
+                </button>
+              ))}
+            </>
+          ) : (
+            // EXPANDED: grouped by pillar with collapsible sections
+            <>
+              {/* Summary — standalone top link */}
+              <button onClick={() => { setActive("personalHome"); setMobileMenuOpen(false); }}
                 className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition border-l-2 ${
-                  isActive
+                  active === "personalHome"
                     ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351] font-medium"
                     : "border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900"
                 }`}>
-                <item.icon className="w-4 h-4 flex-shrink-0" />
-                {(!collapsed || mobileMenuOpen) && <span>{itemLabel}</span>}
+                <Home className="w-4 h-4 flex-shrink-0" />
+                <span>{t("Summary", lang)}</span>
               </button>
-            );
-          })}
+
+              {/* Pillars */}
+              {PERSONAL_NAV_PILLARS.map(pillar => {
+                const isOpen = openPillars[pillar.id] !== false;
+                const pillarHasActive = pillar.items.some(item => item.id && active === item.id);
+                const PillarIcon = pillar.icon;
+                return (
+                  <div key={pillar.id}>
+                    <button
+                      onClick={() => togglePillar(pillar.id)}
+                      className={`w-full flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest transition border-l-2 border-transparent ${
+                        pillarHasActive ? "text-[#5b7351]" : "text-stone-400 hover:text-stone-500"
+                      }`}>
+                      {PillarIcon && <PillarIcon className="w-3.5 h-3.5 flex-shrink-0" />}
+                      <span className="flex-1 text-left">{t(pillar.label, lang)}</span>
+                      {isOpen ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+                    </button>
+                    {isOpen && pillar.items.map((item, idx) => {
+                      if (item.soon) {
+                        return (
+                          <div key={`${item.label}-${idx}`}
+                            className="flex items-center gap-3 pl-9 pr-4 py-1.5 text-sm text-stone-300 cursor-default select-none">
+                            <item.icon className="w-3.5 h-3.5 flex-shrink-0" />
+                            <span className="flex-1">{t(item.label, lang)}</span>
+                            <span className="text-[9px] tracking-wider uppercase font-medium text-stone-300">soon</span>
+                          </div>
+                        );
+                      }
+                      const isActive = active === item.id;
+                      // Preserve user's custom calendar label if they renamed it
+                      const label = item.id === "calendarYear" && data.calendarLabel ? data.calendarLabel : t(item.label, lang);
+                      return (
+                        <button key={`${item.id}-${item.label}-${idx}`}
+                          onClick={() => { setActive(item.id); setMobileMenuOpen(false); }}
+                          className={`w-full flex items-center gap-3 pl-9 pr-4 py-2 text-sm transition border-l-2 ${
+                            isActive
+                              ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351] font-medium"
+                              : "border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900"
+                          }`}>
+                          <item.icon className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span>{label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+
+              {/* Settings */}
+              {SHARED_NAV.map(item => {
+                const isActive = active === item.id;
+                const IconComp = item.icon;
+                return (
+                  <button key={item.id} onClick={() => { setActive(item.id); setMobileMenuOpen(false); }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm transition border-l-2 ${
+                      isActive
+                        ? "border-[#7a9a6e] bg-[#f4f7ee] text-[#5b7351] font-medium"
+                        : "border-transparent text-stone-600 hover:bg-stone-50 hover:text-stone-900"
+                    }`}>
+                    <IconComp className="w-4 h-4 flex-shrink-0" />
+                    <span>{t(item.label, lang)}</span>
+                  </button>
+                );
+              })}
+            </>
+          )}
         </nav>
         <div className="p-3 border-t border-stone-200 space-y-1">
           <button onClick={onLogout} className="w-full flex items-center gap-3 px-3 py-2 text-sm rounded hover:bg-stone-100 text-stone-600">
@@ -3644,6 +4049,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           {active === "vision" && <VisionModule {...moduleProps} />}
           {active === "scripts" && <ScriptsModule {...moduleProps} />}
           {active === "personalHome" && <PersonalHomeModule {...moduleProps} setActive={setActive} />}
+          {active === "sovereignOS" && <SovereignOSModule {...moduleProps} />}
           {active === "personalFinance" && <PersonalFinanceModule {...moduleProps} />}
           {active === "credentials" && <CredentialsModule {...moduleProps} />}
           {active === "habits" && <HabitsSelfModule {...moduleProps} />}
@@ -3651,7 +4057,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           {active === "cycle" && <CycleModule {...moduleProps} />}
           {active === "speak" && <SpeakElegantlyModule {...moduleProps} />}
           {active === "boundaries" && <BoundariesModule {...moduleProps} />}
-          {active === "settings" && <SettingsModule {...moduleProps} setUser={setUser} onLogout={onLogout} dataKey={dataKey} />}
+          {active === "settings" && <SettingsModule {...moduleProps} setUser={setUser} onLogout={onLogout} dataKey={dataKey} applySidebarDefaultView={applySidebarDefaultView} />}
           {active === "disclosures" && (
             <div className="max-w-4xl">
               <PageHeader title={t("Disclosures & Legal", lang)} subtitle={t("Copyright, disclaimers, terms of use.", lang)} dark={dark} />
@@ -4121,7 +4527,7 @@ const ACCENT_PALETTES = {
   noir:     { id: "noir",     name: "Noir",     swatch: "#525252", primary: "#2d2d2d", mid: "#525252", light: "#9a9a9a", pale: "#d4d4d4", bg: "#f5f5f5" },
 };
 
-function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerConfetti, onLogout, dataKey, setData, data, accent, setAccent, lang, setLang, navigateTo }) {
+function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerConfetti, onLogout, dataKey, setData, data, accent, setAccent, lang, setLang, navigateTo, applySidebarDefaultView }) {
   // ----- Sovereign engagement % — soft nudge to explore the rest of the
   // app. Each of the 15 sections counts as "used" once the user has put
   // ANY real data into it. The percentage drives a friendly progress bar
@@ -4349,6 +4755,34 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
               })}
             </div>
             <p className="text-[11px] italic text-stone-400 mt-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Translations cover the sidebar, greeting, and main labels — more strings are being translated module by module.", lang)}</p>
+          </div>
+          <div className="p-3 rounded border border-stone-200">
+            <div className="mb-2">
+              <div className="text-sm font-medium">{t("Sidebar default view", lang)}</div>
+              <div className="text-xs text-stone-500">{t("How sections appear when you open the app.", lang)}</div>
+            </div>
+            <div className="flex gap-2">
+              {[
+                { id: "expanded",  label: t("Expanded", lang),  desc: t("All open", lang) },
+                { id: "collapsed", label: t("Collapsed", lang), desc: t("All closed", lang) },
+                { id: "remember",  label: t("Remember", lang),  desc: t("Last state", lang) },
+              ].map(opt => {
+                const isActive = (data.sidebarDefaultView ?? "expanded") === opt.id;
+                return (
+                  <button
+                    key={opt.id}
+                    onClick={() => {
+                      setData(d => ({ ...d, sidebarDefaultView: opt.id }));
+                      if (applySidebarDefaultView) applySidebarDefaultView(opt.id);
+                    }}
+                    className={`flex-1 py-2 px-3 rounded-lg border text-xs text-center transition ${isActive ? "bg-[#5b7351] text-white border-[#5b7351] font-semibold" : "bg-white text-stone-600 border-stone-200 hover:border-stone-400"}`}
+                  >
+                    <div className="font-medium">{opt.label}</div>
+                    <div className={`text-[10px] mt-0.5 ${isActive ? "text-white/80" : "text-stone-400"}`}>{opt.desc}</div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
           <div className="p-3 rounded border border-stone-200">
             <div className="flex items-baseline justify-between mb-3">
@@ -4759,7 +5193,7 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
     <div>
       <div className="mb-6">
         <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Personal Finance", lang)}</h1>
-        <p className={`text-sm mt-1 ${themeMuted}`}>{t("Your income, expenses, bills, and savings goals. Saved privately on this device only.", lang)}</p>
+        <p className={`text-sm mt-1 ${themeMuted} italic`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Stewardship creates freedom.", lang)}</p>
       </div>
 
       {/* YEAR-TO-DATE LITTLE BOXES */}
@@ -5366,6 +5800,227 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
 // ============================================================
 // PERSONAL SUMMARY (HOME) MODULE — checklist hero
 // ============================================================
+// Sprint 3 — Daily Experience Engine: rotating bilingual content pools
+const DAILY_PRINCIPLES = [
+  { en: "You were created for consistency, not convenience.", es: "Fuiste creada para la consistencia, no para la conveniencia." },
+  { en: "Small actions taken daily become the legacy of a lifetime.", es: "Las acciones pequeñas tomadas a diario se convierten en el legado de una vida." },
+  { en: "Discipline is not punishment — it is devotion to who you are becoming.", es: "La disciplina no es castigo — es devoción a quien estás llegando a ser." },
+  { en: "Your habits are your autobiography. Write it with intention.", es: "Tus hábitos son tu autobiografía. Escríbela con intención." },
+  { en: "The version of you that you want to be is already on the other side of your excuses.", es: "La versión de ti que quieres ser ya está del otro lado de tus excusas." },
+  { en: "You don't need permission to grow. You need practice.", es: "No necesitas permiso para crecer. Necesitas práctica." },
+  { en: "Rest is not retreat. It is fuel for the next move.", es: "El descanso no es retroceso. Es combustible para el próximo movimiento." },
+  { en: "The way you do one thing is the way you do everything.", es: "La forma en que haces una cosa es la forma en que haces todo." },
+  { en: "Clarity comes from action, not thought alone.", es: "La claridad viene de la acción, no solo del pensamiento." },
+  { en: "Every morning is a new agreement with who you choose to be.", es: "Cada mañana es un nuevo acuerdo con quien eliges ser." },
+  { en: "Build so well that your work speaks before you do.", es: "Construye tan bien que tu trabajo hable antes que tú." },
+  { en: "Comparison is the thief of your specific calling.", es: "La comparación es el ladrón de tu llamado específico." },
+  { en: "Your standards protect your energy. Hold them.", es: "Tus estándares protegen tu energía. Mantenlos." },
+  { en: "Discomfort is just the address where growth lives.", es: "La incomodidad es simplemente la dirección donde vive el crecimiento." },
+  { en: "Gratitude is not a feeling — it is a practice that rewires your mind.", es: "La gratitud no es un sentimiento — es una práctica que recablea tu mente." },
+  { en: "What you feed your mind shapes what you manifest.", es: "Lo que alimentas a tu mente da forma a lo que manifiestas." },
+  { en: "The best investment you will ever make is in the person you are becoming.", es: "La mejor inversión que jamás harás es en la persona en la que te estás convirtiendo." },
+  { en: "Urgency without clarity is just noise. Get clear first.", es: "La urgencia sin claridad es solo ruido. Primero aclara." },
+  { en: "You are not behind. You are exactly where your next step begins.", es: "No estás atrasada. Estás exactamente donde comienza tu próximo paso." },
+  { en: "Honor every version of yourself — especially the one that is still learning.", es: "Honra cada versión de ti misma — especialmente la que todavía está aprendiendo." },
+];
+const DAILY_REFLECTIONS = [
+  { en: "Growth is rarely loud. Most days it looks like showing up, choosing again, and trusting the process when you cannot yet see the result.", es: "El crecimiento rara vez es ruidoso. La mayoría de los días parece presentarse, elegir de nuevo y confiar en el proceso cuando aún no puedes ver el resultado." },
+  { en: "The woman you are becoming is watching every choice you make today. She is cheering for every small act of discipline you choose over comfort.", es: "La mujer en la que te estás convirtiendo está observando cada elección que haces hoy. Ella anima cada pequeño acto de disciplina que eliges sobre la comodidad." },
+  { en: "Seasons of slowness are not signs of failure. They are the quiet work that makes the breakthrough visible.", es: "Las temporadas de lentitud no son señales de fracaso. Son el trabajo silencioso que hace visible el avance." },
+  { en: "You were not built to shrink. Every time you play small, you delay the very thing the world is waiting for from you.", es: "No fuiste construida para encogerte. Cada vez que juegas pequeño, retransas lo que el mundo está esperando de ti." },
+  { en: "The most powerful thing you can do is decide — and then act as though the outcome is already certain.", es: "Lo más poderoso que puedes hacer es decidir — y luego actuar como si el resultado ya fuera cierto." },
+  { en: "Integrity means the same level of care whether someone is watching or not. That is where real character is built.", es: "La integridad significa el mismo nivel de cuidado ya sea que alguien esté mirando o no. Ahí es donde se construye el carácter real." },
+  { en: "Your peace is not dependent on your circumstances. It is a practice you choose in the middle of them.", es: "Tu paz no depende de tus circunstancias. Es una práctica que eliges en medio de ellas." },
+  { en: "The story you tell yourself every morning before you rise sets the tone for everything that follows. Choose it carefully.", es: "La historia que te cuentas cada mañana antes de levantarte establece el tono para todo lo que sigue. Elígela cuidadosamente." },
+  { en: "Momentum is built through small, boring, repeated decisions. That is the secret that looks like luck from the outside.", es: "El impulso se construye a través de pequeñas y aburridas decisiones repetidas. Ese es el secreto que parece suerte desde afuera." },
+  { en: "You are not waiting for the right time. The right time is always now — right where you are, with what you already have.", es: "No estás esperando el momento correcto. El momento correcto es siempre ahora — justo donde estás, con lo que ya tienes." },
+  { en: "Rest is productive. A rested woman makes better decisions, shows up more fully, and serves from a place of overflow, not depletion.", es: "El descanso es productivo. Una mujer descansada toma mejores decisiones y sirve desde un lugar de abundancia, no de agotamiento." },
+  { en: "Faith is not the absence of doubt. It is moving forward in spite of it. Trust the process you have set in motion.", es: "La fe no es la ausencia de duda. Es avanzar a pesar de ella. Confía en el proceso que has puesto en movimiento." },
+  { en: "The boundaries you hold are not walls — they are declarations of what you value and who you intend to become.", es: "Los límites que mantienes no son muros — son declaraciones de lo que valoras y de quien pretendes llegar a ser." },
+  { en: "Everything you are building today is the foundation someone you love will one day stand on. Build it with care.", es: "Todo lo que estás construyendo hoy es el cimiento sobre el que alguien a quien amas algún día se parará. Constrúyelo con cuidado." },
+  { en: "You do not need to have everything figured out. You only need to take the next right step, and then the next.", es: "No necesitas tener todo resuelto. Solo necesitas dar el siguiente paso correcto, y luego el siguiente." },
+  { en: "Your emotions are information, not instructions. Notice them. Name them. Then choose how you want to respond.", es: "Tus emociones son información, no instrucciones. Obsérvelas. Nómbralas. Luego elige cómo quieres responder." },
+  { en: "Wealth is built in the margins — the extra call, the early hour, the decision to reinvest before you spend.", es: "La riqueza se construye en los márgenes — la llamada extra, la hora temprana, la decisión de reinvertir antes de gastar." },
+  { en: "Comparison steals your present. The woman next to you is running a different race on a different track. Run your own.", es: "La comparación roba tu presente. La mujer a tu lado corre una carrera diferente en una pista diferente. Corre la tuya." },
+  { en: "Every win — no matter how small — is evidence that you are capable. Collect that evidence. It becomes your certainty.", es: "Cada victoria — sin importar cuán pequeña — es evidencia de que eres capaz. Recopila esa evidencia. Se convierte en tu certeza." },
+  { en: "The version of you that shows up consistently is far more powerful than the version that shows up perfectly once.", es: "La versión de ti que se presenta consistentemente es mucho más poderosa que la que se presenta perfectamente una sola vez." },
+];
+const DAILY_QUESTIONS = [
+  { en: "What deserves your best attention today?", es: "¿Qué merece tu mejor atención hoy?" },
+  { en: "What promise will you keep today?", es: "¿Qué promesa cumplirás hoy?" },
+  { en: "Who are you becoming today?", es: "¿En quién te estás convirtiendo hoy?" },
+  { en: "What would make today meaningful?", es: "¿Qué haría que hoy fuera significativo?" },
+  { en: "What distraction can you release today?", es: "¿Qué distracción puedes liberar hoy?" },
+  { en: "What one thing, if done well today, would make everything else easier?", es: "¿Qué única cosa, si se hace bien hoy, haría todo lo demás más fácil?" },
+  { en: "Who needs you to show up fully today?", es: "¿Quién necesita que te presentes plenamente hoy?" },
+  { en: "What habit are you building one rep at a time right now?", es: "¿Qué hábito estás construyendo una repetición a la vez ahora mismo?" },
+  { en: "What would the best version of you do in the next hour?", es: "¿Qué haría la mejor versión de ti en la próxima hora?" },
+  { en: "What are you tolerating that you need to stop tolerating?", es: "¿Qué estás tolerando que necesitas dejar de tolerar?" },
+  { en: "What part of your vision will today move forward?", es: "¿Qué parte de tu visión hará avanzar hoy?" },
+  { en: "What conversation have you been avoiding that would change everything?", es: "¿Qué conversación has estado evitando que lo cambiaría todo?" },
+  { en: "What does rest and recovery look like for you today?", es: "¿Cómo se ve el descanso y la recuperación para ti hoy?" },
+  { en: "What belief is holding you back that you are ready to release?", es: "¿Qué creencia te está frenando y estás lista para liberar?" },
+  { en: "How will you celebrate a small win today?", es: "¿Cómo celebrarás una pequeña victoria hoy?" },
+  { en: "Who in your life needs your gratitude today?", es: "¿Quién en tu vida necesita tu gratitud hoy?" },
+  { en: "What are you building that your future self will thank you for?", es: "¿Qué estás construyendo por lo que tu yo futuro te agradecerá?" },
+  { en: "What boundary do you need to hold — or set — today?", es: "¿Qué límite necesitas mantener — o establecer — hoy?" },
+  { en: "What would it mean to show up with full presence today?", es: "¿Qué significaría presentarte con plena presencia hoy?" },
+  { en: "What are you most afraid of doing today — and why might that be the exact thing to do?", es: "¿Qué es lo que más temes hacer hoy — y por qué podría ser exactamente lo que deberías hacer?" },
+];
+const DAILY_INTENTIONS = [
+  { id: "present",      label: "Present",      es: "Presente" },
+  { id: "focused",      label: "Focused",      es: "Enfocada" },
+  { id: "peaceful",     label: "Peaceful",     es: "En paz" },
+  { id: "disciplined",  label: "Disciplined",  es: "Disciplinada" },
+  { id: "joyful",       label: "Joyful",       es: "Con alegría" },
+  { id: "patient",      label: "Patient",      es: "Paciente" },
+  { id: "courageous",   label: "Courageous",   es: "Con valentía" },
+  { id: "intentional",  label: "Intentional",  es: "Intencional" },
+  { id: "grateful",     label: "Grateful",     es: "Agradecida" },
+];
+
+// ============================================================
+// SOVEREIGN OS MODULE — Daily Companion Experience (Sprint 4)
+// ============================================================
+function SovereignOSModule({ data, setData, dark, themePanel, themeMuted, lang }) {
+  const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+  const today = todayISO();
+
+  // Daily rotating content — same source as Today page
+  const [dbContent, setDbContent] = useState(null);
+  useEffect(() => {
+    fetch("/api/daily-content").then(r => r.ok ? r.json() : null).then(d => { if (d) setDbContent(d); }).catch(() => {});
+  }, []);
+  const doy = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  const principleObj  = DAILY_PRINCIPLES[doy % DAILY_PRINCIPLES.length] || DAILY_PRINCIPLES[0];
+  const reflectionObj = DAILY_REFLECTIONS[doy % DAILY_REFLECTIONS.length] || DAILY_REFLECTIONS[0];
+  const tomorrowObj   = DAILY_PRINCIPLES[(doy + 1) % DAILY_PRINCIPLES.length] || DAILY_PRINCIPLES[0];
+  const principle  = dbContent?.principle  ? (lang === "es" ? dbContent.principle.es  : dbContent.principle.en)  : (lang === "es" ? principleObj.es  : principleObj.en);
+  const reflection = dbContent?.reflection ? (lang === "es" ? dbContent.reflection.es : dbContent.reflection.en) : (lang === "es" ? reflectionObj.es : reflectionObj.en);
+  const tomorrow   = lang === "es" ? tomorrowObj.es : tomorrowObj.en;
+
+  // User-editable overrides from Today page carry over here too
+  const dco = data.dailyContentOverrides || {};
+  const displayPrinciple  = (dco.principle  || {})[today] || principle;
+  const displayReflection = (dco.reflection || {})[today] || reflection;
+
+  // Per-day SovereignOS data
+  const soData = (data.sovereignOS || {})[today] || {};
+  const setSO = (patch) => setData({ ...data, sovereignOS: { ...(data.sovereignOS || {}), [today]: { ...soData, ...patch } } });
+
+  // Use same 5 prompts + same storage as Summary page Reflection Questions
+  const reflectionAnswers = data.reflectionAnswers || {};
+  const todayAnswers = reflectionAnswers[today] || {};
+  const setSORAnswer = (idx, val) => {
+    const next = { ...reflectionAnswers, [today]: { ...todayAnswers, [idx]: val } };
+    setData({ ...data, reflectionAnswers: next });
+  };
+  const prompts = [
+    t("What am I proud of today?", lang),
+    t("What challenged me today?", lang),
+    t("What did I learn today?", lang),
+    t("What promise did I keep today?", lang),
+    t("What deserves my attention tomorrow?", lang),
+  ];
+
+  const dateLabel = new Date().toLocaleDateString(lang === "es" ? "es-ES" : "en-US", { weekday: "long", month: "long", day: "numeric" });
+
+  return (
+    <div className="max-w-2xl mx-auto pb-12">
+      {/* Page header */}
+      <div className="mb-8 text-center">
+        <p className="text-[10px] tracking-[0.25em] uppercase text-[#7a9a6e] mb-2" style={serif}>{dateLabel}</p>
+        <h1 className="font-serif text-3xl sm:text-4xl italic text-stone-800 leading-tight mb-2" style={serif}>
+          {t("Sovereign OS", lang)}
+        </h1>
+        <p className="text-sm italic text-stone-500" style={serif}>{t("Who am I becoming today?", lang)}</p>
+      </div>
+
+      {/* 1 — TODAY'S PRINCIPLE */}
+      <div className="rounded-2xl bg-gradient-to-br from-[#5b7351]/10 via-[#f4f7ee]/60 to-white border border-[#d3e0c5] px-6 py-7 mb-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] mb-3 font-semibold" style={serif}>{t("Today's Principle", lang)}</p>
+        <p className="font-serif text-2xl sm:text-3xl italic text-stone-800 leading-snug mb-3" style={serif}>&ldquo;{displayPrinciple}&rdquo;</p>
+        <p className="text-xs italic text-stone-500 leading-relaxed" style={serif}>{t("Let this guide every decision you make today.", lang)}</p>
+      </div>
+
+      {/* 2 — REFLECTION */}
+      <div className="rounded-2xl border border-stone-200 bg-white px-6 py-6 mb-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-stone-500 mb-4 font-semibold" style={serif}>{t("Today's Reflection", lang)}</p>
+        <div className="prose prose-sm max-w-none">
+          {displayReflection.split(/\n+/).map((para, i) => (
+            <p key={i} className="text-sm text-stone-700 leading-loose italic mb-3 last:mb-0" style={serif}>{para}</p>
+          ))}
+        </div>
+      </div>
+
+      {/* 3 — REFLECTION QUESTIONS */}
+      <div className="mb-5">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] mb-3 font-semibold px-1" style={serif}>{t("Reflection Questions", lang)}</p>
+        <div className="space-y-3">
+          {prompts.map((q, i) => (
+            <div key={i} className="rounded-2xl border border-[#d3e0c5] bg-[#f9fbf7] px-5 py-4 shadow-sm">
+              <p className="text-sm italic text-stone-700 mb-2.5 font-semibold leading-snug" style={serif}>{q}</p>
+              <textarea
+                rows={3}
+                value={todayAnswers[i] || ""}
+                onChange={e => setSORAnswer(i, e.target.value)}
+                placeholder={t("Write your answer…", lang)}
+                className="block w-full px-3 py-2.5 rounded-xl border border-[#d3e0c5] bg-white text-sm text-stone-700 outline-none resize-none focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20"
+                style={{ ...serif, minHeight: "72px", maxHeight: "160px" }} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 4 — TODAY'S ONE PROMISE */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/50 px-6 py-5 mb-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serif}>{t("Today's One Promise", lang)}</p>
+        <p className="text-[11px] italic text-stone-400 mb-3" style={serif}>{t("One small commitment that rebuilds self-trust.", lang)}</p>
+        <textarea
+          rows={2}
+          value={soData.onePromise || ""}
+          onChange={e => setSO({ onePromise: e.target.value })}
+          placeholder={t("I will…", lang)}
+          className="block w-full px-3 py-2.5 rounded-xl border border-[#d3e0c5] bg-white text-sm italic text-stone-700 outline-none resize-none focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20"
+          style={{ ...serif, minHeight: "56px", maxHeight: "120px" }} />
+        <div className="mt-3 flex flex-wrap gap-2">
+          {[
+            t("Drink one extra glass of water.", lang),
+            t("Finish one unfinished task.", lang),
+            t("Read one page.", lang),
+            t("Take a 10-minute walk.", lang),
+          ].map(s => (
+            <button key={s}
+              onClick={() => setSO({ onePromise: s })}
+              className="text-[10px] italic text-stone-500 border border-stone-200 rounded-full px-2.5 py-1 hover:border-[#7a9a6e] hover:text-[#5b7351] hover:bg-[#f4f7ee] transition"
+              style={serif}>{s}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* 5 — EVENING REFLECTION */}
+      <div className="rounded-2xl border border-stone-200 bg-white px-6 py-5 mb-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-stone-500 mb-1.5 font-semibold" style={serif}>{t("Evening Reflection", lang)}</p>
+        <p className="text-sm italic text-stone-600 mb-3 leading-relaxed" style={serif}>{t("What evidence did you give yourself today that you can trust yourself?", lang)}</p>
+        <textarea
+          rows={4}
+          value={soData.eveningReflection || ""}
+          onChange={e => setSO({ eveningReflection: e.target.value })}
+          placeholder={t("Today I showed up by…", lang)}
+          className="block w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-[#fafaf8] text-sm text-stone-700 outline-none resize-none focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20"
+          style={{ ...serif, minHeight: "96px", maxHeight: "220px" }} />
+      </div>
+
+      {/* 6 — TOMORROW TEASER */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-gradient-to-r from-[#f4f7ee]/60 to-white px-6 py-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] mb-2 font-semibold" style={serif}>{t("Tomorrow", lang)}</p>
+        <p className="text-xs italic text-stone-500 leading-relaxed" style={serif}>&ldquo;{tomorrow}&rdquo;</p>
+        <p className="text-[10px] italic text-stone-400 mt-2" style={serif}>{t("Rest. Tomorrow continues what today began.", lang)}</p>
+      </div>
+    </div>
+  );
+}
+
 function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted, triggerConfetti, setActive, navigateTo, lang }) {
   const today = todayISO();
   const tasks = data.tasks || [];
@@ -5377,7 +6032,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   //     users opt INTO them via the Customize modal.
   const SUMMARY_DEFAULTS = {
     affirmation: true, circles: true, today: true, why: true, priorities: true, vitamins: true,
-    events: false, finance: false, goals: false, vision: false, wins: false,
+    events: false, finance: false, goals: false, vision: false, wins: false, reflection: false,
   };
   const SUMMARY_KEYS = Object.keys(SUMMARY_DEFAULTS);
   const summaryPrefs = SUMMARY_KEYS.reduce((acc, k) => {
@@ -5475,7 +6130,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           .filter(r => r && r.title && (!r.startDate || r.startDate <= today))
           .filter(r => r.recurrence === "daily" || (r.recurrence === "weekly" && r.weekday === dowToday))
           .every(r => !!(r.doneByDate && r.doneByDate[today]));
-        if (realDone && recurDone && todaysTasks.length > 0) triggerConfetti(t("All done — champion day", lang), true);
+        if (realDone && recurDone && todaysTasks.length > 0) triggerConfetti(t("Every promise kept. Champion day.", lang), true);
       }
       return;
     }
@@ -5487,55 +6142,40 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
       const todayList = updated.filter(t => t.date === today);
       const recurDone = todaysRecurring.every(r => r.done);
       const allDone = todayList.length > 0 && todayList.every(t => t.done) && recurDone;
-      if (allDone) triggerConfetti(t("All done — champion day", lang), true);
+      if (allDone) triggerConfetti(t("Every promise kept. Champion day.", lang), true);
     }
   };
 
   // Same ordering rule as the Daily Planner so the Summary's TO DO list
   // shows the same sequence — priorities first by slot, then by manual
   // `order` (defaulting to id for legacy tasks without one).
-  const sortedTodaysTasks = [...todaysTasks].sort((a, b) => {
-    const ap = a.priority ? (a.priorityOrder || 99) : 1000;
-    const bp = b.priority ? (b.priorityOrder || 99) : 1000;
-    if (ap !== bp) return ap - bp;
-    return ((a.order ?? a.id) || 0) - ((b.order ?? b.id) || 0);
-  });
+  // summaryOrder is a per-day map of taskId → display position, persisted in
+  // data so both one-off and recurring tasks can be reordered on the Summary page.
+  const summaryOrderMap = (data.summaryOrder || {})[today] || {};
+  const getSummaryPos = (t) => {
+    if (summaryOrderMap[t.id] != null) return summaryOrderMap[t.id];
+    return t.order ?? (t.priority ? (t.priorityOrder || 99) : 1000 + (t.id || 0));
+  };
+  const sortedTodaysTasks = [...todaysTasks].sort((a, b) => getSummaryPos(a) - getSummaryPos(b));
   const moveSummaryTask = (id, dir) => {
     const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return;
-    const cur = sortedTodaysTasks[idx];
-    if (cur._recurring) return;
-    let target = idx + dir;
-    while (target >= 0 && target < sortedTodaysTasks.length && sortedTodaysTasks[target]._recurring) target += dir;
+    const target = idx + dir;
     if (target < 0 || target >= sortedTodaysTasks.length) return;
-    const swap = sortedTodaysTasks[target];
-    if (!!cur.priority !== !!swap.priority) return;
-    if (cur.priority && swap.priority) {
-      setData({ ...data, tasks: tasks.map(x => {
-        if (!x) return x;
-        if (x.id === cur.id) return { ...x, priorityOrder: swap.priorityOrder };
-        if (x.id === swap.id) return { ...x, priorityOrder: cur.priorityOrder };
-        return x;
-      }) });
-      return;
-    }
-    setData({ ...data, tasks: tasks.map(x => {
-      if (!x) return x;
-      if (x.id === cur.id) return { ...x, order: swap.order ?? swap.id };
-      if (x.id === swap.id) return { ...x, order: cur.order ?? cur.id };
-      return x;
-    }) });
+    // Assign explicit positions to every task, then swap the two
+    const newMap = {};
+    sortedTodaysTasks.forEach((t, i) => { newMap[t.id] = (i + 1) * 10; });
+    const curPos = newMap[id];
+    const swapId = sortedTodaysTasks[target].id;
+    newMap[id] = newMap[swapId];
+    newMap[swapId] = curPos;
+    setData({ ...data, summaryOrder: { ...(data.summaryOrder || {}), [today]: newMap } });
   };
   const canMoveSummaryTask = (id, dir) => {
     const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return false;
-    const cur = sortedTodaysTasks[idx];
-    if (cur._recurring) return false;
-    let target = idx + dir;
-    while (target >= 0 && target < sortedTodaysTasks.length && sortedTodaysTasks[target]._recurring) target += dir;
-    if (target < 0 || target >= sortedTodaysTasks.length) return false;
-    const b = sortedTodaysTasks[target];
-    return !!cur.priority === !!b.priority;
+    const target = idx + dir;
+    return target >= 0 && target < sortedTodaysTasks.length;
   };
 
   // Summaries from each module
@@ -5638,14 +6278,68 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const timeGreeting = t(hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening", lang);
 
   const dayPhrase = t(
-    hour < 12 ? "A quiet start. Let's set the tone."
-    : hour < 17 ? "You're in the middle of it. Stay with yourself."
-    : "Soft landing. Honor what you did today.",
+    hour < 12 ? "Today is another opportunity to become the person you're building."
+    : hour < 17 ? "You are in the middle of building something real. Stay the course."
+    : "Rest well. Every effort today was evidence of who you're becoming.",
     lang
   );
   const net = Math.round(monthlyIncome - monthlyExpenses);
   const firstName = (user.name || "").split(" ")[0];
   const serifStyle = { fontFamily: "'Playfair Display', Georgia, serif" };
+
+  // Sprint 3 — daily rotating content (DB-driven with hardcoded fallback)
+  const [dbDailyContent, setDbDailyContent] = useState(null);
+  useEffect(() => {
+    fetch("/api/daily-content").then(r => r.ok ? r.json() : null).then(d => { if (d) setDbDailyContent(d); }).catch(() => {});
+  }, []);
+  const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  const todayPrincipleObj = DAILY_PRINCIPLES[dayOfYear % DAILY_PRINCIPLES.length] || DAILY_PRINCIPLES[0];
+  const todayReflectionObj = DAILY_REFLECTIONS[dayOfYear % DAILY_REFLECTIONS.length] || DAILY_REFLECTIONS[0];
+  const todayQuestionObj = DAILY_QUESTIONS[dayOfYear % DAILY_QUESTIONS.length] || DAILY_QUESTIONS[0];
+  // Use DB content when available, fall back to hardcoded arrays
+  const todayPrinciple = dbDailyContent?.principle
+    ? (lang === "es" ? dbDailyContent.principle.es : dbDailyContent.principle.en)
+    : ((lang === "es" ? todayPrincipleObj.es : null) || todayPrincipleObj.en);
+  const todayReflection = dbDailyContent?.reflection
+    ? (lang === "es" ? dbDailyContent.reflection.es : dbDailyContent.reflection.en)
+    : ((lang === "es" ? todayReflectionObj.es : null) || todayReflectionObj.en);
+  const todayQuestion = dbDailyContent?.question
+    ? (lang === "es" ? dbDailyContent.question.es : dbDailyContent.question.en)
+    : ((lang === "es" ? todayQuestionObj.es : null) || todayQuestionObj.en);
+  // Intentions: use DB list when available, fall back to hardcoded
+  const activeIntentions = (dbDailyContent?.intentions?.length > 0)
+    ? dbDailyContent.intentions.map(i => ({ id: i.id, label: i.en, es: i.es }))
+    : DAILY_INTENTIONS;
+  // Word of the Day — one intention word rotated daily by admin/DB
+  const wordOfDayObj = activeIntentions[dayOfYear % activeIntentions.length] || activeIntentions[0];
+  const wordOfDay = lang === "es" ? wordOfDayObj.es : wordOfDayObj.label;
+  const todayIntentionId = (data.dailyIntentions || {})[today] || null;
+  const setTodayIntention = (id) => {
+    setData({ ...data, dailyIntentions: { ...(data.dailyIntentions || {}), [today]: todayIntentionId === id ? null : id } });
+  };
+  // Today's Commitment — user types their daily promise
+  const todayCommitment = ((data.dailyCommitments || {})[today]) || "";
+  const setTodayCommitment = (val) => setData({ ...data, dailyCommitments: { ...(data.dailyCommitments || {}), [today]: val } });
+
+  // ----- Daily content inline editing -----
+  // Stores user overrides per day: data.dailyContentOverrides = { principle: { [today]: "..." }, ... }
+  const dco = data.dailyContentOverrides || {};
+  const getDCO = (field) => (dco[field] || {})[today] || null;
+  const setDCO = (field, val) => {
+    const updated = { ...dco, [field]: { ...(dco[field] || {}), [today]: val } };
+    setData({ ...data, dailyContentOverrides: updated });
+  };
+  const [editingDailyField, setEditingDailyField] = useState(null);
+  const [editingDailyText, setEditingDailyText] = useState("");
+  const startEditDaily = (field, currentText) => { setEditingDailyField(field); setEditingDailyText(currentText); };
+  const saveEditDaily = () => {
+    if (editingDailyField) setDCO(editingDailyField, editingDailyText.trim() || null);
+    setEditingDailyField(null); setEditingDailyText("");
+  };
+  // Override DB/hardcoded values with user edits if present
+  const displayPrinciple = getDCO("principle") || todayPrinciple;
+  const displayReflection = getDCO("reflection") || todayReflection;
+  const displayQuestion = getDCO("question") || todayQuestion;
 
   // ----- Priority editing on the summary card -----
   // We read from today's priority TASKS (modern model). Each priority slot
@@ -5696,7 +6390,8 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     { key: "finance",  label: t("Money this month", lang),  hint: t("Income, expenses, net", lang) },
     { key: "goals",    label: t("Goals progress", lang),    hint: t("Average across active goals", lang) },
     { key: "vision",   label: t("Vision board peek", lang), hint: t("A few images from your board", lang) },
-    { key: "wins",     label: t("Today's wins", lang),      hint: t("From your Daily Planner", lang) },
+    { key: "wins",        label: t("Today's wins", lang),          hint: t("From your Daily Planner", lang) },
+    { key: "reflection",  label: t("Reflection Questions", lang),  hint: t("Evening check-in, 5 prompts", lang) },
   ];
   // The 11 circle options the user can mix and match.
   const customizeCircleRows = [
@@ -5779,7 +6474,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           <h1 className="font-serif text-2xl tracking-tight leading-tight" style={serifStyle}>
             {timeGreeting}, <span className="italic text-[#5b7351]">{firstName || t("love", lang)}</span>.
           </h1>
-          <p className="text-sm italic text-stone-500 mt-1" style={serifStyle}>{dayPhrase}</p>
+          <p className="text-sm italic text-stone-600 mt-1" style={serifStyle}>{t("Welcome back. Let's build today with intention.", lang)}</p>
         </div>
         <button onClick={() => setCustomizeOpen(true)}
           className="px-3 py-1.5 rounded-full border border-stone-200 text-[11px] tracking-wider uppercase text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee] hover:text-[#5b7351] transition flex-shrink-0">
@@ -5787,7 +6482,9 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         </button>
       </div>
 
-      {/* AFFIRMATION HERO — pick your own for today */}
+      {/* ── DAILY RITUAL FLOW ── */}
+
+      {/* 1. DAILY AFFIRMATION — your word for the day */}
       {summaryPrefs.affirmation && (allAffs.length > 0 ? (
         <div className="rounded-2xl bg-gradient-to-br from-[#f4f7ee] via-white to-[#f4f7ee]/50 border border-[#d3e0c5] px-6 py-6 mb-6 text-center relative">
           <div className="text-[10px] italic tracking-[0.2em] text-[#7a9a6e] mb-3" style={serifStyle}>{t("a word for today", lang)}</div>
@@ -5866,12 +6563,9 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         </div>
       )}
 
-      {/* TODAY CHECKLIST — circles, not boxes */}
+      {/* STAT CIRCLES */}
       {summaryPrefs.circles && (() => {
         const tasksLeft = todayTotal - todayDone;
-        // Priority tasks = anything in today's tasks marked with .priority
-        // (replaces the old standalone Top 3 array, which has been folded
-        // into the unified To-Do list with star toggles).
         const todayPriorityTasks = todaysTasks.filter(t => t && t.priority);
         const prioritiesSet = todayPriorityTasks.length;
         const habitsLeft = habitTotal - habitDone;
@@ -5896,21 +6590,15 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
             </div>
           );
         };
-        // Live data used by the new opt-in circles (so they reflect the same
-        // numbers shown elsewhere on the summary).
         const todaysEventsCount = ((data.calendarEvents || {})[today] || []).length;
         const todaysWinsCount = (dailyPlan.wins || [])
           .map(w => typeof w === "string" ? { text: w } : w)
           .filter(w => w && w.text && String(w.text).trim()).length;
-        // Compact money formatter for the "money" circle (-$12k / +$3.4k / $0)
         const fmtMoneyShort = (n) => {
           const abs = Math.abs(n);
           if (abs >= 1000) return `${n < 0 ? "-" : ""}$${(abs / 1000).toFixed(abs >= 10000 ? 0 : 1)}k`;
           return `${n < 0 ? "-" : ""}$${abs}`;
         };
-        // Canonical circle library. Each entry knows its data, target, label,
-        // sub-line, and the module to jump to on tap. The user picks which to
-        // show via the Customize modal (data.summaryCircles).
         const allCircleDefs = [
           { key: "tasks",    onClick: () => navigateTo("planner", "section-todo"),         label: "tasks left", sub: todayTotal > 0 ? (tasksLeft > 0 ? t("of {n} today", lang, { n: todayTotal }) : t("all done — well done", lang)) : t("no tasks yet", lang), done: todayDone, total: todayTotal, valueLabel: `${tasksLeft || 0}` },
           { key: "top3",     onClick: () => navigateTo("planner", "section-top3"),         label: "top 3",      sub: prioritiesSet === 3 ? t("you know your why", lang) : t("set today's priorities", lang), done: prioritiesSet, total: 3, valueLabel: `${prioritiesSet}/3` },
@@ -5924,12 +6612,8 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           { key: "money",    onClick: () => navigateTo("finance"),                          label: "money",      sub: t("net this month", lang), done: net >= 0 ? 1 : 0, total: 1, valueLabel: fmtMoneyShort(net) },
           { key: "vision",   onClick: () => navigateTo("vision"),                           label: "vision",     sub: visionItems.length > 0 ? t("{n} achieved", lang, { n: visionAchieved }) : t("add to vision board", lang), done: visionAchieved, total: Math.max(1, visionItems.length), valueLabel: visionItems.length > 0 ? `${visionAchieved}/${visionItems.length}` : "—" },
         ];
-        // enabledCircleKeys is computed at component scope above so the
-        // Customize modal and this render path use the same source of truth.
         const enabledCircles = allCircleDefs.filter(c => enabledCircleKeys.includes(c.key));
         if (enabledCircles.length === 0) return null;
-        // Tailwind needs static class names — map circle count to a fixed
-        // sm:grid-cols-N class. Anything beyond 6 wraps onto a 2nd row.
         const smCols = {
           1: "sm:grid-cols-1", 2: "sm:grid-cols-2", 3: "sm:grid-cols-3",
           4: "sm:grid-cols-4", 5: "sm:grid-cols-5", 6: "sm:grid-cols-6",
@@ -5937,11 +6621,8 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         return (
           <div className={`grid gap-2 mb-6 grid-cols-3 ${smCols}`}>
             {enabledCircles.map((c) => (
-              <button
-                key={c.key}
-                onClick={c.onClick}
-                className="flex flex-col items-center text-center rounded-2xl px-2 py-3 transition hover:bg-[#f4f7ee]/40"
-              >
+              <button key={c.key} onClick={c.onClick}
+                className="flex flex-col items-center text-center rounded-2xl px-2 py-3 transition hover:bg-[#f4f7ee]/40">
                 <ProgressCircle done={c.done} total={c.total} valueLabel={c.valueLabel} doneIcon={c.doneIcon} />
                 <div className="font-serif italic text-sm text-stone-800 mt-2 leading-tight" style={serifStyle}>{t(c.label, lang)}</div>
                 <div className="text-[10px] text-stone-400 italic mt-0.5 leading-tight" style={serifStyle}>{c.sub}</div>
@@ -5950,6 +6631,52 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           </div>
         );
       })()}
+
+      {/* TODAY'S PRINCIPLE — from Admin */}
+      <div className="rounded-2xl bg-gradient-to-r from-[#5b7351]/10 to-[#f4f7ee]/40 border border-[#d3e0c5] px-5 py-4 mb-4">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Principle", lang)}</div>
+        <p className="font-serif text-base italic text-stone-800 leading-snug" style={serifStyle}>{displayPrinciple}</p>
+      </div>
+
+      {/* TODAY'S INTENTION — user picks one identity word */}
+      <div className="rounded-2xl border border-stone-200 bg-white/70 px-5 py-4 mb-4">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 mb-3 font-semibold" style={serifStyle}>{t("Today's Intention", lang)}</div>
+        <p className="text-[11px] italic text-stone-400 mb-3" style={serifStyle}>{t("How do you choose to show up today?", lang)}</p>
+        <div className="flex flex-wrap gap-2">
+          {activeIntentions.map((intent) => {
+            const isSelected = todayIntentionId === intent.id;
+            const label = lang === "es" ? intent.es : intent.label;
+            return (
+              <button key={intent.id}
+                onClick={() => setTodayIntention(intent.id)}
+                className={`px-3 py-1.5 rounded-full text-xs italic transition border ${isSelected ? "text-white border-[#5b7351] font-semibold" : "bg-white text-stone-600 border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
+                style={{ background: isSelected ? "#5b7351" : undefined, fontFamily: "'Playfair Display', Georgia, serif" }}>
+                {label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* 6. TODAY'S COMMITMENT — user writes one promise for the day */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/50 px-5 py-4 mb-4">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Commitment", lang)}</div>
+        <p className="font-serif text-base italic text-stone-600 mb-3 leading-snug" style={serifStyle}>{t("What promise will you keep today?", lang)}</p>
+        <textarea
+          rows={2}
+          value={todayCommitment}
+          onChange={e => setTodayCommitment(e.target.value)}
+          placeholder={t("I will…", lang)}
+          className="block w-full px-3 py-2 rounded-xl border border-[#d3e0c5] bg-white text-sm text-stone-700 outline-none resize-none focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20"
+          style={{ fontFamily: "'Playfair Display', Georgia, serif", minHeight: "56px", maxHeight: "120px" }} />
+      </div>
+
+      {/* 7. TODAY'S REFLECTION — display only, from Admin */}
+      <div className="rounded-2xl border border-stone-200 px-5 py-4 mb-6 bg-white/70">
+        <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 mb-1.5 font-semibold" style={serifStyle}>{t("Today's Reflection", lang)}</div>
+        <p className="text-sm text-stone-700 leading-relaxed italic" style={serifStyle}>{displayReflection}</p>
+      </div>
+
 
       {(summaryPrefs.today || summaryPrefs.why) && (
       <div className="grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[repeat(3,minmax(0,1fr))] gap-5">
@@ -5963,13 +6690,13 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
               actual editing, instead of opening a modal here. */}
           {(() => {
             const summaryPriorityCount = sortedTodaysTasks.filter(t => t && (t.priority === "high" || t.priority === "critical")).length;
-            const visibleSummaryTasks = sortedTodaysTasks.slice(0, 5);
-            const hiddenSummaryCount = Math.max(0, sortedTodaysTasks.length - 5);
+            const visibleSummaryTasks = sortedTodaysTasks;
+            const hiddenSummaryCount = 0;
             return (
               <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
                 <div className="flex items-center justify-between mb-2 gap-3">
                   <div className="flex items-center gap-2 min-w-0">
-                    <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO DO LIST", lang)}</h2>
+                    <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S PROMISES", lang)}</h2>
                     <button onClick={() => navigateTo("planner", "section-todo")}
                       className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
                       style={{ background: "var(--accent-mid)" }}
@@ -6334,7 +7061,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                 </div>
                 <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("What you're proud of.", lang)}</p>
                 {todaysWins.length === 0 ? (
-                  <button onClick={() => navigateTo("planner", "section-wins")} className={`block w-full py-4 text-center ${themeMuted} text-sm italic hover:text-[#5b7351] transition`} style={serifStyle}>{t("No wins logged yet. Tap + to add.", lang)}</button>
+                  <button onClick={() => navigateTo("planner", "section-wins")} className={`block w-full py-4 text-center ${themeMuted} text-sm italic hover:text-[#5b7351] transition`} style={serifStyle}>{t("Every small win is evidence of who you're becoming. Tap + to log it.", lang)}</button>
                 ) : (
                   <ul className="space-y-2">
                     {todaysWins.slice(0, 3).map((w, i) => (
@@ -6344,6 +7071,47 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
                 )}
               </div>
             )}
+          </div>
+        );
+      })()}
+
+      {/* REFLECTION QUESTIONS — opt-in, shown only when user enables it in Customize */}
+      {summaryPrefs.reflection && (() => {
+        const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+        const reflectionAnswers = data.reflectionAnswers || {};
+        const todayAnswers = reflectionAnswers[today] || {};
+        const setAnswer = (idx, val) => {
+          const next = { ...reflectionAnswers, [today]: { ...todayAnswers, [idx]: val } };
+          setData({ ...data, reflectionAnswers: next });
+        };
+        const prompts = [
+          t("What am I proud of today?", lang),
+          t("What challenged me today?", lang),
+          t("What did I learn today?", lang),
+          t("What promise did I keep today?", lang),
+          t("What deserves my attention tomorrow?", lang),
+        ];
+        return (
+          <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/40 px-5 py-5 mt-5 mb-2">
+            <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1 font-semibold" style={serif}>{t("Reflection Questions", lang)}</div>
+            <p className="text-[11px] italic text-stone-400 mb-4" style={serif}>{t("Take a moment to close the day with intention.", lang)}</p>
+            <ol className="space-y-4">
+              {prompts.map((prompt, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white mt-0.5" style={{ background: "#7a9a6e" }}>{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm italic text-stone-700 leading-snug mb-1.5" style={serif}>{prompt}</p>
+                    <textarea
+                      rows={2}
+                      value={todayAnswers[i] || ""}
+                      onChange={e => setAnswer(i, e.target.value)}
+                      placeholder={t("Write your answer…", lang)}
+                      className="block w-full px-2.5 py-2 border rounded-lg text-xs sm:text-sm outline-none resize-none bg-white/80 border-[#d3e0c5] focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20 text-stone-700"
+                      style={{ ...serif, minHeight: "56px", maxHeight: "120px" }} />
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         );
       })()}
@@ -6697,12 +7465,53 @@ function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, trigger
 
   return (
     <div>
-      <PageHeader title={t("Growth & Self", lang)} subtitle={t("Know your strengths. Own your growth. Manage habits on the Daily Planner.", lang)} dark={dark}
+      <PageHeader title={t("Growth & Self", lang)} subtitle={t("Know yourself better one day at a time.", lang)} dark={dark}
         action={
           <button onClick={addCustomPanel} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> {t("New section", lang)}
           </button>
         } />
+
+      {/* Sprint 4 — Today's 6 Reflection Prompts with inline answers */}
+      {(() => {
+        const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+        const reflectionAnswers = data.reflectionAnswers || {};
+        const todayAnswers = reflectionAnswers[today] || {};
+        const setAnswer = (idx, val) => {
+          const next = { ...reflectionAnswers, [today]: { ...todayAnswers, [idx]: val } };
+          setData({ ...data, reflectionAnswers: next });
+        };
+        const prompts = [
+          t("What am I proud of today?", lang),
+          t("What challenged me today?", lang),
+          t("What did I learn today?", lang),
+          t("What promise did I keep today?", lang),
+          t("How did I grow today?", lang),
+          t("What deserves my attention tomorrow?", lang),
+        ];
+        return (
+          <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/40 px-5 py-4 mb-6">
+            <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-4 font-semibold" style={serif}>{t("Today's reflection prompts", lang)}</div>
+            <ol className="space-y-4">
+              {prompts.map((prompt, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white mt-0.5" style={{ background: "#7a9a6e" }}>{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm italic text-stone-700 leading-snug mb-1.5" style={serif}>{prompt}</p>
+                    <textarea
+                      rows={2}
+                      value={todayAnswers[i] || ""}
+                      onChange={e => setAnswer(i, e.target.value)}
+                      placeholder={t("Write your answer…", lang)}
+                      className="block w-full px-2.5 py-2 border rounded-lg text-xs sm:text-sm outline-none resize-none bg-white/80 border-[#d3e0c5] focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20 text-stone-700"
+                      style={{ ...serif, minHeight: "56px", maxHeight: "120px" }} />
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        );
+      })()}
 
       <div className="grid lg:grid-cols-3 gap-5">
         <ReflectionPanel
@@ -6919,7 +7728,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 
   return (
     <div>
-      <PageHeader title={t("Cycle & Mood", lang)} subtitle={t("Track your flow. Honor how you feel. Notice the patterns.", lang)} dark={dark}
+      <PageHeader title={t("Cycle & Mood", lang)} subtitle={t("Listen to your body before demanding more from it.", lang)} dark={dark}
         action={
           <button onClick={clearAll} className="px-3 py-2 border border-stone-300 hover:border-rose-400 hover:text-rose-600 hover:bg-rose-50 text-sm rounded flex items-center gap-1.5"><RefreshCw className="w-4 h-4" /> {t("Clear all", lang)}</button>
         } />
@@ -7607,7 +8416,7 @@ function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, tri
 
   return (
     <div>
-      <PageHeader title={t("Speak Eloquently", lang)} subtitle={t("Refine your language. Grow your authority. The way you speak becomes the woman you are.", lang)} dark={dark}
+      <PageHeader title={t("Speak Eloquently", lang)} subtitle={t("Your words shape your relationships.", lang)} dark={dark}
         action={<button onClick={() => setOpen(true)} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5"><Plus className="w-4 h-4" /> {t("Add phrase", lang)}</button>} />
 
       <div className="mb-5">
@@ -7767,7 +8576,7 @@ function BoundariesModule({ data, setData, dark, themePanel, themeMuted, trigger
 
   return (
     <div>
-      <PageHeader title={t("Boundaries", lang)} subtitle={t("What you accept. What you don't. The line you don't cross.", lang)} dark={dark}
+      <PageHeader title={t("Boundaries", lang)} subtitle={t("Every yes protects something. Every no protects someone.", lang)} dark={dark}
         action={
           <button onClick={addCustomBoundary} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> {t("New section", lang)}
@@ -9923,7 +10732,9 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     const startTime = newStart ? to12h(newStart) : "";
     const endTime = newEnd ? to12h(newEnd) : "";
     const notes = (newTaskNotes || "").trim();
-    const task = { id, title, date: modalTaskDate || date, done: false };
+    // Assign an explicit order so tasks can be reordered from the moment they're created.
+    const maxOrder = dayTasks.reduce((m, t) => Math.max(m, t.order ?? (1000 + (t.id || 0))), 0);
+    const task = { id, title, date: modalTaskDate || date, done: false, order: maxOrder + 10 };
     if (startTime) task.startTime = startTime;
     if (endTime) task.endTime = endTime;
     if (notes) task.notes = notes;
@@ -9958,52 +10769,32 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   };
   // Render-order: priorities first by their order slot, then the rest by
   // manual `order` (defaults to id so existing tasks keep the same position).
-  const sortedDayTasks = [...dayTasks].sort((a, b) => {
-    const ap = a.priority ? (a.priorityOrder || 99) : 1000;
-    const bp = b.priority ? (b.priorityOrder || 99) : 1000;
-    if (ap !== bp) return ap - bp;
-    return ((a.order ?? a.id) || 0) - ((b.order ?? b.id) || 0);
-  });
+  // plannerOrder is a per-day map so reorder works for recurring tasks too
+  const plannerOrderMap = (data.plannerOrder || {})[date] || {};
+  const getPlannerPos = (t) => {
+    if (plannerOrderMap[t.id] != null) return plannerOrderMap[t.id];
+    return t.order ?? (t.priority ? (t.priorityOrder || 99) : 1000 + (t.id || 0));
+  };
+  const sortedDayTasks = [...dayTasks].sort((a, b) => getPlannerPos(a) - getPlannerPos(b));
 
-  // Move a task up (-1) or down (+1) within its band — won't cross the
-  // priority/non-priority boundary, since priorities are pinned to slots
-  // 1/2/3 and live in their own visual zone.
   const moveTask = (id, dir) => {
     const idx = sortedDayTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return;
-    const cur = sortedDayTasks[idx];
-    if (cur._recurring) return;
-    let target = idx + dir;
-    while (target >= 0 && target < sortedDayTasks.length && sortedDayTasks[target]._recurring) target += dir;
+    const target = idx + dir;
     if (target < 0 || target >= sortedDayTasks.length) return;
-    const swap = sortedDayTasks[target];
-    if (!!cur.priority !== !!swap.priority) return;
-    if (cur.priority && swap.priority) {
-      setTasks(allTasks.map(x => {
-        if (!x) return x;
-        if (x.id === cur.id) return { ...x, priorityOrder: swap.priorityOrder };
-        if (x.id === swap.id) return { ...x, priorityOrder: cur.priorityOrder };
-        return x;
-      }));
-      return;
-    }
-    setTasks(allTasks.map(x => {
-      if (!x) return x;
-      if (x.id === cur.id) return { ...x, order: swap.order ?? swap.id };
-      if (x.id === swap.id) return { ...x, order: cur.order ?? cur.id };
-      return x;
-    }));
+    const newMap = {};
+    sortedDayTasks.forEach((t, i) => { newMap[t.id] = (i + 1) * 10; });
+    const curPos = newMap[id];
+    const swapId = sortedDayTasks[target].id;
+    newMap[id] = newMap[swapId];
+    newMap[swapId] = curPos;
+    setData({ ...data, plannerOrder: { ...(data.plannerOrder || {}), [date]: newMap } });
   };
   const canMoveTask = (id, dir) => {
     const idx = sortedDayTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return false;
-    const cur = sortedDayTasks[idx];
-    if (cur._recurring) return false;
-    let target = idx + dir;
-    while (target >= 0 && target < sortedDayTasks.length && sortedDayTasks[target]._recurring) target += dir;
-    if (target < 0 || target >= sortedDayTasks.length) return false;
-    const b = sortedDayTasks[target];
-    return !!cur.priority === !!b.priority;
+    const target = idx + dir;
+    return target >= 0 && target < sortedDayTasks.length;
   };
   const toggleTask = (id) => {
     if (isVirtualTaskId(id)) {
@@ -10169,7 +10960,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       {/* Header — title + (+) add button on the left, SEE MORE on the right */}
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
-          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TO DO LIST", lang)}</h2>
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S PROMISES", lang)}</h2>
           <button onClick={() => setAddTaskModalOpen(true)}
             className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
             style={{ background: "var(--accent-mid)" }}
@@ -10232,7 +11023,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
               const meta = timeRange ? timeRange.toUpperCase() : null;
               const isLast = idx === visibleTasks.length - 1;
               return (
-                <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-1.5 sm:py-2.5 group ${editingId === task.id ? "" : "h-[44px] sm:h-auto overflow-hidden"} ${isLast ? "" : "border-b border-stone-100"}`}>
+                <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-2 sm:py-2.5 group min-h-[44px] ${isLast ? "" : "border-b border-stone-100"}`}>
                   {/* Done circle */}
                   <button onClick={() => toggleTask(task.id)}
                     className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border hover:bg-stone-50"}`}
@@ -10509,6 +11300,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S WINS", lang)}</h2>
+          <p className="text-[10px] italic text-stone-400 mt-0.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Every promise you keep becomes evidence that you can trust yourself.", lang)}</p>
           <button onClick={() => setAddWinModalOpen(true)}
             className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
             style={{ background: "var(--accent-mid)" }}
@@ -11063,7 +11855,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       {AddTaskModal}
       {CellExpanderPopup}
       {AddWinModal}
-      <PageHeader title={t("Daily Planner", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
+      <PageHeader title={t("Today's Focus", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
       {/* Row 1: To-do on its own line, Wins underneath (stacked at every width).
           Explicit minmax(0, 1fr) on the column so the card cannot stretch
@@ -11080,15 +11872,16 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("GRATITUDE", lang)}</h2>
           <textarea {...grow("gratitude", 80, 220, 8)} value={gratitude} onChange={e => updatePlan({ gratitude: e.target.value })}
-            placeholder={t("What did you appreciate today?", lang)} />
+            placeholder={t("What made today meaningful?", lang)} />
         </div>
         <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
-          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("MY NOTES", lang)}</h2>
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("REFLECTION", lang)}</h2>
           <textarea {...grow("notes", 80, 220, 8)} value={journal} onChange={e => updatePlan({ journal: e.target.value })}
             placeholder={t("Free-form journal for the day…", lang)} />
         </div>
         <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
-          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("TOMORROW", lang)}</h2>
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-1">{t("PREPARE TOMORROW", lang)}</h2>
+          <p className="text-[10px] italic text-stone-400 mb-2.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Give tomorrow one clear direction before you rest.", lang)}</p>
           <textarea {...grow("tomorrow", 80, 220, 8)} value={tomorrow} onChange={e => updatePlan({ tomorrow: e.target.value })}
             placeholder={t("What's the first thing tomorrow needs from you?", lang)} />
         </div>
@@ -12973,7 +13766,7 @@ function NotesModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 
   return (
     <div>
-      <PageHeader title={t("Notes", lang)} subtitle={t("Brain dump. Tag. Pin. Find later.", lang)} dark={dark}
+      <PageHeader title={t("Notes", lang)} subtitle={t("Capture what you never want to forget.", lang)} dark={dark}
         action={<AddButton onClick={() => { setForm(blank); setEditing(null); setOpen(true); }} label={t("Add Note", lang)} dark={dark} />} />
 
       <div className={`flex items-center gap-2 px-3 py-2 rounded border ${dark ? "bg-white border-stone-200" : "bg-white border-stone-300"} mb-4`}>
@@ -13327,8 +14120,9 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
   const BUSINESS_CATS = ["Business", "Income", "Sales", "Recruiting", "Production"];
   const allGoals = data.goals || [];
   const goals = allGoals.filter(g => !BUSINESS_CATS.includes(g.category));
-  const active = goals.filter(g => g.progress < 100);
-  const achieved = goals.filter(g => g.progress >= 100);
+  const sortByOrder = (arr) => [...arr].sort((a, b) => (a.sort_order ?? (a.id || 0)) - (b.sort_order ?? (b.id || 0)));
+  const active = sortByOrder(goals.filter(g => g.progress < 100));
+  const achieved = sortByOrder(goals.filter(g => g.progress >= 100));
   const list = tab === "active" ? active : achieved;
 
   const save = () => {
@@ -13345,7 +14139,7 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
     const newP = Math.max(0, Math.min(100, p));
     const oldG = allGoals.find(g => g.id === id);
     setData({ ...data, goals: allGoals.map(g => g.id === id ? { ...g, progress: newP } : g) });
-    if (newP === 100 && oldG && oldG.progress < 100) triggerConfetti(t("GOAL ACHIEVED", lang), true);
+    if (newP === 100 && oldG && oldG.progress < 100) triggerConfetti(t("One step closer to the life you're building.", lang), true);
   };
   const del = (id) => setData({ ...data, goals: allGoals.filter(g => g.id !== id) });
   const updateGoalField = (id, patch) => setData({ ...data, goals: allGoals.map(g => g.id === id ? { ...g, ...patch } : g) });
@@ -13360,13 +14154,37 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
     updateGoalField(goalId, { milestones });
   };
 
+  // Reorder goals by swapping adjacent items
+  const moveGoal = (id, dir) => {
+    const idx = list.findIndex(g => g.id === id);
+    if (idx === -1) return;
+    const target = idx + dir;
+    if (target < 0 || target >= list.length) return;
+    const a = list[idx];
+    const b = list[target];
+    // Assign/swap sort_order field
+    const aOrder = a.sort_order ?? idx * 10;
+    const bOrder = b.sort_order ?? target * 10;
+    setData({ ...data, goals: allGoals.map(g => {
+      if (g.id === a.id) return { ...g, sort_order: bOrder };
+      if (g.id === b.id) return { ...g, sort_order: aOrder };
+      return g;
+    }) });
+  };
+  const canMoveGoal = (id, dir) => {
+    const idx = list.findIndex(g => g.id === id);
+    if (idx === -1) return false;
+    const target = idx + dir;
+    return target >= 0 && target < list.length;
+  };
+
   // Toggle a goal between done and active (no percentages)
   const toggleDone = (id) => {
     const g = allGoals.find(x => x.id === id);
     if (!g) return;
     const wasActive = (g.progress || 0) < 100;
     setData({ ...data, goals: allGoals.map(x => x.id === id ? { ...x, progress: wasActive ? 100 : 0 } : x) });
-    if (wasActive) triggerConfetti(t("GOAL ACHIEVED", lang), true);
+    if (wasActive) triggerConfetti(t("One step closer to the life you're building.", lang), true);
   };
 
   return (
@@ -13432,6 +14250,22 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                 <span className={`text-xs ${themeMuted} font-mono`}>{g.deadline || "—"}</span>
                 <span className="text-xs text-stone-500">{totalMs > 0 ? t("{n} of {m} ✓", lang, { n: completedMs, m: totalMs }) : <span className="italic text-stone-400">{t("none yet", lang)}</span>}</span>
                 <div className="flex items-center gap-1 justify-end">
+                  <div className="flex gap-0.5 flex-shrink-0 mr-1">
+                    <button
+                      type="button"
+                      onClick={() => moveGoal(g.id, -1)}
+                      disabled={!canMoveGoal(g.id, -1)}
+                      className="w-6 h-6 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                      title={t("Move up", lang)} aria-label={t("Move up", lang)}
+                    ><ChevronUp className="w-3.5 h-3.5" /></button>
+                    <button
+                      type="button"
+                      onClick={() => moveGoal(g.id, 1)}
+                      disabled={!canMoveGoal(g.id, 1)}
+                      className="w-6 h-6 flex items-center justify-center rounded text-stone-500 hover:bg-stone-100 hover:text-[#5b7351] active:bg-stone-200 disabled:opacity-25 disabled:hover:bg-transparent transition touch-manipulation"
+                      title={t("Move down", lang)} aria-label={t("Move down", lang)}
+                    ><ChevronDown className="w-3.5 h-3.5" /></button>
+                  </div>
                   {/* The ONLY way to move a goal to Done is this explicit button */}
                   {!isDone ? (
                     <button
@@ -13476,7 +14310,19 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                 >
                   {isDone ? <><RefreshCw className="w-4 h-4" /> {t("Reopen — move back to Active", lang)}</> : <><CheckCircle2 className="w-4 h-4" /> {t("Mark done — move to Done", lang)}</>}
                 </button>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-4 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => moveGoal(g.id, -1)}
+                    disabled={!canMoveGoal(g.id, -1)}
+                    className="py-2 text-xs font-medium border border-stone-200 text-stone-600 rounded-lg active:bg-stone-100 disabled:opacity-30 flex items-center justify-center gap-1 touch-manipulation"
+                  ><ChevronUp className="w-4 h-4" /> {t("Up", lang)}</button>
+                  <button
+                    type="button"
+                    onClick={() => moveGoal(g.id, 1)}
+                    disabled={!canMoveGoal(g.id, 1)}
+                    className="py-2 text-xs font-medium border border-stone-200 text-stone-600 rounded-lg active:bg-stone-100 disabled:opacity-30 flex items-center justify-center gap-1 touch-manipulation"
+                  ><ChevronDown className="w-4 h-4" /> {t("Down", lang)}</button>
                   <button
                     onClick={() => { setForm(g); setEditing(g.id); setMilestonesText((g.milestones || []).join("\n")); setOpen(true); }}
                     className="py-2 text-xs font-medium border border-stone-200 text-stone-700 rounded-lg active:bg-stone-50 flex items-center justify-center gap-1.5"
@@ -13638,7 +14484,7 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
 
   return (
     <div>
-      <PageHeader title={t("Affirmations", lang)} subtitle={t("Words become beliefs. Beliefs become reality.", lang)} dark={dark}
+      <PageHeader title={t("Affirmations", lang)} subtitle={t("Repeat what you want your mind to believe.", lang)} dark={dark}
         action={<AddButton onClick={() => setOpen(true)} label={t("Add", lang)} dark={dark} />} />
 
       {/* Daily affirmation hero — mobile friendly */}
@@ -13837,7 +14683,8 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
             <span className="text-xs tracking-[0.2em] font-bold text-[#5b3a1e]">{meta.topVerse}</span>
           </div>
         </div>
-        <p className="text-sm font-bold tracking-wider mt-2 italic text-[#5b3a1e] max-w-4xl uppercase" style={{ fontFamily: "Georgia, serif" }}>
+        <p className="text-xs italic text-[#7a9a6e] mt-1 mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Every vision deserves today's action.", lang)}</p>
+        <p className="text-sm font-bold tracking-wider mt-1 italic text-[#5b3a1e] max-w-4xl uppercase" style={{ fontFamily: "Georgia, serif" }}>
           "{meta.statement}"
         </p>
       </div>
