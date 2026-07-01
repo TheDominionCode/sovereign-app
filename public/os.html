@@ -1959,14 +1959,15 @@ const TRANSLATIONS = {
     "What did I learn today?": "What did I learn today?",
     "What promise did I keep today?": "What promise did I keep today?",
     "What deserves my attention tomorrow?": "What deserves my attention tomorrow?",
-    "Be fully present": "Be fully present",
-    "Lead with courage": "Lead with courage",
-    "Grow one percent": "Grow one percent",
-    "Serve with excellence": "Serve with excellence",
-    "Honor my rest": "Honor my rest",
-    "Stay focused": "Stay focused",
-    "Practice gratitude": "Practice gratitude",
-    "Build my future self": "Build my future self",
+    "Present": "Present",
+    "Focused": "Focused",
+    "Peaceful": "Peaceful",
+    "Disciplined": "Disciplined",
+    "Joyful": "Joyful",
+    "Patient": "Patient",
+    "Courageous": "Courageous",
+    "Intentional": "Intentional",
+    "Grateful": "Grateful",
     "STAT CIRCLES": "STAT CIRCLES",
     "Pick what shows in the row of circles.": "Pick what shows in the row of circles.",
     "Tasks left": "Tasks left",
@@ -2724,14 +2725,15 @@ const TRANSLATIONS = {
     "What did I learn today?": "¿Qué aprendí hoy?",
     "What promise did I keep today?": "¿Qué promesa cumplí hoy?",
     "What deserves my attention tomorrow?": "¿Qué merece mi atención mañana?",
-    "Be fully present": "Estar completamente presente",
-    "Lead with courage": "Liderar con valentía",
-    "Grow one percent": "Crecer un uno por ciento",
-    "Serve with excellence": "Servir con excelencia",
-    "Honor my rest": "Honrar mi descanso",
-    "Stay focused": "Mantenerme enfocada",
-    "Practice gratitude": "Practicar la gratitud",
-    "Build my future self": "Construir mi yo del futuro",
+    "Present": "Presente",
+    "Focused": "Enfocada",
+    "Peaceful": "En paz",
+    "Disciplined": "Disciplinada",
+    "Joyful": "Con alegría",
+    "Patient": "Paciente",
+    "Courageous": "Con valentía",
+    "Intentional": "Intencional",
+    "Grateful": "Agradecida",
     "STAT CIRCLES": "CÍRCULOS DEL DÍA",
     "Pick what shows in the row of circles.": "Elige qué se muestra en la fila de círculos.",
     "Tasks left": "Tareas pendientes",
@@ -5795,14 +5797,15 @@ const DAILY_QUESTIONS = [
   { en: "What are you most afraid of doing today — and why might that be the exact thing to do?", es: "¿Qué es lo que más temes hacer hoy — y por qué podría ser exactamente lo que deberías hacer?" },
 ];
 const DAILY_INTENTIONS = [
-  { id: "present",   label: "Be fully present",    es: "Estar completamente presente" },
-  { id: "lead",      label: "Lead with courage",   es: "Liderar con valentía" },
-  { id: "grow",      label: "Grow one percent",    es: "Crecer un uno por ciento" },
-  { id: "serve",     label: "Serve with excellence", es: "Servir con excelencia" },
-  { id: "rest",      label: "Honor my rest",       es: "Honrar mi descanso" },
-  { id: "focus",     label: "Stay focused",        es: "Mantenerme enfocada" },
-  { id: "gratitude", label: "Practice gratitude",  es: "Practicar la gratitud" },
-  { id: "build",     label: "Build my future self", es: "Construir mi yo del futuro" },
+  { id: "present",      label: "Present",      es: "Presente" },
+  { id: "focused",      label: "Focused",      es: "Enfocada" },
+  { id: "peaceful",     label: "Peaceful",     es: "En paz" },
+  { id: "disciplined",  label: "Disciplined",  es: "Disciplinada" },
+  { id: "joyful",       label: "Joyful",       es: "Con alegría" },
+  { id: "patient",      label: "Patient",      es: "Paciente" },
+  { id: "courageous",   label: "Courageous",   es: "Con valentía" },
+  { id: "intentional",  label: "Intentional",  es: "Intencional" },
+  { id: "grateful",     label: "Grateful",     es: "Agradecida" },
 ];
 
 function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted, triggerConfetti, setActive, navigateTo, lang }) {
@@ -6075,14 +6078,29 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const firstName = (user.name || "").split(" ")[0];
   const serifStyle = { fontFamily: "'Playfair Display', Georgia, serif" };
 
-  // Sprint 3 — daily rotating content
+  // Sprint 3 — daily rotating content (DB-driven with hardcoded fallback)
+  const [dbDailyContent, setDbDailyContent] = useState(null);
+  useEffect(() => {
+    fetch("/api/daily-content").then(r => r.ok ? r.json() : null).then(d => { if (d) setDbDailyContent(d); }).catch(() => {});
+  }, []);
   const dayOfYear = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
   const todayPrincipleObj = DAILY_PRINCIPLES[dayOfYear % DAILY_PRINCIPLES.length] || DAILY_PRINCIPLES[0];
   const todayReflectionObj = DAILY_REFLECTIONS[dayOfYear % DAILY_REFLECTIONS.length] || DAILY_REFLECTIONS[0];
   const todayQuestionObj = DAILY_QUESTIONS[dayOfYear % DAILY_QUESTIONS.length] || DAILY_QUESTIONS[0];
-  const todayPrinciple = (lang === "es" ? todayPrincipleObj.es : null) || todayPrincipleObj.en;
-  const todayReflection = (lang === "es" ? todayReflectionObj.es : null) || todayReflectionObj.en;
-  const todayQuestion = (lang === "es" ? todayQuestionObj.es : null) || todayQuestionObj.en;
+  // Use DB content when available, fall back to hardcoded arrays
+  const todayPrinciple = dbDailyContent?.principle
+    ? (lang === "es" ? dbDailyContent.principle.es : dbDailyContent.principle.en)
+    : ((lang === "es" ? todayPrincipleObj.es : null) || todayPrincipleObj.en);
+  const todayReflection = dbDailyContent?.reflection
+    ? (lang === "es" ? dbDailyContent.reflection.es : dbDailyContent.reflection.en)
+    : ((lang === "es" ? todayReflectionObj.es : null) || todayReflectionObj.en);
+  const todayQuestion = dbDailyContent?.question
+    ? (lang === "es" ? dbDailyContent.question.es : dbDailyContent.question.en)
+    : ((lang === "es" ? todayQuestionObj.es : null) || todayQuestionObj.en);
+  // Intentions: use DB list when available, fall back to hardcoded
+  const activeIntentions = (dbDailyContent?.intentions?.length > 0)
+    ? dbDailyContent.intentions.map(i => ({ id: i.id, label: i.en, es: i.es }))
+    : DAILY_INTENTIONS;
   const todayIntentionId = (data.dailyIntentions || {})[today] || null;
   const setTodayIntention = (id) => {
     setData({ ...data, dailyIntentions: { ...(data.dailyIntentions || {}), [today]: todayIntentionId === id ? null : id } });

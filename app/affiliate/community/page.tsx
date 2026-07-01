@@ -42,6 +42,12 @@ export default async function AffiliateCommunityPage() {
           >
             Wall of wins
           </h1>
+          <p
+            className="text-sm italic mt-0.5"
+            style={{ color: theme.accent, fontFamily: "'Cormorant Garamond', Georgia, serif" }}
+          >
+            Growth becomes stronger when it&apos;s shared.
+          </p>
           <Link
             href="/affiliate"
             className="text-[11px] tracking-[0.18em] uppercase hover:underline"

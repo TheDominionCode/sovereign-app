@@ -139,11 +139,12 @@ insert into daily_questions (content_en, content_es) values
 
 -- Seed: intentions
 insert into daily_intentions (content_en, content_es, sort_order) values
-  ('Be fully present',    'Estar completamente presente', 1),
-  ('Lead with courage',   'Liderar con valentía',         2),
-  ('Grow one percent',    'Crecer un uno por ciento',     3),
-  ('Serve with excellence','Servir con excelencia',       4),
-  ('Honor my rest',       'Honrar mi descanso',           5),
-  ('Stay focused',        'Mantenerme enfocada',          6),
-  ('Practice gratitude',  'Practicar la gratitud',        7),
-  ('Build my future self','Construir mi yo del futuro',   8);
+  ('Present',     'Presente',      1),
+  ('Focused',     'Enfocada',      2),
+  ('Peaceful',    'En paz',        3),
+  ('Disciplined', 'Disciplinada',  4),
+  ('Joyful',      'Con alegría',   5),
+  ('Patient',     'Paciente',      6),
+  ('Courageous',  'Con valentía',  7),
+  ('Intentional', 'Intencional',   8),
+  ('Grateful',    'Agradecida',    9);
