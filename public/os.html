@@ -7425,6 +7425,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
 }
 
 function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
+  const today = todayISO();
   const habitsList = Array.isArray(data.habitsCustom) ? data.habitsCustom : [];
   const reflection = data.selfReflection || { strengths: [], weaknesses: [], improvements: [] };
   const customPanels = Array.isArray(data.customReflections) ? data.customReflections : [];
