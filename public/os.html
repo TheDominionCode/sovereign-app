@@ -6136,41 +6136,32 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   // Same ordering rule as the Daily Planner so the Summary's TO DO list
   // shows the same sequence — priorities first by slot, then by manual
   // `order` (defaulting to id for legacy tasks without one).
-  const sortedTodaysTasks = [...todaysTasks].sort((a, b) => {
-    const aOrder = a.order ?? (a.priority ? (a.priorityOrder || 99) : 1000 + (a.id || 0));
-    const bOrder = b.order ?? (b.priority ? (b.priorityOrder || 99) : 1000 + (b.id || 0));
-    return aOrder - bOrder;
-  });
+  // summaryOrder is a per-day map of taskId → display position, persisted in
+  // data so both one-off and recurring tasks can be reordered on the Summary page.
+  const summaryOrderMap = (data.summaryOrder || {})[today] || {};
+  const getSummaryPos = (t) => {
+    if (summaryOrderMap[t.id] != null) return summaryOrderMap[t.id];
+    return t.order ?? (t.priority ? (t.priorityOrder || 99) : 1000 + (t.id || 0));
+  };
+  const sortedTodaysTasks = [...todaysTasks].sort((a, b) => getSummaryPos(a) - getSummaryPos(b));
   const moveSummaryTask = (id, dir) => {
     const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return;
-    const cur = sortedTodaysTasks[idx];
-    if (cur._recurring) return;
-    let target = idx + dir;
-    while (target >= 0 && target < sortedTodaysTasks.length && sortedTodaysTasks[target]._recurring) target += dir;
+    const target = idx + dir;
     if (target < 0 || target >= sortedTodaysTasks.length) return;
-    const swap = sortedTodaysTasks[target];
-    // Normalize ALL today's real tasks to explicit order values based on
-    // their current position, then swap cur and swap. Avoids inconsistency
-    // between the sort fallback (1000+id) and the swap fallback (idx*1000).
-    const updatedTasks = tasks.map(x => {
-      if (!x) return x;
-      const si = sortedTodaysTasks.findIndex(s => s && s.id === x.id);
-      if (si < 0) return x; // not in today's list — leave untouched
-      const baseOrder = (si + 1) * 10;
-      if (x.id === cur.id) return { ...x, order: (target + 1) * 10 };
-      if (x.id === swap.id) return { ...x, order: (idx + 1) * 10 };
-      return { ...x, order: baseOrder };
-    });
-    setData({ ...data, tasks: updatedTasks });
+    // Assign explicit positions to every task, then swap the two
+    const newMap = {};
+    sortedTodaysTasks.forEach((t, i) => { newMap[t.id] = (i + 1) * 10; });
+    const curPos = newMap[id];
+    const swapId = sortedTodaysTasks[target].id;
+    newMap[id] = newMap[swapId];
+    newMap[swapId] = curPos;
+    setData({ ...data, summaryOrder: { ...(data.summaryOrder || {}), [today]: newMap } });
   };
   const canMoveSummaryTask = (id, dir) => {
     const idx = sortedTodaysTasks.findIndex(x => x && x.id === id);
     if (idx === -1) return false;
-    const cur = sortedTodaysTasks[idx];
-    if (cur._recurring) return false;
-    let target = idx + dir;
-    while (target >= 0 && target < sortedTodaysTasks.length && sortedTodaysTasks[target]._recurring) target += dir;
+    const target = idx + dir;
     return target >= 0 && target < sortedTodaysTasks.length;
   };
 
@@ -6557,13 +6548,6 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           </div>
         </div>
       )}
-
-      {/* 2. WORD OF THE DAY — prominent identity anchor */}
-      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/60 px-5 py-5 mb-4 text-center">
-        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-3 font-semibold" style={serifStyle}>{t("Word of the Day", lang)}</div>
-        <p className="font-serif text-4xl sm:text-5xl italic font-bold text-[#5b7351] leading-none tracking-tight" style={serifStyle}>{wordOfDay}</p>
-        <p className="text-[11px] italic text-stone-400 mt-2" style={serifStyle}>{t("Let this word guide who you are today.", lang)}</p>
-      </div>
 
       {/* STAT CIRCLES */}
       {summaryPrefs.circles && (() => {
