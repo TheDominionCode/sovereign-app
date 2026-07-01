@@ -1649,7 +1649,7 @@ const BUSINESS_NAV = [
 
 const PERSONAL_NAV = [
   { id: "personalHome", label: "Summary",              icon: Home },
-  { id: "sovereignOS",  label: "Sovereign OS",       icon: Sparkles },
+  { id: "sovereignOS",  label: "Sovereign",           icon: Sparkles },
   { id: "planner",      label: "Today's Focus",      icon: BookOpen },
   { id: "calendarYear", label: "Calendar",            icon: Calendar },
   { id: "habitsView",   label: "Habits",              icon: Activity },
@@ -1683,7 +1683,7 @@ const PERSONAL_NAV_PILLARS = [
   {
     id: "mind", label: "Mind", icon: Lightbulb,
     items: [
-      { id: "sovereignOS",     label: "Sovereign OS",     icon: Sparkles },
+      { id: "sovereignOS",     label: "Sovereign",         icon: Sparkles },
       { id: "affirmations",    label: "Affirmations",     icon: Sparkles },
       { id: "speak",           label: "Speak Eloquently", icon: MessageCircle },
       { id: "habits",          label: "Reflection",       icon: Lightbulb },
@@ -1718,7 +1718,7 @@ const TRANSLATIONS = {
   en: {
     // Sidebar nav — updated labels
     "Today": "Today",
-    "Sovereign OS": "Sovereign OS",
+    "Sovereign OS": "Sovereign",
     "Today's Focus": "Today's Focus",
     "Calendar": "Calendar",
     "Finances": "Finances",
@@ -1971,10 +1971,11 @@ const TRANSLATIONS = {
     "One step closer to the life you're building.": "One step closer to the life you're building.",
     "Write your answer…": "Write your answer…",
     "edit": "edit",
-    "Sovereign OS": "Sovereign OS",
+    "Sovereign OS": "Sovereign",
     "Who am I becoming today?": "Who am I becoming today?",
     "Let this guide every decision you make today.": "Let this guide every decision you make today.",
     "Reflection Questions": "Reflection Questions",
+    "Evening check-in, 5 prompts": "Evening check-in, 5 prompts",
     "Today's One Promise": "Today's One Promise",
     "One small commitment that rebuilds self-trust.": "One small commitment that rebuilds self-trust.",
     "I will…": "I will…",
@@ -2514,7 +2515,7 @@ const TRANSLATIONS = {
   es: {
     // Sidebar nav — updated labels
     "Today": "Hoy",
-    "Sovereign OS": "Sovereign OS",
+    "Sovereign OS": "Sovereign",
     "Today's Focus": "Mi Enfoque de Hoy",
     "Calendar": "Calendario",
     "Finances": "Finanzas",
@@ -2770,10 +2771,11 @@ const TRANSLATIONS = {
     "One step closer to the life you're building.": "Un paso más cerca de la vida que estás construyendo.",
     "Write your answer…": "Escribe tu respuesta…",
     "edit": "editar",
-    "Sovereign OS": "Sovereign OS",
+    "Sovereign OS": "Sovereign",
     "Who am I becoming today?": "¿En quién me estoy convirtiendo hoy?",
     "Let this guide every decision you make today.": "Deja que esto guíe cada decisión que tomes hoy.",
     "Reflection Questions": "Preguntas de reflexión",
+    "Evening check-in, 5 prompts": "Revisión nocturna, 5 preguntas",
     "Today's One Promise": "Mi promesa de hoy",
     "One small commitment that rebuilds self-trust.": "Un pequeño compromiso que reconstruye la confianza propia.",
     "I will…": "Voy a…",
@@ -6030,7 +6032,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   //     users opt INTO them via the Customize modal.
   const SUMMARY_DEFAULTS = {
     affirmation: true, circles: true, today: true, why: true, priorities: true, vitamins: true,
-    events: false, finance: false, goals: false, vision: false, wins: false,
+    events: false, finance: false, goals: false, vision: false, wins: false, reflection: false,
   };
   const SUMMARY_KEYS = Object.keys(SUMMARY_DEFAULTS);
   const summaryPrefs = SUMMARY_KEYS.reduce((acc, k) => {
@@ -6388,7 +6390,8 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     { key: "finance",  label: t("Money this month", lang),  hint: t("Income, expenses, net", lang) },
     { key: "goals",    label: t("Goals progress", lang),    hint: t("Average across active goals", lang) },
     { key: "vision",   label: t("Vision board peek", lang), hint: t("A few images from your board", lang) },
-    { key: "wins",     label: t("Today's wins", lang),      hint: t("From your Daily Planner", lang) },
+    { key: "wins",        label: t("Today's wins", lang),          hint: t("From your Daily Planner", lang) },
+    { key: "reflection",  label: t("Reflection Questions", lang),  hint: t("Evening check-in, 5 prompts", lang) },
   ];
   // The 11 circle options the user can mix and match.
   const customizeCircleRows = [
@@ -7072,8 +7075,8 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         );
       })()}
 
-      {/* REFLECTION QUESTIONS — evening check-in, 5 prompts at bottom of Today page */}
-      {(() => {
+      {/* REFLECTION QUESTIONS — opt-in, shown only when user enables it in Customize */}
+      {summaryPrefs.reflection && (() => {
         const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
         const reflectionAnswers = data.reflectionAnswers || {};
         const todayAnswers = reflectionAnswers[today] || {};
