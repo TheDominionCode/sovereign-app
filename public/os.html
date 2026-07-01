@@ -1649,6 +1649,7 @@ const BUSINESS_NAV = [
 
 const PERSONAL_NAV = [
   { id: "personalHome", label: "Today",              icon: Home },
+  { id: "sovereignOS",  label: "Sovereign OS",       icon: Sparkles },
   { id: "planner",      label: "Today's Focus",      icon: BookOpen },
   { id: "calendarYear", label: "Calendar",            icon: Calendar },
   { id: "habitsView",   label: "Habits",              icon: Activity },
@@ -1682,6 +1683,7 @@ const PERSONAL_NAV_PILLARS = [
   {
     id: "mind", label: "Mind", icon: Lightbulb,
     items: [
+      { id: "sovereignOS",     label: "Sovereign OS",     icon: Sparkles },
       { id: "affirmations",    label: "Affirmations",     icon: Sparkles },
       { id: "speak",           label: "Speak Eloquently", icon: MessageCircle },
       { id: "habits",          label: "Reflection",       icon: Lightbulb },
@@ -1716,6 +1718,7 @@ const TRANSLATIONS = {
   en: {
     // Sidebar nav — updated labels
     "Today": "Today",
+    "Sovereign OS": "Sovereign OS",
     "Today's Focus": "Today's Focus",
     "Calendar": "Calendar",
     "Finances": "Finances",
@@ -1958,7 +1961,30 @@ const TRANSLATIONS = {
     "What challenged me today?": "What challenged me today?",
     "What did I learn today?": "What did I learn today?",
     "What promise did I keep today?": "What promise did I keep today?",
+    "How did I grow today?": "How did I grow today?",
     "What deserves my attention tomorrow?": "What deserves my attention tomorrow?",
+    "Welcome back. Let's build today with intention.": "Welcome back. Let's build today with intention.",
+    "Give tomorrow one clear direction before you rest.": "Give tomorrow one clear direction before you rest.",
+    "Every promise you keep becomes evidence that you can trust yourself.": "Every promise you keep becomes evidence that you can trust yourself.",
+    "Every promise kept. Champion day.": "Every promise kept. Champion day.",
+    "One step closer to the life you're building.": "One step closer to the life you're building.",
+    "Write your answer…": "Write your answer…",
+    "edit": "edit",
+    "Sovereign OS": "Sovereign OS",
+    "Who am I becoming today?": "Who am I becoming today?",
+    "Let this guide every decision you make today.": "Let this guide every decision you make today.",
+    "Reflection Questions": "Reflection Questions",
+    "Today's One Promise": "Today's One Promise",
+    "One small commitment that rebuilds self-trust.": "One small commitment that rebuilds self-trust.",
+    "I will…": "I will…",
+    "Drink one extra glass of water.": "Drink one extra glass of water.",
+    "Finish one unfinished task.": "Finish one unfinished task.",
+    "Read one page.": "Read one page.",
+    "Take a 10-minute walk.": "Take a 10-minute walk.",
+    "Evening Reflection": "Evening Reflection",
+    "What evidence did you give yourself today that you can trust yourself?": "What evidence did you give yourself today that you can trust yourself?",
+    "Today I showed up by…": "Today I showed up by…",
+    "Rest. Tomorrow continues what today began.": "Rest. Tomorrow continues what today began.",
     "Present": "Present",
     "Focused": "Focused",
     "Peaceful": "Peaceful",
@@ -2479,6 +2505,7 @@ const TRANSLATIONS = {
   es: {
     // Sidebar nav — updated labels
     "Today": "Hoy",
+    "Sovereign OS": "Sovereign OS",
     "Today's Focus": "Mi Enfoque de Hoy",
     "Calendar": "Calendario",
     "Finances": "Finanzas",
@@ -2724,7 +2751,30 @@ const TRANSLATIONS = {
     "What challenged me today?": "¿Qué me desafió hoy?",
     "What did I learn today?": "¿Qué aprendí hoy?",
     "What promise did I keep today?": "¿Qué promesa cumplí hoy?",
+    "How did I grow today?": "¿Cómo crecí hoy?",
     "What deserves my attention tomorrow?": "¿Qué merece mi atención mañana?",
+    "Welcome back. Let's build today with intention.": "Bienvenida de nuevo. Construyamos el día con intención.",
+    "Give tomorrow one clear direction before you rest.": "Dale a mañana una dirección clara antes de descansar.",
+    "Every promise you keep becomes evidence that you can trust yourself.": "Cada promesa que cumples se convierte en evidencia de que puedes confiar en ti misma.",
+    "Every promise kept. Champion day.": "Cada promesa cumplida. Día de campeona.",
+    "One step closer to the life you're building.": "Un paso más cerca de la vida que estás construyendo.",
+    "Write your answer…": "Escribe tu respuesta…",
+    "edit": "editar",
+    "Sovereign OS": "Sovereign OS",
+    "Who am I becoming today?": "¿En quién me estoy convirtiendo hoy?",
+    "Let this guide every decision you make today.": "Deja que esto guíe cada decisión que tomes hoy.",
+    "Reflection Questions": "Preguntas de reflexión",
+    "Today's One Promise": "Mi promesa de hoy",
+    "One small commitment that rebuilds self-trust.": "Un pequeño compromiso que reconstruye la confianza propia.",
+    "I will…": "Voy a…",
+    "Drink one extra glass of water.": "Beber un vaso extra de agua.",
+    "Finish one unfinished task.": "Terminar una tarea pendiente.",
+    "Read one page.": "Leer una página.",
+    "Take a 10-minute walk.": "Dar un paseo de 10 minutos.",
+    "Evening Reflection": "Reflexión vespertina",
+    "What evidence did you give yourself today that you can trust yourself?": "¿Qué evidencia te diste hoy de que puedes confiar en ti misma?",
+    "Today I showed up by…": "Hoy me presenté al…",
+    "Rest. Tomorrow continues what today began.": "Descansa. Mañana continúa lo que hoy comenzó.",
     "Present": "Presente",
     "Focused": "Enfocada",
     "Peaceful": "En paz",
@@ -3512,7 +3562,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   useEffect(() => { storage.set("dom_active", active); }, [active]);
 
   const [confettiBig, setConfettiBig] = useState(false);
-  const triggerConfetti = (msg = "✓ Crushed it!", big = false) => {
+  const triggerConfetti = (msg = "Another promise kept.", big = false) => {
     setConfetti(true); setConfettiBig(big); setToast(msg);
     const dur = big ? 6500 : 3200;
     setTimeout(() => { setConfetti(false); setConfettiBig(false); }, dur);
@@ -3979,6 +4029,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           {active === "vision" && <VisionModule {...moduleProps} />}
           {active === "scripts" && <ScriptsModule {...moduleProps} />}
           {active === "personalHome" && <PersonalHomeModule {...moduleProps} setActive={setActive} />}
+          {active === "sovereignOS" && <SovereignOSModule {...moduleProps} />}
           {active === "personalFinance" && <PersonalFinanceModule {...moduleProps} />}
           {active === "credentials" && <CredentialsModule {...moduleProps} />}
           {active === "habits" && <HabitsSelfModule {...moduleProps} />}
@@ -5808,6 +5859,139 @@ const DAILY_INTENTIONS = [
   { id: "grateful",     label: "Grateful",     es: "Agradecida" },
 ];
 
+// ============================================================
+// SOVEREIGN OS MODULE — Daily Companion Experience (Sprint 4)
+// ============================================================
+function SovereignOSModule({ data, setData, dark, themePanel, themeMuted, lang }) {
+  const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+  const today = todayISO();
+
+  // Daily rotating content — same source as Today page
+  const [dbContent, setDbContent] = useState(null);
+  useEffect(() => {
+    fetch("/api/daily-content").then(r => r.ok ? r.json() : null).then(d => { if (d) setDbContent(d); }).catch(() => {});
+  }, []);
+  const doy = Math.floor((new Date() - new Date(new Date().getFullYear(), 0, 0)) / 86400000);
+  const principleObj  = DAILY_PRINCIPLES[doy % DAILY_PRINCIPLES.length] || DAILY_PRINCIPLES[0];
+  const reflectionObj = DAILY_REFLECTIONS[doy % DAILY_REFLECTIONS.length] || DAILY_REFLECTIONS[0];
+  const tomorrowObj   = DAILY_PRINCIPLES[(doy + 1) % DAILY_PRINCIPLES.length] || DAILY_PRINCIPLES[0];
+  const principle  = dbContent?.principle  ? (lang === "es" ? dbContent.principle.es  : dbContent.principle.en)  : (lang === "es" ? principleObj.es  : principleObj.en);
+  const reflection = dbContent?.reflection ? (lang === "es" ? dbContent.reflection.es : dbContent.reflection.en) : (lang === "es" ? reflectionObj.es : reflectionObj.en);
+  const tomorrow   = lang === "es" ? tomorrowObj.es : tomorrowObj.en;
+
+  // User-editable overrides from Today page carry over here too
+  const dco = data.dailyContentOverrides || {};
+  const displayPrinciple  = (dco.principle  || {})[today] || principle;
+  const displayReflection = (dco.reflection || {})[today] || reflection;
+
+  // Per-day SovereignOS data
+  const soData = (data.sovereignOS || {})[today] || {};
+  const setSO = (patch) => setData({ ...data, sovereignOS: { ...(data.sovereignOS || {}), [today]: { ...soData, ...patch } } });
+
+  const prompts = [
+    t("What am I proud of today?", lang),
+    t("What challenged me today?", lang),
+    t("How did I grow today?", lang),
+  ];
+
+  const dateLabel = new Date().toLocaleDateString(lang === "es" ? "es-ES" : "en-US", { weekday: "long", month: "long", day: "numeric" });
+
+  return (
+    <div className="max-w-2xl mx-auto pb-12">
+      {/* Page header */}
+      <div className="mb-8 text-center">
+        <p className="text-[10px] tracking-[0.25em] uppercase text-[#7a9a6e] mb-2" style={serif}>{dateLabel}</p>
+        <h1 className="font-serif text-3xl sm:text-4xl italic text-stone-800 leading-tight mb-2" style={serif}>
+          {t("Sovereign OS", lang)}
+        </h1>
+        <p className="text-sm italic text-stone-500" style={serif}>{t("Who am I becoming today?", lang)}</p>
+      </div>
+
+      {/* 1 — TODAY'S PRINCIPLE */}
+      <div className="rounded-2xl bg-gradient-to-br from-[#5b7351]/10 via-[#f4f7ee]/60 to-white border border-[#d3e0c5] px-6 py-7 mb-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] mb-3 font-semibold" style={serif}>{t("Today's Principle", lang)}</p>
+        <p className="font-serif text-2xl sm:text-3xl italic text-stone-800 leading-snug mb-3" style={serif}>&ldquo;{displayPrinciple}&rdquo;</p>
+        <p className="text-xs italic text-stone-500 leading-relaxed" style={serif}>{t("Let this guide every decision you make today.", lang)}</p>
+      </div>
+
+      {/* 2 — REFLECTION */}
+      <div className="rounded-2xl border border-stone-200 bg-white px-6 py-6 mb-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-stone-500 mb-4 font-semibold" style={serif}>{t("Today's Reflection", lang)}</p>
+        <div className="prose prose-sm max-w-none">
+          {displayReflection.split(/\n+/).map((para, i) => (
+            <p key={i} className="text-sm text-stone-700 leading-loose italic mb-3 last:mb-0" style={serif}>{para}</p>
+          ))}
+        </div>
+      </div>
+
+      {/* 3 — REFLECTION QUESTIONS */}
+      <div className="mb-5">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] mb-3 font-semibold px-1" style={serif}>{t("Reflection Questions", lang)}</p>
+        <div className="space-y-3">
+          {prompts.map((q, i) => (
+            <div key={i} className="rounded-2xl border border-[#d3e0c5] bg-[#f9fbf7] px-5 py-4 shadow-sm">
+              <p className="text-sm italic text-stone-700 mb-2.5 font-semibold leading-snug" style={serif}>{q}</p>
+              <textarea
+                rows={3}
+                value={(soData.reflectionAnswers || {})[i] || ""}
+                onChange={e => setSO({ reflectionAnswers: { ...(soData.reflectionAnswers || {}), [i]: e.target.value } })}
+                placeholder={t("Write your answer…", lang)}
+                className="block w-full px-3 py-2.5 rounded-xl border border-[#d3e0c5] bg-white text-sm text-stone-700 outline-none resize-none focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20"
+                style={{ ...serif, minHeight: "72px", maxHeight: "160px" }} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* 4 — TODAY'S ONE PROMISE */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/50 px-6 py-5 mb-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serif}>{t("Today's One Promise", lang)}</p>
+        <p className="text-[11px] italic text-stone-400 mb-3" style={serif}>{t("One small commitment that rebuilds self-trust.", lang)}</p>
+        <textarea
+          rows={2}
+          value={soData.onePromise || ""}
+          onChange={e => setSO({ onePromise: e.target.value })}
+          placeholder={t("I will…", lang)}
+          className="block w-full px-3 py-2.5 rounded-xl border border-[#d3e0c5] bg-white text-sm italic text-stone-700 outline-none resize-none focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20"
+          style={{ ...serif, minHeight: "56px", maxHeight: "120px" }} />
+        <div className="mt-3 flex flex-wrap gap-2">
+          {[
+            t("Drink one extra glass of water.", lang),
+            t("Finish one unfinished task.", lang),
+            t("Read one page.", lang),
+            t("Take a 10-minute walk.", lang),
+          ].map(s => (
+            <button key={s}
+              onClick={() => setSO({ onePromise: s })}
+              className="text-[10px] italic text-stone-500 border border-stone-200 rounded-full px-2.5 py-1 hover:border-[#7a9a6e] hover:text-[#5b7351] hover:bg-[#f4f7ee] transition"
+              style={serif}>{s}</button>
+          ))}
+        </div>
+      </div>
+
+      {/* 5 — EVENING REFLECTION */}
+      <div className="rounded-2xl border border-stone-200 bg-white px-6 py-5 mb-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-stone-500 mb-1.5 font-semibold" style={serif}>{t("Evening Reflection", lang)}</p>
+        <p className="text-sm italic text-stone-600 mb-3 leading-relaxed" style={serif}>{t("What evidence did you give yourself today that you can trust yourself?", lang)}</p>
+        <textarea
+          rows={4}
+          value={soData.eveningReflection || ""}
+          onChange={e => setSO({ eveningReflection: e.target.value })}
+          placeholder={t("Today I showed up by…", lang)}
+          className="block w-full px-3 py-2.5 rounded-xl border border-stone-200 bg-[#fafaf8] text-sm text-stone-700 outline-none resize-none focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20"
+          style={{ ...serif, minHeight: "96px", maxHeight: "220px" }} />
+      </div>
+
+      {/* 6 — TOMORROW TEASER */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-gradient-to-r from-[#f4f7ee]/60 to-white px-6 py-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] mb-2 font-semibold" style={serif}>{t("Tomorrow", lang)}</p>
+        <p className="text-xs italic text-stone-500 leading-relaxed" style={serif}>&ldquo;{tomorrow}&rdquo;</p>
+        <p className="text-[10px] italic text-stone-400 mt-2" style={serif}>{t("Rest. Tomorrow continues what today began.", lang)}</p>
+      </div>
+    </div>
+  );
+}
+
 function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted, triggerConfetti, setActive, navigateTo, lang }) {
   const today = todayISO();
   const tasks = data.tasks || [];
@@ -5917,7 +6101,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           .filter(r => r && r.title && (!r.startDate || r.startDate <= today))
           .filter(r => r.recurrence === "daily" || (r.recurrence === "weekly" && r.weekday === dowToday))
           .every(r => !!(r.doneByDate && r.doneByDate[today]));
-        if (realDone && recurDone && todaysTasks.length > 0) triggerConfetti(t("All done — champion day", lang), true);
+        if (realDone && recurDone && todaysTasks.length > 0) triggerConfetti(t("Every promise kept. Champion day.", lang), true);
       }
       return;
     }
@@ -5929,7 +6113,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
       const todayList = updated.filter(t => t.date === today);
       const recurDone = todaysRecurring.every(r => r.done);
       const allDone = todayList.length > 0 && todayList.every(t => t.done) && recurDone;
-      if (allDone) triggerConfetti(t("All done — champion day", lang), true);
+      if (allDone) triggerConfetti(t("Every promise kept. Champion day.", lang), true);
     }
   };
 
@@ -6106,6 +6290,26 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     setData({ ...data, dailyIntentions: { ...(data.dailyIntentions || {}), [today]: todayIntentionId === id ? null : id } });
   };
 
+  // ----- Daily content inline editing -----
+  // Stores user overrides per day: data.dailyContentOverrides = { principle: { [today]: "..." }, ... }
+  const dco = data.dailyContentOverrides || {};
+  const getDCO = (field) => (dco[field] || {})[today] || null;
+  const setDCO = (field, val) => {
+    const updated = { ...dco, [field]: { ...(dco[field] || {}), [today]: val } };
+    setData({ ...data, dailyContentOverrides: updated });
+  };
+  const [editingDailyField, setEditingDailyField] = useState(null);
+  const [editingDailyText, setEditingDailyText] = useState("");
+  const startEditDaily = (field, currentText) => { setEditingDailyField(field); setEditingDailyText(currentText); };
+  const saveEditDaily = () => {
+    if (editingDailyField) setDCO(editingDailyField, editingDailyText.trim() || null);
+    setEditingDailyField(null); setEditingDailyText("");
+  };
+  // Override DB/hardcoded values with user edits if present
+  const displayPrinciple = getDCO("principle") || todayPrinciple;
+  const displayReflection = getDCO("reflection") || todayReflection;
+  const displayQuestion = getDCO("question") || todayQuestion;
+
   // ----- Priority editing on the summary card -----
   // We read from today's priority TASKS (modern model). Each priority slot
   // 1/2/3 maps to a task whose .priorityOrder matches. Empty slots show an
@@ -6238,7 +6442,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           <h1 className="font-serif text-2xl tracking-tight leading-tight" style={serifStyle}>
             {timeGreeting}, <span className="italic text-[#5b7351]">{firstName || t("love", lang)}</span>.
           </h1>
-          <p className="text-sm italic text-stone-500 mt-1" style={serifStyle}>{dayPhrase}</p>
+          <p className="text-sm italic text-stone-600 mt-1" style={serifStyle}>{t("Welcome back. Let's build today with intention.", lang)}</p>
         </div>
         <button onClick={() => setCustomizeOpen(true)}
           className="px-3 py-1.5 rounded-full border border-stone-200 text-[11px] tracking-wider uppercase text-stone-600 hover:border-[#7a9a6e] hover:bg-[#f4f7ee] hover:text-[#5b7351] transition flex-shrink-0">
@@ -6246,23 +6450,77 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
         </button>
       </div>
 
-      {/* SPRINT 3 — DAILY EXPERIENCE ENGINE */}
+      {/* SPRINT 3 / 4 — DAILY EXPERIENCE ENGINE */}
       {/* Today's Principle */}
       <div className="rounded-2xl bg-gradient-to-r from-[#5b7351]/10 to-[#f4f7ee]/40 border border-[#d3e0c5] px-5 py-4 mb-4">
-        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Principle", lang)}</div>
-        <p className="font-serif text-base italic text-stone-800 leading-snug" style={serifStyle}>{todayPrinciple}</p>
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] font-semibold" style={serifStyle}>{t("Today's Principle", lang)}</div>
+          <button onClick={() => startEditDaily("principle", displayPrinciple)}
+            className="text-[10px] italic text-stone-400 hover:text-[#5b7351] transition ml-2 flex-shrink-0"
+            style={serifStyle} title={t("Edit", lang)}>✏ {t("edit", lang)}</button>
+        </div>
+        {editingDailyField === "principle" ? (
+          <div>
+            <textarea autoFocus rows={3} value={editingDailyText} onChange={e => setEditingDailyText(e.target.value)}
+              onKeyDown={e => { if (e.key === "Escape") setEditingDailyField(null); }}
+              className="block w-full px-2 py-1.5 border rounded text-sm outline-none resize-none bg-white border-[#d3e0c5] focus:border-[#7a9a6e] font-serif italic"
+              style={{ ...serifStyle, minHeight: "60px" }} />
+            <div className="flex gap-2 mt-2">
+              <button onClick={saveEditDaily} className="px-3 py-1 text-xs text-white rounded hover:opacity-90" style={{ background: "var(--accent-mid)" }}>{t("Save", lang)}</button>
+              <button onClick={() => setEditingDailyField(null)} className="px-3 py-1 text-xs text-stone-500 hover:text-stone-700">{t("Cancel", lang)}</button>
+            </div>
+          </div>
+        ) : (
+          <p className="font-serif text-base italic text-stone-800 leading-snug" style={serifStyle}>{displayPrinciple}</p>
+        )}
       </div>
 
       {/* Today's Reflection */}
       <div className="rounded-2xl border border-stone-200 px-5 py-4 mb-4 bg-white/70">
-        <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 mb-1.5 font-semibold" style={serifStyle}>{t("Today's Reflection", lang)}</div>
-        <p className="text-sm text-stone-700 leading-relaxed italic" style={serifStyle}>{todayReflection}</p>
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="text-[10px] tracking-[0.2em] uppercase text-stone-500 font-semibold" style={serifStyle}>{t("Today's Reflection", lang)}</div>
+          <button onClick={() => startEditDaily("reflection", displayReflection)}
+            className="text-[10px] italic text-stone-400 hover:text-[#5b7351] transition ml-2 flex-shrink-0"
+            style={serifStyle} title={t("Edit", lang)}>✏ {t("edit", lang)}</button>
+        </div>
+        {editingDailyField === "reflection" ? (
+          <div>
+            <textarea autoFocus rows={5} value={editingDailyText} onChange={e => setEditingDailyText(e.target.value)}
+              onKeyDown={e => { if (e.key === "Escape") setEditingDailyField(null); }}
+              className="block w-full px-2 py-1.5 border rounded text-sm outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e] italic"
+              style={{ ...serifStyle, minHeight: "80px" }} />
+            <div className="flex gap-2 mt-2">
+              <button onClick={saveEditDaily} className="px-3 py-1 text-xs text-white rounded hover:opacity-90" style={{ background: "var(--accent-mid)" }}>{t("Save", lang)}</button>
+              <button onClick={() => setEditingDailyField(null)} className="px-3 py-1 text-xs text-stone-500 hover:text-stone-700">{t("Cancel", lang)}</button>
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-stone-700 leading-relaxed italic" style={serifStyle}>{displayReflection}</p>
+        )}
       </div>
 
       {/* Today's Question */}
       <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/50 px-5 py-4 mb-4">
-        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-1.5 font-semibold" style={serifStyle}>{t("Today's Question", lang)}</div>
-        <p className="font-serif text-lg italic text-stone-800 leading-snug" style={serifStyle}>{todayQuestion}</p>
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] font-semibold" style={serifStyle}>{t("Today's Question", lang)}</div>
+          <button onClick={() => startEditDaily("question", displayQuestion)}
+            className="text-[10px] italic text-stone-400 hover:text-[#5b7351] transition ml-2 flex-shrink-0"
+            style={serifStyle} title={t("Edit", lang)}>✏ {t("edit", lang)}</button>
+        </div>
+        {editingDailyField === "question" ? (
+          <div>
+            <textarea autoFocus rows={2} value={editingDailyText} onChange={e => setEditingDailyText(e.target.value)}
+              onKeyDown={e => { if (e.key === "Escape") setEditingDailyField(null); }}
+              className="block w-full px-2 py-1.5 border rounded text-sm outline-none resize-none bg-white border-[#d3e0c5] focus:border-[#7a9a6e] font-serif italic"
+              style={{ ...serifStyle, minHeight: "50px" }} />
+            <div className="flex gap-2 mt-2">
+              <button onClick={saveEditDaily} className="px-3 py-1 text-xs text-white rounded hover:opacity-90" style={{ background: "var(--accent-mid)" }}>{t("Save", lang)}</button>
+              <button onClick={() => setEditingDailyField(null)} className="px-3 py-1 text-xs text-stone-500 hover:text-stone-700">{t("Cancel", lang)}</button>
+            </div>
+          </div>
+        ) : (
+          <p className="font-serif text-lg italic text-stone-800 leading-snug" style={serifStyle}>{displayQuestion}</p>
+        )}
       </div>
 
       {/* Today's Intention — selector */}
@@ -7201,24 +7459,46 @@ function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, trigger
           </button>
         } />
 
-      {/* Sprint 3 — Today's 5 Reflection Prompts */}
-      <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/40 px-5 py-4 mb-6">
-        <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-3 font-semibold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Today's reflection prompts", lang)}</div>
-        <ol className="space-y-2">
-          {[
-            t("What am I proud of today?", lang),
-            t("What challenged me today?", lang),
-            t("What did I learn today?", lang),
-            t("What promise did I keep today?", lang),
-            t("What deserves my attention tomorrow?", lang),
-          ].map((prompt, i) => (
-            <li key={i} className="flex items-start gap-2.5">
-              <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white mt-0.5" style={{ background: "#7a9a6e" }}>{i + 1}</span>
-              <p className="text-sm italic text-stone-700 leading-snug" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{prompt}</p>
-            </li>
-          ))}
-        </ol>
-      </div>
+      {/* Sprint 4 — Today's 6 Reflection Prompts with inline answers */}
+      {(() => {
+        const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+        const reflectionAnswers = data.reflectionAnswers || {};
+        const todayAnswers = reflectionAnswers[today] || {};
+        const setAnswer = (idx, val) => {
+          const next = { ...reflectionAnswers, [today]: { ...todayAnswers, [idx]: val } };
+          setData({ ...data, reflectionAnswers: next });
+        };
+        const prompts = [
+          t("What am I proud of today?", lang),
+          t("What challenged me today?", lang),
+          t("What did I learn today?", lang),
+          t("What promise did I keep today?", lang),
+          t("How did I grow today?", lang),
+          t("What deserves my attention tomorrow?", lang),
+        ];
+        return (
+          <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/40 px-5 py-4 mb-6">
+            <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-4 font-semibold" style={serif}>{t("Today's reflection prompts", lang)}</div>
+            <ol className="space-y-4">
+              {prompts.map((prompt, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white mt-0.5" style={{ background: "#7a9a6e" }}>{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm italic text-stone-700 leading-snug mb-1.5" style={serif}>{prompt}</p>
+                    <textarea
+                      rows={2}
+                      value={todayAnswers[i] || ""}
+                      onChange={e => setAnswer(i, e.target.value)}
+                      placeholder={t("Write your answer…", lang)}
+                      className="block w-full px-2.5 py-2 border rounded-lg text-xs sm:text-sm outline-none resize-none bg-white/80 border-[#d3e0c5] focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20 text-stone-700"
+                      style={{ ...serif, minHeight: "56px", maxHeight: "120px" }} />
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        );
+      })()}
 
       <div className="grid lg:grid-cols-3 gap-5">
         <ReflectionPanel
@@ -10439,7 +10719,9 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     const startTime = newStart ? to12h(newStart) : "";
     const endTime = newEnd ? to12h(newEnd) : "";
     const notes = (newTaskNotes || "").trim();
-    const task = { id, title, date: modalTaskDate || date, done: false };
+    // Assign an explicit order so tasks can be reordered from the moment they're created.
+    const maxOrder = dayTasks.reduce((m, t) => Math.max(m, t.order ?? (1000 + (t.id || 0))), 0);
+    const task = { id, title, date: modalTaskDate || date, done: false, order: maxOrder + 10 };
     if (startTime) task.startTime = startTime;
     if (endTime) task.endTime = endTime;
     if (notes) task.notes = notes;
@@ -10734,10 +11016,10 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
               const meta = timeRange ? timeRange.toUpperCase() : null;
               const isLast = idx === visibleTasks.length - 1;
               return (
-                <li key={task.id} className={`flex items-center gap-1.5 sm:gap-2 px-1 py-1.5 sm:py-2.5 group ${editingId === task.id ? "" : "h-[44px] sm:h-auto overflow-hidden"} ${isLast ? "" : "border-b border-stone-100"}`}>
+                <li key={task.id} className={`flex items-start gap-1.5 sm:gap-2 px-1 py-2 sm:py-2.5 group ${isLast ? "" : "border-b border-stone-100"}`}>
                   {/* Done circle */}
                   <button onClick={() => toggleTask(task.id)}
-                    className={`w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border hover:bg-stone-50"}`}
+                    className={`w-5 h-5 mt-0.5 rounded-full flex items-center justify-center flex-shrink-0 transition ${task.done ? "text-white" : "border hover:bg-stone-50"}`}
                     style={task.done
                       ? { background: "var(--accent-mid)" }
                       : { borderColor: "var(--accent-mid)", opacity: 0.55 }}
@@ -11011,7 +11293,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S WINS", lang)}</h2>
-          <p className="text-[10px] italic text-stone-400 mt-0.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Evidence that you're becoming who you said you'd be.", lang)}</p>
+          <p className="text-[10px] italic text-stone-400 mt-0.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Every promise you keep becomes evidence that you can trust yourself.", lang)}</p>
           <button onClick={() => setAddWinModalOpen(true)}
             className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
             style={{ background: "var(--accent-mid)" }}
@@ -11591,7 +11873,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
             placeholder={t("Free-form journal for the day…", lang)} />
         </div>
         <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
-          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-3">{t("PREPARE TOMORROW", lang)}</h2>
+          <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-1">{t("PREPARE TOMORROW", lang)}</h2>
+          <p className="text-[10px] italic text-stone-400 mb-2.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Give tomorrow one clear direction before you rest.", lang)}</p>
           <textarea {...grow("tomorrow", 80, 220, 8)} value={tomorrow} onChange={e => updatePlan({ tomorrow: e.target.value })}
             placeholder={t("What's the first thing tomorrow needs from you?", lang)} />
         </div>
@@ -13848,7 +14131,7 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
     const newP = Math.max(0, Math.min(100, p));
     const oldG = allGoals.find(g => g.id === id);
     setData({ ...data, goals: allGoals.map(g => g.id === id ? { ...g, progress: newP } : g) });
-    if (newP === 100 && oldG && oldG.progress < 100) triggerConfetti(t("GOAL ACHIEVED", lang), true);
+    if (newP === 100 && oldG && oldG.progress < 100) triggerConfetti(t("One step closer to the life you're building.", lang), true);
   };
   const del = (id) => setData({ ...data, goals: allGoals.filter(g => g.id !== id) });
   const updateGoalField = (id, patch) => setData({ ...data, goals: allGoals.map(g => g.id === id ? { ...g, ...patch } : g) });
@@ -13869,7 +14152,7 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
     if (!g) return;
     const wasActive = (g.progress || 0) < 100;
     setData({ ...data, goals: allGoals.map(x => x.id === id ? { ...x, progress: wasActive ? 100 : 0 } : x) });
-    if (wasActive) triggerConfetti(t("GOAL ACHIEVED", lang), true);
+    if (wasActive) triggerConfetti(t("One step closer to the life you're building.", lang), true);
   };
 
   return (
