@@ -149,7 +149,37 @@ window.addEventListener("unhandledrejection", function(e){
     };
     function leaveFlush() { if (timer) clearTimeout(timer); flush(true); }
     window.addEventListener("pagehide", leaveFlush);
-    document.addEventListener("visibilitychange", function () { if (document.visibilityState === "hidden") leaveFlush(); });
+
+    // Cross-device sync: re-fetch from server when tab becomes visible after
+    // being hidden for > 20 seconds. Only runs when there are no pending
+    // local writes to avoid stomping an in-progress edit. Dispatches
+    // "sovereign-sync" so React can merge the fresh data into its state.
+    var hiddenAt = null;
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden") {
+        leaveFlush();
+        hiddenAt = Date.now();
+      } else if (hiddenAt && Date.now() - hiddenAt > 20000 && Object.keys(dirty).length === 0) {
+        hiddenAt = null;
+        fetch("/api/state", { credentials: "same-origin", headers: { "Accept": "application/json" } })
+          .then(function (r) { return r.ok ? r.json() : null; })
+          .then(function (j) {
+            if (!j || !j.state) return;
+            var changed = false;
+            Object.keys(j.state).forEach(function (k) {
+              if (!Object.prototype.hasOwnProperty.call(dirty, k) && cache[k] !== j.state[k]) {
+                cache[k] = j.state[k];
+                try { localStorage.setItem(k, j.state[k]); } catch (e) {}
+                changed = true;
+              }
+            });
+            if (changed) window.dispatchEvent(new CustomEvent("sovereign-sync"));
+          })
+          .catch(function () {});
+      } else {
+        hiddenAt = null;
+      }
+    });
   }
 
   // Compile the (deferred) JSX app source and run it as a module so the import
@@ -3441,6 +3471,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
   const dataKey = `dom_data_${user.username}`;
   const [data, setData] = useState(() => {
     const d = storage.get(dataKey, buildDemoData());
+    // (initial load only — cross-device sync handled below)
 
     // --- Affirmations: refresh defaults when the version bumps; keep user-added ones intact ---
     const list = Array.isArray(d.affirmations) ? d.affirmations : [];
@@ -3580,6 +3611,19 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
 
   useEffect(() => { storage.set(dataKey, data); }, [data, dataKey]);
   useEffect(() => { storage.set("dom_active", active); }, [active]);
+
+  // Cross-device sync: when the bootstrap detects fresh server data (tab was
+  // backgrounded for > 20 s), pull the updated value from cache into React.
+  // The bootstrap only overwrites cache keys that weren't dirty locally, so
+  // any unsaved local edits are always preserved.
+  useEffect(() => {
+    const onSync = () => {
+      const fresh = storage.get(dataKey, null);
+      if (fresh && typeof fresh === "object") setData(fresh);
+    };
+    window.addEventListener("sovereign-sync", onSync);
+    return () => window.removeEventListener("sovereign-sync", onSync);
+  }, [dataKey]);
 
   const [confettiBig, setConfettiBig] = useState(false);
   const triggerConfetti = (msg = "Another promise kept.", big = false) => {
