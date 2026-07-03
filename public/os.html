@@ -1770,6 +1770,7 @@ const TRANSLATIONS = {
     "Personal Finance": "Personal Finance",
     "Vision Board": "Vision Board",
     "Growth & Self": "Growth & Self",
+    "Self": "Self",
     // Pillar labels
     "Purpose": "Purpose",
     "Mind": "Mind",
@@ -2570,6 +2571,7 @@ const TRANSLATIONS = {
     "Personal Finance": "Finanzas Personales",
     "Vision Board": "Tablero de Visión",
     "Growth & Self": "Crecimiento y Yo",
+    "Self": "Yo",
     // Pillar labels
     "Purpose": "Propósito",
     "Mind": "Mente",
@@ -7516,7 +7518,7 @@ function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, trigger
 
   return (
     <div>
-      <PageHeader title={t("Growth & Self", lang)} subtitle={t("Know yourself better one day at a time.", lang)} dark={dark}
+      <PageHeader title={t("Self", lang)} subtitle={t("Know yourself better one day at a time.", lang)} dark={dark}
         action={
           <button onClick={addCustomPanel} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> {t("New section", lang)}
@@ -7542,24 +7544,20 @@ function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, trigger
         ];
         return (
           <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/40 px-5 py-4 mb-6">
-            <div className="text-[10px] tracking-[0.2em] uppercase text-[#7a9a6e] mb-4 font-semibold" style={serif}>{t("Today's reflection prompts", lang)}</div>
-            <ol className="space-y-4">
+            <div className="space-y-4">
               {prompts.map((prompt, i) => (
-                <li key={i} className="flex items-start gap-2.5">
-                  <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white mt-0.5" style={{ background: "#7a9a6e" }}>{i + 1}</span>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm italic text-stone-700 leading-snug mb-1.5" style={serif}>{prompt}</p>
-                    <textarea
-                      rows={2}
-                      value={todayAnswers[i] || ""}
-                      onChange={e => setAnswer(i, e.target.value)}
-                      placeholder={t("Write your answer…", lang)}
-                      className="block w-full px-2.5 py-2 border rounded-lg text-xs sm:text-sm outline-none resize-none bg-white/80 border-[#d3e0c5] focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20 text-stone-700"
-                      style={{ ...serif, minHeight: "56px", maxHeight: "120px" }} />
-                  </div>
-                </li>
+                <div key={i}>
+                  <p className="text-sm italic text-stone-700 leading-snug mb-1.5" style={serif}>{prompt}</p>
+                  <textarea
+                    rows={2}
+                    value={todayAnswers[i] || ""}
+                    onChange={e => setAnswer(i, e.target.value)}
+                    placeholder={t("Write your answer…", lang)}
+                    className="block w-full px-2.5 py-2 border rounded-lg text-xs sm:text-sm outline-none resize-none bg-white/80 border-[#d3e0c5] focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20 text-stone-700"
+                    style={{ ...serif, minHeight: "56px", maxHeight: "120px" }} />
+                </div>
               ))}
-            </ol>
+            </div>
           </div>
         );
       })()}
