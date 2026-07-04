@@ -1684,7 +1684,7 @@ const PERSONAL_NAV = [
   { id: "calendarYear", label: "Calendar",            icon: Calendar },
   { id: "habitsView",   label: "Habits",              icon: Activity },
   { id: "goals",        label: "Goals",               icon: Target },
-  { id: "habits",       label: "Reflection",          icon: Lightbulb },
+  { id: "habits",       label: "Self",                 icon: Lightbulb },
   { id: "personalFinance", label: "Finances",         icon: DollarSign },
   { id: "cycle",        label: "Cycle & Mood",        icon: Heart },
   { id: "speak",        label: "Speak Eloquently",    icon: MessageCircle },
@@ -1716,7 +1716,7 @@ const PERSONAL_NAV_PILLARS = [
       { id: "sovereignOS",     label: "Sovereign",         icon: Sparkles },
       { id: "affirmations",    label: "Affirmations",     icon: Sparkles },
       { id: "speak",           label: "Speak Eloquently", icon: MessageCircle },
-      { id: "habits",          label: "Reflection",       icon: Lightbulb },
+      { id: "habits",          label: "Self",             icon: Lightbulb },
       { id: "notes",           label: "Notes",            icon: StickyNote },
     ],
   },
@@ -7518,49 +7518,13 @@ function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, trigger
 
   return (
     <div>
-      <PageHeader title={t("Self", lang)} subtitle={t("Know yourself better one day at a time.", lang)} dark={dark}
+      <PageHeader title={t("Growth & Self", lang)} subtitle={t("Know yourself better one day at a time.", lang)} dark={dark}
         action={
           <button onClick={addCustomPanel} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5">
             <Plus className="w-4 h-4" /> {t("New section", lang)}
           </button>
         } />
 
-      {/* Sprint 4 — Today's 6 Reflection Prompts with inline answers */}
-      {(() => {
-        const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
-        const reflectionAnswers = data.reflectionAnswers || {};
-        const todayAnswers = reflectionAnswers[today] || {};
-        const setAnswer = (idx, val) => {
-          const next = { ...reflectionAnswers, [today]: { ...todayAnswers, [idx]: val } };
-          setData({ ...data, reflectionAnswers: next });
-        };
-        const prompts = [
-          t("What am I proud of today?", lang),
-          t("What challenged me today?", lang),
-          t("What did I learn today?", lang),
-          t("What promise did I keep today?", lang),
-          t("How did I grow today?", lang),
-          t("What deserves my attention tomorrow?", lang),
-        ];
-        return (
-          <div className="rounded-2xl border border-[#d3e0c5] bg-[#f4f7ee]/40 px-5 py-4 mb-6">
-            <div className="space-y-4">
-              {prompts.map((prompt, i) => (
-                <div key={i}>
-                  <p className="text-sm italic text-stone-700 leading-snug mb-1.5" style={serif}>{prompt}</p>
-                  <textarea
-                    rows={2}
-                    value={todayAnswers[i] || ""}
-                    onChange={e => setAnswer(i, e.target.value)}
-                    placeholder={t("Write your answer…", lang)}
-                    className="block w-full px-2.5 py-2 border rounded-lg text-xs sm:text-sm outline-none resize-none bg-white/80 border-[#d3e0c5] focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20 text-stone-700"
-                    style={{ ...serif, minHeight: "56px", maxHeight: "120px" }} />
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
 
       <div className="grid lg:grid-cols-3 gap-5">
         <ReflectionPanel
