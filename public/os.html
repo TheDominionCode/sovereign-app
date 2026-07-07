@@ -1681,8 +1681,8 @@ const PERSONAL_NAV = [
   { id: "personalHome", label: "Summary",              icon: Home },
   { id: "sovereignOS",  label: "Sovereign",           icon: Sparkles },
   { id: "planner",      label: "Today's Focus",      icon: BookOpen },
-  { id: "calendarYear", label: "Calendar",            icon: Calendar },
-  { id: "habitsView",   label: "Habits",              icon: Activity },
+  { id: "calendarYear", label: "Life Calendar",        icon: Calendar },
+  { id: "habitsView",   label: "Daily Rhythm",         icon: Activity },
   { id: "goals",        label: "Goals",               icon: Target },
   { id: "habits",       label: "Self",                 icon: Lightbulb },
   { id: "personalFinance", label: "Finances",         icon: DollarSign },
@@ -1692,6 +1692,7 @@ const PERSONAL_NAV = [
   { id: "boundaries",   label: "Boundaries",          icon: Shield },
   { id: "vision",       label: "Vision",              icon: ImageIcon },
   { id: "notes",        label: "Notes",               icon: StickyNote },
+  { id: "coach",        label: "AI Coach",            icon: Crown },
 ];
 
 const SHARED_NAV = [
@@ -1705,7 +1706,7 @@ const PERSONAL_NAV_PILLARS = [
     id: "purpose", label: "Purpose", icon: Target,
     items: [
       { id: "planner",         label: "Today's Focus",   icon: BookOpen },
-      { id: "calendarYear",    label: "Calendar",         icon: Calendar },
+      { id: "calendarYear",    label: "Life Calendar",    icon: Calendar },
       { id: "goals",           label: "Goals",            icon: Target },
       { id: "vision",          label: "Vision",           icon: ImageIcon },
     ],
@@ -1718,12 +1719,13 @@ const PERSONAL_NAV_PILLARS = [
       { id: "speak",           label: "Speak Eloquently", icon: MessageCircle },
       { id: "habits",          label: "Self",             icon: Lightbulb },
       { id: "notes",           label: "Notes",            icon: StickyNote },
+      { id: "coach",           label: "AI Coach",         icon: Crown },
     ],
   },
   {
     id: "body", label: "Body", icon: Activity,
     items: [
-      { id: "habitsView",      label: "Habits",           icon: Activity },
+      { id: "habitsView",      label: "Daily Rhythm",     icon: Activity },
       { id: "cycle",           label: "Cycle & Mood",     icon: Heart },
     ],
   },
@@ -1751,6 +1753,9 @@ const TRANSLATIONS = {
     "Sovereign OS": "Sovereign",
     "Today's Focus": "Today's Focus",
     "Calendar": "Calendar",
+    "Life Calendar": "Life Calendar",
+    "This Year at a Glance": "This Year at a Glance",
+    "What deserves your time?": "What deserves your time?",
     "Finances": "Finances",
     "Goals": "Goals",
     "Reflection": "Reflection",
@@ -1764,6 +1769,13 @@ const TRANSLATIONS = {
     "Settings": "Settings",
     "Sign out": "Sign out",
     "Habits": "Habits",
+    "Daily Rhythm": "Daily Rhythm",
+    "in alignment": "in alignment",
+    "TODAY'S ALIGNMENT": "TODAY'S ALIGNMENT",
+    "Today's Identity": "Today's Identity",
+    "Today I choose to become…": "Today I choose to become…",
+    "Every habit you complete today is evidence that you are": "Every habit you complete today is evidence that you are",
+    "Generous": "Generous",
     // Legacy keys kept so existing translated strings still resolve
     "Summary": "Summary",
     "Daily Planner": "Daily Planner",
@@ -1982,12 +1994,39 @@ const TRANSLATIONS = {
     "Evidence that you're becoming who you said you'd be.": "Evidence that you're becoming who you said you'd be.",
     "Every yes protects something. Every no protects someone.": "Every yes protects something. Every no protects someone.",
     "Your words shape your relationships.": "Your words shape your relationships.",
+    "The language you repeatedly use becomes your identity.": "The language you repeatedly use becomes your identity.",
     "Listen to your body before demanding more from it.": "Listen to your body before demanding more from it.",
     "Repeat what you want your mind to believe.": "Repeat what you want your mind to believe.",
     "Capture what you never want to forget.": "Capture what you never want to forget.",
+    "The Sovereign Mind": "The Sovereign Mind",
+    "Write it here. Free your attention for what matters most.": "Write it here. Free your attention for what matters most.",
+    "Capture every thought, worry, idea, reminder, and unfinished task. Your mind deserves clarity before it deserves a plan.": "Capture every thought, worry, idea, reminder, and unfinished task. Your mind deserves clarity before it deserves a plan.",
+    "What keeps showing up in your mind that needs a place to live?": "What keeps showing up in your mind that needs a place to live?",
     "Stewardship creates freedom.": "Stewardship creates freedom.",
+    "Personal Wealth Operating System": "Personal Wealth Operating System",
+    "Am I becoming wealthier?": "Am I becoming wealthier?",
     "Every vision deserves today's action.": "Every vision deserves today's action.",
     "Know yourself better one day at a time.": "Know yourself better one day at a time.",
+    "Did you become who you said you wanted to become today?": "Did you become who you said you wanted to become today?",
+    "AI Coach": "AI Coach",
+    "Your personal evening debrief.": "Your personal evening debrief.",
+    "DOMINION STRENGTHENED": "DOMINION STRENGTHENED",
+    "Today you strengthened your Dominion.": "Today you strengthened your Dominion.",
+    "Today you chose to be": "Today you chose to be",
+    "Your habits confirmed it.": "Your habits confirmed it.",
+    "Tomorrow, let your habits confirm it.": "Tomorrow, let your habits confirm it.",
+    "Every day is a new beginning. Tomorrow you choose again.": "Every day is a new beginning. Tomorrow you choose again.",
+    "Perfect alignment. You showed up fully today.": "Perfect alignment. You showed up fully today.",
+    "{n} of {m} habits completed today.": "{n} of {m} habits completed today.",
+    "What you built today": "What you built today",
+    "Evening Debrief": "Evening Debrief",
+    "Your AI coach reflects on your day and offers one insight.": "Your AI coach reflects on your day and offers one insight.",
+    "Generate Tonight's Debrief": "Generate Tonight's Debrief",
+    "Your coach is reflecting on your day…": "Your coach is reflecting on your day…",
+    "Your AI coach is not available yet — ask your admin to set up the API key.": "Your AI coach is not available yet — ask your admin to set up the API key.",
+    "Something went wrong. Try again.": "Something went wrong. Try again.",
+    "Generate again": "Generate again",
+    "completed": "completed",
     "Today's reflection prompts": "Today's reflection prompts",
     "What am I proud of today?": "What am I proud of today?",
     "What challenged me today?": "What challenged me today?",
@@ -2384,6 +2423,7 @@ const TRANSLATIONS = {
     "Search notes…": "Search notes…",
     "Edit Note": "Edit Note",
     "New Note": "New Note",
+    "Before the world gets loud": "Before the world gets loud",
     "Body": "Body",
     "Tags (comma-separated)": "Tags (comma-separated)",
     "Pin to top": "Pin to top",
@@ -2405,6 +2445,9 @@ const TRANSLATIONS = {
     "Save phrase": "Save phrase",
     // Credentials
     "Add login": "Add login",
+    "Pin to favorites": "Pin to favorites",
+    "Unpin": "Unpin",
+    "All Logins": "All Logins",
     "Stored locally on this device only — never sent to a server. For sensitive accounts (banking, email recovery) consider a dedicated password manager. This vault is great for keeping things organized.": "Stored locally on this device only — never sent to a server. For sensitive accounts (banking, email recovery) consider a dedicated password manager. This vault is great for keeping things organized.",
     "Search sites, usernames…": "Search sites, usernames…",
     "No logins saved yet. Add your first one.": "No logins saved yet. Add your first one.",
@@ -2474,6 +2517,25 @@ const TRANSLATIONS = {
     "New passwords don't match.": "New passwords don't match.",
     "New password must be at least 6 characters.": "New password must be at least 6 characters.",
     "Fill in all fields.": "Fill in all fields.",
+    "Security": "Security",
+    "Face ID / Touch ID": "Face ID / Touch ID",
+    "Mobile app": "Mobile app",
+    "Require biometric authentication to open Sovereign": "Require biometric authentication to open Sovereign",
+    "Auto-lock": "Auto-lock",
+    "Lock the vault after a period of inactivity": "Lock the vault after a period of inactivity",
+    "Hide app in App Switcher": "Hide app in App Switcher",
+    "Prevent app preview from appearing when switching apps": "Prevent app preview from appearing when switching apps",
+    "Encrypt backups": "Encrypt backups",
+    "Add a passphrase to exported JSON backups": "Add a passphrase to exported JSON backups",
+    "Local-only mode": "Local-only mode",
+    "Keep all data on this device — disable cloud sync": "Keep all data on this device — disable cloud sync",
+    "Recovery phrase": "Recovery phrase",
+    "12-word phrase to recover your account if you lose access": "12-word phrase to recover your account if you lose access",
+    "Write this down and keep it safe. Never share it.": "Write this down and keep it safe. Never share it.",
+    "Trusted devices": "Trusted devices",
+    "Manage which devices can access your account without re-authentication": "Manage which devices can access your account without re-authentication",
+    "Session history": "Session history",
+    "See when and where your account has been accessed": "See when and where your account has been accessed",
     "Daily reminder": "Daily reminder",
     "Show today's tasks and goals each morning": "Show today's tasks and goals each morning",
     "Milestone celebrations": "Milestone celebrations",
@@ -2552,6 +2614,9 @@ const TRANSLATIONS = {
     "Sovereign OS": "Sovereign",
     "Today's Focus": "Mi Enfoque de Hoy",
     "Calendar": "Calendario",
+    "Life Calendar": "Calendario de Vida",
+    "This Year at a Glance": "Este Año de un Vistazo",
+    "What deserves your time?": "¿Qué merece tu tiempo?",
     "Finances": "Finanzas",
     "Goals": "Metas",
     "Reflection": "Reflexión",
@@ -2565,6 +2630,13 @@ const TRANSLATIONS = {
     "Settings": "Configuración",
     "Sign out": "Cerrar sesión",
     "Habits": "Hábitos",
+    "Daily Rhythm": "Ritmo Diario",
+    "in alignment": "en alineación",
+    "TODAY'S ALIGNMENT": "ALINEACIÓN DE HOY",
+    "Today's Identity": "Mi Identidad de Hoy",
+    "Today I choose to become…": "Hoy elijo convertirme en…",
+    "Every habit you complete today is evidence that you are": "Cada hábito que completes hoy es evidencia de que eres",
+    "Generous": "Generosa",
     // Legacy keys kept so existing translated strings still resolve
     "Summary": "Resumen",
     "Daily Planner": "Planificador Diario",
@@ -2786,12 +2858,39 @@ const TRANSLATIONS = {
     "Evidence that you're becoming who you said you'd be.": "Evidencia de que te estás convirtiendo en quien dijiste que serías.",
     "Every yes protects something. Every no protects someone.": "Cada sí protege algo. Cada no protege a alguien.",
     "Your words shape your relationships.": "Tus palabras dan forma a tus relaciones.",
+    "The language you repeatedly use becomes your identity.": "El lenguaje que usas repetidamente se convierte en tu identidad.",
     "Listen to your body before demanding more from it.": "Escucha a tu cuerpo antes de exigirle más.",
     "Repeat what you want your mind to believe.": "Repite lo que quieres que tu mente crea.",
     "Capture what you never want to forget.": "Captura lo que nunca quieres olvidar.",
+    "The Sovereign Mind": "La Mente Soberana",
+    "Write it here. Free your attention for what matters most.": "Escríbelo aquí. Libera tu atención para lo que más importa.",
+    "Capture every thought, worry, idea, reminder, and unfinished task. Your mind deserves clarity before it deserves a plan.": "Captura cada pensamiento, preocupación, idea, recordatorio y tarea pendiente. Tu mente merece claridad antes de merecer un plan.",
+    "What keeps showing up in your mind that needs a place to live?": "¿Qué sigue apareciendo en tu mente y necesita un lugar donde vivir?",
     "Stewardship creates freedom.": "La administración crea libertad.",
+    "Personal Wealth Operating System": "Sistema Operativo de Riqueza Personal",
+    "Am I becoming wealthier?": "¿Me estoy volviendo más próspera?",
     "Every vision deserves today's action.": "Cada visión merece la acción de hoy.",
     "Know yourself better one day at a time.": "Conócete mejor un día a la vez.",
+    "Did you become who you said you wanted to become today?": "¿Te convertiste en quien dijiste que querías ser hoy?",
+    "AI Coach": "Coach de IA",
+    "Your personal evening debrief.": "Tu resumen personal de la noche.",
+    "DOMINION STRENGTHENED": "DOMINIO FORTALECIDO",
+    "Today you strengthened your Dominion.": "Hoy fortaleciste tu Dominio.",
+    "Today you chose to be": "Hoy elegiste ser",
+    "Your habits confirmed it.": "Tus hábitos lo confirmaron.",
+    "Tomorrow, let your habits confirm it.": "Mañana, deja que tus hábitos lo confirmen.",
+    "Every day is a new beginning. Tomorrow you choose again.": "Cada día es un nuevo comienzo. Mañana eliges de nuevo.",
+    "Perfect alignment. You showed up fully today.": "Alineación perfecta. Te presentaste plenamente hoy.",
+    "{n} of {m} habits completed today.": "{n} de {m} hábitos completados hoy.",
+    "What you built today": "Lo que construiste hoy",
+    "Evening Debrief": "Resumen Nocturno",
+    "Your AI coach reflects on your day and offers one insight.": "Tu coach de IA reflexiona sobre tu día y ofrece una perspectiva.",
+    "Generate Tonight's Debrief": "Generar el Resumen de Esta Noche",
+    "Your coach is reflecting on your day…": "Tu coach está reflexionando sobre tu día…",
+    "Your AI coach is not available yet — ask your admin to set up the API key.": "Tu coach de IA aún no está disponible — pide al administrador que configure la clave API.",
+    "Something went wrong. Try again.": "Algo salió mal. Inténtalo de nuevo.",
+    "Generate again": "Generar de nuevo",
+    "completed": "completados",
     "Today's reflection prompts": "Preguntas de reflexión de hoy",
     "What am I proud of today?": "¿De qué estoy orgullosa hoy?",
     "What challenged me today?": "¿Qué me desafió hoy?",
@@ -3186,6 +3285,7 @@ const TRANSLATIONS = {
     "Search notes…": "Buscar notas…",
     "Edit Note": "Editar nota",
     "New Note": "Nueva nota",
+    "Before the world gets loud": "Antes de que el mundo se haga ruidoso",
     "Body": "Contenido",
     "Tags (comma-separated)": "Etiquetas (separadas por comas)",
     "Pin to top": "Fijar arriba",
@@ -3207,6 +3307,9 @@ const TRANSLATIONS = {
     "Save phrase": "Guardar frase",
     // Credentials — native Spanish
     "Add login": "Añadir acceso",
+    "Pin to favorites": "Fijar en favoritos",
+    "Unpin": "Desfijar",
+    "All Logins": "Todos los accesos",
     "Stored locally on this device only — never sent to a server. For sensitive accounts (banking, email recovery) consider a dedicated password manager. This vault is great for keeping things organized.": "Guardado solo en este dispositivo — nunca se envía a un servidor. Para cuentas sensibles (banca, recuperación de correo) considera un gestor de contraseñas dedicado. Esta bóveda es ideal para mantener las cosas organizadas.",
     "Search sites, usernames…": "Buscar sitios, usuarios…",
     "No logins saved yet. Add your first one.": "Aún no hay accesos guardados. Añade el primero.",
@@ -3276,6 +3379,25 @@ const TRANSLATIONS = {
     "New passwords don't match.": "Las contraseñas nuevas no coinciden.",
     "New password must be at least 6 characters.": "La nueva contraseña debe tener al menos 6 caracteres.",
     "Fill in all fields.": "Completa todos los campos.",
+    "Security": "Seguridad",
+    "Face ID / Touch ID": "Face ID / Touch ID",
+    "Mobile app": "App móvil",
+    "Require biometric authentication to open Sovereign": "Requiere autenticación biométrica para abrir Sovereign",
+    "Auto-lock": "Bloqueo automático",
+    "Lock the vault after a period of inactivity": "Bloquear la bóveda tras un período de inactividad",
+    "Hide app in App Switcher": "Ocultar app en el selector de apps",
+    "Prevent app preview from appearing when switching apps": "Evitar que aparezca la vista previa al cambiar de app",
+    "Encrypt backups": "Cifrar copias de seguridad",
+    "Add a passphrase to exported JSON backups": "Añadir contraseña a las copias de seguridad exportadas",
+    "Local-only mode": "Modo solo local",
+    "Keep all data on this device — disable cloud sync": "Guardar todos los datos en este dispositivo — desactivar sincronización en la nube",
+    "Recovery phrase": "Frase de recuperación",
+    "12-word phrase to recover your account if you lose access": "Frase de 12 palabras para recuperar tu cuenta si pierdes el acceso",
+    "Write this down and keep it safe. Never share it.": "Escríbela y guárdala en un lugar seguro. Nunca la compartas.",
+    "Trusted devices": "Dispositivos de confianza",
+    "Manage which devices can access your account without re-authentication": "Gestionar qué dispositivos pueden acceder a tu cuenta sin volver a autenticarse",
+    "Session history": "Historial de sesiones",
+    "See when and where your account has been accessed": "Ver cuándo y desde dónde se ha accedido a tu cuenta",
     "Daily reminder": "Recordatorio diario",
     "Show today's tasks and goals each morning": "Muestra las tareas y metas de hoy cada mañana",
     "Milestone celebrations": "Celebración de logros",
@@ -4106,6 +4228,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           {active === "credentials" && <CredentialsModule {...moduleProps} />}
           {active === "habits" && <HabitsSelfModule {...moduleProps} />}
           {active === "habitsView" && <HabitsViewModule {...moduleProps} />}
+          {active === "coach" && <CoachModule {...moduleProps} />}
           {active === "cycle" && <CycleModule {...moduleProps} />}
           {active === "speak" && <SpeakElegantlyModule {...moduleProps} />}
           {active === "boundaries" && <BoundariesModule {...moduleProps} />}
@@ -4208,8 +4331,15 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
     return days >= 60;
   }).slice(0, 3);
 
-  const totalCount = customReminders.length + tasksToday.length + birthdaysUpcoming.length + stale.length + goalsDue.length + vitaminsMissed.length + recruitsStalled.length;
-  const hasAlerts = totalCount > 0;
+  const [bellTab, setBellTab] = useState("reminders");
+
+  // Badge logic: amber = urgent (birthday ≤1 day, or overdue task), green dot = has items
+  const overdueTaskCount = (data.tasks || []).filter(t => t.date && t.date < today && !t.done).length;
+  const urgentBirthday = birthdaysUpcoming.some(c => c.daysAway <= 1);
+  const isUrgent = overdueTaskCount > 0 || urgentBirthday;
+  const remindersCount = customReminders.length + tasksToday.length + vitaminsMissed.length;
+  const notificationsCount = birthdaysUpcoming.length + stale.length + goalsDue.length + recruitsStalled.length;
+  const hasAny = remindersCount + notificationsCount > 0;
 
   const Section = ({ icon: Icon, label, items, render, route, color = "#7a9a6e" }) => {
     if (items.length === 0) return null;
@@ -4232,110 +4362,99 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
 
   return (
     <div className="relative">
-      <button onClick={() => setOpen(!open)} className="p-2 rounded hover:bg-stone-100 relative" title={hasAlerts ? `${totalCount} reminder${totalCount === 1 ? "" : "s"}` : "No reminders"}>
+      <button onClick={() => setOpen(!open)} className="p-2 rounded hover:bg-stone-100 relative" title={hasAny ? "Notifications & Reminders" : "All clear"}>
         <Bell className="w-4 h-4" />
-        {hasAlerts && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-[#7a9a6e] text-white text-[9px] font-bold rounded-full flex items-center justify-center">{totalCount > 9 ? "9+" : totalCount}</span>
+        {isUrgent && (
+          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-amber-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{(overdueTaskCount + (urgentBirthday ? 1 : 0)) > 9 ? "9+" : overdueTaskCount + (urgentBirthday ? 1 : 0)}</span>
+        )}
+        {!isUrgent && hasAny && (
+          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#7a9a6e] border-2 border-white" />
         )}
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-stone-200 rounded-lg shadow-2xl z-50 overflow-hidden max-h-[70vh] overflow-y-auto">
-            <div className="px-4 py-3 border-b border-stone-100 flex items-center justify-between">
-              <div>
-                <div className="text-sm font-semibold">Reminders</div>
-                <div className="text-[10px] text-stone-500">{hasAlerts ? `${totalCount} thing${totalCount === 1 ? "" : "s"} on your radar` : "Nothing pressing — well done"}</div>
-              </div>
-              <Bell className="w-4 h-4 text-[#7a9a6e]" />
-            </div>
-            {/* USER-ADDED REMINDERS — anything you want on your radar */}
-            <div className="px-4 py-3 border-b border-stone-100 bg-[#f4f7ee]/30">
-              <div className="text-[10px] tracking-[0.18em] text-[#5b7351] mb-2 font-medium">YOUR REMINDERS</div>
-              <div className="flex gap-1.5 mb-2">
-                <input
-                  value={draft}
-                  onChange={(e) => setDraft(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addReminder(); } }}
-                  placeholder="Add a reminder…"
-                  className="flex-1 px-2.5 py-1.5 text-xs bg-white border border-stone-200 rounded focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20 outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={addReminder}
-                  className="px-3 py-1.5 text-[11px] uppercase tracking-wider bg-[#7a9a6e] text-white rounded font-medium hover:bg-[#5b7351] transition"
-                >
-                  + Add
+          <div className="absolute right-0 top-full mt-2 w-80 bg-white border border-stone-200 rounded-lg shadow-2xl z-50 overflow-hidden max-h-[75vh] flex flex-col">
+            {/* Tab bar */}
+            <div className="flex border-b border-stone-100 flex-shrink-0">
+              {[
+                { id: "reminders", label: "Reminders", count: remindersCount },
+                { id: "notifications", label: "Notifications", count: notificationsCount },
+              ].map(tab => (
+                <button key={tab.id} onClick={() => setBellTab(tab.id)}
+                  className={`flex-1 py-2.5 text-xs font-medium transition flex items-center justify-center gap-1.5 border-b-2 ${bellTab === tab.id ? "border-[#7a9a6e] text-[#5b7351]" : "border-transparent text-stone-500 hover:text-stone-700"}`}>
+                  {tab.label}
+                  {tab.count > 0 && <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-bold ${bellTab === tab.id ? "bg-[#7a9a6e] text-white" : "bg-stone-100 text-stone-500"}`}>{tab.count}</span>}
                 </button>
-              </div>
-              {customReminders.length === 0 ? (
-                <div className="text-[11px] text-stone-400 italic py-1">Nothing yet. Add anything you want to remember.</div>
-              ) : (
-                <ul className="space-y-1">
-                  {customReminders.map((r) => (
-                    <li key={r.id} className="flex items-start gap-2 text-xs text-stone-700 group py-1">
-                      <span className="mt-0.5 text-[#7a9a6e]">•</span>
-                      <span className="flex-1 leading-snug break-words">{r.text}</span>
-                      <button
-                        onClick={() => removeReminder(r.id)}
-                        className="opacity-40 group-hover:opacity-100 text-stone-400 hover:text-rose-500 transition px-1"
-                        aria-label="Remove reminder"
-                      >✕</button>
-                    </li>
-                  ))}
-                </ul>
-              )}
+              ))}
             </div>
 
-            {!hasAlerts && (
-              <div className="px-4 py-10 text-center text-sm text-stone-400 italic">You&apos;re all clear. Take a breath.</div>
-            )}
-            <Section
-              icon={CheckSquare}
-              label="TODAY'S PENDING TASKS"
-              items={tasksToday}
-              route="planner"
-              render={(t) => <span>• {t.title}{t.priority === "critical" || t.priority === "high" ? <span className="ml-1 text-[#5b7351] font-medium tracking-wider">PRIORITY</span> : null}</span>}
-            />
-            <Section
-              icon={Gift}
-              label="UPCOMING BIRTHDAYS"
-              items={birthdaysUpcoming}
-              route="clients"
-              color="#a16207"
-              render={(c) => <span>🎂 {c.name} — {c.daysAway === 0 ? "today" : c.daysAway === 1 ? "tomorrow" : `in ${c.daysAway} days`}</span>}
-            />
-            <Section
-              icon={Phone}
-              label="CLIENTS GOING COLD (30+ DAYS)"
-              items={stale}
-              route="clients"
-              color="#b45309"
-              render={(c) => <span>📞 {c.name} — {Math.floor((now - new Date(c.lastContact)) / (1000 * 60 * 60 * 24))} days</span>}
-            />
-            <Section
-              icon={Target}
-              label="GOALS DUE THIS MONTH"
-              items={goalsDue}
-              route="goals"
-              render={(g) => <span>🎯 {g.title} — {g.progress}% · due {fmtDate(g.deadline)}</span>}
-            />
-            <Section
-              icon={Heart}
-              label="VITAMINS NOT TAKEN TODAY"
-              items={vitaminsMissed}
-              route="cycle"
-              color="#b07a7a"
-              render={(v) => <span>💊 {v.name}</span>}
-            />
-            <Section
-              icon={UserPlus}
-              label="RECRUITS STALLED 60+ DAYS"
-              items={recruitsStalled}
-              route="recruits"
-              color="#b45309"
-              render={(r) => <span>👤 {r.name} — non-licensed since {fmtDate(r.startDate)}</span>}
-            />
+            <div className="overflow-y-auto flex-1">
+              {bellTab === "reminders" && (
+                <>
+                  {/* USER-ADDED REMINDERS */}
+                  <div className="px-4 py-3 border-b border-stone-100 bg-[#f4f7ee]/30">
+                    <div className="text-[10px] tracking-[0.18em] text-[#5b7351] mb-2 font-medium">YOUR REMINDERS</div>
+                    <div className="flex gap-1.5 mb-2">
+                      <input
+                        value={draft}
+                        onChange={(e) => setDraft(e.target.value)}
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addReminder(); } }}
+                        placeholder="Add a reminder…"
+                        className="flex-1 px-2.5 py-1.5 text-xs bg-white border border-stone-200 rounded focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20 outline-none"
+                      />
+                      <button type="button" onClick={addReminder}
+                        className="px-3 py-1.5 text-[11px] uppercase tracking-wider bg-[#7a9a6e] text-white rounded font-medium hover:bg-[#5b7351] transition">
+                        + Add
+                      </button>
+                    </div>
+                    {customReminders.length === 0 ? (
+                      <div className="text-[11px] text-stone-400 italic py-1">Nothing yet. Add anything you want to remember.</div>
+                    ) : (
+                      <ul className="space-y-1">
+                        {customReminders.map((r) => (
+                          <li key={r.id} className="flex items-start gap-2 text-xs text-stone-700 group py-1">
+                            <span className="mt-0.5 text-[#7a9a6e]">•</span>
+                            <span className="flex-1 leading-snug break-words">{r.text}</span>
+                            <button onClick={() => removeReminder(r.id)} className="opacity-40 group-hover:opacity-100 text-stone-400 hover:text-rose-500 transition px-1">✕</button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+
+                  {tasksToday.length === 0 && vitaminsMissed.length === 0 && (
+                    <div className="px-4 py-8 text-center text-sm text-stone-400 italic">Tasks and vitamins are all clear.</div>
+                  )}
+                  <Section icon={CheckSquare} label="TODAY'S PENDING TASKS" items={tasksToday} route="planner"
+                    render={(t) => <span className={overdueTaskCount > 0 && t.date < today ? "text-amber-700 font-medium" : ""}>• {t.title}{t.priority === "critical" || t.priority === "high" ? <span className="ml-1 text-[#5b7351] font-medium tracking-wider">PRIORITY</span> : null}</span>}
+                  />
+                  <Section icon={Heart} label="VITAMINS NOT TAKEN TODAY" items={vitaminsMissed} route="cycle" color="#b07a7a"
+                    render={(v) => <span>💊 {v.name}</span>}
+                  />
+                </>
+              )}
+
+              {bellTab === "notifications" && (
+                <>
+                  {notificationsCount === 0 && (
+                    <div className="px-4 py-10 text-center text-sm text-stone-400 italic">You&apos;re all clear. Well done.</div>
+                  )}
+                  <Section icon={Gift} label="UPCOMING BIRTHDAYS" items={birthdaysUpcoming} route="clients" color="#a16207"
+                    render={(c) => <span className={c.daysAway <= 1 ? "text-amber-700 font-medium" : ""}>🎂 {c.name} — {c.daysAway === 0 ? "today" : c.daysAway === 1 ? "tomorrow" : `in ${c.daysAway} days`}</span>}
+                  />
+                  <Section icon={Target} label="GOALS DUE THIS MONTH" items={goalsDue} route="goals"
+                    render={(g) => <span>🎯 {g.title} — {g.progress}% · due {fmtDate(g.deadline)}</span>}
+                  />
+                  <Section icon={Phone} label="CLIENTS GOING COLD (30+ DAYS)" items={stale} route="clients" color="#b45309"
+                    render={(c) => <span>📞 {c.name} — {Math.floor((now - new Date(c.lastContact)) / (1000 * 60 * 60 * 24))} days</span>}
+                  />
+                  <Section icon={UserPlus} label="RECRUITS STALLED 60+ DAYS" items={recruitsStalled} route="recruits" color="#b45309"
+                    render={(r) => <span>👤 {r.name} — non-licensed since {fmtDate(r.startDate)}</span>}
+                  />
+                </>
+              )}
+            </div>
           </div>
         </>
       )}
@@ -4632,7 +4751,24 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
     weekStart: "Monday",
     currency: "$",
     accent: "sage",
+    autoLock: "never",
+    encryptBackups: false,
+    localOnly: false,
   }));
+
+  // Recovery phrase — generate once, store in localStorage
+  const [recoveryPhrase, setRecoveryPhrase] = useState(() => {
+    const stored = storage.get(`dom_recovery_${user.username}`, null);
+    return stored;
+  });
+  const [showRecovery, setShowRecovery] = useState(false);
+  const generateRecovery = () => {
+    const words = ["amber","brave","calm","dawn","echo","faith","grace","hope","iron","jade","keen","light","moon","noble","oak","peace","quiet","river","sage","truth","unity","valor","wild","xray","yield","zenith"];
+    const phrase = Array.from({ length: 12 }, () => words[Math.floor(Math.random() * words.length)]).join(" ");
+    storage.set(`dom_recovery_${user.username}`, phrase);
+    setRecoveryPhrase(phrase);
+    setShowRecovery(true);
+  };
   // Keep prefs.accent + lang in sync with the lifted AppShell state
   useEffect(() => { if (accent && accent !== prefs.accent) setPrefs(p => ({ ...p, accent })); }, [accent]);
   useEffect(() => { if (lang && lang !== prefs.lang) setPrefs(p => ({ ...p, lang })); }, [lang]);
@@ -4755,6 +4891,125 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
             </div>
           )}
           <button onClick={changePassword} className="px-4 py-2 bg-[#7a9a6e] text-white text-sm rounded font-medium hover:bg-[#5b7351]">{t("Update password", lang)}</button>
+        </div>
+      </Panel>
+
+      {/* SECURITY */}
+      <Panel title={t("Security", lang)} dark={dark} className="mb-5">
+        <div className="space-y-3">
+          {/* BIOMETRIC — native-only */}
+          <div className="flex items-start justify-between gap-4 p-3 rounded border border-stone-200 opacity-60">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-medium">{t("Face ID / Touch ID", lang)}</div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 tracking-wide uppercase font-medium">{t("Mobile app", lang)}</span>
+              </div>
+              <div className="text-xs text-stone-500">{t("Require biometric authentication to open Sovereign", lang)}</div>
+            </div>
+            <input type="checkbox" disabled className="accent-[#7a9a6e] w-4 h-4 mt-0.5 cursor-not-allowed" />
+          </div>
+
+          {/* AUTO-LOCK */}
+          <div className="p-3 rounded border border-stone-200">
+            <div className="flex items-start justify-between gap-4 mb-2">
+              <div>
+                <div className="text-sm font-medium">{t("Auto-lock", lang)}</div>
+                <div className="text-xs text-stone-500">{t("Lock the vault after a period of inactivity", lang)}</div>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { value: "30s", label: "30s" },
+                { value: "1min", label: "1 min" },
+                { value: "5min", label: "5 min" },
+                { value: "never", label: t("Never", lang) },
+              ].map(opt => (
+                <button key={opt.value} onClick={() => setPrefs({ ...prefs, autoLock: opt.value })}
+                  className={`px-3 py-1.5 text-xs rounded border transition ${prefs.autoLock === opt.value ? "bg-[#5b7351] text-white border-[#5b7351] font-medium" : "border-stone-200 text-stone-600 hover:border-[#7a9a6e]"}`}>
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* HIDE IN APP SWITCHER — native-only */}
+          <div className="flex items-start justify-between gap-4 p-3 rounded border border-stone-200 opacity-60">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-medium">{t("Hide app in App Switcher", lang)}</div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 tracking-wide uppercase font-medium">{t("Mobile app", lang)}</span>
+              </div>
+              <div className="text-xs text-stone-500">{t("Prevent app preview from appearing when switching apps", lang)}</div>
+            </div>
+            <input type="checkbox" disabled className="accent-[#7a9a6e] w-4 h-4 mt-0.5 cursor-not-allowed" />
+          </div>
+
+          {/* ENCRYPT BACKUPS */}
+          <label className="flex items-start justify-between gap-4 p-3 rounded border border-stone-200 cursor-pointer">
+            <div>
+              <div className="text-sm font-medium">{t("Encrypt backups", lang)}</div>
+              <div className="text-xs text-stone-500">{t("Add a passphrase to exported JSON backups", lang)}</div>
+            </div>
+            <input type="checkbox" checked={!!prefs.encryptBackups} onChange={e => setPrefs({ ...prefs, encryptBackups: e.target.checked })} className="accent-[#7a9a6e] w-4 h-4 mt-0.5" />
+          </label>
+
+          {/* LOCAL-ONLY MODE */}
+          <label className="flex items-start justify-between gap-4 p-3 rounded border border-stone-200 cursor-pointer">
+            <div>
+              <div className="text-sm font-medium">{t("Local-only mode", lang)}</div>
+              <div className="text-xs text-stone-500">{t("Keep all data on this device — disable cloud sync", lang)}</div>
+            </div>
+            <input type="checkbox" checked={!!prefs.localOnly} onChange={e => setPrefs({ ...prefs, localOnly: e.target.checked })} className="accent-[#7a9a6e] w-4 h-4 mt-0.5" />
+          </label>
+
+          {/* RECOVERY PHRASE */}
+          <div className="p-3 rounded border border-stone-200">
+            <div className="flex items-start justify-between gap-4 mb-2">
+              <div>
+                <div className="text-sm font-medium">{t("Recovery phrase", lang)}</div>
+                <div className="text-xs text-stone-500">{t("12-word phrase to recover your account if you lose access", lang)}</div>
+              </div>
+              {!recoveryPhrase && (
+                <button onClick={generateRecovery} className="px-3 py-1.5 bg-[#7a9a6e] text-white text-xs rounded font-medium hover:bg-[#5b7351] flex-shrink-0">{t("Generate", lang)}</button>
+              )}
+              {recoveryPhrase && (
+                <button onClick={() => setShowRecovery(v => !v)} className="px-3 py-1.5 text-xs border border-stone-200 rounded hover:border-[#7a9a6e] flex-shrink-0 flex items-center gap-1">
+                  {showRecovery ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                  {showRecovery ? t("Hide", lang) : t("Reveal", lang)}
+                </button>
+              )}
+            </div>
+            {recoveryPhrase && showRecovery && (
+              <div className="p-3 rounded bg-amber-50 border border-amber-200 mt-2">
+                <div className="text-xs text-amber-800 mb-2 font-medium">{t("Write this down and keep it safe. Never share it.", lang)}</div>
+                <div className="font-mono text-sm text-stone-800 break-all leading-relaxed">{recoveryPhrase}</div>
+              </div>
+            )}
+          </div>
+
+          {/* TRUSTED DEVICES — native-only */}
+          <div className="flex items-start justify-between gap-4 p-3 rounded border border-stone-200 opacity-60">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-medium">{t("Trusted devices", lang)}</div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 tracking-wide uppercase font-medium">{t("Mobile app", lang)}</span>
+              </div>
+              <div className="text-xs text-stone-500">{t("Manage which devices can access your account without re-authentication", lang)}</div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-stone-400 mt-0.5" />
+          </div>
+
+          {/* SESSION HISTORY — native-only */}
+          <div className="flex items-start justify-between gap-4 p-3 rounded border border-stone-200 opacity-60">
+            <div>
+              <div className="flex items-center gap-2">
+                <div className="text-sm font-medium">{t("Session history", lang)}</div>
+                <span className="text-[9px] px-1.5 py-0.5 rounded bg-stone-100 text-stone-500 tracking-wide uppercase font-medium">{t("Mobile app", lang)}</span>
+              </div>
+              <div className="text-xs text-stone-500">{t("See when and where your account has been accessed", lang)}</div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-stone-400 mt-0.5" />
+          </div>
         </div>
       </Panel>
 
@@ -5244,8 +5499,8 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
   return (
     <div>
       <div className="mb-6">
-        <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Personal Finance", lang)}</h1>
-        <p className={`text-sm mt-1 ${themeMuted} italic`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Stewardship creates freedom.", lang)}</p>
+        <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Personal Wealth Operating System", lang)}</h1>
+        <p className={`text-sm mt-2 ${themeMuted} italic`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Am I becoming wealthier?", lang)}</p>
       </div>
 
       {/* YEAR-TO-DATE LITTLE BOXES */}
@@ -7284,16 +7539,50 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
     + habitsCustom.filter(h => (todayPlan.customHabits || {})[h.id]).length;
   const water = todayPlan.waterGlasses || 0;
 
+  const identityChoices = [
+    t("Calm", lang), t("Courageous", lang), t("Disciplined", lang),
+    t("Patient", lang), t("Joyful", lang), t("Generous", lang), t("Focused", lang),
+  ];
+  const todayIdentity = todayPlan.todayIdentity || null;
+  const setTodayIdentity = (val) => update({ todayIdentity: val === todayIdentity ? null : val });
+
   return (
     <div>
-      <PageHeader title={t("Habits", lang)} subtitle={fmtDate(today) + " — " + t("your rhythm for today", lang)} dark={dark} />
+      <PageHeader title={t("Daily Rhythm", lang)} subtitle={fmtDate(today) + " — " + t("your rhythm for today", lang)} dark={dark} />
+
+      {/* TODAY'S IDENTITY — pick one word that shapes every habit */}
+      <div className={`rounded-2xl border ${themePanel} px-5 py-5 mb-5`}>
+        <p className="text-[10px] tracking-[0.25em] uppercase text-[#7a9a6e] font-semibold mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Today's Identity", lang)}</p>
+        <p className="text-sm italic text-stone-500 mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Today I choose to become…", lang)}</p>
+        <div className="flex flex-wrap gap-2">
+          {identityChoices.map(word => (
+            <button
+              key={word}
+              onClick={() => setTodayIdentity(word)}
+              className={`px-4 py-2 rounded-full text-sm font-medium border transition ${
+                todayIdentity === word
+                  ? "bg-[#5b7351] text-white border-[#5b7351] shadow-sm"
+                  : "bg-white text-stone-600 border-stone-200 hover:border-[#7a9a6e] hover:text-[#5b7351]"
+              }`}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
+            >
+              {todayIdentity === word ? "✓ " : ""}{word}
+            </button>
+          ))}
+        </div>
+        {todayIdentity && (
+          <p className="mt-3 text-xs italic text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
+            {t("Every habit you complete today is evidence that you are", lang)} <strong>{todayIdentity}</strong>.
+          </p>
+        )}
+      </div>
 
       {/* Top row: completion ring + water */}
       <div id="section-water" className={`rounded-lg border ${themePanel} p-5 mb-5 flex flex-wrap items-center justify-between gap-6 scroll-mt-20`}>
         <div className="flex items-center gap-5">
-          <ProgressRing value={totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0} size={90} stroke={8} dark={dark} label="done" />
+          <ProgressRing value={totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0} size={90} stroke={8} dark={dark} label={t("in alignment", lang)} />
           <div>
-            <div className="text-xs tracking-[0.2em] text-[#7a9a6e]">{t("TODAY", lang)}</div>
+            <div className="text-xs tracking-[0.2em] text-[#7a9a6e]">{t("TODAY'S ALIGNMENT", lang)}</div>
             <div className="font-serif text-lg" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("{n} of {m} habits", lang, { n: doneCount, m: totalCount })}</div>
           </div>
         </div>
@@ -7428,6 +7717,10 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
           </div>
         )}
       </Panel></div>
+    </div>
+
+    <div className="mt-10 text-center px-4">
+      <p className="font-serif text-xl italic text-[#7a9a6e]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Did you become who you said you wanted to become today?", lang)}</p>
     </div>
   );
 }
@@ -8429,7 +8722,7 @@ function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, tri
 
   return (
     <div>
-      <PageHeader title={t("Speak Eloquently", lang)} subtitle={t("Your words shape your relationships.", lang)} dark={dark}
+      <PageHeader title={t("Speak Eloquently", lang)} subtitle={t("The language you repeatedly use becomes your identity.", lang)} dark={dark}
         action={<button onClick={() => setOpen(true)} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351] flex items-center gap-1.5"><Plus className="w-4 h-4" /> {t("Add phrase", lang)}</button>} />
 
       <div className="mb-5">
@@ -8490,6 +8783,192 @@ function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, tri
           <button onClick={addPhrase} className="w-full py-2 bg-[#7a9a6e] text-white font-medium rounded hover:bg-[#5b7351]">{t("Save phrase", lang)}</button>
         </div>
       </Modal>
+    </div>
+  );
+}
+
+// ============================================================
+// AI COACH MODULE — evening debrief + Dominion intelligence
+// ============================================================
+const DOMINION_KEYWORDS = ["prayer", "bible", "scripture", "devotion", "worship", "inventory", "gratitude", "reflection", "meditation", "oración", "biblia", "gratitud", "reflexión"];
+
+function CoachModule({ data, setData, dark, themePanel, themeMuted, lang }) {
+  const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+  const today = todayISO();
+  const todayPlan = (data.planners || {})[today] || {};
+
+  // Habit data
+  const builtInKeys = ["morningRoutineDone", "workoutDone", "readingDone", "afternoonRoutineDone", "eveningRoutineDone"];
+  const builtInLabels = { morningRoutineDone: "Morning Routine", workoutDone: "Workout", readingDone: "Reading", afternoonRoutineDone: "Afternoon Routine", eveningRoutineDone: "Evening Routine" };
+  const doneBuiltIns = builtInKeys.filter(k => todayPlan[k]);
+  const habitsCustom = Array.isArray(data.habitsCustom) ? data.habitsCustom : [];
+  const doneCustom = habitsCustom.filter(h => (todayPlan.customHabits || {})[h.id]);
+  const allDoneLabels = [
+    ...doneBuiltIns.map(k => builtInLabels[k]),
+    ...doneCustom.map(h => h.label),
+  ];
+  const totalHabits = builtInKeys.filter(k => !(data.routineHidden || {})[k.replace("Done","")]).length + habitsCustom.length;
+  const doneCount = doneBuiltIns.length + doneCustom.length;
+  const alignmentPct = totalHabits > 0 ? Math.round((doneCount / totalHabits) * 100) : 0;
+
+  // Dominion detection — spiritual/identity habits completed
+  const dominionHabits = allDoneLabels.filter(l => DOMINION_KEYWORDS.some(kw => l.toLowerCase().includes(kw)));
+  const dominionStrengthened = dominionHabits.length >= 2;
+
+  // Identity word chosen today
+  const todayIdentity = todayPlan.todayIdentity || null;
+
+  // Tasks
+  const tasks = data.tasks || [];
+  const todayTasks = tasks.filter(t => t.date === today);
+  const doneTasks = todayTasks.filter(t => t.done);
+
+  // Reflection answers
+  const reflectionAnswers = (data.reflectionAnswers || {})[today] || {};
+  const reflectionFilled = Object.values(reflectionAnswers).filter(v => v && String(v).trim()).length;
+
+  // AI debrief state
+  const [debrief, setDebrief] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const generateDebrief = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const payload = {
+        date: today,
+        alignmentPct,
+        doneCount,
+        totalHabits,
+        completedHabits: allDoneLabels,
+        dominionHabits,
+        todayIdentity,
+        doneTasks: doneTasks.map(t => t.text || t.name || ""),
+        totalTasks: todayTasks.length,
+        reflectionFilled,
+        reflectionAnswers: Object.values(reflectionAnswers).filter(Boolean),
+        gratitude: todayPlan.gratitude || "",
+        onePromise: (data.sovereignOS || {})[today]?.onePromise || "",
+      };
+      const res = await fetch("/api/coach", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "same-origin",
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("coach_unavailable");
+      const json = await res.json();
+      setDebrief(json.message);
+    } catch (e) {
+      setError(e.message === "coach_unavailable" ? t("Your AI coach is not available yet — ask your admin to set up the API key.", lang) : t("Something went wrong. Try again.", lang));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="max-w-2xl mx-auto pb-12">
+      {/* Header */}
+      <div className="mb-8 text-center">
+        <p className="text-[10px] tracking-[0.25em] uppercase text-[#7a9a6e] mb-2" style={serif}>{new Date().toLocaleDateString(lang === "es" ? "es-ES" : "en-US", { weekday: "long", month: "long", day: "numeric" })}</p>
+        <h1 className="font-serif text-3xl sm:text-4xl italic text-stone-800 leading-tight mb-2" style={serif}>{t("AI Coach", lang)}</h1>
+        <p className="text-sm italic text-stone-500" style={serif}>{t("Your personal evening debrief.", lang)}</p>
+      </div>
+
+      {/* Dominion Score */}
+      <div className={`rounded-2xl px-6 py-6 mb-5 shadow-sm ${dominionStrengthened ? "bg-gradient-to-br from-[#5b3a1e]/10 via-[#f4f7ee]/60 to-white border border-[#c4a882]" : "bg-white border border-stone-200"}`}>
+        <p className="text-[9px] tracking-[0.3em] uppercase font-semibold mb-3" style={{ ...serif, color: dominionStrengthened ? "#5b3a1e" : "#7a9a6e" }}>
+          {dominionStrengthened ? t("DOMINION STRENGTHENED", lang) : t("TODAY'S ALIGNMENT", lang)}
+        </p>
+        <div className="flex items-end gap-4 mb-3">
+          <span className="font-serif text-5xl font-bold" style={{ ...serif, color: dominionStrengthened ? "#5b3a1e" : "#5b7351" }}>{alignmentPct}%</span>
+          <span className="text-sm text-stone-500 mb-2 italic" style={serif}>{t("in alignment", lang)}</span>
+        </div>
+        {dominionStrengthened ? (
+          <p className="text-sm text-[#5b3a1e] italic leading-relaxed" style={serif}>
+            {t("Today you strengthened your Dominion.", lang)} {dominionHabits.length > 0 && <span className="text-xs text-[#7a6050]">({dominionHabits.join(", ")})</span>}
+          </p>
+        ) : (
+          <p className="text-sm text-stone-600 italic" style={serif}>
+            {doneCount === 0 ? t("Every day is a new beginning. Tomorrow you choose again.", lang)
+              : doneCount === totalHabits ? t("Perfect alignment. You showed up fully today.", lang)
+              : t("{n} of {m} habits completed today.", lang, { n: doneCount, m: totalHabits })}
+          </p>
+        )}
+        {todayIdentity && (
+          <div className="mt-3 pt-3 border-t border-stone-100">
+            <p className="text-xs text-[#7a9a6e] italic" style={serif}>{t("Today you chose to be", lang)} <strong>{todayIdentity}</strong>. {alignmentPct >= 50 ? t("Your habits confirmed it.", lang) : t("Tomorrow, let your habits confirm it.", lang)}</p>
+          </div>
+        )}
+      </div>
+
+      {/* Today's snapshot */}
+      <div className="grid grid-cols-3 gap-3 mb-5">
+        {[
+          { label: t("Habits", lang), value: `${doneCount}/${totalHabits}`, sub: t("completed", lang) },
+          { label: t("Tasks", lang), value: `${doneTasks.length}/${todayTasks.length}`, sub: t("done", lang) },
+          { label: t("Reflection", lang), value: reflectionFilled, sub: t("answers", lang) },
+        ].map(({ label, value, sub }) => (
+          <div key={label} className="rounded-xl border border-stone-200 bg-white px-4 py-3 text-center">
+            <p className="text-[9px] tracking-[0.2em] uppercase text-stone-400 mb-1" style={serif}>{label}</p>
+            <p className="font-serif text-2xl text-[#5b7351]" style={serif}>{value}</p>
+            <p className="text-[10px] text-stone-400 italic">{sub}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Completed habits list */}
+      {allDoneLabels.length > 0 && (
+        <div className="rounded-2xl border border-[#d3e0c5] bg-[#f9fbf7] px-5 py-4 mb-5">
+          <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] font-semibold mb-3" style={serif}>{t("What you built today", lang)}</p>
+          <div className="flex flex-wrap gap-2">
+            {allDoneLabels.map((l, i) => (
+              <span key={i} className={`text-xs px-2.5 py-1 rounded-full font-medium ${DOMINION_KEYWORDS.some(kw => l.toLowerCase().includes(kw)) ? "bg-[#5b3a1e]/10 text-[#5b3a1e] border border-[#c4a882]/50" : "bg-[#7a9a6e]/10 text-[#5b7351] border border-[#d3e0c5]"}`}>
+                ✓ {l}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* AI Evening Debrief */}
+      <div className="rounded-2xl border border-[#d3e0c5] bg-white px-6 py-6 mb-5 shadow-sm">
+        <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] font-semibold mb-1" style={serif}>{t("Evening Debrief", lang)}</p>
+        <p className="text-xs italic text-stone-400 mb-4" style={serif}>{t("Your AI coach reflects on your day and offers one insight.", lang)}</p>
+
+        {!debrief && !loading && (
+          <button
+            onClick={generateDebrief}
+            className="w-full py-3 rounded-xl bg-gradient-to-r from-[#5b7351] to-[#7a9a6e] text-white font-semibold text-sm hover:opacity-90 transition shadow-sm"
+            style={serif}
+          >
+            {t("Generate Tonight's Debrief", lang)}
+          </button>
+        )}
+
+        {loading && (
+          <div className="text-center py-6">
+            <p className="text-sm italic text-stone-400 animate-pulse" style={serif}>{t("Your coach is reflecting on your day…", lang)}</p>
+          </div>
+        )}
+
+        {error && (
+          <div className="text-center py-4">
+            <p className="text-sm text-rose-500 italic mb-3" style={serif}>{error}</p>
+            <button onClick={generateDebrief} className="text-xs text-[#7a9a6e] underline">{t("Try again", lang)}</button>
+          </div>
+        )}
+
+        {debrief && (
+          <div>
+            <div className="rounded-xl bg-[#f9fbf7] border border-[#d3e0c5] px-5 py-5 mb-4">
+              <p className="text-sm text-stone-700 leading-loose italic whitespace-pre-wrap" style={serif}>{debrief}</p>
+            </div>
+            <button onClick={() => { setDebrief(null); setError(null); }} className="text-xs text-stone-400 hover:text-[#7a9a6e] underline">{t("Generate again", lang)}</button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -8657,6 +9136,75 @@ function BoundariesModule({ data, setData, dark, themePanel, themeMuted, trigger
 // ============================================================
 const CRED_CATEGORIES = ["Personal", "Banking", "Social", "Work", "Shopping", "Streaming", "Insurance", "Other"];
 
+// Map common site/app names → emoji for instant recognition
+const SITE_EMOJI = {
+  gmail: "📧", google: "🔍", youtube: "🎬", netflix: "🎬",
+  amazon: "🛒", instagram: "📱", facebook: "👥", twitter: "🐦", x: "🐦",
+  apple: "🍎", icloud: "☁️", chase: "🏦", "bank of america": "🏦",
+  "wells fargo": "🏦", citi: "🏦", "capital one": "🏦", "credit karma": "💳",
+  spotify: "🎵", linkedin: "💼", chatgpt: "🤖", openai: "🤖",
+  tiktok: "🎵", snapchat: "👻", pinterest: "📌", reddit: "🔴",
+  microsoft: "🪟", outlook: "📨", office: "🪟", github: "💻",
+  dropbox: "📦", slack: "💬", zoom: "📹", venmo: "💸", paypal: "💸",
+  zelle: "💸", cashapp: "💸", airbnb: "🏠", uber: "🚗", lyft: "🚗",
+  doordash: "🍕", grubhub: "🍔", walmart: "🛍️", target: "🎯",
+  etsy: "🎨", ebay: "📦", costco: "🛒", hulu: "📺", disney: "🏰",
+  peacock: "🦚", hbo: "📺", paramount: "⭐", calendar: "📅",
+};
+
+function getSiteEmoji(site) {
+  const key = (site || "").toLowerCase().trim();
+  for (const [k, v] of Object.entries(SITE_EMOJI)) {
+    if (key.includes(k)) return v;
+  }
+  return null;
+}
+
+function getFaviconUrl(urlOrSite) {
+  // Try to extract a domain from a URL field; fall back to treating site name as a domain
+  let domain = "";
+  try {
+    const raw = (urlOrSite || "").trim();
+    const withProto = raw.startsWith("http") ? raw : `https://${raw}`;
+    domain = new URL(withProto).hostname.replace("www.", "");
+  } catch {
+    domain = (urlOrSite || "").toLowerCase().replace(/\s+/g, "") + ".com";
+  }
+  if (!domain || domain === ".com") return null;
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+}
+
+function CredIcon({ site, url }) {
+  const [imgOk, setImgOk] = useState(true);
+  const emoji = getSiteEmoji(site);
+  const faviconSrc = getFaviconUrl(url || site);
+
+  if (faviconSrc && imgOk) {
+    return (
+      <div className="w-10 h-10 rounded-lg bg-white border border-stone-100 flex items-center justify-center flex-shrink-0 overflow-hidden shadow-sm">
+        <img
+          src={faviconSrc}
+          alt=""
+          className="w-6 h-6 object-contain"
+          onError={() => setImgOk(false)}
+        />
+      </div>
+    );
+  }
+  if (emoji) {
+    return (
+      <div className="w-10 h-10 rounded-lg bg-[#f4f7ee] border border-[#d3e0c5] flex items-center justify-center flex-shrink-0 text-xl">
+        {emoji}
+      </div>
+    );
+  }
+  return (
+    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#a8c090] to-[#5b7351] flex items-center justify-center text-white font-bold flex-shrink-0 text-sm">
+      {(site || "?")[0]?.toUpperCase() || "?"}
+    </div>
+  );
+}
+
 function CredentialsModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const creds = data.credentials || [];
   const [open, setOpen] = useState(false);
@@ -8667,7 +9215,7 @@ function CredentialsModule({ data, setData, dark, themePanel, themeMuted, trigge
   // English filter value that no longer matches any Spanish category.
   useEffect(() => { setFilter("All"); }, [lang]);
   const [showId, setShowId] = useState(null); // which item's password is shown
-  const blank = { site: "", url: "", username: "", password: "", category: "Personal", notes: "" };
+  const blank = { site: "", url: "", username: "", password: "", category: "Personal", notes: "", pinned: false };
   const [form, setForm] = useState(blank);
 
   const filtered = creds.filter(c => {
@@ -8696,8 +9244,54 @@ function CredentialsModule({ data, setData, dark, themePanel, themeMuted, trigge
     setForm({ ...form, password: p });
   };
 
+  const togglePin = (id) => {
+    setData({ ...data, credentials: creds.map(c => c.id === id ? { ...c, pinned: !c.pinned } : c) });
+  };
+
   const cats = ["All", ...CRED_CATEGORIES];
-  const hostInitial = (s) => (s || "?")[0]?.toUpperCase() || "?";
+
+  const pinned = filtered.filter(c => c.pinned);
+  const unpinned = filtered.filter(c => !c.pinned);
+
+  const CredCard = ({ c }) => {
+    const isShown = showId === c.id;
+    return (
+      <div key={c.id} className={`p-4 rounded-lg border ${themePanel}`}>
+        <div className="flex items-center gap-3 mb-3">
+          <CredIcon site={c.site} url={c.url} />
+          <div className="flex-1 min-w-0">
+            <div className="font-medium truncate">{c.site}</div>
+            {c.url && <a href={c.url.startsWith("http") ? c.url : `https://${c.url}`} target="_blank" rel="noreferrer" className="text-xs text-stone-500 truncate hover:text-[#5b7351] block">{c.url}</a>}
+          </div>
+          <span className="text-[10px] tracking-wider px-1.5 py-0.5 rounded bg-[#f4f7ee] text-[#5b7351] flex-shrink-0">{t(c.category, lang)}</span>
+        </div>
+
+        <div className="space-y-2 mb-3">
+          <div className="flex items-center gap-2 p-2 rounded bg-stone-50 border border-stone-200">
+            <span className="text-[10px] tracking-wider text-stone-500 w-16 flex-shrink-0">{t("USER", lang)}</span>
+            <span className="flex-1 text-sm font-mono truncate">{c.username || "—"}</span>
+            <button onClick={() => copy(c.username, t("Username", lang))} className="p-1 text-stone-400 hover:text-[#5b7351]" title={t("Copy username", lang)}><FileText className="w-3.5 h-3.5" /></button>
+          </div>
+          <div className="flex items-center gap-2 p-2 rounded bg-stone-50 border border-stone-200">
+            <span className="text-[10px] tracking-wider text-stone-500 w-16 flex-shrink-0">{t("PASSWORD", lang)}</span>
+            <span className="flex-1 text-sm font-mono truncate">{isShown ? (c.password || "—") : "•".repeat(Math.min(20, (c.password || "").length))}</span>
+            <button onClick={() => setShowId(isShown ? null : c.id)} className="p-1 text-stone-400 hover:text-[#5b7351]" title={isShown ? t("Hide", lang) : t("Show", lang)}>{isShown ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}</button>
+            <button onClick={() => copy(c.password, t("Password", lang))} className="p-1 text-stone-400 hover:text-[#5b7351]" title={t("Copy password", lang)}><FileText className="w-3.5 h-3.5" /></button>
+          </div>
+        </div>
+
+        {c.notes && <div className="text-xs text-stone-600 italic mb-3">"{c.notes}"</div>}
+
+        <div className="flex gap-1">
+          <button onClick={() => togglePin(c.id)} className={`px-2 py-1 text-xs border rounded flex items-center gap-1 transition ${c.pinned ? "border-amber-300 bg-amber-50 text-amber-700" : "border-stone-200 text-stone-500 hover:border-amber-300 hover:text-amber-600"}`} title={c.pinned ? t("Unpin", lang) : t("Pin to favorites", lang)}>
+            <Star className={`w-3 h-3 ${c.pinned ? "fill-amber-400 text-amber-400" : ""}`} />
+          </button>
+          <button onClick={() => { setForm(c); setEditing(c.id); setOpen(true); }} className="flex-1 px-2 py-1 text-xs border border-stone-200 rounded hover:border-[#7a9a6e] flex items-center justify-center gap-1"><Edit2 className="w-3 h-3" /> {t("Edit", lang)}</button>
+          <button onClick={() => del(c.id)} className="px-2 py-1 text-xs border border-stone-200 rounded hover:border-rose-300 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div>
@@ -8718,7 +9312,7 @@ function CredentialsModule({ data, setData, dark, themePanel, themeMuted, trigge
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t("Search sites, usernames…", lang)} className="bg-transparent outline-none flex-1" />
         </div>
         {cats.map(c => (
-          <button key={c} onClick={() => setFilter(c)} className={`px-3 py-1.5 text-xs rounded border ${filter === c ? "bg-[#7a9a6e] text-white border-[#7a9a6e] font-medium" : "border-stone-300 text-stone-600 hover:border-[#7a9a6e]"}`}>{c}</button>
+          <button key={c} onClick={() => setFilter(c)} className={`px-3 py-1.5 text-xs rounded border ${filter === c ? "bg-[#7a9a6e] text-white border-[#7a9a6e] font-medium" : "border-stone-300 text-stone-600 hover:border-[#7a9a6e]"}`}>{t(c, lang)}</button>
         ))}
       </div>
 
@@ -8728,45 +9322,31 @@ function CredentialsModule({ data, setData, dark, themePanel, themeMuted, trigge
           <div className="text-sm">{creds.length === 0 ? t("No logins saved yet. Add your first one.", lang) : t("No logins match your filter.", lang)}</div>
         </div>
       ) : (
-        <div className="grid md:grid-cols-2 gap-3">
-          {filtered.map(c => {
-            const isShown = showId === c.id;
-            return (
-              <div key={c.id} className={`p-4 rounded-lg border ${themePanel} group`}>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#a8c090] to-[#5b7351] flex items-center justify-center text-white font-bold flex-shrink-0">
-                    {hostInitial(c.site)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{c.site}</div>
-                    {c.url && <a href={c.url.startsWith("http") ? c.url : `https://${c.url}`} target="_blank" rel="noreferrer" className="text-xs text-stone-500 truncate hover:text-[#5b7351] block">{c.url}</a>}
-                  </div>
-                  <span className="text-[10px] tracking-wider px-1.5 py-0.5 rounded bg-[#f4f7ee] text-[#5b7351] flex-shrink-0">{t(c.category, lang)}</span>
-                </div>
-
-                <div className="space-y-2 mb-3">
-                  <div className="flex items-center gap-2 p-2 rounded bg-stone-50 border border-stone-200">
-                    <span className="text-[10px] tracking-wider text-stone-500 w-16 flex-shrink-0">{t("USER", lang)}</span>
-                    <span className="flex-1 text-sm font-mono truncate">{c.username || "—"}</span>
-                    <button onClick={() => copy(c.username, t("Username", lang))} className="p-1 text-stone-400 hover:text-[#5b7351]" title={t("Copy username", lang)}><FileText className="w-3.5 h-3.5" /></button>
-                  </div>
-                  <div className="flex items-center gap-2 p-2 rounded bg-stone-50 border border-stone-200">
-                    <span className="text-[10px] tracking-wider text-stone-500 w-16 flex-shrink-0">{t("PASSWORD", lang)}</span>
-                    <span className="flex-1 text-sm font-mono truncate">{isShown ? (c.password || "—") : "•".repeat(Math.min(20, (c.password || "").length))}</span>
-                    <button onClick={() => setShowId(isShown ? null : c.id)} className="p-1 text-stone-400 hover:text-[#5b7351]" title={isShown ? t("Hide", lang) : t("Show", lang)}>{isShown ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}</button>
-                    <button onClick={() => copy(c.password, t("Password", lang))} className="p-1 text-stone-400 hover:text-[#5b7351]" title={t("Copy password", lang)}><FileText className="w-3.5 h-3.5" /></button>
-                  </div>
-                </div>
-
-                {c.notes && <div className="text-xs text-stone-600 italic mb-3">"{c.notes}"</div>}
-
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                  <button onClick={() => { setForm(c); setEditing(c.id); setOpen(true); }} className="flex-1 px-2 py-1 text-xs border border-stone-200 rounded hover:border-[#7a9a6e] flex items-center justify-center gap-1"><Edit2 className="w-3 h-3" /> {t("Edit", lang)}</button>
-                  <button onClick={() => del(c.id)} className="px-2 py-1 text-xs border border-stone-200 rounded hover:border-rose-300 hover:text-rose-600"><Trash2 className="w-3 h-3" /></button>
-                </div>
+        <div>
+          {pinned.length > 0 && (
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                <span className="text-xs tracking-[0.2em] uppercase font-semibold text-amber-700">{t("Favorites", lang)}</span>
               </div>
-            );
-          })}
+              <div className="grid md:grid-cols-2 gap-3">
+                {pinned.map(c => <CredCard key={c.id} c={c} />)}
+              </div>
+            </div>
+          )}
+          {unpinned.length > 0 && (
+            <div>
+              {pinned.length > 0 && (
+                <div className="flex items-center gap-2 mb-3">
+                  <Lock className="w-4 h-4 text-stone-400" />
+                  <span className="text-xs tracking-[0.2em] uppercase font-semibold text-stone-500">{t("All Logins", lang)}</span>
+                </div>
+              )}
+              <div className="grid md:grid-cols-2 gap-3">
+                {unpinned.map(c => <CredCard key={c.id} c={c} />)}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -8792,6 +9372,10 @@ function CredentialsModule({ data, setData, dark, themePanel, themeMuted, trigge
             <label className={`text-xs ${themeMuted}`}>{t("Notes (security questions, recovery phrase, etc.)", lang)}</label>
             <textarea value={form.notes} onChange={e => setForm({ ...form, notes: e.target.value })} rows={3} className="mt-1 w-full px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white" />
           </div>
+          <label className="flex items-center gap-2 cursor-pointer select-none">
+            <input type="checkbox" checked={!!form.pinned} onChange={e => setForm({ ...form, pinned: e.target.checked })} className="accent-[#7a9a6e] w-4 h-4" />
+            <span className="text-sm text-stone-600">{t("Pin to favorites", lang)}</span>
+          </label>
           <button onClick={save} className="w-full py-2 bg-[#7a9a6e] text-white font-medium rounded hover:bg-[#5b7351]">{editing ? t("Save changes", lang) : t("Add login", lang)}</button>
         </div>
       </Modal>
@@ -11870,6 +12454,8 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       {AddWinModal}
       <PageHeader title={t("Today's Focus", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
+      <p className="text-base italic text-[#7a9a6e] -mt-6 mb-6 font-semibold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Who am I becoming today?", lang)}</p>
+
       {/* Row 1: To-do on its own line, Wins underneath (stacked at every width).
           Explicit minmax(0, 1fr) on the column so the card cannot stretch
           wider than the viewport when a row's title is very long — without
@@ -12181,7 +12767,7 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
   const [draftEnd, setDraftEnd] = useState("");
   const [draftNotes, setDraftNotes] = useState("");
   // Title rename + show/hide year view
-  const calendarLabel = data.calendarLabel || "Calendar";
+  const calendarLabel = (data.calendarLabel && data.calendarLabel !== "Calendar") ? data.calendarLabel : t("This Year at a Glance", lang);
   const setCalendarLabel = (v) => setData({ ...data, calendarLabel: v });
   const [editingTitle, setEditingTitle] = useState(false);
   const showYearView = data.showYearView !== false; // default true
@@ -12361,7 +12947,7 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
               <Edit2 className="w-4 h-4 text-stone-300 group-hover:text-[#5b7351] transition" />
             </button>
           )}
-          <p className={`text-sm mt-1 ${themeMuted}`}>{t("Plan your week and your year. Click any day to add what you need to do.", lang)}</p>
+          <p className={`text-sm mt-1 ${themeMuted}`}>{t("What deserves your time?", lang)}</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <button onClick={() => setShowCalendarConnect(true)} className="px-3 py-2 rounded border border-[#a8c090] text-[#5b7351] text-sm font-medium hover:bg-[#f4f7ee] flex items-center gap-2">
@@ -13779,8 +14365,9 @@ function NotesModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 
   return (
     <div>
-      <PageHeader title={t("Notes", lang)} subtitle={t("Capture what you never want to forget.", lang)} dark={dark}
+      <PageHeader title={t("The Sovereign Mind", lang)} subtitle={t("Write it here. Free your attention for what matters most.", lang)} dark={dark}
         action={<AddButton onClick={() => { setForm(blank); setEditing(null); setOpen(true); }} label={t("Add Note", lang)} dark={dark} />} />
+      <p className={`text-sm -mt-6 mb-6 ${dark ? "text-stone-400" : "text-stone-500"} italic`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Capture every thought, worry, idea, reminder, and unfinished task. Your mind deserves clarity before it deserves a plan.", lang)}</p>
 
       <div className={`flex items-center gap-2 px-3 py-2 rounded border ${dark ? "bg-white border-stone-200" : "bg-white border-stone-300"} mb-4`}>
         <Search className="w-4 h-4 text-stone-500" />
@@ -13804,12 +14391,12 @@ function NotesModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
         ))}
       </div>
 
-      <Modal open={open} onClose={() => setOpen(false)} title={editing ? t("Edit Note", lang) : t("New Note", lang)} dark={dark}>
+      <Modal open={open} onClose={() => setOpen(false)} title={editing ? t("Edit Note", lang) : t("Before the world gets loud", lang)} dark={dark}>
         <div className="space-y-3">
           <TextField label={t("Title", lang)} value={form.title} onChange={v => setForm({ ...form, title: v })} dark={dark} />
           <div>
             <label className={`text-xs ${themeMuted}`}>{t("Body", lang)}</label>
-            <textarea value={form.body} onChange={e => setForm({ ...form, body: e.target.value })} rows={6} className={`mt-1 w-full px-3 py-2 rounded border outline-none focus:border-[#7a9a6e] text-sm ${dark ? "bg-white border-stone-200" : "bg-white border-stone-300"}`} />
+            <textarea value={form.body} onChange={e => setForm({ ...form, body: e.target.value })} rows={6} placeholder={editing ? "" : t("What keeps showing up in your mind that needs a place to live?", lang)} className={`mt-1 w-full px-3 py-2 rounded border outline-none focus:border-[#7a9a6e] text-sm ${dark ? "bg-white border-stone-200" : "bg-white border-stone-300"}`} />
           </div>
           <TextField label={t("Tags (comma-separated)", lang)} value={(form.tags || []).join(", ")} onChange={v => setForm({ ...form, tags: v.split(",").map(t => t.trim()).filter(Boolean) })} dark={dark} />
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={form.pinned} onChange={e => setForm({ ...form, pinned: e.target.checked })} className="accent-[#9cb88f]" /> {t("Pin to top", lang)}</label>
