@@ -272,15 +272,21 @@ window.addEventListener("unhandledrejection", function(e){
             var localObj = JSON.parse(localRaw);
             var cloudObj = JSON.parse(cloudRaw);
             if (localObj && cloudObj) {
-              // Treat missing _savedAt as 0 so any timestamped local write
+              // Default to local unless the server copy is STRICTLY newer.
+              // Treating missing _savedAt as 0 means any stamped local write
               // beats cloud data that predates the _savedAt feature.
+              // Using > (not >=) means we keep local when timestamps are equal
+              // — same-device refresh where flush completed — which is safe
+              // because the data content is identical.
               var lSaved = typeof localObj._savedAt === "number" ? localObj._savedAt : 0;
               var cSaved = typeof cloudObj._savedAt === "number" ? cloudObj._savedAt : 0;
-              if (lSaved > cSaved) {
-                mergedState[k] = localRaw; // local is newer — use it
+              if (cSaved > lSaved) {
+                // Cloud is strictly newer (another device synced) — keep cloud
+              } else {
+                mergedState[k] = localRaw; // local is same age or newer
               }
             }
-          } catch (e) {}
+          } catch (e) { mergedState[k] = localRaw; } // parse error → prefer local
         }
       } catch (e) {}
 
@@ -292,7 +298,7 @@ window.addEventListener("unhandledrejection", function(e){
 </script>
 
 <script type="text/plain" id="app-source" data-presets="react">
-import React, { useState, useEffect, useLayoutEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useLayoutEffect, useCallback, useRef, useMemo } from "react";
 import { createRoot } from "react-dom/client";
 import {
   Crown, Home, Users, UserPlus, DollarSign, Calendar, Mail, Share2,
@@ -3736,7 +3742,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
     if (newMode === "personal" && !PERSONAL_NAV.some(n => n.id === active) && active !== "settings") setActive("personalHome");
   };
   const dataKey = `dom_data_${user.username}`;
-  const [data, setData] = useState(() => {
+  const [data, _setData] = useState(() => {
     const d = storage.get(dataKey, buildDemoData());
     // (initial load only — cross-device sync handled below)
 
@@ -3819,6 +3825,20 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
     // "My Why" photo starts empty — users upload their own from the dashboard.
     return d;
   });
+  // Always keep a ref to the latest data so the setData wrapper below can
+  // read it without a stale closure, even though the callback is memoised.
+  const _dataRef = useRef(data);
+  _dataRef.current = data;
+  // Synchronous-write wrapper: every call to setData() immediately persists
+  // to localStorage BEFORE React processes the state update. This closes the
+  // race window where a fast reload/app-switch could happen between the click
+  // handler and the useLayoutEffect fire, losing the last change.
+  const setData = useCallback((next) => {
+    const n = typeof next === "function" ? next(_dataRef.current) : next;
+    const stamped = { ...n, _savedAt: Date.now() };
+    try { storage.set(dataKey, stamped); } catch (e) {}
+    _setData(stamped);
+  }, [dataKey]);
   const [confetti, setConfetti] = useState(false);
   const [accent, setAccent] = useState(() => (storage.get(`dom_prefs_${user.username}`, {}).accent) || "sage");
   const [lang, setLang] = useState(() => (storage.get(`dom_prefs_${user.username}`, {}).lang) || "en");
@@ -3876,9 +3896,9 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
 
   const [toast, setToast] = useState(null);
 
-  // useLayoutEffect fires synchronously after React commits to the DOM,
-  // before the browser can fire pagehide/beforeunload, so the localStorage
-  // write is guaranteed to land even when the user exits right after a tap.
+  // Belt-and-suspenders: setData() already writes synchronously on every call,
+  // but useLayoutEffect gives us a second write after React commits in case
+  // data was initialised from storage directly (bypassing setData).
   useLayoutEffect(() => { storage.set(dataKey, { ...data, _savedAt: Date.now() }); }, [data, dataKey]);
   useEffect(() => { storage.set("dom_active", active); }, [active]);
 
