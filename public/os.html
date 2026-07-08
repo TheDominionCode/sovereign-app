@@ -4333,10 +4333,9 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
 
   const [bellTab, setBellTab] = useState("reminders");
 
-  // Badge logic: amber = urgent (birthday ≤1 day, or overdue task), green dot = has items
-  const overdueTaskCount = (data.tasks || []).filter(t => t.date && t.date < today && !t.done).length;
+  // Badge logic: amber = birthday today or tomorrow only; green dot = anything else pending
   const urgentBirthday = birthdaysUpcoming.some(c => c.daysAway <= 1);
-  const isUrgent = overdueTaskCount > 0 || urgentBirthday;
+  const isUrgent = urgentBirthday;
   const remindersCount = customReminders.length + tasksToday.length + vitaminsMissed.length;
   const notificationsCount = birthdaysUpcoming.length + stale.length + goalsDue.length + recruitsStalled.length;
   const hasAny = remindersCount + notificationsCount > 0;
@@ -4365,7 +4364,7 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
       <button onClick={() => setOpen(!open)} className="p-2 rounded hover:bg-stone-100 relative" title={hasAny ? "Notifications & Reminders" : "All clear"}>
         <Bell className="w-4 h-4" />
         {isUrgent && (
-          <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 bg-amber-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">{(overdueTaskCount + (urgentBirthday ? 1 : 0)) > 9 ? "9+" : overdueTaskCount + (urgentBirthday ? 1 : 0)}</span>
+          <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-500 border-2 border-white" />
         )}
         {!isUrgent && hasAny && (
           <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-[#7a9a6e] border-2 border-white" />
