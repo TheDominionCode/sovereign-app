@@ -133,33 +133,75 @@ window.addEventListener("unhandledrejection", function(e){
   function installCloudStorage(initial) {
     var cache = initial || {};
     var dirty = {}, removed = {}, timer = null;
-    function schedule() { if (!timer) timer = setTimeout(function () { flush(false); }, 700); }
-    function flush(keepalive) {
+
+    // 300ms debounce — faster than the old 700ms so edits reach Supabase
+    // before the user switches away on mobile.
+    function schedule() { if (!timer) timer = setTimeout(function () { flush(false); }, 300); }
+
+    function flush(isLeaving) {
       timer = null;
       var entries = Object.keys(dirty).map(function (k) { return { key: k, value: dirty[k] }; });
       var deletes = Object.keys(removed);
+      if (!entries.length && !deletes.length) return;
       dirty = {}; removed = {};
-      if (entries.length) fetch("/api/state", { method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "same-origin", keepalive: keepalive, body: JSON.stringify({ entries: entries }) }).catch(function () {});
-      if (deletes.length) fetch("/api/state", { method: "DELETE", headers: { "Content-Type": "application/json" }, credentials: "same-origin", keepalive: keepalive, body: JSON.stringify({ keys: deletes }) }).catch(function () {});
+
+      var body = JSON.stringify({ entries: entries });
+
+      // Primary: async fetch with keepalive (works everywhere except some iOS versions).
+      if (entries.length) {
+        fetch("/api/state", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          keepalive: true,
+          body: body,
+        }).catch(function () {
+          // Fallback: synchronous XHR — last resort for iOS pagehide where
+          // keepalive fetch is silently dropped. Sync XHR is deprecated but
+          // still works and is the only reliable way to fire a request when
+          // the page is being unloaded on iOS Safari.
+          if (isLeaving) {
+            try {
+              var xhr = new XMLHttpRequest();
+              xhr.open("PUT", "/api/state", false); // false = synchronous
+              xhr.withCredentials = true;
+              xhr.setRequestHeader("Content-Type", "application/json");
+              xhr.send(body);
+            } catch (e) {}
+          }
+        });
+      }
+      if (deletes.length) {
+        fetch("/api/state", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          keepalive: true,
+          body: JSON.stringify({ keys: deletes }),
+        }).catch(function () {});
+      }
     }
+
     window.storage = {
       getItem: function (k) { return Object.prototype.hasOwnProperty.call(cache, k) ? cache[k] : null; },
       setItem: function (k, v) { v = String(v); cache[k] = v; delete removed[k]; dirty[k] = v; try { localStorage.setItem(k, v); } catch (e) {} schedule(); },
       removeItem: function (k) { delete cache[k]; delete dirty[k]; removed[k] = true; try { localStorage.removeItem(k); } catch (e) {} schedule(); }
     };
+
     function leaveFlush() { if (timer) clearTimeout(timer); flush(true); }
     window.addEventListener("pagehide", leaveFlush);
+    window.addEventListener("beforeunload", leaveFlush);
 
     // Cross-device sync: re-fetch from server when tab becomes visible after
-    // being hidden for > 20 seconds. Only runs when there are no pending
-    // local writes to avoid stomping an in-progress edit. Dispatches
-    // "sovereign-sync" so React can merge the fresh data into its state.
+    // being hidden for > 10 seconds (was 20s — halved for faster cross-device pickup).
+    // Skipped if there are pending local writes (dirty) to avoid overwriting
+    // in-progress edits. Dispatches "sovereign-sync" so React re-reads the cache.
     var hiddenAt = null;
     document.addEventListener("visibilitychange", function () {
       if (document.visibilityState === "hidden") {
         leaveFlush();
         hiddenAt = Date.now();
-      } else if (hiddenAt && Date.now() - hiddenAt > 20000 && Object.keys(dirty).length === 0) {
+      } else if (hiddenAt && Date.now() - hiddenAt > 10000 && Object.keys(dirty).length === 0) {
         hiddenAt = null;
         fetch("/api/state", { credentials: "same-origin", headers: { "Accept": "application/json" } })
           .then(function (r) { return r.ok ? r.json() : null; })
@@ -167,9 +209,21 @@ window.addEventListener("unhandledrejection", function(e){
             if (!j || !j.state) return;
             var changed = false;
             Object.keys(j.state).forEach(function (k) {
-              if (!Object.prototype.hasOwnProperty.call(dirty, k) && cache[k] !== j.state[k]) {
-                cache[k] = j.state[k];
-                try { localStorage.setItem(k, j.state[k]); } catch (e) {}
+              // Only overwrite if the server value is newer (higher _savedAt).
+              // For non-data keys (prefs, active, etc.) always take the server value.
+              var serverVal = j.state[k];
+              var localVal = cache[k];
+              if (serverVal === localVal) return;
+              if (!Object.prototype.hasOwnProperty.call(dirty, k)) {
+                // If both are JSON and have _savedAt, pick the newer one.
+                try {
+                  var sv = JSON.parse(serverVal), lv = JSON.parse(localVal);
+                  if (sv && lv && typeof sv._savedAt === "number" && typeof lv._savedAt === "number") {
+                    if (lv._savedAt >= sv._savedAt) return; // local is newer — keep it
+                  }
+                } catch (e) {}
+                cache[k] = serverVal;
+                try { localStorage.setItem(k, serverVal); } catch (e) {}
                 changed = true;
               }
             });
@@ -200,8 +254,34 @@ window.addEventListener("unhandledrejection", function(e){
 
   Promise.all([loadState(), loadBabel()])
     .then(function (res) {
-      var state = res[0];
-      if (state) installCloudStorage(state);
+      var cloudState = res[0] || {};
+
+      // For each dom_data_* key: if localStorage has a newer _savedAt than
+      // Supabase (e.g. iOS failed to flush the last write), prefer the local
+      // version so we don't overwrite more recent work with stale cloud data.
+      var mergedState = Object.assign({}, cloudState);
+      try {
+        for (var i = 0; i < localStorage.length; i++) {
+          var k = localStorage.key(i);
+          if (!k || !k.startsWith("dom_data_")) continue;
+          var localRaw = localStorage.getItem(k);
+          var cloudRaw = cloudState[k];
+          if (!localRaw) continue;
+          if (!cloudRaw) { mergedState[k] = localRaw; continue; }
+          try {
+            var localObj = JSON.parse(localRaw);
+            var cloudObj = JSON.parse(cloudRaw);
+            if (localObj && cloudObj &&
+                typeof localObj._savedAt === "number" &&
+                typeof cloudObj._savedAt === "number" &&
+                localObj._savedAt > cloudObj._savedAt) {
+              mergedState[k] = localRaw; // local is newer — use it
+            }
+          } catch (e) {}
+        }
+      } catch (e) {}
+
+      installCloudStorage(mergedState);
       startApp();
     })
     .catch(function (e) { showError((e && e.message) || "Load error."); });
@@ -3759,7 +3839,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
 
   const [toast, setToast] = useState(null);
 
-  useEffect(() => { storage.set(dataKey, data); }, [data, dataKey]);
+  useEffect(() => { storage.set(dataKey, { ...data, _savedAt: Date.now() }); }, [data, dataKey]);
   useEffect(() => { storage.set("dom_active", active); }, [active]);
 
   // Cross-device sync: when the bootstrap detects fresh server data (tab was
