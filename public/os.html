@@ -271,11 +271,14 @@ window.addEventListener("unhandledrejection", function(e){
           try {
             var localObj = JSON.parse(localRaw);
             var cloudObj = JSON.parse(cloudRaw);
-            if (localObj && cloudObj &&
-                typeof localObj._savedAt === "number" &&
-                typeof cloudObj._savedAt === "number" &&
-                localObj._savedAt > cloudObj._savedAt) {
-              mergedState[k] = localRaw; // local is newer — use it
+            if (localObj && cloudObj) {
+              // Treat missing _savedAt as 0 so any timestamped local write
+              // beats cloud data that predates the _savedAt feature.
+              var lSaved = typeof localObj._savedAt === "number" ? localObj._savedAt : 0;
+              var cSaved = typeof cloudObj._savedAt === "number" ? cloudObj._savedAt : 0;
+              if (lSaved > cSaved) {
+                mergedState[k] = localRaw; // local is newer — use it
+              }
             }
           } catch (e) {}
         }
@@ -2219,6 +2222,23 @@ const TRANSLATIONS = {
     "of {n} today": "of {n} today",
     "all done — well done": "all done — well done",
     "no tasks yet": "no tasks yet",
+    "Reminders": "Reminders",
+    "Notifications": "Notifications",
+    "Notifications & Reminders": "Notifications & Reminders",
+    "YOUR REMINDERS": "YOUR REMINDERS",
+    "Add a reminder…": "Add a reminder…",
+    "+ Add": "+ Add",
+    "Nothing yet. Add anything you want to remember.": "Nothing yet. Add anything you want to remember.",
+    "Tasks and vitamins are all clear.": "Tasks and vitamins are all clear.",
+    "TODAY'S PENDING TASKS": "TODAY'S PENDING TASKS",
+    "VITAMINS NOT TAKEN TODAY": "VITAMINS NOT TAKEN TODAY",
+    "tomorrow": "tomorrow",
+    "in {n} days (short)": "in {n} days",
+    "You're all clear. Well done.": "You're all clear. Well done.",
+    "UPCOMING BIRTHDAYS": "UPCOMING BIRTHDAYS",
+    "GOALS EXPIRING": "GOALS EXPIRING",
+    "STALE CLIENTS": "STALE CLIENTS",
+    "RECRUITS GONE QUIET": "RECRUITS GONE QUIET",
     "you know your why": "you know your why",
     "set today's priorities": "set today's priorities",
     "{n} of {m} left": "{n} of {m} left",
@@ -3093,6 +3113,23 @@ const TRANSLATIONS = {
     "of {n} today": "de {n} hoy",
     "all done — well done": "todo hecho — bien hecho",
     "no tasks yet": "sin tareas todavía",
+    "Reminders": "Recordatorios",
+    "Notifications": "Notificaciones",
+    "Notifications & Reminders": "Notificaciones y recordatorios",
+    "YOUR REMINDERS": "TUS RECORDATORIOS",
+    "Add a reminder…": "Agregar un recordatorio…",
+    "+ Add": "+ Agregar",
+    "Nothing yet. Add anything you want to remember.": "Nada aún. Agrega lo que quieras recordar.",
+    "Tasks and vitamins are all clear.": "Tareas y vitaminas al día.",
+    "TODAY'S PENDING TASKS": "TAREAS PENDIENTES DE HOY",
+    "VITAMINS NOT TAKEN TODAY": "VITAMINAS NO TOMADAS HOY",
+    "tomorrow": "mañana",
+    "in {n} days (short)": "en {n} días",
+    "You're all clear. Well done.": "Todo está al día. Bien hecho.",
+    "UPCOMING BIRTHDAYS": "PRÓXIMOS CUMPLEAÑOS",
+    "GOALS EXPIRING": "METAS POR VENCER",
+    "STALE CLIENTS": "CLIENTES SIN SEGUIMIENTO",
+    "RECRUITS GONE QUIET": "RECLUTAS SIN RESPUESTA",
     "you know your why": "conoces tu porqué",
     "set today's priorities": "marca las prioridades de hoy",
     "{n} of {m} left": "{n} de {m} pendientes",
@@ -3839,7 +3876,10 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
 
   const [toast, setToast] = useState(null);
 
-  useEffect(() => { storage.set(dataKey, { ...data, _savedAt: Date.now() }); }, [data, dataKey]);
+  // useLayoutEffect fires synchronously after React commits to the DOM,
+  // before the browser can fire pagehide/beforeunload, so the localStorage
+  // write is guaranteed to land even when the user exits right after a tap.
+  useLayoutEffect(() => { storage.set(dataKey, { ...data, _savedAt: Date.now() }); }, [data, dataKey]);
   useEffect(() => { storage.set("dom_active", active); }, [active]);
 
   // Cross-device sync: when the bootstrap detects fresh server data (tab was
@@ -4297,7 +4337,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
                 </div>
               );
             })()}
-            <NotificationsBell data={data} setData={setData} setActive={setActive} open={bellOpen} setOpen={setBellOpen} />
+            <NotificationsBell data={data} setData={setData} setActive={setActive} open={bellOpen} setOpen={setBellOpen} lang={lang} />
             <ProfileAvatar user={user} setUser={setUser} themeMuted={themeMuted} onLogout={onLogout} lang={lang} isAffiliate={isAffiliate} isPlannerAdmin={isPlannerAdmin} isOwner={isOwner} data={data} setData={setData} />
           </div>
         </header>
@@ -4360,7 +4400,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
 // ============================================================
 // NOTIFICATIONS BELL — pulls actionable reminders from app data
 // ============================================================
-function NotificationsBell({ data, setData, setActive, open, setOpen }) {
+function NotificationsBell({ data, setData, setActive, open, setOpen, lang }) {
   const today = todayISO();
   const now = new Date();
 
@@ -4461,7 +4501,7 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
 
   return (
     <div className="relative">
-      <button onClick={() => setOpen(!open)} className="p-2 rounded hover:bg-stone-100 relative" title={hasAny ? "Notifications & Reminders" : "All clear"}>
+      <button onClick={() => setOpen(!open)} className="p-2 rounded hover:bg-stone-100 relative" title={hasAny ? t("Notifications & Reminders", lang) : t("You're all clear. Well done.", lang)}>
         <Bell className="w-4 h-4" />
         {isUrgent && (
           <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-amber-500 border-2 border-white" />
@@ -4477,8 +4517,8 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
             {/* Tab bar */}
             <div className="flex border-b border-stone-100 flex-shrink-0">
               {[
-                { id: "reminders", label: "Reminders", count: remindersCount },
-                { id: "notifications", label: "Notifications", count: notificationsCount },
+                { id: "reminders", label: t("Reminders", lang), count: remindersCount },
+                { id: "notifications", label: t("Notifications", lang), count: notificationsCount },
               ].map(tab => (
                 <button key={tab.id} onClick={() => setBellTab(tab.id)}
                   className={`flex-1 py-2.5 text-xs font-medium transition flex items-center justify-center gap-1.5 border-b-2 ${bellTab === tab.id ? "border-[#7a9a6e] text-[#5b7351]" : "border-transparent text-stone-500 hover:text-stone-700"}`}>
@@ -4493,22 +4533,22 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
                 <>
                   {/* USER-ADDED REMINDERS */}
                   <div className="px-4 py-3 border-b border-stone-100 bg-[#f4f7ee]/30">
-                    <div className="text-[10px] tracking-[0.18em] text-[#5b7351] mb-2 font-medium">YOUR REMINDERS</div>
+                    <div className="text-[10px] tracking-[0.18em] text-[#5b7351] mb-2 font-medium">{t("YOUR REMINDERS", lang)}</div>
                     <div className="flex gap-1.5 mb-2">
                       <input
                         value={draft}
                         onChange={(e) => setDraft(e.target.value)}
                         onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addReminder(); } }}
-                        placeholder="Add a reminder…"
+                        placeholder={t("Add a reminder…", lang)}
                         className="flex-1 px-2.5 py-1.5 text-xs bg-white border border-stone-200 rounded focus:border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20 outline-none"
                       />
                       <button type="button" onClick={addReminder}
                         className="px-3 py-1.5 text-[11px] uppercase tracking-wider bg-[#7a9a6e] text-white rounded font-medium hover:bg-[#5b7351] transition">
-                        + Add
+                        {t("+ Add", lang)}
                       </button>
                     </div>
                     {customReminders.length === 0 ? (
-                      <div className="text-[11px] text-stone-400 italic py-1">Nothing yet. Add anything you want to remember.</div>
+                      <div className="text-[11px] text-stone-400 italic py-1">{t("Nothing yet. Add anything you want to remember.", lang)}</div>
                     ) : (
                       <ul className="space-y-1">
                         {customReminders.map((r) => (
@@ -4523,12 +4563,12 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
                   </div>
 
                   {tasksToday.length === 0 && vitaminsMissed.length === 0 && (
-                    <div className="px-4 py-8 text-center text-sm text-stone-400 italic">Tasks and vitamins are all clear.</div>
+                    <div className="px-4 py-8 text-center text-sm text-stone-400 italic">{t("Tasks and vitamins are all clear.", lang)}</div>
                   )}
-                  <Section icon={CheckSquare} label="TODAY'S PENDING TASKS" items={tasksToday} route="planner"
-                    render={(t) => <span className={overdueTaskCount > 0 && t.date < today ? "text-amber-700 font-medium" : ""}>• {t.title}{t.priority === "critical" || t.priority === "high" ? <span className="ml-1 text-[#5b7351] font-medium tracking-wider">PRIORITY</span> : null}</span>}
+                  <Section icon={CheckSquare} label={t("TODAY'S PENDING TASKS", lang)} items={tasksToday} route="planner"
+                    render={(task) => <span>• {task.title}{task.priority === "critical" || task.priority === "high" ? <span className="ml-1 text-[#5b7351] font-medium tracking-wider">{t("PRIORITY", lang)}</span> : null}</span>}
                   />
-                  <Section icon={Heart} label="VITAMINS NOT TAKEN TODAY" items={vitaminsMissed} route="cycle" color="#b07a7a"
+                  <Section icon={Heart} label={t("VITAMINS NOT TAKEN TODAY", lang)} items={vitaminsMissed} route="cycle" color="#b07a7a"
                     render={(v) => <span>💊 {v.name}</span>}
                   />
                 </>
@@ -4537,18 +4577,18 @@ function NotificationsBell({ data, setData, setActive, open, setOpen }) {
               {bellTab === "notifications" && (
                 <>
                   {notificationsCount === 0 && (
-                    <div className="px-4 py-10 text-center text-sm text-stone-400 italic">You&apos;re all clear. Well done.</div>
+                    <div className="px-4 py-10 text-center text-sm text-stone-400 italic">{t("You're all clear. Well done.", lang)}</div>
                   )}
-                  <Section icon={Gift} label="UPCOMING BIRTHDAYS" items={birthdaysUpcoming} route="clients" color="#a16207"
-                    render={(c) => <span className={c.daysAway <= 1 ? "text-amber-700 font-medium" : ""}>🎂 {c.name} — {c.daysAway === 0 ? "today" : c.daysAway === 1 ? "tomorrow" : `in ${c.daysAway} days`}</span>}
+                  <Section icon={Gift} label={t("UPCOMING BIRTHDAYS", lang)} items={birthdaysUpcoming} route="clients" color="#a16207"
+                    render={(c) => <span className={c.daysAway <= 1 ? "text-amber-700 font-medium" : ""}>🎂 {c.name} — {c.daysAway === 0 ? t("today", lang) : c.daysAway === 1 ? t("tomorrow", lang) : t("in {n} days (short)", lang, { n: c.daysAway })}</span>}
                   />
-                  <Section icon={Target} label="GOALS DUE THIS MONTH" items={goalsDue} route="goals"
+                  <Section icon={Target} label={t("GOALS EXPIRING", lang)} items={goalsDue} route="goals"
                     render={(g) => <span>🎯 {g.title} — {g.progress}% · due {fmtDate(g.deadline)}</span>}
                   />
-                  <Section icon={Phone} label="CLIENTS GOING COLD (30+ DAYS)" items={stale} route="clients" color="#b45309"
+                  <Section icon={Phone} label={t("STALE CLIENTS", lang)} items={stale} route="clients" color="#b45309"
                     render={(c) => <span>📞 {c.name} — {Math.floor((now - new Date(c.lastContact)) / (1000 * 60 * 60 * 24))} days</span>}
                   />
-                  <Section icon={UserPlus} label="RECRUITS STALLED 60+ DAYS" items={recruitsStalled} route="recruits" color="#b45309"
+                  <Section icon={UserPlus} label={t("RECRUITS GONE QUIET", lang)} items={recruitsStalled} route="recruits" color="#b45309"
                     render={(r) => <span>👤 {r.name} — non-licensed since {fmtDate(r.startDate)}</span>}
                   />
                 </>
@@ -10197,7 +10237,7 @@ function HomeModule({ data, setData, user, dark, triggerConfetti, themePanel, th
   const mtdRevenue = data.revenueData.at(-1)?.revenue || 0;
   const ytdRevenue = data.revenueData.reduce((s, r) => s + (r.revenue || 0), 0);
   const activeClients = data.clients.filter(c => c.status === "active").length;
-  const pendingTasks = data.tasks.filter(t => !t.done).length;
+  const pendingTasks = (data.tasks || []).filter(t => !t.done).length;
   const pipeline = data.clients.filter(c => ["lead", "quoted"].includes(c.status)).reduce((s, c) => s + (c.coverage || 0) * 0.001, 0);
   const socialReach = Object.values(data.social).reduce((s, p) => s + p.reach, 0);
   const teamProd = data.team.reduce((s, t) => s + t.mtd, 0);
@@ -10438,7 +10478,8 @@ function ClientsModule({ data, setData, dark, themePanel, themeMuted, triggerCon
     if (editing) {
       setData({ ...data, clients: data.clients.map(c => c.id === editing ? { ...form, id: editing } : c) });
     } else {
-      const id = Math.max(0, ...data.clients.map(c => c.id)) + 1;
+      const clientIds = (data.clients || []).map(c => Number(c && c.id)).filter(n => !isNaN(n));
+      const id = (clientIds.length ? Math.max(...clientIds) : 0) + 1;
       setData({ ...data, clients: [...data.clients, { ...form, id }] });
       triggerConfetti("✓ Client added!");
     }
@@ -13640,7 +13681,7 @@ function TasksModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
   const today = todayISO();
   const weekStart = (() => { const d = new Date(); d.setDate(d.getDate() - 7); return toLocalISO(d); })();
 
-  const filtered = data.tasks.filter(t => {
+  const filtered = (data.tasks || []).filter(t => {
     if (view === "today") return t.date === today;
     if (view === "week") return t.date >= weekStart;
     return true;
@@ -13668,7 +13709,8 @@ function TasksModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
 
   const add = () => {
     if (!form.title) return;
-    const id = Math.max(0, ...data.tasks.map(t => t.id)) + 1;
+    const taskIds = (data.tasks || []).map(t => Number(t && t.id)).filter(n => !isNaN(n));
+    const id = (taskIds.length ? Math.max(...taskIds) : 0) + 1;
     setData({ ...data, tasks: [...data.tasks, { ...form, id, done: false }] });
     setOpen(false);
     setForm({ title: "", priority: "normal", date: todayISO(), recurring: false, category: "client" });
