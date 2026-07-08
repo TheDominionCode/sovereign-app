@@ -17,6 +17,7 @@ const TABS: { href: string; label: string; perm: PermissionKey }[] = [
   { href: "/admin/testimonials",  label: "Testimonials",  perm: "testimonials" },
   { href: "/admin/announcements",    label: "Announcements",   perm: "announcements" },
   { href: "/admin/daily-experience", label: "Daily Experience", perm: "daily_experience" },
+  { href: "/admin/bugs",             label: "Bug Reports",      perm: "bugs" },
   { href: "/admin/admins",           label: "Admins",           perm: "admins" },
 ];
 

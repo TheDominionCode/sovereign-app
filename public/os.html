@@ -1768,6 +1768,16 @@ const TRANSLATIONS = {
     "Logins & Passwords": "Logins & Passwords",
     "Settings": "Settings",
     "Sign out": "Sign out",
+    "Found a bug?": "Found a bug?",
+    "Let us know — we read every report.": "Let us know — we read every report.",
+    "Report a bug": "Report a bug",
+    "What went wrong?": "What went wrong?",
+    "Describe what happened, what you expected, and what you saw.": "Describe what happened, what you expected, and what you saw.",
+    "Which section? (optional)": "Which section? (optional)",
+    "e.g. Daily Rhythm, Vision Board, Notes…": "e.g. Daily Rhythm, Vision Board, Notes…",
+    "Report sent. Thank you!": "Report sent. Thank you!",
+    "Couldn't send — check your connection and try again.": "Couldn't send — check your connection and try again.",
+    "Send report": "Send report",
     "Habits": "Habits",
     "Daily Rhythm": "Daily Rhythm",
     "in alignment": "in alignment",
@@ -2629,6 +2639,16 @@ const TRANSLATIONS = {
     "Logins & Passwords": "Accesos y Contraseñas",
     "Settings": "Configuración",
     "Sign out": "Cerrar sesión",
+    "Found a bug?": "¿Encontraste un error?",
+    "Let us know — we read every report.": "Cuéntanos — leemos cada reporte.",
+    "Report a bug": "Reportar un error",
+    "What went wrong?": "¿Qué salió mal?",
+    "Describe what happened, what you expected, and what you saw.": "Describe qué pasó, qué esperabas y qué viste.",
+    "Which section? (optional)": "¿En qué sección? (opcional)",
+    "e.g. Daily Rhythm, Vision Board, Notes…": "Ej. Ritmo Diario, Tablero de Visión, Notas…",
+    "Report sent. Thank you!": "Reporte enviado. ¡Gracias!",
+    "Couldn't send — check your connection and try again.": "No se pudo enviar — revisa tu conexión e intenta de nuevo.",
+    "Send report": "Enviar reporte",
     "Habits": "Hábitos",
     "Daily Rhythm": "Ritmo Diario",
     "in alignment": "en alineación",
@@ -5139,13 +5159,102 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
         </div>
       </Panel>
 
-      <Panel title={t("Account", lang)} dark={dark}>
+      <Panel title={t("Account", lang)} dark={dark} className="mb-5">
         <div className="space-y-3">
           <button onClick={onLogout} className="px-4 py-2 border border-stone-300 text-sm rounded hover:border-rose-300 hover:text-rose-600 flex items-center gap-2">
             <LogOut className="w-4 h-4" /> {t("Sign out", lang)}
           </button>
         </div>
       </Panel>
+
+      {/* BUG REPORT */}
+      <BugReportPanel dark={dark} themeMuted={themeMuted} lang={lang} themePanel={themePanel} />
+    </div>
+  );
+}
+
+function BugReportPanel({ dark, themeMuted, lang, themePanel }) {
+  const [open, setOpen] = useState(false);
+  const [description, setDescription] = useState("");
+  const [page, setPage] = useState("");
+  const [status, setStatus] = useState(null); // null | "sending" | "ok" | "err"
+
+  const submit = async () => {
+    if (!description.trim()) return;
+    setStatus("sending");
+    try {
+      const res = await fetch("/api/bug-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: description.trim(), page: page.trim() }),
+      });
+      if (!res.ok) throw new Error();
+      setStatus("ok");
+      setDescription("");
+      setPage("");
+      setTimeout(() => { setOpen(false); setStatus(null); }, 2000);
+    } catch {
+      setStatus("err");
+    }
+  };
+
+  return (
+    <div className={`rounded-xl border ${themePanel} p-5`}>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <div className="text-sm font-medium">{t("Found a bug?", lang)}</div>
+          <div className={`text-xs ${themeMuted} mt-0.5`}>{t("Let us know — we read every report.", lang)}</div>
+        </div>
+        <button onClick={() => { setOpen(o => !o); setStatus(null); }}
+          className="px-3 py-1.5 text-xs border border-stone-200 rounded hover:border-[#7a9a6e] hover:text-[#5b7351] flex items-center gap-1.5 transition flex-shrink-0">
+          <MessageCircle className="w-3.5 h-3.5" />
+          {t("Report a bug", lang)}
+        </button>
+      </div>
+
+      {open && (
+        <div className="mt-4 space-y-3 border-t border-stone-100 pt-4">
+          <div>
+            <label className={`text-xs ${themeMuted}`}>{t("What went wrong?", lang)}</label>
+            <textarea
+              value={description}
+              onChange={e => setDescription(e.target.value)}
+              rows={4}
+              placeholder={t("Describe what happened, what you expected, and what you saw.", lang)}
+              className="mt-1 w-full px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white resize-none"
+            />
+          </div>
+          <div>
+            <label className={`text-xs ${themeMuted}`}>{t("Which section? (optional)", lang)}</label>
+            <input
+              value={page}
+              onChange={e => setPage(e.target.value)}
+              placeholder={t("e.g. Daily Rhythm, Vision Board, Notes…", lang)}
+              className="mt-1 w-full px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white"
+            />
+          </div>
+          {status === "ok" && (
+            <div className="px-3 py-2 rounded bg-[#f4f7ee] border border-[#d3e0c5] text-sm text-[#5b7351]">
+              ✓ {t("Report sent. Thank you!", lang)}
+            </div>
+          )}
+          {status === "err" && (
+            <div className="px-3 py-2 rounded bg-rose-50 border border-rose-200 text-sm text-rose-700">
+              {t("Couldn't send — check your connection and try again.", lang)}
+            </div>
+          )}
+          <div className="flex gap-2">
+            <button onClick={submit} disabled={!description.trim() || status === "sending" || status === "ok"}
+              className="px-4 py-2 bg-[#7a9a6e] text-white text-sm rounded font-medium hover:bg-[#5b7351] disabled:opacity-50 transition">
+              {status === "sending" ? t("Sending…", lang) : t("Send report", lang)}
+            </button>
+            <button onClick={() => { setOpen(false); setStatus(null); setDescription(""); setPage(""); }}
+              className="px-4 py-2 text-sm border border-stone-200 rounded hover:border-stone-400 transition">
+              {t("Cancel", lang)}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
