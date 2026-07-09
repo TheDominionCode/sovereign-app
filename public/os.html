@@ -12795,6 +12795,33 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                 );
               })}
             </div>
+            {/* Unscheduled tasks row — tasks without a start time appear here
+                so Today's Promises are always visible on the weekly schedule
+                even when no time slot has been assigned. */}
+            {weekDates.some(iso => allTasks.some(tk => tk && tk.date === iso && !tk.startTime)) && (
+              <div className="grid border-b border-stone-100 bg-stone-50/40" style={{ gridTemplateColumns: "52px repeat(7, minmax(70px, 1fr))" }}>
+                <div className="text-[9px] tracking-[0.18em] text-stone-400 font-semibold px-1 flex items-start" style={{ paddingTop: 5, paddingBottom: 5 }}>{t("Tasks", lang)}</div>
+                {weekDates.map(iso => {
+                  const unscheduled = allTasks.filter(tk => tk && tk.date === iso && !tk.startTime);
+                  return (
+                    <div key={iso} className="border-l border-stone-100 py-1 px-0.5" style={{ minHeight: 24 }}>
+                      {unscheduled.map(tk => (
+                        <button
+                          key={tk.id}
+                          type="button"
+                          onClick={() => openTaskEditorFromSchedule(tk)}
+                          title={tk.title}
+                          className={`w-full text-left text-[8px] sm:text-[9px] px-1 py-0.5 rounded mb-0.5 font-semibold hover:opacity-80 transition leading-tight truncate block ${tk.done ? "opacity-50" : ""}`}
+                          style={{ background: colorForId(tk.colorId).color, color: "white" }}
+                        >
+                          {tk.done ? "✓ " : ""}{tk.title || t("(untitled)", lang)}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
             <div>
               {PLANNER_HOURS.filter(hour => {
                 const isHalf = hour.includes(":30");
