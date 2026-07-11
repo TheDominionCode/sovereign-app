@@ -256,9 +256,11 @@ window.addEventListener("unhandledrejection", function(e){
     .then(function (res) {
       var cloudState = res[0] || {};
 
-      // For each dom_data_* key: if localStorage has a newer _savedAt than
-      // Supabase (e.g. iOS failed to flush the last write), prefer the local
-      // version so we don't overwrite more recent work with stale cloud data.
+      // For each dom_data_* key: prefer Supabase (cloud) UNLESS localStorage
+      // has a strictly higher _savedAt timestamp, meaning the user made a
+      // change on this device that hasn't synced yet (e.g. iOS tab-switch).
+      // Cloud-wins-when-tied is the safe default: it prevents stale or empty
+      // localStorage from overwriting the user's real Supabase data.
       var mergedState = Object.assign({}, cloudState);
       try {
         for (var i = 0; i < localStorage.length; i++) {
@@ -272,21 +274,15 @@ window.addEventListener("unhandledrejection", function(e){
             var localObj = JSON.parse(localRaw);
             var cloudObj = JSON.parse(cloudRaw);
             if (localObj && cloudObj) {
-              // Default to local unless the server copy is STRICTLY newer.
-              // Treating missing _savedAt as 0 means any stamped local write
-              // beats cloud data that predates the _savedAt feature.
-              // Using > (not >=) means we keep local when timestamps are equal
-              // — same-device refresh where flush completed — which is safe
-              // because the data content is identical.
               var lSaved = typeof localObj._savedAt === "number" ? localObj._savedAt : 0;
               var cSaved = typeof cloudObj._savedAt === "number" ? cloudObj._savedAt : 0;
-              if (cSaved > lSaved) {
-                // Cloud is strictly newer (another device synced) — keep cloud
-              } else {
-                mergedState[k] = localRaw; // local is same age or newer
+              if (lSaved > cSaved) {
+                mergedState[k] = localRaw; // local is strictly newer — prefer it
               }
+              // else: cloud wins (default) — safer than letting stale local
+              // overwrite real data when _savedAt is absent or equal.
             }
-          } catch (e) { mergedState[k] = localRaw; } // parse error → prefer local
+          } catch (e) { /* parse error: cloud already in mergedState, keep it */ }
         }
       } catch (e) {}
 
