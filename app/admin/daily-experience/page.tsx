@@ -194,11 +194,17 @@ export default async function DailyExperiencePage() {
         <p className="text-sm text-stone-500 italic">
           Manage the rotating daily content shown to every Sovereign member. Content rotates by day of year unless a specific schedule date is set.
         </p>
+        <ul className="mt-2 text-xs text-stone-400 space-y-0.5 list-disc list-inside">
+          <li><strong className="text-stone-500">Principles</strong> — daily principle shown on the Today &amp; Mind pages</li>
+          <li><strong className="text-stone-500">Reflections</strong> — Today&apos;s Reflection paragraph on the Today &amp; Mind pages</li>
+          <li><strong className="text-stone-500">Reflection Questions</strong> — the question prompts in the Mind module (all active entries show as the list; add/remove to change what members answer)</li>
+          <li><strong className="text-stone-500">Intentions Library</strong> — the word chips members pick as their daily intention</li>
+        </ul>
       </div>
 
       <SectionManager title="Principles" table="daily_principles" rows={principles} hasDate />
       <SectionManager title="Reflections" table="daily_reflections" rows={reflections} hasDate />
-      <SectionManager title="Questions" table="daily_questions" rows={questions} hasDate />
+      <SectionManager title="Reflection Questions (Mind module)" table="daily_questions" rows={questions} hasDate />
       <SectionManager title="Intentions Library" table="daily_intentions" rows={intentions} hasOrder />
     </div>
   );

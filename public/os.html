@@ -6459,20 +6459,22 @@ function SovereignOSModule({ data, setData, dark, themePanel, themeMuted, lang }
   const soData = (data.sovereignOS || {})[today] || {};
   const setSO = (patch) => setData({ ...data, sovereignOS: { ...(data.sovereignOS || {}), [today]: { ...soData, ...patch } } });
 
-  // Use same 5 prompts + same storage as Summary page Reflection Questions
+  // Reflection Questions — use DB list when available, fall back to hardcoded
+  const FALLBACK_PROMPTS = [
+    { en: "What am I proud of today?",             es: "¿De qué estoy orgullosa hoy?" },
+    { en: "What challenged me today?",              es: "¿Qué me desafió hoy?" },
+    { en: "What did I learn today?",                es: "¿Qué aprendí hoy?" },
+    { en: "What promise did I keep today?",         es: "¿Qué promesa cumplí hoy?" },
+    { en: "What deserves my attention tomorrow?",   es: "¿Qué merece mi atención mañana?" },
+  ];
+  const promptObjs = (dbContent?.questions?.length > 0) ? dbContent.questions : FALLBACK_PROMPTS;
+  const prompts = promptObjs.map(p => lang === "es" ? (p.es || p.en) : p.en);
   const reflectionAnswers = data.reflectionAnswers || {};
   const todayAnswers = reflectionAnswers[today] || {};
   const setSORAnswer = (idx, val) => {
     const next = { ...reflectionAnswers, [today]: { ...todayAnswers, [idx]: val } };
     setData({ ...data, reflectionAnswers: next });
   };
-  const prompts = [
-    t("What am I proud of today?", lang),
-    t("What challenged me today?", lang),
-    t("What did I learn today?", lang),
-    t("What promise did I keep today?", lang),
-    t("What deserves my attention tomorrow?", lang),
-  ];
 
   const dateLabel = new Date().toLocaleDateString(lang === "es" ? "es-ES" : "en-US", { weekday: "long", month: "long", day: "numeric" });
 

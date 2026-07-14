@@ -51,7 +51,7 @@ export async function GET() {
     const doy = dayOfYear(new Date());
     const admin = createAdminClient();
 
-    const [principle, reflection, question, intentionsRes] = await Promise.all([
+    const [principle, reflection, question, intentionsRes, questionsRes] = await Promise.all([
       pickOne("daily_principles", today, doy),
       pickOne("daily_reflections", today, doy),
       pickOne("daily_questions", today, doy),
@@ -60,6 +60,13 @@ export async function GET() {
         .select("id,content_en,content_es,sort_order")
         .eq("active", true)
         .order("sort_order")
+        .order("id"),
+      // All active questions — used as the Reflection Questions list in the Mind module
+      admin
+        .from("daily_questions")
+        .select("id,content_en,content_es")
+        .eq("active", true)
+        .is("display_date", null)
         .order("id"),
     ]);
 
@@ -74,6 +81,11 @@ export async function GET() {
         question: question
           ? { en: question.content_en, es: question.content_es }
           : null,
+        // Full list of active questions for the Mind module's Reflection Questions section
+        questions: (questionsRes.data ?? []).map((r: Row) => ({
+          en: r.content_en,
+          es: r.content_es,
+        })),
         intentions: (intentionsRes.data ?? []).map((r: Row) => ({
           id: String(r.id),
           en: r.content_en,
@@ -87,6 +99,6 @@ export async function GET() {
       }
     );
   } catch {
-    return NextResponse.json({ principle: null, reflection: null, question: null, intentions: [] }, { status: 500 });
+    return NextResponse.json({ principle: null, reflection: null, question: null, questions: [], intentions: [] }, { status: 500 });
   }
 }
