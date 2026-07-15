@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 // Cloud key/value store backing the Sovereign app's window.storage wrapper.
 // Auth comes from the existing Supabase session cookies (same-origin requests
@@ -15,12 +16,11 @@ type Entry = { key: string; value: string };
 // we don't need every single one to hit the DB). Fire-and-forget: if the
 // update fails we still serve the page so the user never sees a slowdown.
 const ACTIVITY_THROTTLE_MS = 10 * 60 * 1000; // 10 minutes
-async function bumpLastActive(
-  supabase: Awaited<ReturnType<typeof createClient>>,
-  userId: string,
-): Promise<void> {
+async function bumpLastActive(userId: string): Promise<void> {
   try {
-    const { data } = await supabase
+    // Must use the admin client — profiles has no UPDATE RLS policy for users.
+    const admin = createAdminClient();
+    const { data } = await admin
       .from("profiles")
       .select("last_active_at")
       .eq("id", userId)
@@ -29,7 +29,7 @@ async function bumpLastActive(
     if (last && Date.now() - new Date(last).getTime() < ACTIVITY_THROTTLE_MS) {
       return;
     }
-    await supabase
+    await admin
       .from("profiles")
       .update({ last_active_at: new Date().toISOString() })
       .eq("id", userId);
@@ -49,7 +49,7 @@ export async function GET() {
   }
 
   // Fire-and-forget activity bump.
-  void bumpLastActive(supabase, user.id);
+  void bumpLastActive(user.id);
 
   const { data, error } = await supabase
     .from("app_state")
