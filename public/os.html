@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <title>Sovereign — Build the Life</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- Babel is loaded by the cloud-storage bootstrap below, only after the
      user's Supabase state is fetched, so the app reads cloud data on first render. -->
@@ -37,8 +37,6 @@
 <style>
   html, body { overflow-x: hidden; max-width: 100%; }
   body { font-family: 'Inter', system-ui, sans-serif; margin: 0; background: #ffffff; }
-  /* Uniform font — override Tailwind's font-serif utility so every element uses Inter */
-  .font-serif, [class~="font-serif"] { font-family: 'Inter', system-ui, sans-serif !important; }
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: #d3e0c5; border-radius: 4px; }
@@ -905,7 +903,7 @@ export default function DominionOS() {
 // LANDING PAGE
 // ============================================================
 function LandingPage({ onStart, onSignIn }) {
-  const serif = { fontFamily: "'Inter', system-ui, sans-serif" };
+  const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
   return (
     <div className="min-h-screen bg-white text-stone-900 font-sans" style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
       {/* NAV */}
@@ -1132,7 +1130,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
                 <Sparkles className="w-3 h-3 text-[#9cb88f]" />
                 <span className="text-xs tracking-wider text-[#9cb88f]">FOR SERIOUS PRODUCERS</span>
               </div>
-              <h1 className="font-serif text-6xl md:text-8xl leading-[0.95] tracking-tight mb-6" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+              <h1 className="font-serif text-6xl md:text-8xl leading-[0.95] tracking-tight mb-6" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                 Build Your<br /><span className="text-[#9cb88f] italic">Dominion.</span>
               </h1>
               <p className="text-xl text-stone-400 max-w-xl mb-10 leading-relaxed">
@@ -1170,7 +1168,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
       <section className="py-32">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <div className="text-[#9cb88f] text-xs tracking-[0.3em] mb-6">THE PROBLEM</div>
-          <h2 className="font-serif text-5xl md:text-6xl leading-tight mb-8" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+          <h2 className="font-serif text-5xl md:text-6xl leading-tight mb-8" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             Sticky notes. Spreadsheets.<br />
             <span className="text-stone-500 italic">Lost leads.</span><br />
             Forgotten birthdays. Missed renewals.
@@ -1185,7 +1183,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="text-[#9cb88f] text-xs tracking-[0.3em] mb-4">TWO MODES · ONE OPERATING SYSTEM</div>
-            <h2 className="font-serif text-5xl mb-4" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Run the business. Build the life.</h2>
+            <h2 className="font-serif text-5xl mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Run the business. Build the life.</h2>
             <p className="text-stone-400 max-w-2xl mx-auto">Switch between Business and Personal mode in one click. Your data stays separate, your workflow stays seamless.</p>
           </div>
 
@@ -1193,7 +1191,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
           <div className="mb-16">
             <div className="flex items-center gap-3 mb-6">
               <Briefcase className="w-5 h-5 text-[#5b7351]" />
-              <h3 className="font-serif text-3xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Business Mode</h3>
+              <h3 className="font-serif text-3xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Business Mode</h3>
               <span className="text-xs tracking-wider text-stone-400">FOR PRODUCERS WHO ACTUALLY PRODUCE</span>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1210,7 +1208,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
               ].map((f, i) => (
                 <div key={i} className="group p-7 border border-stone-200 rounded-lg hover:border-[#9cb88f]/40 hover:bg-[#f7faf3] transition">
                   <f.icon className="w-6 h-6 text-[#9cb88f] mb-4 group-hover:scale-110 transition" />
-                  <h4 className="font-serif text-xl mb-2" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{f.name}</h4>
+                  <h4 className="font-serif text-xl mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{f.name}</h4>
                   <p className="text-stone-500 text-sm leading-relaxed">{f.desc}</p>
                 </div>
               ))}
@@ -1221,7 +1219,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
           <div>
             <div className="flex items-center gap-3 mb-6">
               <Heart className="w-5 h-5 text-[#5b7351]" />
-              <h3 className="font-serif text-3xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Personal Mode</h3>
+              <h3 className="font-serif text-3xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Personal Mode</h3>
               <span className="text-xs tracking-wider text-stone-400">FOR THE WOMAN BEHIND THE PRODUCTION</span>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1238,7 +1236,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
               ].map((f, i) => (
                 <div key={i} className="group p-7 border border-stone-200 rounded-lg hover:border-[#9cb88f]/40 hover:bg-[#f7faf3] transition">
                   <f.icon className="w-6 h-6 text-[#9cb88f] mb-4 group-hover:scale-110 transition" />
-                  <h4 className="font-serif text-xl mb-2" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{f.name}</h4>
+                  <h4 className="font-serif text-xl mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{f.name}</h4>
                   <p className="text-stone-500 text-sm leading-relaxed">{f.desc}</p>
                 </div>
               ))}
@@ -1258,7 +1256,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
               { n: "127%", l: "Avg producer growth" },
             ].map((s, i) => (
               <div key={i} className="text-center">
-                <div className="font-serif text-6xl md:text-7xl text-[#9cb88f] mb-2 tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{s.n}</div>
+                <div className="font-serif text-6xl md:text-7xl text-[#9cb88f] mb-2 tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.n}</div>
                 <div className="text-stone-400 text-sm tracking-wide">{s.l}</div>
               </div>
             ))}
@@ -1271,7 +1269,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="text-[#9cb88f] text-xs tracking-[0.3em] mb-4">SIMPLE PRICING</div>
-            <h2 className="font-serif text-5xl mb-4" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Choose your path</h2>
+            <h2 className="font-serif text-5xl mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Choose your path</h2>
             <p className="text-stone-400">Pay monthly. Cancel anytime. No setup fees.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -1284,7 +1282,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
                 {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-[#9cb88f] text-stone-950 text-xs tracking-wider font-medium rounded">{p.tag}</div>}
                 <div className="text-stone-400 text-sm mb-2">{p.name}</div>
                 <div className="flex items-baseline gap-1 mb-4">
-                  <span className="font-serif text-5xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${p.price}</span>
+                  <span className="font-serif text-5xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${p.price}</span>
                   <span className="text-stone-500">/mo</span>
                 </div>
                 {!p.popular && <div className="text-stone-500 text-sm mb-6">{p.tag}</div>}
@@ -1306,7 +1304,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <div className="text-[#9cb88f] text-xs tracking-[0.3em] mb-4">PRODUCERS TALKING</div>
-            <h2 className="font-serif text-5xl mb-4" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Built for closers.</h2>
+            <h2 className="font-serif text-5xl mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Built for closers.</h2>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
             {[
@@ -1317,7 +1315,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
             ].map((t, i) => (
               <div key={i} className="p-7 border border-stone-200 rounded-lg bg-white">
                 <div className="flex gap-0.5 mb-4">{[...Array(5)].map((_, k) => <Star key={k} className="w-3.5 h-3.5 fill-[#9cb88f] text-[#9cb88f]" />)}</div>
-                <p className="text-stone-800 text-sm leading-relaxed mb-6 font-serif italic" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>"{t.q}"</p>
+                <p className="text-stone-800 text-sm leading-relaxed mb-6 font-serif italic" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>"{t.q}"</p>
                 <div className="text-sm font-medium">{t.n}</div>
                 <div className="text-xs text-stone-500">{t.c}</div>
               </div>
@@ -1331,7 +1329,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
         <div className="max-w-3xl mx-auto px-6">
           <div className="text-center mb-12">
             <div className="text-[#9cb88f] text-xs tracking-[0.3em] mb-4">QUESTIONS</div>
-            <h2 className="font-serif text-5xl mb-4" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Frequently asked</h2>
+            <h2 className="font-serif text-5xl mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Frequently asked</h2>
           </div>
           <div className="space-y-3">
             {[
@@ -1352,7 +1350,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
       <section className="py-32 bg-gradient-to-br from-[#9cb88f]/10 via-white to-[#3a4a32]/10 border-y border-stone-200">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <Crown className="w-12 h-12 text-[#9cb88f] mx-auto mb-6" />
-          <h2 className="font-serif text-5xl md:text-6xl leading-tight mb-6" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+          <h2 className="font-serif text-5xl md:text-6xl leading-tight mb-6" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             Stop managing chaos.<br />
             <span className="text-[#9cb88f] italic">Start building empires.</span>
           </h2>
@@ -1369,7 +1367,7 @@ function LandingPage__OLD({ onStart, onSignIn }) {
           <div className="text-center mb-10">
             <Shield className="w-8 h-8 text-[#5b7351] mx-auto mb-4" />
             <div className="text-[#5b7351] text-xs tracking-[0.3em] mb-3">DISCLOSURES &amp; LEGAL</div>
-            <h2 className="font-serif text-4xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Read this carefully.</h2>
+            <h2 className="font-serif text-4xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Read this carefully.</h2>
           </div>
           <Disclosures lang={lang} />
         </div>
@@ -1453,7 +1451,7 @@ function Disclosures({ lang } = {}) {
       <div className="space-y-4">
         {sections.map((s, i) => (
           <div key={i} className="bg-white rounded-lg border border-stone-200 p-5">
-            <h3 className="font-serif text-lg mb-2 text-[#5b7351]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{s.title}</h3>
+            <h3 className="font-serif text-lg mb-2 text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.title}</h3>
             <p className="text-sm text-stone-600 leading-relaxed">{s.body}</p>
           </div>
         ))}
@@ -1511,7 +1509,7 @@ function Disclosures({ lang } = {}) {
     <div className="space-y-4">
       {sections.map((s, i) => (
         <div key={i} className="bg-white rounded-lg border border-stone-200 p-5">
-          <h3 className="font-serif text-lg mb-2 text-[#5b7351]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{s.title}</h3>
+          <h3 className="font-serif text-lg mb-2 text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.title}</h3>
           <p className="text-sm text-stone-600 leading-relaxed">{s.body}</p>
         </div>
       ))}
@@ -1588,7 +1586,7 @@ function AuthPage({ onLogin }) {
   const [err, setErr] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
-  const serif = { fontFamily: "'Inter', system-ui, sans-serif" };
+  const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
 
   const submit = (e) => {
     e.preventDefault();
@@ -4032,7 +4030,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
             <div className="px-4 py-3 border-b border-stone-100 flex items-center justify-between sticky top-0 bg-white rounded-t-2xl">
               <div>
                 <div className="text-[10px] tracking-[0.18em] uppercase text-[#5b7351] font-semibold">{lang === "es" ? "Mensajes" : "Messages"}</div>
-                <div className="font-serif text-base leading-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+                <div className="font-serif text-base leading-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                   {lang === "es" ? "Tu buzón" : "Your inbox"}
                 </div>
               </div>
@@ -4116,7 +4114,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
             <div className="flex items-start justify-between gap-3 mb-2">
               <div>
                 <div className="text-[10px] tracking-[0.18em] uppercase text-[#5b7351] font-semibold">{lang === "es" ? "Nuevo" : "What's new"}</div>
-                <h3 className="font-serif text-lg leading-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+                <h3 className="font-serif text-lg leading-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                   {lang === "es" ? "Últimas mejoras" : "Latest updates"}
                 </h3>
               </div>
@@ -4153,8 +4151,8 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           <Crown className="w-6 h-6 text-[#9cb88f] flex-shrink-0" />
           {(!collapsed || mobileMenuOpen) && (
             <div className="leading-tight">
-              <div className="font-serif text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}><span className="text-[#9cb88f]">Sovereign</span></div>
-              <div className="text-[10px] italic text-stone-500 tracking-wide" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Calm, centered, in charge.", lang)}</div>
+              <div className="font-serif text-lg" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}><span className="text-[#9cb88f]">Sovereign</span></div>
+              <div className="text-[10px] italic text-stone-500 tracking-wide" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Calm, centered, in charge.", lang)}</div>
             </div>
           )}
           <button onClick={() => { if (window.innerWidth < 768) setMobileMenuOpen(false); else setCollapsed(!collapsed); }} className="ml-auto p-1 rounded hover:bg-stone-100">
@@ -4723,7 +4721,7 @@ function PageHeader({ title, subtitle, action, dark }) {
   return (
     <div className="flex items-start justify-between mb-8 sm:mb-10 gap-4">
       <div>
-        <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{title}</h1>
+        <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{title}</h1>
         {subtitle && <p className={`text-sm mt-2 ${dark ? "text-stone-400" : "text-stone-600"}`}>{subtitle}</p>}
       </div>
       {action}
@@ -4752,7 +4750,7 @@ function StatCard({ label, value, sub, accent = "amber", dark, icon: Icon, onCli
           {Icon && <Icon className={`w-4 h-4 ${accents[accent]}`} />}
         </div>
       </div>
-      <div className={`font-serif text-3xl ${accents[accent]}`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{value}</div>
+      <div className={`font-serif text-3xl ${accents[accent]}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{value}</div>
       {sub && <div className="text-xs mt-1 text-stone-500">{sub}</div>}
     </>
   );
@@ -4788,7 +4786,7 @@ function Modal({ open, onClose, title, children, dark }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#f7faf3] backdrop-blur-sm" onClick={onClose}>
       <div onClick={e => e.stopPropagation()} className={`w-full max-w-lg rounded-lg border ${dark ? "bg-white border-stone-200 text-stone-900" : "bg-white border-stone-200 text-stone-900"} max-h-[90vh] overflow-y-auto`}>
         <div className={`flex items-center justify-between p-4 border-b ${dark ? "border-stone-200" : "border-stone-200"}`}>
-          <h3 className="font-serif text-xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{title}</h3>
+          <h3 className="font-serif text-xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{title}</h3>
           <button onClick={onClose} className={`p-1 rounded ${dark ? "hover:bg-stone-100" : "hover:bg-stone-100"}`}><X className="w-4 h-4" /></button>
         </div>
         <div className="p-5">{children}</div>
@@ -4835,7 +4833,7 @@ function ProgressRing({ value = 0, size = 100, stroke = 8, label, dark }) {
         <circle cx={size / 2} cy={size / 2} r={r} stroke="var(--accent-mid)" strokeWidth={stroke} fill="none" strokeDasharray={c} strokeDashoffset={offset} strokeLinecap="round" style={{ transition: "stroke-dashoffset 0.8s ease" }} />
       </svg>
       <div className="absolute text-center">
-        <div className="font-serif text-xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{value}%</div>
+        <div className="font-serif text-xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{value}%</div>
         {label && <div className="text-[10px] text-stone-500">{label}</div>}
       </div>
     </div>
@@ -4898,7 +4896,7 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
   const engagementUsed = engagementSections.filter((s) => s.used).length;
   const engagementPct = Math.round((engagementUsed / engagementTotal) * 100);
   const engagementUnused = engagementSections.filter((s) => !s.used).slice(0, 3);
-  const serifStyle = { fontFamily: "'Inter', system-ui, sans-serif" };
+  const serifStyle = { fontFamily: "'Playfair Display', Georgia, serif" };
   const [profile, setProfile] = useState({ name: user.name || "" });
   const [pwd, setPwd] = useState({ current: "", next: "", confirm: "" });
   const [pwdMsg, setPwdMsg] = useState(null);
@@ -5030,7 +5028,7 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
               className="mt-1 w-full px-3 py-2 rounded border border-stone-200 bg-stone-50 text-stone-500 text-sm cursor-not-allowed"
               title={t("Usernames are permanent. Contact support if you need a change.", lang)}
             />
-            <p className="text-[11px] italic text-stone-400 mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Your username is locked — it's how you sign in.", lang)}</p>
+            <p className="text-[11px] italic text-stone-400 mt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Your username is locked — it's how you sign in.", lang)}</p>
           </div>
           <button onClick={saveProfile} className="px-4 py-2 bg-[#7a9a6e] text-white text-sm rounded font-medium hover:bg-[#5b7351]">{t("Save profile", lang)}</button>
         </div>
@@ -5218,7 +5216,7 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
                 );
               })}
             </div>
-            <p className="text-[11px] italic text-stone-400 mt-2" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Translations cover the sidebar, greeting, and main labels — more strings are being translated module by module.", lang)}</p>
+            <p className="text-[11px] italic text-stone-400 mt-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Translations cover the sidebar, greeting, and main labels — more strings are being translated module by module.", lang)}</p>
           </div>
           <div className="p-3 rounded border border-stone-200">
             <div className="mb-2">
@@ -5254,7 +5252,7 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
                 <div className="text-sm font-medium">{t("Accent color", lang)}</div>
                 <div className="text-xs text-stone-500">{t("Pick the tone that feels like you.", lang)}</div>
               </div>
-              <div className="text-[10px] italic text-stone-400" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{ACCENT_PALETTES[prefs.accent]?.name || "Sage"}</div>
+              <div className="text-[10px] italic text-stone-400" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{ACCENT_PALETTES[prefs.accent]?.name || "Sage"}</div>
             </div>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {Object.values(ACCENT_PALETTES).map(p => {
@@ -5267,7 +5265,7 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
                     title={p.name}
                   >
                     <span className="w-8 h-8 rounded-full ring-2 ring-white shadow-sm" style={{ background: `linear-gradient(135deg, ${p.primary} 0%, ${p.mid} 50%, ${p.light} 100%)` }}></span>
-                    <span className={`text-[10px] italic ${active ? "text-stone-800" : "text-stone-500"}`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{p.name}</span>
+                    <span className={`text-[10px] italic ${active ? "text-stone-800" : "text-stone-500"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{p.name}</span>
                     {active && <Check className="absolute top-1 right-1 w-3 h-3 text-stone-700" />}
                   </button>
                 );
@@ -5745,12 +5743,12 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
   return (
     <div>
       <div className="mb-6">
-        <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Personal Wealth Operating System", lang)}</h1>
-        <p className={`text-sm mt-2 ${themeMuted} italic`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Am I becoming wealthier?", lang)}</p>
+        <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Personal Wealth Operating System", lang)}</h1>
+        <p className={`text-sm mt-2 ${themeMuted} italic`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Am I becoming wealthier?", lang)}</p>
       </div>
 
       {/* YEAR-TO-DATE LITTLE BOXES */}
-      <div className="text-[10px] tracking-[0.22em] text-[#5b7351] mb-2" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("YEAR TO DATE · {year}", lang, { year: yearStr })}</div>
+      <div className="text-[10px] tracking-[0.22em] text-[#5b7351] mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("YEAR TO DATE · {year}", lang, { year: yearStr })}</div>
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         {[
           { label: t("YTD INCOME", lang), val: ytdIncome },
@@ -5759,8 +5757,8 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
           { label: t("INVESTMENTS", lang), val: investments.reduce((s, x) => s + (x.amount || 0), 0) },
         ].map(c => (
           <div key={c.label} className="rounded-lg p-4 text-center" style={{ background: FOREST, color: CREAM }}>
-            <div className="text-[10px] tracking-[0.18em]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{c.label}</div>
-            <div className="font-serif text-2xl mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{fmt(c.val)}</div>
+            <div className="text-[10px] tracking-[0.18em]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{c.label}</div>
+            <div className="font-serif text-2xl mt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{fmt(c.val)}</div>
           </div>
         ))}
       </div>
@@ -5777,8 +5775,8 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
           { label: t("TOTAL SAVED", lang), val: totalSaved },
         ].map(c => (
           <div key={c.label} className="rounded-lg p-5 text-center" style={{ background: FOREST, color: CREAM }}>
-            <div className="text-[11px] tracking-[0.18em]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{c.label}</div>
-            <div className="font-serif text-3xl mt-2" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{fmt(c.val)}</div>
+            <div className="text-[11px] tracking-[0.18em]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{c.label}</div>
+            <div className="font-serif text-3xl mt-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{fmt(c.val)}</div>
           </div>
         ))}
       </div>
@@ -5797,7 +5795,7 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
             onClick={() => setTab(t.id)}
             className={`px-2 sm:px-4 py-2 sm:py-3 rounded-md text-xs sm:text-sm tracking-wide transition ${tab === t.id ? "text-white" : `${themeMuted} hover:text-[#5b7351]`}`}
             style={{
-              fontFamily: "'Inter', system-ui, sans-serif",
+              fontFamily: "'Playfair Display', Georgia, serif",
               background: tab === t.id ? FOREST : "transparent",
             }}
           >
@@ -6159,7 +6157,7 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
                 <div key={s.id} className={`p-5 rounded-lg border ${themePanel}`}>
                   <div className="flex items-start justify-between gap-4 mb-3">
                     <div className="flex-1">
-                      <h3 className="font-serif text-xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{s.name}</h3>
+                      <h3 className="font-serif text-xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.name}</h3>
                       {s.deadline && <p className="text-xs text-stone-500 mt-1">By {fmtDate(s.deadline)}</p>}
                     </div>
                     <ProgressRing value={pct} size={70} stroke={6} dark={dark} />
@@ -6185,14 +6183,14 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
 
       {/* INVESTMENTS — standalone section */}
       <div className="mt-10 pt-8 border-t border-stone-200">
-        <h2 className="font-serif text-2xl tracking-tight mb-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Investments</h2>
+        <h2 className="font-serif text-2xl tracking-tight mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Investments</h2>
         <p className={`text-sm ${themeMuted} mb-4`}>Holdings, retirement, real estate. Update values as your portfolio moves.</p>
 
         {/* Total card — matches the four stat cards at top */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
           <div className="rounded-lg p-5 text-center" style={{ background: FOREST, color: CREAM }}>
-            <div className="text-[11px] tracking-[0.18em]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>TOTAL PORTFOLIO</div>
-            <div className="font-serif text-3xl mt-2" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{fmt(investments.reduce((s, x) => s + (x.amount || 0), 0))}</div>
+            <div className="text-[11px] tracking-[0.18em]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>TOTAL PORTFOLIO</div>
+            <div className="font-serif text-3xl mt-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{fmt(investments.reduce((s, x) => s + (x.amount || 0), 0))}</div>
           </div>
         </div>
 
@@ -6256,9 +6254,9 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
       {/* CREDIT SCORE — three bureaus, side by side */}
       <div className="mt-10 pt-8 border-t border-stone-200">
         <div className="flex items-baseline justify-between mb-1 gap-3 flex-wrap">
-          <h2 className="font-serif text-2xl tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Credit Score</h2>
+          <h2 className="font-serif text-2xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Credit Score</h2>
           {averageScore != null && (
-            <span className="text-xs italic text-stone-500" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+            <span className="text-xs italic text-stone-500" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
               average across bureaus: <span className="font-mono text-[#5b7351] font-semibold">{averageScore}</span>
             </span>
           )}
@@ -6275,11 +6273,11 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
             return (
               <div key={bureau.id} className={`rounded-lg border ${themePanel} p-4`} style={{ borderTopWidth: 3, borderTopColor: bureau.accent }}>
                 <div className="flex items-baseline justify-between mb-2">
-                  <h3 className="font-serif text-base" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{bureau.name}</h3>
-                  {b.lastUpdated && <span className="text-[10px] italic text-stone-400" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{fmtDate(b.lastUpdated)}</span>}
+                  <h3 className="font-serif text-base" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{bureau.name}</h3>
+                  {b.lastUpdated && <span className="text-[10px] italic text-stone-400" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{fmtDate(b.lastUpdated)}</span>}
                 </div>
                 <div className="flex items-baseline gap-2">
-                  <div className="font-serif text-4xl" style={{ fontFamily: "'Inter', system-ui, sans-serif", color: band.color }}>{b.current || "—"}</div>
+                  <div className="font-serif text-4xl" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: band.color }}>{b.current || "—"}</div>
                   <span className={`text-[10px] tracking-wider px-2 py-0.5 rounded ${band.bg} ${band.text}`}>{band.label}</span>
                   {change != null && change !== 0 && (
                     <span className={`text-xs font-mono ${change > 0 ? "text-emerald-600" : "text-rose-500"}`}>
@@ -6329,7 +6327,7 @@ function PersonalFinanceModule({ data, setData, dark, themePanel, themeMuted, tr
                         return (
                           <div key={h.date} className="flex items-center gap-2 group text-xs">
                             <span className="text-stone-500 font-mono w-20 flex-shrink-0">{fmtDate(h.date)}</span>
-                            <span className="font-serif" style={{ fontFamily: "'Inter', system-ui, sans-serif", color: hb.color }}>{h.score}</span>
+                            <span className="font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif", color: hb.color }}>{h.score}</span>
                             <div className="flex-1"></div>
                             <button onClick={() => removeCreditEntry(bureau.id, h.date)} className="p-1 text-stone-300 hover:text-rose-500 opacity-0 group-hover:opacity-100" title="Delete"><Trash2 className="w-3 h-3" /></button>
                           </div>
@@ -6436,7 +6434,7 @@ const DAILY_INTENTIONS = [
 // SOVEREIGN OS MODULE — Daily Companion Experience (Sprint 4)
 // ============================================================
 function SovereignOSModule({ data, setData, dark, themePanel, themeMuted, lang }) {
-  const serif = { fontFamily: "'Inter', system-ui, sans-serif" };
+  const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
   const today = todayISO();
 
   // Daily rotating content — same source as Today page
@@ -6840,7 +6838,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   );
   const net = Math.round(monthlyIncome - monthlyExpenses);
   const firstName = (user.name || "").split(" ")[0];
-  const serifStyle = { fontFamily: "'Inter', system-ui, sans-serif" };
+  const serifStyle = { fontFamily: "'Playfair Display', Georgia, serif" };
 
   // Sprint 3 — daily rotating content (DB-driven with hardcoded fallback)
   const [dbDailyContent, setDbDailyContent] = useState(null);
@@ -6979,7 +6977,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const CustomizeModal = customizeOpen ? (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setCustomizeOpen(false)}>
       <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full max-h-[85vh] overflow-y-auto p-6" onClick={(e) => e.stopPropagation()}>
-        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Customize summary", lang)}</h3>
+        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Customize summary", lang)}</h3>
         <p className="text-xs text-stone-500 mb-4 italic">{t("Pick what shows on this page.", lang)}</p>
 
         <div className="text-[10px] tracking-[0.2em] text-stone-500 font-semibold mb-2">{t("SHOW / HIDE", lang)}</div>
@@ -7205,7 +7203,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
               <button key={intent.id}
                 onClick={() => setTodayIntention(intent.id)}
                 className={`px-3 py-1.5 rounded-full text-xs italic transition border ${isSelected ? "text-white border-[#5b7351] font-semibold" : "bg-white text-stone-600 border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
-                style={{ background: isSelected ? "#5b7351" : undefined, fontFamily: "'Inter', system-ui, sans-serif" }}>
+                style={{ background: isSelected ? "#5b7351" : undefined, fontFamily: "'Playfair Display', Georgia, serif" }}>
                 {label}
               </button>
             );
@@ -7223,7 +7221,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           onChange={e => setTodayCommitment(e.target.value)}
           placeholder={t("I will…", lang)}
           className="block w-full px-3 py-2 rounded-xl border border-[#d3e0c5] bg-white text-sm text-stone-700 outline-none resize-none focus:border-[#7a9a6e] focus:ring-1 focus:ring-[#7a9a6e]/20"
-          style={{ fontFamily: "'Inter', system-ui, sans-serif", minHeight: "56px", maxHeight: "120px" }} />
+          style={{ fontFamily: "'Playfair Display', Georgia, serif", minHeight: "56px", maxHeight: "120px" }} />
       </div>
 
       {/* 7. TODAY'S REFLECTION — display only, from Admin */}
@@ -7632,7 +7630,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
 
       {/* REFLECTION QUESTIONS — opt-in, shown only when user enables it in Customize */}
       {summaryPrefs.reflection && (() => {
-        const serif = { fontFamily: "'Inter', system-ui, sans-serif" };
+        const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
         const reflectionAnswers = data.reflectionAnswers || {};
         const todayAnswers = reflectionAnswers[today] || {};
         const setAnswer = (idx, val) => {
@@ -7800,8 +7798,8 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
 
       {/* TODAY'S IDENTITY — pick one word that shapes every habit */}
       <div className={`rounded-2xl border ${themePanel} px-5 py-5 mb-5`}>
-        <p className="text-[10px] tracking-[0.25em] uppercase text-[#7a9a6e] font-semibold mb-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Today's Identity", lang)}</p>
-        <p className="text-sm italic text-stone-500 mb-4" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Today I choose to become…", lang)}</p>
+        <p className="text-[10px] tracking-[0.25em] uppercase text-[#7a9a6e] font-semibold mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Today's Identity", lang)}</p>
+        <p className="text-sm italic text-stone-500 mb-4" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Today I choose to become…", lang)}</p>
         <div className="flex flex-wrap gap-2">
           {identityChoices.map(word => (
             <button
@@ -7812,14 +7810,14 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
                   ? "bg-[#5b7351] text-white border-[#5b7351] shadow-sm"
                   : "bg-white text-stone-600 border-stone-200 hover:border-[#7a9a6e] hover:text-[#5b7351]"
               }`}
-              style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             >
               {todayIdentity === word ? "✓ " : ""}{word}
             </button>
           ))}
         </div>
         {todayIdentity && (
-          <p className="mt-3 text-xs italic text-[#5b7351]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+          <p className="mt-3 text-xs italic text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             {t("Every habit you complete today is evidence that you are", lang)} <strong>{todayIdentity}</strong>.
           </p>
         )}
@@ -7831,7 +7829,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
           <ProgressRing value={totalCount > 0 ? Math.round((doneCount / totalCount) * 100) : 0} size={90} stroke={8} dark={dark} label={t("in alignment", lang)} />
           <div>
             <div className="text-xs tracking-[0.2em] text-[#7a9a6e]">{t("TODAY'S ALIGNMENT", lang)}</div>
-            <div className="font-serif text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("{n} of {m} habits", lang, { n: doneCount, m: totalCount })}</div>
+            <div className="font-serif text-lg" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("{n} of {m} habits", lang, { n: doneCount, m: totalCount })}</div>
           </div>
         </div>
         <div className="flex flex-col items-center">
@@ -7967,7 +7965,7 @@ function HabitsViewModule({ data, setData, dark, themePanel, themeMuted, trigger
       </Panel></div>
 
       <div className="mt-10 text-center px-4">
-        <p className="font-serif text-xl italic text-[#7a9a6e]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Did you become who you said you wanted to become today?", lang)}</p>
+        <p className="font-serif text-xl italic text-[#7a9a6e]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Did you become who you said you wanted to become today?", lang)}</p>
       </div>
     </div>
   );
@@ -8015,10 +8013,10 @@ function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, trigger
               onChange={e => onTitleChange(e.target.value)}
               placeholder={t("Section title…", lang)}
               className="flex-1 font-serif text-base font-semibold bg-transparent border-0 outline-none focus:bg-[#f4f7ee] focus:px-2 focus:py-1 focus:rounded transition-all"
-              style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             />
           ) : (
-            <h3 className="font-serif text-base font-semibold" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{title}</h3>
+            <h3 className="font-serif text-base font-semibold" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{title}</h3>
           )}
           <div className="flex items-center gap-1 flex-shrink-0">
             <span className="text-[10px] text-stone-500">{t(list.length === 1 ? "{n} item" : "{n} items", lang, { n: list.length })}</span>
@@ -8111,8 +8109,8 @@ function HabitsSelfModule({ data, setData, dark, themePanel, themeMuted, trigger
           <div className="w-12 h-12 rounded-full bg-[#f4f7ee] flex items-center justify-center mb-3 group-hover:bg-[#a8c090]/30">
             <Plus className="w-6 h-6 text-[#5b7351]" />
           </div>
-          <div className="font-serif text-base text-[#5b7351]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Add another section", lang)}</div>
-          <p className="text-xs italic text-stone-500 mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("any list you want to keep track of", lang)}</p>
+          <div className="font-serif text-base text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Add another section", lang)}</div>
+          <p className="text-xs italic text-stone-500 mt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("any list you want to keep track of", lang)}</p>
         </button>
       </div>
     </div>
@@ -8291,19 +8289,19 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         <div className={`rounded-lg border ${themePanel} p-4`}>
           <div className="text-[10px] tracking-[0.2em] text-stone-500">{t("LAST PERIOD", lang)}</div>
-          <div className="font-serif text-2xl text-[#5b7351] mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{lastPeriod ? fmtDate(lastPeriod) : "—"}</div>
+          <div className="font-serif text-2xl text-[#5b7351] mt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{lastPeriod ? fmtDate(lastPeriod) : "—"}</div>
         </div>
         <div className={`rounded-lg border ${themePanel} p-4`}>
           <div className="text-[10px] tracking-[0.2em] text-stone-500">{t("AVG CYCLE", lang)}</div>
-          <div className="font-serif text-2xl text-[#5b7351] mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{avgCycle ? t("{n} days", lang, { n: avgCycle }) : "—"}</div>
+          <div className="font-serif text-2xl text-[#5b7351] mt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{avgCycle ? t("{n} days", lang, { n: avgCycle }) : "—"}</div>
         </div>
         <div className={`rounded-lg border ${themePanel} p-4`}>
           <div className="text-[10px] tracking-[0.2em] text-stone-500">{t("NEXT ESTIMATE", lang)}</div>
-          <div className="font-serif text-2xl text-[#5b7351] mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{nextEstimate ? fmtDate(nextEstimate) : "—"}</div>
+          <div className="font-serif text-2xl text-[#5b7351] mt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{nextEstimate ? fmtDate(nextEstimate) : "—"}</div>
         </div>
         <div className={`rounded-lg border ${themePanel} p-4`}>
           <div className="text-[10px] tracking-[0.2em] text-stone-500">{t("DAYS LOGGED", lang)}</div>
-          <div className="font-serif text-2xl text-[#5b7351] mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{entries.length}</div>
+          <div className="font-serif text-2xl text-[#5b7351] mt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{entries.length}</div>
         </div>
       </div>
 
@@ -8370,7 +8368,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                 placeholder="What's coming up for you today? Anything you want to remember…"
                 rows={3}
                 className="w-full px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-white leading-relaxed"
-                style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+                style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
               />
             </div>
           </Panel>
@@ -8469,7 +8467,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                         <div className="flex-1 min-w-0">
                           <div className="text-sm font-medium">{fmtDate(e.date)} {mood && <span className="ml-1">{mood.emoji} {mood.label}</span>}</div>
                           {(e.symptoms || []).length > 0 && <div className="text-xs text-stone-500 mt-0.5">{e.symptoms.join(" · ")}</div>}
-                          {e.notes && <div className="text-xs text-stone-600 italic mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>"{e.notes}"</div>}
+                          {e.notes && <div className="text-xs text-stone-600 italic mt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>"{e.notes}"</div>}
                         </div>
                         {flow && flow.id !== "none" && <span className="text-[10px] tracking-wider text-stone-400 flex-shrink-0">{flow.label.toUpperCase()}</span>}
                       </button>
@@ -8482,7 +8480,7 @@ function CycleModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                 })}
               </div>
             )}
-            <p className="text-[11px] italic text-stone-400 mt-3" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Tap any entry to edit it — your changes save to that date.", lang)}</p>
+            <p className="text-[11px] italic text-stone-400 mt-3" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Tap any entry to edit it — your changes save to that date.", lang)}</p>
           </Panel>
         </div>
 
@@ -8997,11 +8995,11 @@ function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, tri
               <div className="grid lg:grid-cols-2 gap-5">
                 <div>
                   <div className="text-[10px] tracking-[0.2em] text-stone-400 mb-2">{t("INSTEAD OF", lang)}</div>
-                  <div className="text-sm text-stone-500 italic font-serif" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>"{p.from}"</div>
+                  <div className="text-sm text-stone-500 italic font-serif" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>"{p.from}"</div>
                 </div>
                 <div className="border-l-2 border-[#a8c090] pl-5">
                   <div className="text-[10px] tracking-[0.2em] text-[#5b7351] mb-2">{t("SAY THIS", lang)}</div>
-                  <div className="font-serif text-base text-stone-900" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>"{p.to}"</div>
+                  <div className="font-serif text-base text-stone-900" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>"{p.to}"</div>
                 </div>
               </div>
               <div className="flex items-end justify-between gap-3 mt-4 pt-3 border-t border-stone-100">
@@ -9041,7 +9039,7 @@ function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, tri
 const DOMINION_KEYWORDS = ["prayer", "bible", "scripture", "devotion", "worship", "inventory", "gratitude", "reflection", "meditation", "oración", "biblia", "gratitud", "reflexión"];
 
 function CoachModule({ data, setData, dark, themePanel, themeMuted, lang }) {
-  const serif = { fontFamily: "'Inter', system-ui, sans-serif" };
+  const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
   const today = todayISO();
   const todayPlan = (data.planners || {})[today] || {};
 
@@ -9273,10 +9271,10 @@ function BoundariesModule({ data, setData, dark, themePanel, themeMuted, trigger
                 onChange={e => onTitleChange(e.target.value)}
                 placeholder={t("Title…", lang)}
                 className="w-full font-serif text-xl bg-transparent border-0 outline-none focus:bg-[#f4f7ee] focus:px-2 focus:py-1 focus:rounded transition-all"
-                style={{ fontFamily: "'Inter', system-ui, sans-serif", color }}
+                style={{ fontFamily: "'Playfair Display', Georgia, serif", color }}
               />
             ) : (
-              <h3 className="font-serif text-xl" style={{ fontFamily: "'Inter', system-ui, sans-serif", color }}>{title}</h3>
+              <h3 className="font-serif text-xl" style={{ fontFamily: "'Playfair Display', Georgia, serif", color }}>{title}</h3>
             )}
             {onSubtitleChange ? (
               <input
@@ -9371,8 +9369,8 @@ function BoundariesModule({ data, setData, dark, themePanel, themeMuted, trigger
           <div className="w-12 h-12 rounded-full bg-[#f4f7ee] flex items-center justify-center mb-3 group-hover:bg-[#a8c090]/30">
             <Plus className="w-6 h-6 text-[#5b7351]" />
           </div>
-          <div className="font-serif text-base text-[#5b7351]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Add another section", lang)}</div>
-          <p className="text-xs italic text-stone-500 mt-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("any line you want to hold", lang)}</p>
+          <div className="font-serif text-base text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Add another section", lang)}</div>
+          <p className="text-xs italic text-stone-500 mt-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("any line you want to hold", lang)}</p>
         </button>
       </div>
     </div>
@@ -10062,8 +10060,8 @@ function LeaderboardModule({ data, setData, dark, themePanel, themeMuted, trigge
           const totalAll = ACTIVITY_TYPES.reduce((s, t) => s + countByType(t.id, p.start), 0);
           return (
             <div key={p.id} className="rounded-lg p-3 text-center" style={{ background: "#3d5c34", color: "#f1ebda" }}>
-              <div className="text-[10px] tracking-[0.18em]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{p.label}</div>
-              <div className="font-serif text-2xl mt-0.5" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{totalAll}</div>
+              <div className="text-[10px] tracking-[0.18em]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{p.label}</div>
+              <div className="font-serif text-2xl mt-0.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{totalAll}</div>
             </div>
           );
         })}
@@ -10078,7 +10076,7 @@ function LeaderboardModule({ data, setData, dark, themePanel, themeMuted, trigge
             <div key={t.id} className="rounded-lg p-3 text-center border border-stone-200 bg-white">
               <Icon className={`w-4 h-4 mx-auto mb-1 ${t.color}`} />
               <div className="text-[9px] tracking-wider text-stone-500">{t.label.toUpperCase()}</div>
-              <div className="font-serif text-xl text-[#5b7351] mt-0.5" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{count}</div>
+              <div className="font-serif text-xl text-[#5b7351] mt-0.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{count}</div>
             </div>
           );
         })}
@@ -10314,7 +10312,7 @@ function HomeModule({ data, setData, user, dark, triggerConfetti, themePanel, th
     <div>
       <div className="flex items-start justify-between mb-6 gap-4">
         <div>
-          <h1 className="font-serif text-4xl tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Welcome back, <span className="text-[#9cb88f]">{(user.name || "").split(" ")[0]}</span></h1>
+          <h1 className="font-serif text-4xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Welcome back, <span className="text-[#9cb88f]">{(user.name || "").split(" ")[0]}</span></h1>
           <p className={`text-sm mt-1 ${themeMuted}`}>{dateStr}</p>
         </div>
         <div className="flex gap-2 flex-wrap">
@@ -10361,17 +10359,17 @@ function HomeModule({ data, setData, user, dark, triggerConfetti, themePanel, th
               <div className="grid grid-cols-3 gap-3 mb-5">
                 <div className={`p-3 rounded ${dark ? "bg-white" : "bg-stone-50"} border ${dark ? "border-stone-200" : "border-stone-200"}`}>
                   <div className="text-[10px] tracking-wider text-stone-500">TODAY</div>
-                  <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{todayPts}</div>
+                  <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{todayPts}</div>
                   <div className="text-[10px] text-stone-500">{todayActs.length} actions</div>
                 </div>
                 <div className={`p-3 rounded ${dark ? "bg-white" : "bg-stone-50"} border ${dark ? "border-stone-200" : "border-stone-200"}`}>
                   <div className="text-[10px] tracking-wider text-stone-500">THIS WEEK</div>
-                  <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{weekPts}</div>
+                  <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{weekPts}</div>
                   <div className="text-[10px] text-stone-500">{weekActs.length} actions · rank #2</div>
                 </div>
                 <div className={`p-3 rounded ${dark ? "bg-white" : "bg-stone-50"} border ${dark ? "border-stone-200" : "border-stone-200"}`}>
                   <div className="text-[10px] tracking-wider text-stone-500">MTD</div>
-                  <div className="font-serif text-2xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{monthActs.reduce((s, a) => s + a.points * a.count, 0)}</div>
+                  <div className="font-serif text-2xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{monthActs.reduce((s, a) => s + a.points * a.count, 0)}</div>
                   <div className="text-[10px] text-stone-500">{monthActs.length} actions</div>
                 </div>
               </div>
@@ -10463,7 +10461,7 @@ function HomeModule({ data, setData, user, dark, triggerConfetti, themePanel, th
           })}
           <div className="flex items-center justify-between p-3 rounded bg-[#f4f7ee] mt-3">
             <span className="text-sm font-medium">Total to add</span>
-            <span className="font-serif text-2xl text-[#5b7351]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+            <span className="font-serif text-2xl text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
               +{ACTIVITY_TYPES.reduce((s, t) => s + (parseInt(logCounts[t.id], 10) || 0) * t.points, 0)} pts
             </span>
           </div>
@@ -10990,7 +10988,7 @@ function FinancialsModule({ data, setData, dark, themePanel, themeMuted, trigger
             {commissionByType.map((c, i) => (
               <div key={i} className={`p-3 rounded border bg-white border-stone-200`}>
                 <div className="text-[10px] tracking-wider text-stone-500">{c.type.toUpperCase()}</div>
-                <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${c.total.toLocaleString()}</div>
+                <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${c.total.toLocaleString()}</div>
               </div>
             ))}
           </div>
@@ -11763,7 +11761,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                 >
                   {done && <Check className="w-3 h-3" />}
                 </button>
-                <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-[#5b7351]" : "text-[#5b7351]"}`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{i + 1}</span>
+                <span className={`font-display text-xl w-6 text-center pt-1.5 flex-shrink-0 ${done ? "text-[#5b7351]" : "text-[#5b7351]"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{i + 1}</span>
                 <div className="relative flex-1">
                   <textarea
                     {...grow(key, 64, 64, 1, done ? "text-stone-500" : "")}
@@ -12101,7 +12099,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 sm:p-6 overflow-y-auto"
         style={{ maxHeight: "min(100dvh - 1.5rem, 480px)" }}
         onClick={(e) => e.stopPropagation()}>
-        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Add a win", lang)}</h3>
+        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Add a win", lang)}</h3>
         <p className="text-xs text-stone-500 mb-4 italic">{t("Anything you're proud of today.", lang)}</p>
         <textarea
           autoFocus
@@ -12146,7 +12144,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       <div className="flex items-center justify-between mb-2 gap-3">
         <div className="flex items-center gap-2 min-w-0">
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700">{t("TODAY'S WINS", lang)}</h2>
-          <p className="text-[10px] italic text-stone-400 mt-0.5" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Every promise you keep becomes evidence that you can trust yourself.", lang)}</p>
+          <p className="text-[10px] italic text-stone-400 mt-0.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Every promise you keep becomes evidence that you can trust yourself.", lang)}</p>
           <button onClick={() => setAddWinModalOpen(true)}
             className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
             style={{ background: "var(--accent-mid)" }}
@@ -12447,7 +12445,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 sm:p-6 overflow-y-auto"
         style={{ maxHeight: "min(100dvh - 1.5rem, 560px)" }}
         onClick={(e) => e.stopPropagation()}>
-        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{editingTaskIdFromSchedule != null ? t("Edit task", lang) : t("Add a task", lang)}</h3>
+        <h3 className="font-serif text-xl mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{editingTaskIdFromSchedule != null ? t("Edit task", lang) : t("Add a task", lang)}</h3>
         <p className="text-xs text-stone-500 mb-4 italic">{editingTaskIdFromSchedule != null ? t("Update title, time, or notes — or delete it.", lang) : t("What's the next small thing?", lang)}</p>
         <textarea
           autoFocus
@@ -12650,7 +12648,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={() => setCellExpanderKey(null)}>
         <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-4 sm:p-5 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
           <div className="flex items-baseline justify-between mb-3 gap-2 flex-wrap">
-            <h3 className="font-serif text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+            <h3 className="font-serif text-lg" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
               {t("At this time", lang)}
             </h3>
             <span className="text-[11px] text-stone-500">{xHour} · {fmtDate(xIso)}</span>
@@ -12703,7 +12701,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
       {AddWinModal}
       <PageHeader title={t("Today's Focus", lang)} subtitle={subtitle} action={dateAction} dark={dark} />
 
-      <p className="text-base italic text-stone-700 -mt-6 mb-6" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Who am I becoming today?", lang)}</p>
+      <p className="text-base italic text-stone-700 -mt-6 mb-6" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Who am I becoming today?", lang)}</p>
 
       {/* Row 1: To-do on its own line, Wins underneath (stacked at every width).
           Explicit minmax(0, 1fr) on the column so the card cannot stretch
@@ -12729,7 +12727,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         </div>
         <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
           <h2 className="text-sm font-semibold tracking-[0.2em] text-stone-700 mb-1">{t("PREPARE TOMORROW", lang)}</h2>
-          <p className="text-[10px] italic text-stone-400 mb-2.5" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Give tomorrow one clear direction before you rest.", lang)}</p>
+          <p className="text-[10px] italic text-stone-400 mb-2.5" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Give tomorrow one clear direction before you rest.", lang)}</p>
           <textarea {...grow("tomorrow", 80, 220, 8)} value={tomorrow} onChange={e => updatePlan({ tomorrow: e.target.value })}
             placeholder={t("What's the first thing tomorrow needs from you?", lang)} />
         </div>
@@ -12790,7 +12788,7 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                     title={`${iso}`}
                   >
                     <div className="text-[9px] tracking-[0.14em] font-semibold text-stone-500">{t(label, lang).toUpperCase()}</div>
-                    <div className={`font-serif text-sm leading-none mt-0.5 ${isTodayHeader ? "text-[#7a9a6e]" : "text-stone-700"}`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{dayNum}</div>
+                    <div className={`font-serif text-sm leading-none mt-0.5 ${isTodayHeader ? "text-[#7a9a6e]" : "text-stone-700"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{dayNum}</div>
                   </button>
                 );
               })}
@@ -13211,7 +13209,7 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
               onBlur={() => setEditingTitle(false)}
               onKeyDown={e => { if (e.key === "Enter" || e.key === "Escape") setEditingTitle(false); }}
               className="font-serif text-3xl tracking-tight bg-[#f4f7ee] border border-[#7a9a6e] rounded px-2 py-1 outline-none"
-              style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             />
           ) : (
             <button
@@ -13219,7 +13217,7 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
               className="group inline-flex items-center gap-2 text-left"
               title={t("Rename this page", lang)}
             >
-              <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{calendarLabel}</h1>
+              <h1 className="font-serif text-3xl tracking-tight" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{calendarLabel}</h1>
               <Edit2 className="w-4 h-4 text-stone-300 group-hover:text-[#5b7351] transition" />
             </button>
           )}
@@ -13241,7 +13239,7 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
         {showYearView && (
           <div className="flex items-center gap-2 flex-wrap">
             <button onClick={() => setYear(year - 1)} className="p-2 rounded border border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"><ArrowRight className="w-4 h-4 rotate-180" /></button>
-            <div className="font-serif text-2xl px-2" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{year}</div>
+            <div className="font-serif text-2xl px-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{year}</div>
             <button onClick={() => setYear(year + 1)} className="p-2 rounded border border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"><ArrowRight className="w-4 h-4" /></button>
             <button onClick={() => setYear(new Date().getFullYear())} className="px-3 py-2 bg-[#7a9a6e] text-white text-sm font-medium rounded hover:bg-[#5b7351]">{t("This year", lang)}</button>
           </div>
@@ -13255,7 +13253,7 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
           return (
             <div key={name} className={`rounded-lg border ${themePanel} p-4`}>
               <div className="flex items-baseline justify-between mb-2">
-                <h3 className="font-serif text-lg" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{name}</h3>
+                <h3 className="font-serif text-lg" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{name}</h3>
                 <span className="text-[10px] tracking-[0.18em] text-stone-400">{year}</span>
               </div>
               <div className="grid grid-cols-7 gap-0.5 text-[10px] text-stone-400 mb-1">
@@ -13304,7 +13302,7 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
             <div className="p-5 border-b border-stone-200 flex items-center justify-between">
               <div>
                 <div className="text-[10px] tracking-[0.2em] text-[#7a9a6e] font-semibold mb-1">SELECTED DAY</div>
-                <h3 className="font-serif text-xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{selectedLabel}</h3>
+                <h3 className="font-serif text-xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{selectedLabel}</h3>
               </div>
               <button onClick={() => setSelectedDate(null)} className="p-2 rounded hover:bg-stone-100"><X className="w-4 h-4" /></button>
             </div>
@@ -13640,7 +13638,7 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-stone-200 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
             <div className="flex items-start justify-between mb-2">
               <div>
-                <h3 className="font-serif text-2xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Connect a calendar</h3>
+                <h3 className="font-serif text-2xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Connect a calendar</h3>
                 <p className="text-xs text-stone-500 mt-1">Pull your existing events into your Sovereign calendar.</p>
               </div>
               <button onClick={() => setShowCalendarConnect(false)} className="text-stone-400 hover:text-stone-700 text-2xl leading-none">×</button>
@@ -13923,7 +13921,7 @@ function EmailModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
             <div className={`text-xs ${themeMuted} mb-2`}>Subject</div>
             <div className={`p-3 rounded mb-3 ${dark ? "bg-white" : "bg-stone-50"} text-sm font-medium`}>{active.subject}</div>
             <div className={`text-xs ${themeMuted} mb-2`}>Body</div>
-            <div className={`p-4 rounded ${dark ? "bg-white" : "bg-stone-50"} text-sm whitespace-pre-line leading-relaxed font-serif`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{active.body}</div>
+            <div className={`p-4 rounded ${dark ? "bg-white" : "bg-stone-50"} text-sm whitespace-pre-line leading-relaxed font-serif`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{active.body}</div>
           </Panel>
         </div>
       </div>
@@ -14089,7 +14087,7 @@ function SocialModule({ data, setData, dark, themePanel, themeMuted, triggerConf
                 </div>
                 <span className="text-[10px] text-[#9cb88f] font-mono">+{stats.newWeek}</span>
               </div>
-              <div className="font-serif text-2xl text-[#9cb88f] mb-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{(stats.followers || 0).toLocaleString()}</div>
+              <div className="font-serif text-2xl text-[#9cb88f] mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{(stats.followers || 0).toLocaleString()}</div>
               <div className={`text-[10px] ${themeMuted} grid grid-cols-3 gap-1 mt-2`}>
                 <div><div className="text-stone-500">REACH</div><div className="text-stone-700 font-mono">{((stats.reach || 0) / 1000).toFixed(1)}K</div></div>
                 <div><div className="text-stone-500">ENG.</div><div className="text-stone-700 font-mono">{stats.engagement || 0}%</div></div>
@@ -14185,8 +14183,8 @@ function SocialModule({ data, setData, dark, themePanel, themeMuted, triggerConf
               <div className={`text-xs ${themeMuted}`}>{bestPost.platform} · {bestPost.type} · {fmtDate(bestPost.date)}</div>
             </div>
             <div className="flex gap-6">
-              <div><div className="text-[10px] text-stone-500">ENGAGEMENT</div><div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{bestPost.engagement.toLocaleString()}</div></div>
-              <div><div className="text-[10px] text-stone-500">LEADS</div><div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>+{bestPost.leads}</div></div>
+              <div><div className="text-[10px] text-stone-500">ENGAGEMENT</div><div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{bestPost.engagement.toLocaleString()}</div></div>
+              <div><div className="text-[10px] text-stone-500">LEADS</div><div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>+{bestPost.leads}</div></div>
             </div>
           </div>
         </div>
@@ -14286,7 +14284,7 @@ function TeamModule({ data, setData, user, dark, themePanel, themeMuted, trigger
         <PageHeader title="Team Dashboard" dark={dark} />
         <div className={`p-12 text-center rounded-lg border ${themePanel}`}>
           <Trophy className={`w-12 h-12 mx-auto mb-4 ${themeMuted}`} />
-          <h3 className="font-serif text-xl mb-2" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>Team Dashboard locked</h3>
+          <h3 className="font-serif text-xl mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>Team Dashboard locked</h3>
           <p className={`text-sm ${themeMuted}`}>Available on Agency plan or for users with Team Lead / Agency Owner role.</p>
         </div>
       </div>
@@ -14303,7 +14301,7 @@ function TeamModule({ data, setData, user, dark, themePanel, themeMuted, trigger
         <div className="flex items-end justify-between flex-wrap gap-4">
           <div>
             <div className="text-xs tracking-[0.3em] text-[#9cb88f] mb-2">TEAM TOTAL INCOME · MTD</div>
-            <div className="font-serif text-6xl text-[#9cb88f] leading-none" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${teamTotal.toLocaleString()}</div>
+            <div className="font-serif text-6xl text-[#9cb88f] leading-none" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${teamTotal.toLocaleString()}</div>
             <div className={`text-sm mt-2 ${themeMuted}`}>Override on team production: <span className="text-[#9cb88f] font-mono">${overrides.toFixed(0)}</span></div>
           </div>
           <div className="grid grid-cols-3 gap-4 text-right">
@@ -14366,19 +14364,19 @@ function TeamModule({ data, setData, user, dark, themePanel, themeMuted, trigger
         <div className="grid md:grid-cols-4 gap-4 mb-4">
           <div>
             <div className={`text-[10px] tracking-wider ${themeMuted}`}>TEAM MTD</div>
-            <div className="font-serif text-2xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${teamTotal.toLocaleString()}</div>
+            <div className="font-serif text-2xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${teamTotal.toLocaleString()}</div>
           </div>
           <div>
             <div className={`text-[10px] tracking-wider ${themeMuted}`}>AVG OVERRIDE %</div>
-            <div className="font-serif text-2xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{avgPct.toFixed(1)}%</div>
+            <div className="font-serif text-2xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{avgPct.toFixed(1)}%</div>
           </div>
           <div>
             <div className={`text-[10px] tracking-wider ${themeMuted}`}>YOUR OVERRIDE · MTD</div>
-            <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${overrides.toFixed(0)}</div>
+            <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${overrides.toFixed(0)}</div>
           </div>
           <div>
             <div className={`text-[10px] tracking-wider ${themeMuted}`}>YOUR OVERRIDE · YTD</div>
-            <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${ytdOverrides.toFixed(0)}</div>
+            <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${ytdOverrides.toFixed(0)}</div>
           </div>
         </div>
         {data.team.length > 0 && (
@@ -14555,7 +14553,7 @@ function ObjectionsModule({ data, setData, dark, themePanel, themeMuted, trigger
           <Panel title="Practice Mode" dark={dark}>
             <div className={`p-4 rounded mb-4 border-l-4 border-rose-500 ${dark ? "bg-white" : "bg-rose-50"}`}>
               <div className={`text-[10px] tracking-wider ${themeMuted} mb-1`}>OBJECTION</div>
-              <div className="font-serif text-xl" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>"{active.text}"</div>
+              <div className="font-serif text-xl" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>"{active.text}"</div>
             </div>
             <textarea value={response} onChange={e => setResponse(e.target.value)} placeholder="Type your response. We'll score it on empathy, value framing, urgency, questions, and storytelling…" rows={5} className={`w-full px-3 py-2 rounded border outline-none focus:border-[#7a9a6e] text-sm ${dark ? "bg-white border-stone-200" : "bg-white border-stone-300"}`} />
             <div className="flex gap-2 mt-3">
@@ -14573,7 +14571,7 @@ function ObjectionsModule({ data, setData, dark, themePanel, themeMuted, trigger
               <div className="mt-4 p-4 rounded border border-[#9cb88f]/40 bg-[#9cb88f]/5">
                 <div className="flex items-center justify-between mb-3">
                   <div className={`text-[10px] tracking-wider text-[#9cb88f]`}>YOUR SCORE</div>
-                  <div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{score.total}<span className="text-2xl text-stone-500">/100</span></div>
+                  <div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{score.total}<span className="text-2xl text-stone-500">/100</span></div>
                 </div>
                 <div className="space-y-2">
                   {Object.entries(score.breakdown).map(([k, v]) => {
@@ -14644,7 +14642,7 @@ function NotesModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
     <div>
       <PageHeader title={t("The Sovereign Mind", lang)} subtitle={t("Write it here. Free your attention for what matters most.", lang)} dark={dark}
         action={<AddButton onClick={() => { setForm(blank); setEditing(null); setOpen(true); }} label={t("Add Note", lang)} dark={dark} />} />
-      <p className={`text-sm -mt-6 mb-6 ${dark ? "text-stone-400" : "text-stone-500"} italic`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Capture every thought, worry, idea, reminder, and unfinished task. Your mind deserves clarity before it deserves a plan.", lang)}</p>
+      <p className={`text-sm -mt-6 mb-6 ${dark ? "text-stone-400" : "text-stone-500"} italic`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Capture every thought, worry, idea, reminder, and unfinished task. Your mind deserves clarity before it deserves a plan.", lang)}</p>
 
       <div className={`flex items-center gap-2 px-3 py-2 rounded border ${dark ? "bg-white border-stone-200" : "bg-white border-stone-300"} mb-4`}>
         <Search className="w-4 h-4 text-stone-500" />
@@ -14742,14 +14740,14 @@ function Rule72Calc({ dark }) {
   const years = rate ? (72 / rate).toFixed(1) : 0;
   return <CalcShell title="Rule of 72 — Years to Double" dark={dark}
     inputs={<TextField label="Annual rate (%)" value={rate} onChange={v => setRate(parseFloat(v) || 0)} type="number" dark={dark} />}
-    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">YEARS TO DOUBLE</div><div className="font-serif text-6xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{years}</div></div>} />;
+    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">YEARS TO DOUBLE</div><div className="font-serif text-6xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{years}</div></div>} />;
 }
 function CompoundCalc({ dark }) {
   const [p, setP] = useState(10000); const [r, setR] = useState(8); const [y, setY] = useState(20); const [c, setC] = useState(200);
   const future = (() => { let bal = p; for (let i = 0; i < y; i++) { bal = bal * (1 + r / 100) + c * 12; } return bal; })();
   return <CalcShell title="Compound Interest" dark={dark}
     inputs={<><TextField label="Principal ($)" value={p} onChange={v => setP(parseFloat(v) || 0)} type="number" dark={dark} /><TextField label="Annual rate (%)" value={r} onChange={v => setR(parseFloat(v) || 0)} type="number" dark={dark} /><TextField label="Years" value={y} onChange={v => setY(parseInt(v, 10) || 0)} type="number" dark={dark} /><TextField label="Monthly contribution ($)" value={c} onChange={v => setC(parseFloat(v) || 0)} type="number" dark={dark} /></>}
-    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">FUTURE VALUE</div><div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${Math.round(future).toLocaleString()}</div></div>} />;
+    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">FUTURE VALUE</div><div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${Math.round(future).toLocaleString()}</div></div>} />;
 }
 function TermWholeCalc({ dark }) {
   const [coverage, setCoverage] = useState(500000); const [age, setAge] = useState(35);
@@ -14757,21 +14755,21 @@ function TermWholeCalc({ dark }) {
   const whole = Math.round(coverage * 0.0008 * (1 + (age - 30) * 0.06));
   return <CalcShell title="Term vs Whole Life" dark={dark}
     inputs={<><TextField label="Coverage ($)" value={coverage} onChange={v => setCoverage(parseFloat(v) || 0)} type="number" dark={dark} /><TextField label="Age" value={age} onChange={v => setAge(parseInt(v, 10) || 0)} type="number" dark={dark} /></>}
-    result={<div className="space-y-3"><div><div className="text-xs text-stone-500">TERM (20yr) /mo</div><div className="font-serif text-3xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${term}</div></div><div><div className="text-xs text-stone-500">WHOLE LIFE /mo</div><div className="font-serif text-3xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${whole}</div></div><div className="text-xs text-stone-500 italic">Estimate. Actual rates vary by carrier and underwriting.</div></div>} />;
+    result={<div className="space-y-3"><div><div className="text-xs text-stone-500">TERM (20yr) /mo</div><div className="font-serif text-3xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${term}</div></div><div><div className="text-xs text-stone-500">WHOLE LIFE /mo</div><div className="font-serif text-3xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${whole}</div></div><div className="text-xs text-stone-500 italic">Estimate. Actual rates vary by carrier and underwriting.</div></div>} />;
 }
 function HLVCalc({ dark }) {
   const [income, setIncome] = useState(80000); const [years, setYears] = useState(25); const [growth, setGrowth] = useState(3);
   const hlv = Math.round(income * years * (1 + growth / 100));
   return <CalcShell title="Human Life Value" dark={dark}
     inputs={<><TextField label="Annual income ($)" value={income} onChange={v => setIncome(parseFloat(v) || 0)} type="number" dark={dark} /><TextField label="Years to retirement" value={years} onChange={v => setYears(parseInt(v, 10) || 0)} type="number" dark={dark} /><TextField label="Income growth (%)" value={growth} onChange={v => setGrowth(parseFloat(v) || 0)} type="number" dark={dark} /></>}
-    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">RECOMMENDED COVERAGE</div><div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${hlv.toLocaleString()}</div></div>} />;
+    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">RECOMMENDED COVERAGE</div><div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${hlv.toLocaleString()}</div></div>} />;
 }
 function DIMECalc({ dark }) {
   const [d, setD] = useState(35000); const [i, setI] = useState(80000); const [m, setM] = useState(280000); const [e, setE] = useState(120000);
   const total = d + (i * 10) + m + e;
   return <CalcShell title="DIME Needs Analysis" dark={dark}
     inputs={<><TextField label="Debt ($)" value={d} onChange={v => setD(parseFloat(v) || 0)} type="number" dark={dark} /><TextField label="Annual income ($)" value={i} onChange={v => setI(parseFloat(v) || 0)} type="number" dark={dark} /><TextField label="Mortgage balance ($)" value={m} onChange={v => setM(parseFloat(v) || 0)} type="number" dark={dark} /><TextField label="Education costs ($)" value={e} onChange={v => setE(parseFloat(v) || 0)} type="number" dark={dark} /></>}
-    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">TOTAL NEEDS</div><div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${total.toLocaleString()}</div><div className="text-xs text-stone-500 mt-3">Debt + (Income × 10) + Mortgage + Education</div></div>} />;
+    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">TOTAL NEEDS</div><div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${total.toLocaleString()}</div><div className="text-xs text-stone-500 mt-3">Debt + (Income × 10) + Mortgage + Education</div></div>} />;
 }
 function PremiumCalc({ dark }) {
   const [age, setAge] = useState(35); const [coverage, setCoverage] = useState(500000); const [type, setType] = useState("Term 20"); const [smoker, setSmoker] = useState(false);
@@ -14781,7 +14779,7 @@ function PremiumCalc({ dark }) {
   const premium = Math.round(coverage * base * ageMult * smokerMult);
   return <CalcShell title="Premium Estimator" dark={dark}
     inputs={<><TextField label="Age" value={age} onChange={v => setAge(parseInt(v, 10) || 0)} type="number" dark={dark} /><TextField label="Coverage ($)" value={coverage} onChange={v => setCoverage(parseFloat(v) || 0)} type="number" dark={dark} /><SelectField label="Policy type" value={type} onChange={setType} options={["Term 10", "Term 20", "Term 30", "Whole Life"]} dark={dark} /><label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={smoker} onChange={e => setSmoker(e.target.checked)} className="accent-[#9cb88f]" /> Smoker</label></>}
-    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">EST. MONTHLY PREMIUM</div><div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${premium}</div></div>} />;
+    result={<div className="text-center"><div className="text-xs tracking-wider text-stone-500 mb-2">EST. MONTHLY PREMIUM</div><div className="font-serif text-5xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${premium}</div></div>} />;
 }
 function WaitingCalc({ dark }) {
   const [age, setAge] = useState(35); const [waitYears, setWaitYears] = useState(5); const [coverage, setCoverage] = useState(500000);
@@ -14790,7 +14788,7 @@ function WaitingCalc({ dark }) {
   const lifetime = (futurePrem - todayPrem) * 12 * 20;
   return <CalcShell title="Cost of Waiting" dark={dark}
     inputs={<><TextField label="Current age" value={age} onChange={v => setAge(parseInt(v, 10) || 0)} type="number" dark={dark} /><TextField label="Years to wait" value={waitYears} onChange={v => setWaitYears(parseInt(v, 10) || 0)} type="number" dark={dark} /><TextField label="Coverage ($)" value={coverage} onChange={v => setCoverage(parseFloat(v) || 0)} type="number" dark={dark} /></>}
-    result={<div><div className="text-center mb-3"><div className="text-xs text-stone-500">PREMIUM TODAY</div><div className="font-serif text-3xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${todayPrem}/mo</div></div><div className="text-center mb-3"><div className="text-xs text-stone-500">PREMIUM IN {waitYears} YEARS</div><div className="font-serif text-3xl text-rose-400" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${futurePrem}/mo</div></div><div className="text-center pt-3 border-t border-stone-200"><div className="text-xs text-stone-500">EXTRA LIFETIME COST</div><div className="font-serif text-3xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>${lifetime.toLocaleString()}</div></div></div>} />;
+    result={<div><div className="text-center mb-3"><div className="text-xs text-stone-500">PREMIUM TODAY</div><div className="font-serif text-3xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${todayPrem}/mo</div></div><div className="text-center mb-3"><div className="text-xs text-stone-500">PREMIUM IN {waitYears} YEARS</div><div className="font-serif text-3xl text-rose-400" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${futurePrem}/mo</div></div><div className="text-center pt-3 border-t border-stone-200"><div className="text-xs text-stone-500">EXTRA LIFETIME COST</div><div className="font-serif text-3xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>${lifetime.toLocaleString()}</div></div></div>} />;
 }
 
 // ============================================================
@@ -14924,7 +14922,7 @@ function ScriptsModule({ data, setData, dark, themePanel, themeMuted, triggerCon
         </Panel>
         <div className="lg:col-span-2">
           <Panel title={active.title} dark={dark} action={<span className="text-xs text-[#9cb88f]">{active.cat}</span>}>
-            <div className={`p-5 rounded whitespace-pre-line text-sm leading-relaxed ${dark ? "bg-white" : "bg-stone-50"} font-serif`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{active.body}</div>
+            <div className={`p-5 rounded whitespace-pre-line text-sm leading-relaxed ${dark ? "bg-white" : "bg-stone-50"} font-serif`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{active.body}</div>
           </Panel>
         </div>
       </div>
@@ -15073,11 +15071,11 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
       <div className={`grid grid-cols-2 gap-3 mb-5 rounded-lg border ${themePanel} p-4`}>
         <div>
           <div className="text-[10px] tracking-[0.18em] text-stone-400 font-semibold">{t("ACTIVE", lang)}</div>
-          <div className="font-serif text-2xl text-[#5b7351]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{active.length}</div>
+          <div className="font-serif text-2xl text-[#5b7351]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{active.length}</div>
         </div>
         <div>
           <div className="text-[10px] tracking-[0.18em] text-stone-400 font-semibold">{t("DONE", lang)}</div>
-          <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{achieved.length}</div>
+          <div className="font-serif text-2xl text-[#9cb88f]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{achieved.length}</div>
         </div>
       </div>
 
@@ -15118,7 +15116,7 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                 </div>
                 <button onClick={() => setExpandedId(isOpen ? null : g.id)} className="text-left flex items-center gap-2 min-w-0">
                   <ChevronRight className={`w-3.5 h-3.5 text-stone-400 flex-shrink-0 transition ${isOpen ? "rotate-90" : ""}`} />
-                  <span className={`font-serif text-base truncate ${isDone ? "text-stone-400 line-through" : ""}`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }} title={g.title}>{g.title}</span>
+                  <span className={`font-serif text-base truncate ${isDone ? "text-stone-400 line-through" : ""}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }} title={g.title}>{g.title}</span>
                 </button>
                 <span className={`inline-flex items-center gap-1.5 text-[10px] tracking-wider px-2 py-0.5 rounded border w-fit ${categoryStyle(g.category).bg} ${categoryStyle(g.category).text} ${categoryStyle(g.category).border}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${categoryStyle(g.category).dot}`}></span>
@@ -15171,7 +15169,7 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
                     {isDone && <Check className="w-5 h-5 text-white" />}
                   </span>
                   <div className="flex-1 min-w-0">
-                    <div className={`font-serif text-base leading-snug ${isDone ? "text-stone-400 line-through" : "text-stone-900"}`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{g.title}</div>
+                    <div className={`font-serif text-base leading-snug ${isDone ? "text-stone-400 line-through" : "text-stone-900"}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{g.title}</div>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className="text-[10px] tracking-wider px-2 py-0.5 rounded bg-[#9cb88f]/10 text-[#5b7351]">{g.category}</span>
                       {g.deadline && <span className={`text-[10px] ${themeMuted} font-mono`}>{t("by {date}", lang, { date: g.deadline })}</span>}
@@ -15260,11 +15258,11 @@ function GoalsModule({ data, setData, dark, themePanel, themeMuted, triggerConfe
           <div>
             <div className="flex items-center justify-between mb-2">
               <label className={`text-xs ${themeMuted}`}>{t("Milestones", lang)}</label>
-              <span className="text-[10px] italic text-stone-400" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("the steps along the way", lang)}</span>
+              <span className="text-[10px] italic text-stone-400" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("the steps along the way", lang)}</span>
             </div>
             {formMilestones.length === 0 ? (
               <div className="rounded-lg border border-dashed border-stone-200 p-4 text-center mb-2">
-                <p className="text-xs italic text-stone-400 mb-2" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("No milestones yet. Break this goal into the smaller wins along the way.", lang)}</p>
+                <p className="text-xs italic text-stone-400 mb-2" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("No milestones yet. Break this goal into the smaller wins along the way.", lang)}</p>
                 <button onClick={addMilestone} className="text-xs text-[#5b7351] font-medium hover:underline inline-flex items-center gap-1">
                   <Plus className="w-3.5 h-3.5" /> {t("Add first milestone", lang)}
                 </button>
@@ -15331,7 +15329,7 @@ function AffirmationsModule({ data, setData, dark, themePanel, themeMuted, trigg
   const [form, setForm] = useState({ text: "", category: "Confidence" });
   const [editingId, setEditingId] = useState(null);
   const [editDraft, setEditDraft] = useState({ text: "", category: "Confidence" });
-  const serif = { fontFamily: "'Inter', system-ui, sans-serif" };
+  const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
 
   const list = data.affirmations || [];
   const cats = ["All", "Favorites", ...DEFAULT_AFFIRMATION_CATS];
@@ -15550,15 +15548,15 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
       {/* HEADER — magazine style */}
       <div className="mb-6">
         <div className="flex items-start justify-between gap-4 flex-wrap">
-          <h1 className="font-serif text-5xl tracking-tight text-[#5b3a1e]" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+          <h1 className="font-serif text-5xl tracking-tight text-[#5b3a1e]" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
             {meta.boardName || t("Vision Board", lang)} <span className="text-stone-700">{meta.year}</span>
           </h1>
           <div className="text-right">
             <span className="text-xs tracking-[0.2em] font-bold text-[#5b3a1e]">{meta.topVerse}</span>
           </div>
         </div>
-        <p className="text-xs italic text-[#7a9a6e] mt-1 mb-1" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{t("Every vision deserves today's action.", lang)}</p>
-        <p className="text-sm font-bold tracking-wider mt-1 italic text-[#5b3a1e] max-w-4xl uppercase" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <p className="text-xs italic text-[#7a9a6e] mt-1 mb-1" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{t("Every vision deserves today's action.", lang)}</p>
+        <p className="text-sm font-bold tracking-wider mt-1 italic text-[#5b3a1e] max-w-4xl uppercase" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
           "{meta.statement}"
         </p>
       </div>
@@ -15587,7 +15585,7 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
               <img src={v.img} alt={v.caption || ""} className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-700" />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#f4f7ee] to-stone-100 p-6">
-                <p className="text-center font-serif italic text-stone-700 text-sm" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+                <p className="text-center font-serif italic text-stone-700 text-sm" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>
                   {v.why || t("Add a picture or scripture", lang)}
                 </p>
               </div>
@@ -15596,7 +15594,7 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
             {/* Verse caption at bottom */}
             {v.caption && (
               <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent pt-8 pb-2 px-2">
-                <p className="text-center text-white text-[10px] font-bold tracking-[0.12em] uppercase" style={{ fontFamily: "'Inter', system-ui, sans-serif", textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}>
+                <p className="text-center text-white text-[10px] font-bold tracking-[0.12em] uppercase" style={{ fontFamily: "'Playfair Display', Georgia, serif", textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}>
                   {v.caption}
                 </p>
               </div>
@@ -15693,7 +15691,7 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
               rows={6}
               placeholder="Dear me,&#10;&#10;You did it. The day finally came when…"
               className="w-full px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none text-sm bg-[#fffdf7] leading-relaxed"
-              style={{ fontFamily: "'Inter', system-ui, sans-serif" }}
+              style={{ fontFamily: "'Playfair Display', Georgia, serif" }}
             />
           </div>
           <button onClick={save} className="w-full py-2 bg-[#7a9a6e] text-white font-medium rounded hover:bg-[#5b7351]">{editing ? t("Save changes", lang) : t("Add to board", lang)}</button>
@@ -15711,7 +15709,7 @@ function VisionModule({ data, setData, dark, themePanel, themeMuted, triggerConf
               <div className="text-[10px] text-stone-400 mb-3">{t("For {date}", lang, { date: fmtDate(letterView.date) })}</div>
             )}
             <div className="rounded-md bg-[#fffdf7] border border-stone-200 p-5">
-              <p className="whitespace-pre-wrap text-base leading-relaxed text-stone-800" style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{letterView.letter}</p>
+              <p className="whitespace-pre-wrap text-base leading-relaxed text-stone-800" style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{letterView.letter}</p>
             </div>
           </div>
         )}
@@ -15752,7 +15750,7 @@ function DashboardMockup() {
           ].map((s, i) => (
             <div key={i} className="bg-white rounded p-3 border border-stone-200">
               <div className="text-[10px] text-stone-500 tracking-wider mb-1">{s.l}</div>
-              <div className={`font-serif text-xl ${s.c}`} style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>{s.v}</div>
+              <div className={`font-serif text-xl ${s.c}`} style={{ fontFamily: "'Playfair Display', Georgia, serif" }}>{s.v}</div>
             </div>
           ))}
         </div>
