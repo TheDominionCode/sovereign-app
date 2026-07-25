@@ -6601,18 +6601,18 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     setData({ ...data, summaryPrefs: next });
   };
 
-  const [editingTaskLabel, setEditingTaskLabel] = useState(false);
-  const taskSectionLabel = lang === "es"
-    ? (data.taskSectionLabelES || t("TODAY'S PROMISES", lang))
-    : (data.taskSectionLabelEN || t("TODAY'S PROMISES", lang));
-  const saveTaskSectionLabel = (val) => {
+  const [editingSummaryLabel, setEditingSummaryLabel] = useState(false);
+  const summaryTaskLabel = lang === "es"
+    ? (data.summaryTaskLabelES || t("TODAY'S PROMISES", lang))
+    : (data.summaryTaskLabelEN || t("TODAY'S PROMISES", lang));
+  const saveSummaryTaskLabel = (val) => {
     const trimmed = val.trim();
     if (lang === "es") {
-      setData({ ...data, taskSectionLabelES: trimmed || null });
+      setData({ ...data, summaryTaskLabelES: trimmed || null });
     } else {
-      setData({ ...data, taskSectionLabelEN: trimmed || null });
+      setData({ ...data, summaryTaskLabelEN: trimmed || null });
     }
-    setEditingTaskLabel(false);
+    setEditingSummaryLabel(false);
   };
 
   // Stat circle selection — user picks which of the 11 available circles
@@ -7265,7 +7265,20 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
               <div className={`rounded-2xl border ${themePanel} p-5 h-full flex flex-col min-w-0 overflow-hidden`}>
                 <div className="flex items-center justify-between mb-2 gap-3">
                   <div className="flex items-center gap-2 min-w-0">
-                    <span className="text-sm font-semibold tracking-[0.06em] text-stone-700">{taskSectionLabel}</span>
+                    {editingSummaryLabel ? (
+                      <input
+                        autoFocus
+                        defaultValue={summaryTaskLabel}
+                        onBlur={e => saveSummaryTaskLabel(e.target.value)}
+                        onKeyDown={e => { if (e.key === "Enter") e.target.blur(); if (e.key === "Escape") setEditingSummaryLabel(false); }}
+                        className="text-sm font-semibold tracking-normal text-stone-700 bg-transparent border-b border-stone-300 outline-none w-40 uppercase"
+                      />
+                    ) : (
+                      <button onClick={() => setEditingSummaryLabel(true)} className="flex items-center gap-1 min-w-0" title={t("Rename", lang)}>
+                        <span className="text-sm font-semibold tracking-normal text-stone-700">{summaryTaskLabel}</span>
+                        <Edit2 className="w-3 h-3 text-stone-400 flex-shrink-0" />
+                      </button>
+                    )}
                     <button onClick={() => navigateTo("planner", "section-todo")}
                       className="w-6 h-6 rounded-full flex items-center justify-center text-white transition hover:opacity-90 flex-shrink-0"
                       style={{ background: "var(--accent-mid)" }}
@@ -11285,17 +11298,17 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
   const [editingTaskLabel, setEditingTaskLabel] = useState(false);
   const TASK_PREVIEW_LIMIT = 5;
 
-  // User-customizable section title — stored per-language; falls back to translated default
+  // Planner-panel title — independent from the Summary card label
   const taskSectionLabel = lang === "es"
-    ? (data.taskSectionLabelES || t("TODAY'S PROMISES", lang))
-    : (data.taskSectionLabelEN || t("TODAY'S PROMISES", lang));
+    ? (data.plannerTaskLabelES || t("TODAY'S PROMISES", lang))
+    : (data.plannerTaskLabelEN || t("TODAY'S PROMISES", lang));
 
   const saveTaskSectionLabel = (val) => {
     const trimmed = val.trim();
     if (lang === "es") {
-      setData({ ...data, taskSectionLabelES: trimmed || null });
+      setData({ ...data, plannerTaskLabelES: trimmed || null });
     } else {
-      setData({ ...data, taskSectionLabelEN: trimmed || null });
+      setData({ ...data, plannerTaskLabelEN: trimmed || null });
     }
     setEditingTaskLabel(false);
   };
@@ -11842,11 +11855,11 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
               defaultValue={taskSectionLabel}
               onBlur={e => saveTaskSectionLabel(e.target.value)}
               onKeyDown={e => { if (e.key === "Enter") e.target.blur(); if (e.key === "Escape") setEditingTaskLabel(false); }}
-              className="text-sm font-semibold tracking-[0.06em] text-stone-700 bg-transparent border-b border-stone-300 outline-none w-40 uppercase"
+              className="text-sm font-semibold tracking-normal text-stone-700 bg-transparent border-b border-stone-300 outline-none w-40 uppercase"
             />
           ) : (
-            <button onClick={() => setEditingTaskLabel(true)} className="group/tl flex items-center gap-1 min-w-0" title={t("Rename", lang)}>
-              <span className="text-sm font-semibold tracking-[0.06em] text-stone-700">{taskSectionLabel}</span>
+            <button onClick={() => setEditingTaskLabel(true)} className="flex items-center gap-1 min-w-0" title={t("Rename", lang)}>
+              <span className="text-sm font-semibold tracking-normal text-stone-700">{taskSectionLabel}</span>
               <Edit2 className="w-3 h-3 text-stone-400 flex-shrink-0" />
             </button>
           )}
