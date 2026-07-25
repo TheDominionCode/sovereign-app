@@ -6601,6 +6601,20 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     setData({ ...data, summaryPrefs: next });
   };
 
+  const [editingTaskLabel, setEditingTaskLabel] = useState(false);
+  const taskSectionLabel = lang === "es"
+    ? (data.taskSectionLabelES || t("TODAY'S PROMISES", lang))
+    : (data.taskSectionLabelEN || t("TODAY'S PROMISES", lang));
+  const saveTaskSectionLabel = (val) => {
+    const trimmed = val.trim();
+    if (lang === "es") {
+      setData({ ...data, taskSectionLabelES: trimmed || null });
+    } else {
+      setData({ ...data, taskSectionLabelEN: trimmed || null });
+    }
+    setEditingTaskLabel(false);
+  };
+
   // Stat circle selection — user picks which of the 11 available circles
   // show on the summary, in display order. Storage is an array of keys so
   // we can support reorder later without a schema change.
