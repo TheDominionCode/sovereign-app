@@ -123,16 +123,19 @@ window.addEventListener("unhandledrejection", function(e){
   function loadState() {
     return fetch("/api/state", { credentials: "same-origin", headers: { "Accept": "application/json" } })
       .then(function (r) { if (!r.ok) throw new Error("state " + r.status); return r.json(); })
-      .then(function (j) { return (j && j.state) || {}; })
-      .catch(function () { return null; });
+      .then(function (j) { return { ok: true, state: (j && j.state) || {} }; })
+      .catch(function () { return { ok: false, state: null }; });
   }
 
   // Synchronous window.storage facade over an in-memory cache, with debounced
   // writes to /api/state. Mirrors to localStorage so reloads are instant and
   // offline writes aren't lost.
-  function installCloudStorage(initial) {
+  function installCloudStorage(initial, cloudLoadOk) {
     var cache = initial || {};
     var dirty = {}, removed = {}, timer = null;
+    // If the cloud GET failed (network error, auth hiccup), block writes of
+    // dom_data_* keys to Supabase so demo/empty data never overwrites real data.
+    var cloudOk = !!cloudLoadOk;
 
     // 300ms debounce — faster than the old 700ms so edits reach Supabase
     // before the user switches away on mobile.
@@ -144,6 +147,12 @@ window.addEventListener("unhandledrejection", function(e){
       var deletes = Object.keys(removed);
       if (!entries.length && !deletes.length) return;
       dirty = {}; removed = {};
+
+      // If cloud load failed, strip dom_data_* from the write batch so we
+      // never overwrite real Supabase data with local demo/empty state.
+      if (!cloudOk) {
+        entries = entries.filter(function (e) { return !e.key.startsWith("dom_data_"); });
+      }
 
       var body = JSON.stringify({ entries: entries });
 
@@ -207,6 +216,7 @@ window.addEventListener("unhandledrejection", function(e){
           .then(function (r) { return r.ok ? r.json() : null; })
           .then(function (j) {
             if (!j || !j.state) return;
+            cloudOk = true; // successful re-fetch — allow writes going forward
             var changed = false;
             Object.keys(j.state).forEach(function (k) {
               // Only overwrite if the server value is newer (higher _savedAt).
@@ -254,7 +264,9 @@ window.addEventListener("unhandledrejection", function(e){
 
   Promise.all([loadState(), loadBabel()])
     .then(function (res) {
-      var cloudState = res[0] || {};
+      var loadResult = res[0] || { ok: false, state: null };
+      var cloudLoadOk = !!loadResult.ok;
+      var cloudState = loadResult.state || {};
 
       // For each dom_data_* key: prefer Supabase (cloud) UNLESS localStorage
       // has a strictly higher _savedAt timestamp, meaning the user made a
@@ -286,7 +298,7 @@ window.addEventListener("unhandledrejection", function(e){
         }
       } catch (e) {}
 
-      installCloudStorage(mergedState);
+      installCloudStorage(mergedState, cloudLoadOk);
       startApp();
     })
     .catch(function (e) { showError((e && e.message) || "Load error."); });
