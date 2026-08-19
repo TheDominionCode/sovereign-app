@@ -876,6 +876,15 @@ export default function DominionOS() {
     }
   }, [user && user.username]);
 
+  // Restore avatar from data blob if user session lost it (e.g. large image
+  // exceeded the keepalive fetch limit and never reached Supabase dom_user).
+  useEffect(() => {
+    const d = storage.get(user ? `dom_data_${user.username}` : null, null);
+    if (d && d.profileAvatar && user && !user.avatar) {
+      setUser(u => ({ ...u, avatar: d.profileAvatar }));
+    }
+  }, [user && user.username]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -9813,6 +9822,7 @@ function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate,
     try {
       const compressed = await compressImage(file, { maxWidth: 240, quality: 0.85 });
       setUser({ ...user, avatar: compressed });
+      if (setData) setData({ ...data, profileAvatar: compressed });
       setOpen(false);
     } catch (err) {
       alert(t("Could not process that image.", lang));
@@ -9821,6 +9831,7 @@ function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate,
 
   const removeAvatar = () => {
     setUser({ ...user, avatar: null });
+    if (setData) setData({ ...data, profileAvatar: null });
     setOpen(false);
   };
 
