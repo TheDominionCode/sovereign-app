@@ -12047,9 +12047,10 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                           className="block w-full px-2 py-1.5 border rounded text-xs outline-none resize-none bg-white border-stone-200 focus:border-[#7a9a6e]"
                           style={{ minHeight: "60px", maxHeight: "100px" }} />
                       </div>
-                      {/* Priority toggle — lives inside the edit panel only,
-                          so the collapsed row stays clean. Honors the 3/day cap. */}
-                      {(() => {
+                      {/* Priority toggle — only for real (non-recurring) tasks.
+                          Recurring virtual tasks have string ids like "recur-…";
+                          togglePriority searches allTasks and would silently no-op. */}
+                      {!isVirtualTaskId(task.id) && (() => {
                         const disabled = !isPri && priorityCount >= 3;
                         return (
                           <div className="mt-2 flex items-center gap-2 flex-wrap">
@@ -12162,6 +12163,24 @@ function PlannerModule({ data, setData, dark, themePanel, themeMuted, triggerCon
                         title={t("Move down", lang)} aria-label={t("Move down", lang)}
                       ><ChevronDown className="w-3.5 h-3.5" /></button>
                     </div>
+                  )}
+
+                  {/* Priority star — quick-toggle without opening the editor.
+                      Hidden for recurring virtual tasks (they can't hold priority). */}
+                  {editingId !== task.id && !isVirtualTaskId(task.id) && (
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); if (isPri || priorityCount < 3) togglePriority(task.id); }}
+                      disabled={!isPri && priorityCount >= 3}
+                      title={isPri ? t("Remove priority", lang) : t("Mark as priority", lang)}
+                      aria-label={isPri ? t("Remove priority", lang) : t("Mark as priority", lang)}
+                      className={`w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center rounded flex-shrink-0 transition text-base leading-none touch-manipulation ${
+                        isPri
+                          ? "text-[#5b7351]"
+                          : "text-stone-300 hover:text-[#9cb88f] disabled:opacity-30 disabled:cursor-not-allowed"
+                      }`}>
+                      {isPri ? "★" : "☆"}
+                    </button>
                   )}
 
                   {/* Edit arrow */}
