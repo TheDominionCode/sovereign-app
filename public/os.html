@@ -798,6 +798,27 @@ function compressImage(file, { maxWidth = 800, quality = 0.82 } = {}) {
   });
 }
 
+// Compress an image file then upload it to Supabase Storage via /api/upload-image.
+// Returns the permanent public URL. Falls back to base64 data URL if upload fails.
+async function uploadImage(file, { maxWidth = 800, quality = 0.82, folder = "misc" } = {}) {
+  const dataUrl = await compressImage(file, { maxWidth, quality });
+  try {
+    const arr = dataUrl.split(",");
+    const mime = arr[0].match(/:(.*?);/)[1];
+    const bstr = atob(arr[1]);
+    const u8 = new Uint8Array(bstr.length);
+    for (let i = 0; i < bstr.length; i++) u8[i] = bstr.charCodeAt(i);
+    const blob = new Blob([u8], { type: mime });
+    const fd = new FormData();
+    fd.append("file", new File([blob], "image.jpg", { type: mime }));
+    fd.append("folder", folder);
+    const res = await fetch("/api/upload-image", { method: "POST", credentials: "same-origin", body: fd });
+    const json = await res.json();
+    if (res.ok && json.url) return json.url;
+  } catch (e) {}
+  return dataUrl; // fallback: store as base64 if upload fails
+}
+
 const DEFAULT_AFFIRMATION_CATS = DEFAULT_AFFIRMATION_CATEGORIES;
 const VISION_CATS = ["Home", "Car", "Travel", "Family", "Business", "Lifestyle"];
 const RECRUIT_STAGES = ["non-licensed", "licensed", "active", "inactive"];
@@ -6685,8 +6706,8 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     if (file.size > 10 * 1024 * 1024) { alert(t("Pick an image under 10MB please.", lang)); return; }
     setPickingImg(true);
     try {
-      const compressed = await compressImage(file, { maxWidth: 1000, quality: 0.85 });
-      setData({ ...data, inspirationImg: compressed });
+      const url = await uploadImage(file, { maxWidth: 1000, quality: 0.85, folder: "why" });
+      setData({ ...data, inspirationImg: url });
     } catch (err) {
       alert(t("Could not process that image.", lang));
     } finally {
@@ -9701,8 +9722,8 @@ function VisionImagePicker({ form, setForm, themeMuted, lang }) {
     }
     setBusy(true);
     try {
-      const compressed = await compressImage(file, { maxWidth: 800, quality: 0.82 });
-      setForm({ ...form, img: compressed });
+      const url = await uploadImage(file, { maxWidth: 800, quality: 0.82, folder: "vision" });
+      setForm({ ...form, img: url });
       setUrlInput("");
     } catch (err) {
       alert(t("Could not process that image.", lang));
@@ -9820,9 +9841,9 @@ function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate,
       return;
     }
     try {
-      const compressed = await compressImage(file, { maxWidth: 240, quality: 0.85 });
-      setUser({ ...user, avatar: compressed });
-      if (setData) setData({ ...data, profileAvatar: compressed });
+      const url = await uploadImage(file, { maxWidth: 240, quality: 0.85, folder: "avatars" });
+      setUser({ ...user, avatar: url });
+      if (setData) setData({ ...data, profileAvatar: url });
       setOpen(false);
     } catch (err) {
       alert(t("Could not process that image.", lang));
