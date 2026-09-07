@@ -18,7 +18,7 @@
 <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
 <title>Sovereign — Build the Life</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
 <!-- Babel is loaded by the cloud-storage bootstrap below, only after the
      user's Supabase state is fetched, so the app reads cloud data on first render. -->
@@ -1804,11 +1804,17 @@ const BUSINESS_NAV = [
   { id: "notes", label: "Notes", icon: StickyNote },
 ];
 
+// Hidden from users for now — the whole Life Calendar page (year view, add
+// event, important dates, and the not-yet-ready Google Calendar connect
+// feature) isn't ready to ship. Nothing removed, just gated off everywhere
+// it's linked from; flip this back to true to bring it all back at once.
+const LIFE_CALENDAR_ENABLED = false;
+
 const PERSONAL_NAV = [
   { id: "personalHome", label: "Summary",              icon: Home },
   { id: "sovereignOS",  label: "Sovereign",           icon: Sparkles },
   { id: "planner",      label: "Today's Focus",      icon: BookOpen },
-  { id: "calendarYear", label: "Life Calendar",        icon: Calendar },
+  ...(LIFE_CALENDAR_ENABLED ? [{ id: "calendarYear", label: "Life Calendar", icon: Calendar }] : []),
   { id: "habitsView",   label: "Daily Rhythm",         icon: Activity },
   { id: "goals",        label: "Goals",               icon: Target },
   { id: "habits",       label: "Self",                 icon: Lightbulb },
@@ -1833,7 +1839,7 @@ const PERSONAL_NAV_PILLARS = [
     id: "purpose", label: "Purpose", icon: Target,
     items: [
       { id: "planner",         label: "Today's Focus",   icon: BookOpen },
-      { id: "calendarYear",    label: "Life Calendar",    icon: Calendar },
+      ...(LIFE_CALENDAR_ENABLED ? [{ id: "calendarYear", label: "Life Calendar", icon: Calendar }] : []),
       { id: "goals",           label: "Goals",            icon: Target },
       { id: "vision",          label: "Vision",           icon: ImageIcon },
     ],
@@ -1841,12 +1847,12 @@ const PERSONAL_NAV_PILLARS = [
   {
     id: "mind", label: "Mind", icon: Lightbulb,
     items: [
+      { id: "coach",           label: "AI Coach",         icon: Crown },
       { id: "sovereignOS",     label: "Sovereign",         icon: Sparkles },
       { id: "affirmations",    label: "Affirmations",     icon: Sparkles },
       { id: "speak",           label: "Speak Eloquently", icon: MessageCircle },
       { id: "habits",          label: "Self",             icon: Lightbulb },
       { id: "notes",           label: "Notes",            icon: StickyNote },
-      { id: "coach",           label: "AI Coach",         icon: Crown },
     ],
   },
   {
@@ -1971,6 +1977,8 @@ const TRANSLATIONS = {
     "Today": "Today",
     "The small things, in order.": "The small things, in order.",
     "Three things that matter": "Three things that matter",
+    "Promise to Myself": "Promise to Myself",
+    "Add a promise": "Add a promise",
     "If only these get done, the day was a good one.": "If only these get done, the day was a good one.",
     "Take care of you": "Take care of you",
     "The body keeps the score. Be kind to it.": "The body keeps the score. Be kind to it.",
@@ -2148,6 +2156,11 @@ const TRANSLATIONS = {
     "Did you become who you said you wanted to become today?": "Did you become who you said you wanted to become today?",
     "AI Coach": "AI Coach",
     "Your personal evening debrief.": "Your personal evening debrief.",
+    "The Sovereign Reset": "The Sovereign Reset",
+    "Scripture + Reflection": "Scripture + Reflection",
+    "Brain Science": "Brain Science",
+    "Today's Challenge": "Today's Challenge",
+    "Today's Sovereign Thought": "Today's Sovereign Thought",
     "DOMINION STRENGTHENED": "DOMINION STRENGTHENED",
     "Today you strengthened your Dominion.": "Today you strengthened your Dominion.",
     "Today you chose to be": "Today you chose to be",
@@ -2754,6 +2767,11 @@ const TRANSLATIONS = {
     // YearCalendar
     "Plan your week and your year. Click any day to add what you need to do.": "Plan your week and your year. Click any day to add what you need to do.",
     "Connect calendar": "Connect calendar",
+    "Google Calendar": "Google Calendar",
+    "Connected to Google Calendar": "Connected to Google Calendar",
+    "From Google Calendar": "From Google Calendar",
+    "Disconnect": "Disconnect",
+    "Disconnected.": "Disconnected.",
     "YEAR VIEW": "YEAR VIEW",
     "Previous year": "Previous year",
     "Next year": "Next year",
@@ -2860,6 +2878,8 @@ const TRANSLATIONS = {
     "Today": "Hoy",
     "The small things, in order.": "Las cosas pequeñas, en orden.",
     "Three things that matter": "Tres cosas que importan",
+    "Promise to Myself": "Promesa a mí misma",
+    "Add a promise": "Añadir una promesa",
     "If only these get done, the day was a good one.": "Si solo esto se hace, el día fue bueno.",
     "Take care of you": "Cuídate",
     "The body keeps the score. Be kind to it.": "El cuerpo lleva la cuenta. Sé amable con él.",
@@ -3040,6 +3060,11 @@ const TRANSLATIONS = {
     "Did you become who you said you wanted to become today?": "¿Te convertiste en quien dijiste que querías ser hoy?",
     "AI Coach": "Coach de IA",
     "Your personal evening debrief.": "Tu resumen personal de la noche.",
+    "The Sovereign Reset": "El Reinicio Soberano",
+    "Scripture + Reflection": "Escritura y Reflexión",
+    "Brain Science": "Ciencia del Cerebro",
+    "Today's Challenge": "El Reto de Hoy",
+    "Today's Sovereign Thought": "El Pensamiento Soberano de Hoy",
     "DOMINION STRENGTHENED": "DOMINIO FORTALECIDO",
     "Today you strengthened your Dominion.": "Hoy fortaleciste tu Dominio.",
     "Today you chose to be": "Hoy elegiste ser",
@@ -3644,6 +3669,11 @@ const TRANSLATIONS = {
     // YearCalendar — native Spanish
     "Plan your week and your year. Click any day to add what you need to do.": "Planea tu semana y tu año. Toca cualquier día para añadir lo que necesitas hacer.",
     "Connect calendar": "Conectar calendario",
+    "Google Calendar": "Google Calendar",
+    "Connected to Google Calendar": "Conectado a Google Calendar",
+    "From Google Calendar": "Desde Google Calendar",
+    "Disconnect": "Desconectar",
+    "Disconnected.": "Desconectado.",
     "YEAR VIEW": "VISTA ANUAL",
     "Previous year": "Año anterior",
     "Next year": "Año siguiente",
@@ -4411,7 +4441,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
           {active === "financials" && <FinancialsModule {...moduleProps} />}
           {active === "tasks" && <TasksModule {...moduleProps} />}
           {active === "planner" && <PlannerModule {...moduleProps} />}
-          {active === "calendarYear" && <YearCalendarModule {...moduleProps} />}
+          {active === "calendarYear" && LIFE_CALENDAR_ENABLED && <YearCalendarModule {...moduleProps} />}
           {active === "email" && <EmailModule {...moduleProps} />}
           {active === "social" && <SocialModule {...moduleProps} />}
           {active === "team" && <TeamModule {...moduleProps} />}
@@ -4920,7 +4950,7 @@ function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerCo
       { id: "water",      name: t("Water", lang),             used: anyPlannerVal("waterGlasses"),                                                     target: "habitsView" },
       { id: "wins",       name: t("Wins", lang),              used: anyPlannerVal("wins"),                                                             target: "planner" },
       { id: "gratitude",  name: t("Gratitude", lang),         used: anyPlannerVal("gratitude"),                                                        target: "planner" },
-      { id: "calendar",   name: t("Calendar", lang),          used: data?.calendarEvents && Object.keys(data.calendarEvents).length > 0,               target: "calendarYear" },
+      ...(LIFE_CALENDAR_ENABLED ? [{ id: "calendar", name: t("Calendar", lang), used: data?.calendarEvents && Object.keys(data.calendarEvents).length > 0, target: "calendarYear" }] : []),
       { id: "goals",      name: t("Goals", lang),             used: Array.isArray(data?.goals) && data.goals.length > 0,                               target: "goals" },
       { id: "finance",    name: t("Personal Finance", lang),  used: (() => { const pf = data?.personalFinance || {}; return (pf.income||[]).length + (pf.expenses||[]).length + (pf.savingsGoals||[]).length + (pf.subscriptions||[]).length > 0; })(), target: "personalFinance" },
       { id: "cycle",      name: t("Cycle & Mood", lang),      used: data?.cycle && Array.isArray(data.cycle.entries) && data.cycle.entries.length > 0, target: "cycle" },
@@ -6954,16 +6984,12 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
   const displayReflection = getDCO("reflection") || todayReflection;
   const displayQuestion = getDCO("question") || todayQuestion;
 
-  // ----- Priority editing on the summary card -----
-  // We read from today's priority TASKS (modern model). Each priority slot
-  // 1/2/3 maps to a task whose .priorityOrder matches. Empty slots show an
-  // inline "+ add" affordance so the user can pick a priority without going
-  // to the planner first.
-  // "Three things that matter" — the Summary's three free-text slots.
-  // Deliberately NOT tied to the Daily Planner's Top-3 priorities anymore:
-  // editing one of these no longer creates a task and removing one no longer
-  // strips the priority flag off a planner task. Stored under its own
-  // data.summaryThreeThings field (an array of three strings).
+  // ----- "Promise to Myself" editing on the summary card -----
+  // Three free-text slots, entirely independent of the Daily Planner and the
+  // to-do list: editing one never creates a task, removing one never touches
+  // any task's priority flag, and there's no link back to the planner.
+  // Stored under its own data.summaryThreeThings field (an array of three
+  // strings) — field name kept as-is so existing users' saved data isn't lost.
   const summaryThreeThingsRaw = Array.isArray(data.summaryThreeThings) ? data.summaryThreeThings : [];
   const summaryThreeThings = [0, 1, 2].map(i => summaryThreeThingsRaw[i] || "");
   const thingAt = (slot) => summaryThreeThings[slot - 1] || "";
@@ -6995,11 +7021,11 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
     { key: "circles",     label: t("Today's stat circles", lang) },
     { key: "today",       label: t("Today's tasks", lang) },
     { key: "why",         label: t("My why (photo)", lang) },
-    { key: "priorities",  label: t("Three priorities", lang) },
+    { key: "priorities",  label: t("Promise to Myself", lang) },
     { key: "vitamins",    label: t("Vitamins panel", lang) },
   ];
   const customizeAddons = [
-    { key: "events",   label: t("Today's events", lang),    hint: t("From your Calendar", lang) },
+    ...(LIFE_CALENDAR_ENABLED ? [{ key: "events", label: t("Today's events", lang), hint: t("From your Calendar", lang) }] : []),
     { key: "finance",  label: t("Money this month", lang),  hint: t("Income, expenses, net", lang) },
     { key: "goals",    label: t("Goals progress", lang),    hint: t("Average across active goals", lang) },
     { key: "vision",   label: t("Vision board peek", lang), hint: t("A few images from your board", lang) },
@@ -7221,7 +7247,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
           { key: "mood",     onClick: () => navigateTo("cycle",   "section-mood"),         label: "mood",       sub: moodLogged ? t("feeling {mood}", lang, { mood: t(todayMoodLabel || "okay", lang) }) : t("how am I today?", lang), done: moodLogged ? 1 : 0, total: 1, valueLabel: moodLogged ? todayMoodEmoji : "?", doneIcon: todayMoodEmoji },
           { key: "goals",    onClick: () => navigateTo("goals"),                            label: "goals",      sub: activeGoals.length > 0 ? t("avg across active", lang) : t("add a goal to begin", lang), done: goalAvg, total: 100, valueLabel: `${goalAvg}%` },
           { key: "wins",     onClick: () => navigateTo("planner", "section-wins"),         label: "wins",       sub: todaysWinsCount > 0 ? t("logged today", lang) : t("log a win", lang), done: Math.min(todaysWinsCount, 3), total: 3, valueLabel: `${todaysWinsCount}` },
-          { key: "events",   onClick: () => navigateTo("calendarYear"),                     label: "events",     sub: todaysEventsCount > 0 ? t("on the calendar", lang) : t("nothing scheduled", lang), done: todaysEventsCount > 0 ? 1 : 0, total: 1, valueLabel: `${todaysEventsCount}` },
+          ...(LIFE_CALENDAR_ENABLED ? [{ key: "events", onClick: () => navigateTo("calendarYear"), label: "events", sub: todaysEventsCount > 0 ? t("on the calendar", lang) : t("nothing scheduled", lang), done: todaysEventsCount > 0 ? 1 : 0, total: 1, valueLabel: `${todaysEventsCount}` }] : []),
           { key: "money",    onClick: () => navigateTo("finance"),                          label: "money",      sub: t("net this month", lang), done: net >= 0 ? 1 : 0, total: 1, valueLabel: fmtMoneyShort(net) },
           { key: "vision",   onClick: () => navigateTo("vision"),                           label: "vision",     sub: visionItems.length > 0 ? t("{n} achieved", lang, { n: visionAchieved }) : t("add to vision board", lang), done: visionAchieved, total: Math.max(1, visionItems.length), valueLabel: visionItems.length > 0 ? `${visionAchieved}/${visionItems.length}` : "—" },
         ];
@@ -7473,61 +7499,62 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
       </div>
       )}
 
-      {/* PRIORITIES + VITAMINS — soft headers */}
-      {(summaryPrefs.priorities || summaryPrefs.vitamins) && (
-      <div className={`grid gap-5 mt-5 grid-cols-[minmax(0,1fr)] ${summaryPrefs.priorities && summaryPrefs.vitamins ? "lg:grid-cols-[repeat(2,minmax(0,1fr))]" : ""}`}>
-        {summaryPrefs.priorities && (
-        <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
-          <div className="flex items-baseline justify-between mb-1">
-            <h2 className="font-serif text-2xl text-stone-800" style={serifStyle}>{t("Three things that matter", lang)}</h2>
-            <button onClick={() => navigateTo("planner", "section-top3")} className="text-xs italic text-stone-400 hover:text-[#5b7351]" style={serifStyle}>{t("planner →", lang)}</button>
-          </div>
-          <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("If only these get done, the day was a good one.", lang)}</p>
-          <div className="space-y-3">
-            {[1, 2, 3].map(slot => {
-              const text = thingAt(slot);
-              const isEditing = editingPriSlot === slot;
-              return (
-                <div key={slot} className="flex items-start gap-3 group">
-                  <div className="font-serif text-3xl italic text-[#a8c090] leading-none w-7 flex-shrink-0" style={serifStyle}>{slot}</div>
-                  {isEditing ? (
-                    <div className="flex-1 flex items-center gap-2">
-                      <input
-                        autoFocus
-                        value={editingPriText}
-                        onChange={e => setEditingPriText(e.target.value)}
-                        onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); saveEditPri(); } if (e.key === "Escape") cancelEditPri(); }}
-                        onBlur={saveEditPri}
-                        placeholder={t("What matters most?", lang)}
-                        className="flex-1 px-2 py-1 border rounded text-sm outline-none bg-white border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20"
-                      />
-                    </div>
-                  ) : text ? (
-                    <>
-                      <button onClick={() => startEditPri(slot)}
-                        className="flex-1 text-left text-sm leading-relaxed text-stone-900 hover:text-[#5b7351] transition"
-                        title={t("Tap to edit", lang)}>
-                        {text}
-                      </button>
-                      <button onClick={() => clearThing(slot)}
-                        className="opacity-40 sm:opacity-0 group-hover:opacity-100 px-1 text-xs text-stone-400 hover:text-rose-500 transition flex-shrink-0"
-                        aria-label={t("Remove", lang)} title={t("Remove", lang)}>✕</button>
-                    </>
-                  ) : (
-                    <button onClick={() => startEditPri(slot)}
-                      className="flex-1 text-left text-sm italic text-stone-400 hover:text-[#5b7351] transition"
-                      style={serifStyle}>
-                      + {t("Add a priority", lang)}
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
+      {/* PROMISE TO MYSELF — its own standalone section (not tied to the
+          Daily Planner, not gated behind a "priority" concept, doesn't
+          create/require a to-do list task). */}
+      {summaryPrefs.priorities && (
+      <div className={`rounded-2xl border ${themePanel} p-6 mt-5 min-w-0 overflow-hidden`}>
+        <div className="flex items-baseline justify-between mb-1">
+          <h2 className="font-serif text-2xl text-stone-800" style={serifStyle}>{t("Promise to Myself", lang)}</h2>
         </div>
-        )}
+        <p className="text-xs italic text-stone-400 mb-4" style={serifStyle}>{t("If only these get done, the day was a good one.", lang)}</p>
+        <div className="space-y-3">
+          {[1, 2, 3].map(slot => {
+            const text = thingAt(slot);
+            const isEditing = editingPriSlot === slot;
+            return (
+              <div key={slot} className="flex items-start gap-3 group">
+                <div className="font-serif text-3xl italic text-[#a8c090] leading-none w-7 flex-shrink-0" style={serifStyle}>{slot}</div>
+                {isEditing ? (
+                  <div className="flex-1 flex items-center gap-2">
+                    <input
+                      autoFocus
+                      value={editingPriText}
+                      onChange={e => setEditingPriText(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); saveEditPri(); } if (e.key === "Escape") cancelEditPri(); }}
+                      onBlur={saveEditPri}
+                      placeholder={t("What matters most?", lang)}
+                      className="flex-1 px-2 py-1 border rounded text-sm outline-none bg-white border-[#7a9a6e] focus:ring-2 focus:ring-[#7a9a6e]/20"
+                    />
+                  </div>
+                ) : text ? (
+                  <>
+                    <button onClick={() => startEditPri(slot)}
+                      className="flex-1 text-left text-sm leading-relaxed text-stone-900 hover:text-[#5b7351] transition"
+                      title={t("Tap to edit", lang)}>
+                      {text}
+                    </button>
+                    <button onClick={() => clearThing(slot)}
+                      className="opacity-40 sm:opacity-0 group-hover:opacity-100 px-1 text-xs text-stone-400 hover:text-rose-500 transition flex-shrink-0"
+                      aria-label={t("Remove", lang)} title={t("Remove", lang)}>✕</button>
+                  </>
+                ) : (
+                  <button onClick={() => startEditPri(slot)}
+                    className="flex-1 text-left text-sm italic text-stone-400 hover:text-[#5b7351] transition"
+                    style={serifStyle}>
+                    + {t("Add a promise", lang)}
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      )}
 
-        {summaryPrefs.vitamins && (
+      {/* VITAMINS — its own section, no longer paired in a shared grid */}
+      {summaryPrefs.vitamins && (
+      <div className="grid gap-5 mt-5 grid-cols-[minmax(0,1fr)]">
         <div onClick={() => navigateTo("cycle", "section-vitamins")} className={`rounded-2xl border ${themePanel} p-6 hover:border-[#7a9a6e] transition cursor-pointer min-w-0 overflow-hidden`}>
           <div className="flex items-baseline justify-between mb-1">
             <h2 className="font-serif text-2xl text-stone-800" style={serifStyle}>{t("Take care of you", lang)}</h2>
@@ -7560,13 +7587,12 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
             </div>
           )}
         </div>
-        )}
       </div>
       )}
 
       {/* OPT-IN WIDGETS — only show what the user has explicitly added. Each
           widget pulls live data from its own module and links back there. */}
-      {(summaryPrefs.events || summaryPrefs.finance || summaryPrefs.goals || summaryPrefs.vision || summaryPrefs.wins) && (() => {
+      {((LIFE_CALENDAR_ENABLED && summaryPrefs.events) || summaryPrefs.finance || summaryPrefs.goals || summaryPrefs.vision || summaryPrefs.wins) && (() => {
         const todaysEvents = ((data.calendarEvents || {})[today] || []);
         const todaysWinsRaw = dailyPlan.wins || [];
         const todaysWins = todaysWinsRaw
@@ -7577,7 +7603,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
             {/* Each widget = its own card. Header has a "+" button that
                 jumps to the source module so the user can add a new entry
                 directly. Tapping the card title also navigates there. */}
-            {summaryPrefs.events && (
+            {LIFE_CALENDAR_ENABLED && summaryPrefs.events && (
               <div className={`rounded-2xl border ${themePanel} p-6 min-w-0 overflow-hidden`}>
                 <div className="flex items-baseline justify-between mb-1 gap-2">
                   <button onClick={() => setActive("calendarYear")} className="text-left font-serif text-2xl text-stone-800 hover:text-[#5b7351] transition" style={serifStyle}>{t("Today's events", lang)}</button>
@@ -9110,8 +9136,19 @@ function SpeakElegantlyModule({ data, setData, dark, themePanel, themeMuted, tri
 // ============================================================
 const DOMINION_KEYWORDS = ["prayer", "bible", "scripture", "devotion", "worship", "inventory", "gratitude", "reflection", "meditation", "oración", "biblia", "gratitud", "reflexión"];
 
+const DAILY_RESET_SECTIONS = [
+  { key: "sovereignReset",      emoji: "🌿", label: "The Sovereign Reset" },
+  { key: "todayPrinciple",      emoji: "🧠", label: "Today's Principle" },
+  { key: "scriptureReflection", emoji: "📖", label: "Scripture + Reflection" },
+  { key: "brainScience",        emoji: "🧠", label: "Brain Science" },
+  { key: "todayChallenge",      emoji: "🎯", label: "Today's Challenge" },
+  { key: "sovereignThought",    emoji: "🌿", label: "Today's Sovereign Thought" },
+];
+
 function CoachModule({ data, setData, dark, themePanel, themeMuted, lang }) {
-  const serif = { fontFamily: "'Playfair Display', Georgia, serif" };
+  // Matches the Announcements popup's letter styling (public/os.html ~4171)
+  // per Nataly's request — AI Coach should read like that same daily letter.
+  const serif = { fontFamily: "'Cormorant Garamond', Georgia, serif" };
   const today = todayISO();
   const todayPlan = (data.planners || {})[today] || {};
 
@@ -9144,6 +9181,13 @@ function CoachModule({ data, setData, dark, themePanel, themeMuted, lang }) {
   // Reflection answers
   const reflectionAnswers = (data.reflectionAnswers || {})[today] || {};
   const reflectionFilled = Object.values(reflectionAnswers).filter(v => v && String(v).trim()).length;
+
+  // Daily Reset — admin-curated content, approved + published from
+  // /admin/daily-reset-manager. Independent of the personal debrief below.
+  const [dailyReset, setDailyReset] = useState(null);
+  useEffect(() => {
+    fetch("/api/daily-reset").then(r => r.ok ? r.json() : null).then(d => { if (d?.reset) setDailyReset(d.reset); }).catch(() => {});
+  }, []);
 
   // AI debrief state
   const [debrief, setDebrief] = useState(null);
@@ -9193,6 +9237,26 @@ function CoachModule({ data, setData, dark, themePanel, themeMuted, lang }) {
         <h1 className="font-serif text-3xl sm:text-4xl italic text-stone-800 leading-tight mb-2" style={serif}>{t("AI Coach", lang)}</h1>
         <p className="text-sm italic text-stone-500" style={serif}>{t("Your personal evening debrief.", lang)}</p>
       </div>
+
+      {/* Daily Reset — admin-curated, shown above the personal snapshot/debrief */}
+      {dailyReset && (
+        <div className="space-y-4 mb-8">
+          {DAILY_RESET_SECTIONS.map(({ key, emoji, label }) => {
+            const html = dailyReset[key]?.[lang === "es" ? "es" : "en"];
+            if (!html) return null;
+            return (
+              <div key={key} className="rounded-2xl border border-[#d3e0c5] bg-white px-6 py-6 shadow-sm">
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] font-semibold mb-3" style={serif}>{emoji} {t(label, lang)}</p>
+                <div
+                  className="text-sm text-stone-700 leading-loose italic [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+                  style={serif}
+                  dangerouslySetInnerHTML={{ __html: html }}
+                />
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* Dominion Score */}
       <div className={`rounded-2xl px-6 py-6 mb-5 shadow-sm ${dominionStrengthened ? "bg-gradient-to-br from-[#5b3a1e]/10 via-[#f4f7ee]/60 to-white border border-[#c4a882]" : "bg-white border border-stone-200"}`}>
@@ -13153,6 +13217,12 @@ function buildMonthGrid(year, month) {
   return cells;
 }
 
+// Hidden from users for now — the Google Calendar connection needs its
+// Google Cloud OAuth setup finished first (see .env.example). Nothing below
+// this flag was removed, just gated off, so flipping it back to true is all
+// that's needed once that setup is done.
+const CALENDAR_CONNECT_ENABLED = false;
+
 function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, triggerConfetti, lang }) {
   const today = todayISO();
   const [year, setYear] = useState(new Date().getFullYear());
@@ -13212,7 +13282,44 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
   const events = data.calendarEvents || {};
   const connectedCalendar = data.connectedCalendar || null;
 
+  // Real, read-only Google Calendar import. googleEvents is keyed by ISO
+  // date, same shape as `events`, but never written back — these are
+  // display-only and can't be edited/deleted from here.
+  const [googleConnected, setGoogleConnected] = useState(false);
+  const [googleEvents, setGoogleEvents] = useState({});
+  useEffect(() => {
+    if (!CALENDAR_CONNECT_ENABLED) return;
+    fetch("/api/calendar/status").then(r => r.ok ? r.json() : null).then(d => { if (d) setGoogleConnected(d.connected); }).catch(() => {});
+  }, []);
+  useEffect(() => {
+    if (!CALENDAR_CONNECT_ENABLED || !googleConnected) { setGoogleEvents({}); return; }
+    fetch(`/api/calendar/events?from=${year}-01-01&to=${year}-12-31`)
+      .then(r => r.ok ? r.json() : null)
+      .then(d => {
+        if (!d || !d.connected) return;
+        const byDate = {};
+        (d.events || []).forEach(ev => {
+          const list = byDate[ev.date] || (byDate[ev.date] = []);
+          list.push({
+            id: ev.id,
+            title: ev.title,
+            startTime: ev.allDay ? "" : to12h(ev.startTime),
+            endTime: ev.allDay ? "" : to12h(ev.endTime),
+          });
+        });
+        setGoogleEvents(byDate);
+      })
+      .catch(() => {});
+  }, [googleConnected, year]);
+  const disconnectGoogle = () => {
+    fetch("/api/calendar/disconnect", { method: "POST" }).catch(() => {});
+    setGoogleConnected(false);
+    setGoogleEvents({});
+    triggerConfetti && triggerConfetti(t("Disconnected.", lang), false);
+  };
+
   const dayEvents = selectedDate ? (events[selectedDate] || []) : [];
+  const googleDayEvents = selectedDate ? (googleEvents[selectedDate] || []) : [];
 
   const addEvent = () => {
     if (!selectedDate) return;
@@ -13246,8 +13353,8 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
     setData({ ...data, calendarEvents: nextEvents });
   };
 
-  // Count events per ISO date for dot indicators
-  const eventCountFor = (iso) => (events[iso] || []).length;
+  // Count events per ISO date for dot indicators (local + imported Google events)
+  const eventCountFor = (iso) => (events[iso] || []).length + (googleEvents[iso] || []).length;
 
   const selectedLabel = selectedDate ? fmtDate(selectedDate) : "";
 
@@ -13351,11 +13458,13 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
           )}
           <p className={`text-sm mt-1 ${themeMuted}`}>{t("What deserves your time?", lang)}</p>
         </div>
+        {CALENDAR_CONNECT_ENABLED && (
         <div className="flex items-center gap-2 flex-wrap">
           <button onClick={() => setShowCalendarConnect(true)} className="px-3 py-2 rounded border border-[#a8c090] text-[#5b7351] text-sm font-medium hover:bg-[#f4f7ee] flex items-center gap-2">
-            <Mail className="w-4 h-4" /> {connectedCalendar ? `✓ ${connectedCalendar}` : t("Connect calendar", lang)}
+            <Mail className="w-4 h-4" /> {googleConnected ? `✓ ${t("Google Calendar", lang)}` : connectedCalendar ? `✓ ${connectedCalendar}` : t("Connect calendar", lang)}
           </button>
         </div>
+        )}
       </div>
 
       {/* YEAR VIEW HEADER — always visible, click to expand/hide */}
@@ -13499,6 +13608,25 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
                       />
                     </div>
                   );})}
+                </div>
+              )}
+
+              {/* Imported from Google Calendar — read-only, can't be edited or
+                  deleted here since it isn't Sovereign's data to change. */}
+              {googleDayEvents.length > 0 && (
+                <div className="space-y-2">
+                  <div className="text-[10px] tracking-[0.2em] uppercase text-stone-400 font-semibold">{t("From Google Calendar", lang)}</div>
+                  {googleDayEvents.map(ev => (
+                    <div key={ev.id} className="rounded-lg border border-stone-100 bg-stone-50 p-3 flex items-start gap-2">
+                      <span className="text-[#4285F4] text-xs mt-0.5" title="Google Calendar">🗓</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium text-stone-700 truncate">{ev.title}</div>
+                        {ev.startTime && (
+                          <div className="text-[11px] text-stone-400 mt-0.5">{ev.startTime}{ev.endTime ? ` – ${ev.endTime}` : ""}</div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
 
@@ -13772,7 +13900,13 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
               <button onClick={() => setShowCalendarConnect(false)} className="text-stone-400 hover:text-stone-700 text-2xl leading-none">×</button>
             </div>
 
-            {connectedCalendar && (
+            {googleConnected && (
+              <div className="mt-3 mb-4 p-3 rounded-lg bg-[#f4f7ee] border border-[#d3e0c5] flex items-center justify-between">
+                <div className="text-sm text-[#3d5c34]">✓ {t("Connected to Google Calendar", lang)}</div>
+                <button onClick={disconnectGoogle} className="text-xs text-rose-500 hover:text-rose-700">{t("Disconnect", lang)}</button>
+              </div>
+            )}
+            {!googleConnected && connectedCalendar && (
               <div className="mt-3 mb-4 p-3 rounded-lg bg-[#f4f7ee] border border-[#d3e0c5] flex items-center justify-between">
                 <div className="text-sm text-[#3d5c34]">✓ Currently connected: <span className="font-semibold">{connectedCalendar}</span></div>
                 <button
@@ -13783,8 +13917,22 @@ function YearCalendarModule({ data, setData, dark, themePanel, themeMuted, trigg
             )}
 
             <div className="space-y-2 mt-4">
+              {/* Google Calendar is real — everything else below stays a
+                  decorative placeholder until it gets built too. */}
+              {!googleConnected && (
+                <a
+                  href="/api/calendar/google/start"
+                  className="w-full flex items-center gap-3 p-3 rounded-lg border border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee] transition text-left"
+                >
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold text-base flex-shrink-0" style={{ background: "#4285F4" }}>🗓</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-sm font-semibold text-stone-800">Google Calendar</div>
+                    <div className="text-xs text-stone-500 truncate">Gmail · Workspace · personal</div>
+                  </div>
+                  <div className="text-xs text-[#5b7351] font-medium flex-shrink-0">Connect →</div>
+                </a>
+              )}
               {[
-                { name: "Google Calendar", icon: "🗓", color: "#4285F4", desc: "Gmail · Workspace · personal" },
                 { name: "Apple iCloud", icon: "", color: "#000000", desc: "iPhone · Mac · iPad calendars" },
                 { name: "Outlook / Microsoft 365", icon: "📧", color: "#0078D4", desc: "Outlook.com · Hotmail · Exchange" },
                 { name: "Yahoo Calendar", icon: "Y!", color: "#6001D2", desc: "Yahoo Mail calendars" },
