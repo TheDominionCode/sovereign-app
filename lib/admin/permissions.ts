@@ -17,6 +17,7 @@ export type PermissionKey =
   | "testimonials"
   | "announcements"
   | "daily_experience"
+  | "daily_reset_manager"
   | "bugs"
   | "admins";
 
@@ -44,6 +45,7 @@ export const PERMISSIONS: PermissionDef[] = [
   { key: "testimonials", label: "Testimonials",       hint: "Review + approve testimonial submissions.", group: "growth" },
   { key: "announcements",    label: "Announcements",      hint: "Send in-app messages to every signed-in user (appears as a popup).", group: "growth" },
   { key: "daily_experience", label: "Daily Experience",   hint: "Manage daily principles, reflections, questions, and intentions shown in the app.", group: "growth" },
+  { key: "daily_reset_manager", label: "Daily Reset Manager", hint: "Create, approve, and schedule the Daily Reset content shown on the AI Coach tab.", group: "growth" },
   { key: "bugs",             label: "Bug Reports",        hint: "View and triage bug reports submitted by subscribers from inside the app.", group: "growth" },
   { key: "admins",           label: "Manage admins",      hint: "Add / remove / re-permission other staff. Grant carefully.", group: "people" },
 ];
