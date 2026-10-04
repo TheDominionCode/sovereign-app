@@ -2161,6 +2161,14 @@ const TRANSLATIONS = {
     "Brain Science": "Brain Science",
     "Today's Challenge": "Today's Challenge",
     "Today's Sovereign Thought": "Today's Sovereign Thought",
+    "Today's Sovereign experience is being prepared.": "Today's Sovereign experience is being prepared.",
+    "Previous days": "Previous days",
+    "Nothing published yet.": "Nothing published yet.",
+    "Day {n}": "Day {n}",
+    "{n} days left in the year.": "{n} days left in the year.",
+    "Metacognition": "Metacognition",
+    "Today's Alignment": "Today's Alignment",
+    "Your answer…": "Your answer…",
     "DOMINION STRENGTHENED": "DOMINION STRENGTHENED",
     "Today you strengthened your Dominion.": "Today you strengthened your Dominion.",
     "Today you chose to be": "Today you chose to be",
@@ -3065,6 +3073,14 @@ const TRANSLATIONS = {
     "Brain Science": "Ciencia del Cerebro",
     "Today's Challenge": "El Reto de Hoy",
     "Today's Sovereign Thought": "El Pensamiento Soberano de Hoy",
+    "Today's Sovereign experience is being prepared.": "Tu experiencia Soberana de hoy se está preparando.",
+    "Previous days": "Días anteriores",
+    "Nothing published yet.": "Aún no hay nada publicado.",
+    "Day {n}": "Día {n}",
+    "{n} days left in the year.": "Quedan {n} días en el año.",
+    "Metacognition": "Metacognición",
+    "Today's Alignment": "La Alineación de Hoy",
+    "Your answer…": "Tu respuesta…",
     "DOMINION STRENGTHENED": "DOMINIO FORTALECIDO",
     "Today you strengthened your Dominion.": "Hoy fortaleciste tu Dominio.",
     "Today you chose to be": "Hoy elegiste ser",
@@ -9181,10 +9197,8 @@ const DOMINION_KEYWORDS = ["prayer", "bible", "scripture", "devotion", "worship"
 const DAILY_RESET_SECTIONS = [
   { key: "sovereignReset",      emoji: "🌿", label: "The Sovereign Reset" },
   { key: "todayPrinciple",      emoji: "🧠", label: "Today's Principle" },
-  { key: "scriptureReflection", emoji: "📖", label: "Scripture + Reflection" },
   { key: "brainScience",        emoji: "🧠", label: "Brain Science" },
   { key: "todayChallenge",      emoji: "🎯", label: "Today's Challenge" },
-  { key: "sovereignThought",    emoji: "🌿", label: "Today's Sovereign Thought" },
 ];
 
 function CoachModule({ data, setData, dark, themePanel, themeMuted, lang }) {
@@ -9226,10 +9240,36 @@ function CoachModule({ data, setData, dark, themePanel, themeMuted, lang }) {
 
   // Daily Reset — admin-curated content, approved + published from
   // /admin/daily-reset-manager. Independent of the personal debrief below.
+  // dailyResetChecked distinguishes "still loading" from "confirmed nothing
+  // published yet" so we never silently show stale/no content without
+  // explanation (spec §31).
   const [dailyReset, setDailyReset] = useState(null);
+  const [dailyResetChecked, setDailyResetChecked] = useState(false);
   useEffect(() => {
-    fetch("/api/daily-reset").then(r => r.ok ? r.json() : null).then(d => { if (d?.reset) setDailyReset(d.reset); }).catch(() => {});
+    fetch("/api/daily-reset").then(r => r.ok ? r.json() : null).then(d => { setDailyReset(d?.reset || null); }).catch(() => {}).finally(() => setDailyResetChecked(true));
   }, []);
+
+  // Metacognition + Alignment are the two sections with a place for the
+  // user's own answer, stored the same way reflection answers already are.
+  const metaAnswer = ((data.metacognitionAnswers || {})[today]) || "";
+  const setMetaAnswer = (v) => setData({ ...data, metacognitionAnswers: { ...(data.metacognitionAnswers || {}), [today]: v } });
+  const alignAnswer = ((data.alignmentAnswers || {})[today]) || "";
+  const setAlignAnswer = (v) => setData({ ...data, alignmentAnswers: { ...(data.alignmentAnswers || {}), [today]: v } });
+
+  // Daily History (spec §26/§31) — browse previously published days without
+  // ever confusing them for "today".
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyDays, setHistoryDays] = useState(null);
+  const [historyPick, setHistoryPick] = useState(null);
+  const openHistory = () => {
+    setHistoryOpen(true);
+    if (!historyDays) {
+      fetch("/api/daily-reset/history").then(r => r.ok ? r.json() : null).then(d => setHistoryDays(d?.days || [])).catch(() => setHistoryDays([]));
+    }
+  };
+  const pickHistoryDay = (date) => {
+    fetch(`/api/daily-reset?date=${date}`).then(r => r.ok ? r.json() : null).then(d => { if (d?.reset) setHistoryPick({ ...d.reset, date }); }).catch(() => {});
+  };
 
   // AI debrief state
   const [debrief, setDebrief] = useState(null);
@@ -9281,24 +9321,153 @@ function CoachModule({ data, setData, dark, themePanel, themeMuted, lang }) {
       </div>
 
       {/* Daily Reset — admin-curated, shown above the personal snapshot/debrief */}
-      {dailyReset && (
-        <div className="space-y-4 mb-8">
-          {DAILY_RESET_SECTIONS.map(({ key, emoji, label }) => {
-            const html = dailyReset[key]?.[lang === "es" ? "es" : "en"];
-            if (!html) return null;
-            return (
-              <div key={key} className="rounded-2xl border border-[#d3e0c5] bg-white px-6 py-6 shadow-sm">
-                <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] font-semibold mb-3" style={serif}>{emoji} {t(label, lang)}</p>
-                <div
-                  className="text-sm text-stone-700 leading-loose italic [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
-                  style={serif}
-                  dangerouslySetInnerHTML={{ __html: html }}
-                />
+      {(() => {
+        const shown = historyPick || dailyReset;
+        if (!shown && dailyResetChecked && !historyPick) {
+          return (
+            <div className="rounded-2xl border border-[#d3e0c5] bg-[#f9fbf7] px-6 py-8 mb-8 text-center">
+              <p className="text-sm italic text-stone-500" style={serif}>{t("Today's Sovereign experience is being prepared.", lang)}</p>
+              <button onClick={openHistory} className="mt-3 text-xs text-[#7a9a6e] underline">{t("Previous days", lang)}</button>
+              {historyOpen && (
+                <div className="mt-4 text-left max-w-sm mx-auto space-y-1.5">
+                  {historyDays === null ? (
+                    <p className="text-xs italic text-stone-400">…</p>
+                  ) : historyDays.length === 0 ? (
+                    <p className="text-xs italic text-stone-400">{t("Nothing published yet.", lang)}</p>
+                  ) : historyDays.map(d => (
+                    <button key={d.date} onClick={() => pickHistoryDay(d.date)}
+                      className="block w-full text-left text-xs px-3 py-2 rounded border border-stone-200 hover:border-[#7a9a6e] bg-white">
+                      Day {d.dayNumber} — {d.date}{(d.title?.[lang] || d.title?.en) ? ` — ${d.title[lang] || d.title.en}` : ""}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        }
+        if (!shown) return null;
+
+        const L = lang === "es" ? "es" : "en";
+        const scriptureText = shown.scriptureText?.[L];
+        const scriptureReflection = shown.scriptureReflection?.[L];
+        const sovereignThought = shown.sovereignThought?.[L];
+        const metacognitionPrompt = shown.metacognitionPrompt?.[L];
+        const alignmentPrompt = shown.alignmentPrompt?.[L];
+        const wordOfDay = shown.wordOfDay?.[L];
+        const wordDefinition = shown.wordDefinition?.[L];
+        const title = shown.title?.[L];
+
+        return (
+          <div className="space-y-4 mb-8">
+            {historyPick && (
+              <div className="flex items-center justify-between px-1">
+                <p className="text-xs italic text-stone-400" style={serif}>{historyPick.date}</p>
+                <button onClick={() => setHistoryPick(null)} className="text-xs text-[#7a9a6e] underline">{t("Back to today", lang)}</button>
               </div>
-            );
-          })}
-        </div>
-      )}
+            )}
+
+            {/* Dynamic day header — computed, never hardcoded (spec §10/§30) */}
+            <div className="text-center mb-2">
+              {shown.dayNumber != null && (
+                <p className="text-[10px] tracking-[0.25em] uppercase text-[#7a9a6e] mb-1" style={serif}>
+                  {t("Day {n}", lang, { n: shown.dayNumber })}{title ? ` — ${title}` : ""}
+                </p>
+              )}
+              {shown.daysRemaining != null && (
+                <p className="text-xs italic text-stone-400" style={serif}>{t("{n} days left in the year.", lang, { n: shown.daysRemaining })}</p>
+              )}
+            </div>
+
+            {wordOfDay && (
+              <div className="text-center">
+                <span className="inline-block rounded-full border border-[#d3e0c5] bg-[#f4f7ee] px-4 py-1.5 text-xs text-[#5b7351]" style={serif}>
+                  <strong>{t("Word of the Day", lang)}:</strong> {wordOfDay}{wordDefinition ? ` — ${wordDefinition}` : ""}
+                </span>
+              </div>
+            )}
+
+            {DAILY_RESET_SECTIONS.map(({ key, emoji, label }) => {
+              const html = shown[key]?.[L];
+              if (!html) return null;
+              return (
+                <div key={key} className="rounded-2xl border border-[#d3e0c5] bg-white px-6 py-6 shadow-sm">
+                  <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] font-semibold mb-3" style={serif}>{emoji} {t(label, lang)}</p>
+                  <div
+                    className="text-sm text-stone-700 leading-loose [&_p]:mb-3 [&_p:last-child]:mb-0 [&_ul]:list-disc [&_ul]:pl-5 [&_ol]:list-decimal [&_ol]:pl-5"
+                    style={serif}
+                    dangerouslySetInnerHTML={{ __html: html }}
+                  />
+                </div>
+              );
+            })}
+
+            {(scriptureText || scriptureReflection) && (
+              <div className="rounded-2xl border border-[#d3e0c5] bg-white px-6 py-6 shadow-sm">
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] font-semibold mb-3" style={serif}>📖 {t("Scripture + Reflection", lang)}</p>
+                {scriptureText && (
+                  <p className="text-sm italic text-stone-800 mb-3 leading-relaxed" style={serif}>
+                    “{scriptureText}” — {shown.scriptureReference}{shown.scriptureTranslation ? ` (${shown.scriptureTranslation})` : ""}
+                  </p>
+                )}
+                {scriptureReflection && (
+                  <div className="text-sm text-stone-700 leading-loose [&_p]:mb-3 [&_p:last-child]:mb-0" style={serif} dangerouslySetInnerHTML={{ __html: scriptureReflection }} />
+                )}
+              </div>
+            )}
+
+            {metacognitionPrompt && (
+              <div className="rounded-2xl border border-[#d3e0c5] bg-white px-6 py-6 shadow-sm">
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] font-semibold mb-3" style={serif}>🪞 {t("Metacognition", lang)}</p>
+                <p className="text-sm text-stone-700 leading-relaxed mb-3" style={serif}>{metacognitionPrompt}</p>
+                {!historyPick && (
+                  <textarea value={metaAnswer} onChange={e => setMetaAnswer(e.target.value)} rows={2}
+                    placeholder={t("Your answer…", lang)}
+                    className="w-full text-sm px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none resize-none bg-[#f9fbf7]" />
+                )}
+              </div>
+            )}
+
+            {sovereignThought && (
+              <div className="rounded-2xl border border-[#d3e0c5] bg-white px-6 py-6 shadow-sm">
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] font-semibold mb-3" style={serif}>🌿 {t("Today's Sovereign Thought", lang)}</p>
+                <p className="text-sm italic text-stone-700 leading-relaxed" style={serif}>{sovereignThought}</p>
+              </div>
+            )}
+
+            {alignmentPrompt && (
+              <div className="rounded-2xl border border-[#d3e0c5] bg-white px-6 py-6 shadow-sm">
+                <p className="text-[9px] tracking-[0.3em] uppercase text-[#7a9a6e] font-semibold mb-3" style={serif}>🪞 {t("Today's Alignment", lang)}</p>
+                <p className="text-sm text-stone-700 leading-relaxed mb-3" style={serif}>{alignmentPrompt}</p>
+                {!historyPick && (
+                  <textarea value={alignAnswer} onChange={e => setAlignAnswer(e.target.value)} rows={2}
+                    placeholder={t("Your answer…", lang)}
+                    className="w-full text-sm px-3 py-2 rounded border border-stone-200 focus:border-[#7a9a6e] outline-none resize-none bg-[#f9fbf7]" />
+                )}
+              </div>
+            )}
+
+            {!historyPick && (
+              <div className="text-center">
+                <button onClick={openHistory} className="text-xs text-[#7a9a6e] underline">{t("Previous days", lang)}</button>
+                {historyOpen && (
+                  <div className="mt-3 text-left max-w-sm mx-auto space-y-1.5">
+                    {historyDays === null ? (
+                      <p className="text-xs italic text-stone-400">…</p>
+                    ) : historyDays.length === 0 ? (
+                      <p className="text-xs italic text-stone-400">{t("Nothing published yet.", lang)}</p>
+                    ) : historyDays.map(d => (
+                      <button key={d.date} onClick={() => pickHistoryDay(d.date)}
+                        className="block w-full text-left text-xs px-3 py-2 rounded border border-stone-200 hover:border-[#7a9a6e] bg-white">
+                        Day {d.dayNumber} — {d.date}{(d.title?.[lang] || d.title?.en) ? ` — ${d.title[lang] || d.title.en}` : ""}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {/* Dominion Score */}
       <div className={`rounded-2xl px-6 py-6 mb-5 shadow-sm ${dominionStrengthened ? "bg-gradient-to-br from-[#5b3a1e]/10 via-[#f4f7ee]/60 to-white border border-[#c4a882]" : "bg-white border border-stone-200"}`}>

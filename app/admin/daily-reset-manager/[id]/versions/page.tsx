@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { requirePermission } from "../../../guard";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { restoreVersionAction } from "../../actions";
-import type { DailyResetRow } from "../../_lib/types";
+import { SECTIONS, type DailyResetRow } from "../../_lib/types";
 
 export const dynamic = "force-dynamic";
 
@@ -71,12 +71,17 @@ export default async function VersionsPage({ params }: { params: Promise<{ id: s
                   <div className="absolute right-0 mt-2 w-96 max-h-96 overflow-y-auto bg-white border border-stone-200 rounded-lg shadow-lg p-4 z-10 text-xs text-stone-600 space-y-2">
                     <div><strong>Status:</strong> {v.snapshot.status}</div>
                     <div><strong>Theme:</strong> {v.snapshot.theme ?? "—"}</div>
-                    <div className="pt-2 border-t border-stone-100"><strong>Sovereign Reset (EN):</strong> <span dangerouslySetInnerHTML={{ __html: v.snapshot.sovereign_reset_en ?? "—" }} /></div>
-                    <div><strong>Today&apos;s Principle (EN):</strong> <span dangerouslySetInnerHTML={{ __html: v.snapshot.today_principle_en ?? "—" }} /></div>
-                    <div><strong>Scripture + Reflection (EN):</strong> <span dangerouslySetInnerHTML={{ __html: v.snapshot.scripture_reflection_en ?? "—" }} /></div>
-                    <div><strong>Brain Science (EN):</strong> <span dangerouslySetInnerHTML={{ __html: v.snapshot.brain_science_en ?? "—" }} /></div>
-                    <div><strong>Today&apos;s Challenge (EN):</strong> <span dangerouslySetInnerHTML={{ __html: v.snapshot.today_challenge_en ?? "—" }} /></div>
-                    <div><strong>Sovereign Thought (EN):</strong> <span dangerouslySetInnerHTML={{ __html: v.snapshot.sovereign_thought_en ?? "—" }} /></div>
+                    {SECTIONS.map((s) => {
+                      const enField = s.fields.find((f) => f.column.endsWith("_en")) ?? s.fields[0];
+                      const val = v.snapshot[enField.column as keyof DailyResetRow] as string | null;
+                      if (!val) return null;
+                      return (
+                        <div key={s.key} className="pt-2 border-t border-stone-100">
+                          <strong>{s.label} ({enField.label}):</strong>{" "}
+                          {enField.kind === "richtext" ? <span dangerouslySetInnerHTML={{ __html: val }} /> : <span>{val}</span>}
+                        </div>
+                      );
+                    })}
                   </div>
                 </details>
                 <form action={restoreVersionAction}>
