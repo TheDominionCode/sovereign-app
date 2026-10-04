@@ -39,16 +39,16 @@
   body { font-family: 'Inter', system-ui, sans-serif; margin: 0; background: #ffffff; }
   ::-webkit-scrollbar { width: 8px; height: 8px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: #d3e0c5; border-radius: 4px; }
-  ::-webkit-scrollbar-thumb:hover { background: #a8c090; }
+  ::-webkit-scrollbar-thumb { background: var(--accent-pale, #d3e0c5); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent-light, #a8c090); }
   /* Per-row horizontal scroll without a visible scrollbar — used on the
      To-Do/Wins rows so long titles or notes scroll inside the row instead
      of wrapping and stretching the card vertically. */
   .scrollbar-hide::-webkit-scrollbar { display: none; }
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  input[type="range"] { -webkit-appearance: none; appearance: none; height: 4px; background: #d3e0c5; border-radius: 2px; outline: none; }
-  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: #7a9a6e; cursor: pointer; }
-  input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: #7a9a6e; cursor: pointer; border: 0; }
+  input[type="range"] { -webkit-appearance: none; appearance: none; height: 4px; background: var(--accent-pale, #d3e0c5); border-radius: 2px; outline: none; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent-mid, #7a9a6e); cursor: pointer; }
+  input[type="range"]::-moz-range-thumb { width: 16px; height: 16px; border-radius: 50%; background: var(--accent-mid, #7a9a6e); cursor: pointer; border: 0; }
   #root-loading { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #ffffff; color: #7a9a6e; font-family: 'Inter', system-ui, sans-serif; flex-direction: column; gap: 12px; z-index: 9999; }
   .crown-loading { font-size: 32px; animation: pulse 1.5s ease-in-out infinite; }
   @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
@@ -3931,6 +3931,11 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
       root.setProperty("--accent-light", p.light);
       root.setProperty("--accent-pale", p.pale);
       root.setProperty("--accent-bg", p.bg);
+      // Mobile browser chrome (Safari/Android address bar tint) reads this
+      // meta tag once at load and won't re-read var(--accent-*), so it has
+      // to be updated directly to match the chosen theme.
+      const themeColorMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeColorMeta) themeColorMeta.setAttribute("content", p.primary);
     }
 
     let style = document.getElementById("sovereign-accent-style");
@@ -3940,26 +3945,62 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
       document.head.appendChild(style);
     }
     if (!p || accent === "sage") { style.textContent = ""; return; }
+    // Every hardcoded sage hex actually used across the app (not just the
+    // "core 7") — includes the paler bg tints and the darker hover shades
+    // used in gradients, so no theme leaves green behind. Darker hover
+    // shades fall back to primary since the palette has no separate
+    // "darker than primary" step.
     const map = {
       "#5b7351": p.primary,
       "#3d5c34": p.primary,
+      "#4a5e42": p.primary,
+      "#4a5d3f": p.primary,
       "#7a9a6e": p.mid,
       "#9cb88f": p.mid,
       "#a8c090": p.light,
       "#d3e0c5": p.pale,
+      "#e6efde": p.pale,
       "#f4f7ee": p.bg,
+      "#f7faf3": p.bg,
+      "#f9fbf7": p.bg,
     };
+    const hexToRgbTriple = (hex) => {
+      const n = parseInt(hex.replace("#", ""), 16);
+      return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`;
+    };
+    // Tailwind's arbitrary-value opacity modifiers (e.g. bg-[#7a9a6e]/40)
+    // compile to their own distinct class name — a plain hex override never
+    // matches those, which is why soft/translucent card fills, rings, and
+    // gradient overlays were staying green. Rebuild each one at every
+    // opacity step Tailwind's JIT is realistically asked for here.
+    const OPACITIES = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95];
+    const SOLID_PROPS = [
+      ["bg", "background-color"],
+      ["text", "color"],
+      ["border", "border-color"],
+      ["ring", "--tw-ring-color"],
+      ["shadow", "--tw-shadow-color"],
+      ["fill", "fill"],
+      ["stroke", "stroke"],
+    ];
+    const GRADIENT_PROPS = [
+      ["from", "--tw-gradient-from"],
+      ["via", "--tw-gradient-via"],
+      ["to", "--tw-gradient-to"],
+    ];
     let css = "";
     Object.entries(map).forEach(([from, to]) => {
       const esc = from.replace("#", "\\#");
-      css += `.bg-\\[${esc}\\]{background-color:${to} !important;}`;
-      css += `.text-\\[${esc}\\]{color:${to} !important;}`;
-      css += `.border-\\[${esc}\\]{border-color:${to} !important;}`;
-      css += `.hover\\:bg-\\[${esc}\\]:hover{background-color:${to} !important;}`;
-      css += `.hover\\:text-\\[${esc}\\]:hover{color:${to} !important;}`;
-      css += `.hover\\:border-\\[${esc}\\]:hover{border-color:${to} !important;}`;
-      css += `.focus\\:bg-\\[${esc}\\]:focus{background-color:${to} !important;}`;
-      css += `.focus\\:border-\\[${esc}\\]:focus{border-color:${to} !important;}`;
+      const rgb = hexToRgbTriple(to);
+      [...SOLID_PROPS, ...GRADIENT_PROPS].forEach(([prefix, cssProp]) => {
+        css += `.${prefix}-\\[${esc}\\]{${cssProp}:${to} !important;}`;
+        css += `.hover\\:${prefix}-\\[${esc}\\]:hover{${cssProp}:${to} !important;}`;
+        css += `.focus\\:${prefix}-\\[${esc}\\]:focus{${cssProp}:${to} !important;}`;
+        OPACITIES.forEach((op) => {
+          css += `.${prefix}-\\[${esc}\\]\\/${op}{${cssProp}:rgb(${rgb} / ${op}%) !important;}`;
+          css += `.hover\\:${prefix}-\\[${esc}\\]\\/${op}:hover{${cssProp}:rgb(${rgb} / ${op}%) !important;}`;
+        });
+      });
     });
     style.textContent = css;
   }, [accent]);
@@ -4175,7 +4216,7 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
             <button
               onClick={dismissAnnouncement}
               className="w-full py-3.5 sm:py-3 rounded-xl text-sm sm:text-xs uppercase tracking-wider text-white font-semibold hover:opacity-90 active:opacity-80"
-              style={{ background: "#5b7351", minHeight: "48px" }}
+              style={{ background: "var(--accent-primary, #5b7351)", minHeight: "48px" }}
             >
               {lang === "es" ? "Recibido 🤍" : "Received 🤍"}
             </button>
@@ -4925,6 +4966,7 @@ const ACCENT_PALETTES = {
   honey:    { id: "honey",    name: "Honey",    swatch: "#c0a363", primary: "#a08648", mid: "#c0a363", light: "#d4bd86", pale: "#e6d6b0", bg: "#faf4e6" },
   ocean:    { id: "ocean",    name: "Ocean",    swatch: "#5e8a9c", primary: "#3d6678", mid: "#5e8a9c", light: "#8fb0bf", pale: "#c0d4dc", bg: "#eef4f7" },
   noir:     { id: "noir",     name: "Noir",     swatch: "#525252", primary: "#2d2d2d", mid: "#525252", light: "#9a9a9a", pale: "#d4d4d4", bg: "#f5f5f5" },
+  cherry:   { id: "cherry",   name: "Cherry Red", swatch: "#8f2130", primary: "#6b1420", mid: "#8f2130", light: "#a83b48", pale: "#d4989e", bg: "#faf0f0" },
 };
 
 function SettingsModule({ user, setUser, dark, themePanel, themeMuted, triggerConfetti, onLogout, dataKey, setData, data, accent, setAccent, lang, setLang, navigateTo, applySidebarDefaultView }) {
@@ -7289,7 +7331,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
               <button key={intent.id}
                 onClick={() => setTodayIntention(intent.id)}
                 className={`px-3 py-1.5 rounded-full text-xs italic transition border ${isSelected ? "text-white border-[#5b7351] font-semibold" : "bg-white text-stone-600 border-stone-200 hover:border-[#7a9a6e] hover:bg-[#f4f7ee]"}`}
-                style={{ background: isSelected ? "#5b7351" : undefined, fontFamily: "'Playfair Display', Georgia, serif" }}>
+                style={{ background: isSelected ? "var(--accent-primary, #5b7351)" : undefined, fontFamily: "'Playfair Display', Georgia, serif" }}>
                 {label}
               </button>
             );
@@ -7749,7 +7791,7 @@ function PersonalHomeModule({ data, setData, user, dark, themePanel, themeMuted,
             <ol className="space-y-4">
               {prompts.map((prompt, i) => (
                 <li key={i} className="flex items-start gap-2.5">
-                  <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white mt-0.5" style={{ background: "#7a9a6e" }}>{i + 1}</span>
+                  <span className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white mt-0.5" style={{ background: "var(--accent-mid, #7a9a6e)" }}>{i + 1}</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm italic text-stone-700 leading-snug mb-1.5" style={serif}>{prompt}</p>
                     <textarea
@@ -9260,11 +9302,11 @@ function CoachModule({ data, setData, dark, themePanel, themeMuted, lang }) {
 
       {/* Dominion Score */}
       <div className={`rounded-2xl px-6 py-6 mb-5 shadow-sm ${dominionStrengthened ? "bg-gradient-to-br from-[#5b3a1e]/10 via-[#f4f7ee]/60 to-white border border-[#c4a882]" : "bg-white border border-stone-200"}`}>
-        <p className="text-[9px] tracking-[0.3em] uppercase font-semibold mb-3" style={{ ...serif, color: dominionStrengthened ? "#5b3a1e" : "#7a9a6e" }}>
+        <p className="text-[9px] tracking-[0.3em] uppercase font-semibold mb-3" style={{ ...serif, color: dominionStrengthened ? "#5b3a1e" : "var(--accent-mid, #7a9a6e)" }}>
           {dominionStrengthened ? t("DOMINION STRENGTHENED", lang) : t("TODAY'S ALIGNMENT", lang)}
         </p>
         <div className="flex items-end gap-4 mb-3">
-          <span className="font-serif text-5xl font-bold" style={{ ...serif, color: dominionStrengthened ? "#5b3a1e" : "#5b7351" }}>{alignmentPct}%</span>
+          <span className="font-serif text-5xl font-bold" style={{ ...serif, color: dominionStrengthened ? "#5b3a1e" : "var(--accent-primary, #5b7351)" }}>{alignmentPct}%</span>
           <span className="text-sm text-stone-500 mb-2 italic" style={serif}>{t("in alignment", lang)}</span>
         </div>
         {dominionStrengthened ? (
@@ -10061,7 +10103,7 @@ function ProfileAvatar({ user, setUser, themeMuted, onLogout, lang, isAffiliate,
                       />
                       <div className="flex justify-end gap-1">
                         <button type="button" onClick={cancelLinkEdit} className="px-2 py-1 text-[11px] text-stone-500 hover:text-stone-700 rounded">{t("Cancel", lang)}</button>
-                        <button type="button" onClick={saveLinkDraft} className="px-2 py-1 text-[11px] text-white rounded font-medium" style={{ background: "#5b7351" }}>{t("Save", lang)}</button>
+                        <button type="button" onClick={saveLinkDraft} className="px-2 py-1 text-[11px] text-white rounded font-medium" style={{ background: "var(--accent-primary, #5b7351)" }}>{t("Save", lang)}</button>
                       </div>
                     </div>
                   )}
