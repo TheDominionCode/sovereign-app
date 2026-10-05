@@ -126,7 +126,21 @@ function parseJsonLenient(text: string) {
   return JSON.parse(stripped);
 }
 
-Deno.serve(async () => {
+Deno.serve(async (req: Request) => {
+  // SECURITY: Supabase's platform-level verify_jwt only checks that the
+  // bearer token is a validly-signed project JWT — it does NOT check role,
+  // so the public anon key (shipped in every client bundle) would otherwise
+  // pass that gate too. This function performs a privileged, service-role
+  // write (and can publish content if auto-publish is on), so it must only
+  // ever run for its one legitimate caller: the pg_cron job, which
+  // authenticates with the real service-role key pulled from Vault (see
+  // supabase/migrations/20261004000100_daily_generation_cron.sql). Reject
+  // anything else, including a valid anon-key JWT.
+  const authHeader = req.headers.get("Authorization");
+  if (authHeader !== `Bearer ${SERVICE_ROLE_KEY}`) {
+    return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 });
+  }
+
   const date = new Date().toISOString().slice(0, 10);
   const logStart = { content_date: date, started_at: new Date().toISOString(), status: "running", model: "claude-sonnet-5", generation_attempt: 1 };
   let logRow: { id: number } | null = null;
