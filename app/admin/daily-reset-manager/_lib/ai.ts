@@ -138,7 +138,7 @@ Write EVERY field below in both English and Spanish (natural, warm Spanish — n
 Respond with ONLY a raw JSON object, no markdown fences, no prose, in exactly this shape:
 {"title":{"en":"","es":""},"wordOfDay":{"en":"","es":""},"wordDefinition":{"en":"","es":""},"sovereignReset":{"en":"","es":""},"todayPrinciple":{"en":"","es":""},"scriptureReference":"","scriptureText":{"en":"","es":""},"scriptureReflection":{"en":"","es":""},"brainScience":{"en":"","es":""},"metacognitionPrompt":{"en":"","es":""},"todayChallenge":{"en":"","es":""},"sovereignThought":{"en":"","es":""},"alignmentPrompt":{"en":"","es":""},"needsReview":false}`;
 
-  const text = await callAnthropic(prompt, 3500);
+  const text = await callAnthropic(prompt, 8000);
   const parsed = parseJsonLenient(text) as Record<string, unknown>;
 
   const bi = (key: string): { en: string; es: string } => {
@@ -247,7 +247,7 @@ ${priorContext}
 Respond with ONLY a raw JSON object, no markdown fences, no prose, in exactly this shape:
 {${jsonShapeHint}}`;
 
-  const text = await callAnthropic(prompt, 1200);
+  const text = await callAnthropic(prompt, 2000);
   const parsed = parseJsonLenient(text) as Record<string, unknown>;
 
   const fields: GeneratedFields = {};
