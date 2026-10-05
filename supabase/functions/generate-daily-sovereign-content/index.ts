@@ -126,18 +126,33 @@ function parseJsonLenient(text: string) {
   return JSON.parse(stripped);
 }
 
+function callerRole(authHeader: string | null): string | null {
+  // The Supabase platform's verify_jwt gate already checked this token's
+  // signature before our code ever runs, so decoding (not re-verifying) the
+  // payload to read its role claim is safe here — we're not trusting an
+  // unverified signature, just reading a claim the platform already vetted.
+  const token = authHeader?.replace(/^Bearer\s+/i, "");
+  if (!token) return null;
+  try {
+    const payloadB64 = token.split(".")[1];
+    const payload = JSON.parse(atob(payloadB64.replace(/-/g, "+").replace(/_/g, "/")));
+    return payload.role ?? null;
+  } catch {
+    return null;
+  }
+}
+
 Deno.serve(async (req: Request) => {
   // SECURITY: Supabase's platform-level verify_jwt only checks that the
   // bearer token is a validly-signed project JWT — it does NOT check role,
   // so the public anon key (shipped in every client bundle) would otherwise
   // pass that gate too. This function performs a privileged, service-role
   // write (and can publish content if auto-publish is on), so it must only
-  // ever run for its one legitimate caller: the pg_cron job, which
-  // authenticates with the real service-role key pulled from Vault (see
-  // supabase/migrations/20261004000100_daily_generation_cron.sql). Reject
-  // anything else, including a valid anon-key JWT.
-  const authHeader = req.headers.get("Authorization");
-  if (authHeader !== `Bearer ${SERVICE_ROLE_KEY}`) {
+  // ever run for a caller whose token's role claim is "service_role" — the
+  // pg_cron job, which authenticates with the real service-role key pulled
+  // from Vault (see supabase/migrations/20261004000100_daily_generation_cron.sql).
+  // Reject anything else, including a valid anon-key JWT.
+  if (callerRole(req.headers.get("Authorization")) !== "service_role") {
     return new Response(JSON.stringify({ error: "unauthorized" }), { status: 401 });
   }
 
