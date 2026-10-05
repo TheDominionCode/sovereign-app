@@ -96,7 +96,10 @@ Write a personal evening debrief in 3–4 sentences. Be specific to her data. ${
     }
 
     const json = await res.json();
-    const message = json.content?.[0]?.text ?? "";
+    // Some models can return a "thinking" block before the actual "text"
+    // block — content[0] is not reliably the answer, find the text block.
+    const textBlock = (json.content ?? []).find((c: { type: string }) => c.type === "text");
+    const message = textBlock?.text ?? "";
     return NextResponse.json({ message });
   } catch (e) {
     console.error("Coach route error:", e);

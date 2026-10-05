@@ -36,7 +36,10 @@ async function callAnthropic(prompt: string, maxTokens: number): Promise<string>
   }
 
   const json = await res.json();
-  const text = json.content?.[0]?.text ?? "";
+  // claude-sonnet-5 can return a "thinking" block before the actual "text"
+  // block — content[0] is not reliably the answer, find the text block.
+  const textBlock = (json.content ?? []).find((c: { type: string }) => c.type === "text");
+  const text = textBlock?.text ?? "";
   if (!text) throw new Error("ai_empty_response");
   return text;
 }
