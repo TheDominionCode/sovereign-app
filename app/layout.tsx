@@ -28,8 +28,8 @@ export const metadata: Metadata = {
   },
   // Open Graph — what iMessage, WhatsApp, Slack, Facebook, LinkedIn,
   // Instagram DMs etc. all read when someone pastes a Sovereign link.
-  // We use the flatlay (phone + Sovereign coffee + lip tint) because it
-  // feels like a real morning ritual — much warmer than a raw screenshot.
+  // Uses the street-style "after" hero photo (navy/silver redesign) so
+  // the preview shows a woman, not a flatlay product shot.
   openGraph: {
     type: "website",
     url: SITE_URL,
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
       "An operating system for the woman behind everything. Goals, money, body, vision, language — all in one place.",
     images: [
       {
-        url: "/images/landing/lifestyle-flatlay.png",
-        width: 1206,
-        height: 1608,
+        url: "/images/landing/hero-lifestyle.webp",
+        width: 1800,
+        height: 2249,
         alt: "Sovereign — calm, centered, in charge",
       },
     ],
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     title: "Sovereign — Build the Life",
     description:
       "An operating system for the woman behind everything. Goals, money, body, vision, language — all in one place.",
-    images: ["/images/landing/lifestyle-flatlay.png"],
+    images: ["/images/landing/hero-lifestyle.webp"],
   },
 };
 
