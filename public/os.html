@@ -3966,18 +3966,17 @@ function AppShell({ user, setUser, dark, setDark, onLogout }) {
     // used in gradients, so no theme leaves green behind. Darker hover
     // shades fall back to primary since the palette has no separate
     // "darker than primary" step.
+    //
+    // Note: the navy re-theme consolidated what used to be 6 distinct sage
+    // hex literals down to a single "#0A2245" everywhere, so this map only
+    // needs one entry for it now (a plain JS object literal silently drops
+    // earlier duplicate keys, which is why this used to resolve to p.mid
+    // for every non-default theme instead of the intended p.primary).
     const map = {
       "#0A2245": p.primary,
-      "#0A2245": p.primary,
-      "#0A2245": p.primary,
-      "#0A2245": p.primary,
-      "#0A2245": p.mid,
-      "#0A2245": p.mid,
       "#B8B9BB": p.light,
       "#E7E7E9": p.pale,
-      "#E7E7E9": p.pale,
       "#EEF2F7": p.bg,
-      "#F4F6F9": p.bg,
       "#F4F6F9": p.bg,
     };
     const hexToRgbTriple = (hex) => {
@@ -4976,7 +4975,8 @@ function ProgressRing({ value = 0, size = 100, stroke = 8, label, dark }) {
 // ============================================================
 // Accent color palettes — applied globally via CSS variables in AppShell
 const ACCENT_PALETTES = {
-  sage:     { id: "sage",     name: "Navy",     swatch: "#0A2245", primary: "#0A2245", mid: "#0A2245", light: "#B8B9BB", pale: "#E7E7E9", bg: "#EEF2F7" },
+  sage:       { id: "sage",       name: "Navy",         swatch: "#0A2245", primary: "#0A2245", mid: "#0A2245", light: "#B8B9BB", pale: "#E7E7E9", bg: "#EEF2F7" },
+  silverblue: { id: "silverblue", name: "Silver & Blue", swatch: "#2E4A7A", primary: "#0A2245", mid: "#2E4A7A", light: "#B8B9BB", pale: "#E7E8EA", bg: "#EEF2F7" },
   rose:     { id: "rose",     name: "Rose",     swatch: "#c08894", primary: "#9c6470", mid: "#c08894", light: "#d9aab2", pale: "#ead0d4", bg: "#fbf2f3" },
   lavender: { id: "lavender", name: "Lavender", swatch: "#9a8aac", primary: "#7e6a92", mid: "#9a8aac", light: "#bcb0c8", pale: "#d9d2e0", bg: "#f5f3f8" },
   honey:    { id: "honey",    name: "Honey",    swatch: "#c0a363", primary: "#a08648", mid: "#c0a363", light: "#d4bd86", pale: "#e6d6b0", bg: "#faf4e6" },
