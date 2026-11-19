@@ -287,7 +287,7 @@ const landingCss = `
     max-width:1200px;
     margin:0 auto;
     padding:6px;
-    background:linear-gradient(135deg,#FFFFFF,#D9DCE0,#F4F5F7);
+    background:var(--sv-chrome);
     box-shadow:0 30px 60px rgba(10,34,69,.12);
     border-radius:0;
   }
