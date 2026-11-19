@@ -1,11 +1,11 @@
 import type { Viewport } from "next";
 
-// Restore the sage theme-color for the interior Sovereign experience —
+// Restore the navy theme-color for the interior Sovereign experience —
 // the marketing/auth pages use ivory (set at app/layout.tsx) so iOS
 // rubber-band scroll matches the cream landing, but once you're INSIDE
-// the app the chrome should pick up the forest tone again.
+// the app the chrome should pick up the navy tone again.
 export const viewport: Viewport = {
-  themeColor: "#5b7351",
+  themeColor: "#0A2245",
 };
 
 // The exact Sovereign app (served at /os.html) brings its own full-screen
