@@ -28,8 +28,10 @@ export const metadata: Metadata = {
   },
   // Open Graph — what iMessage, WhatsApp, Slack, Facebook, LinkedIn,
   // Instagram DMs etc. all read when someone pastes a Sovereign link.
-  // Uses the street-style "after" hero photo (navy/silver redesign) so
-  // the preview shows a woman, not a flatlay product shot.
+  // Social crawlers only ever fetch a static image file — they never run
+  // the page's CSS — so this is a flattened screenshot of the actual
+  // "after" photo + glass panel exactly as it renders on the site,
+  // rather than just the bare photo underneath it.
   openGraph: {
     type: "website",
     url: SITE_URL,
@@ -39,10 +41,10 @@ export const metadata: Metadata = {
       "An operating system for the woman behind everything. Goals, money, body, vision, language — all in one place.",
     images: [
       {
-        url: "/images/landing/hero-lifestyle.webp",
-        width: 1800,
-        height: 2249,
-        alt: "Sovereign — calm, centered, in charge",
+        url: "/images/landing/og-share.jpg",
+        width: 1120,
+        height: 1402,
+        alt: "Sovereign — Carry less. Become more.",
       },
     ],
     locale: "en_US",
@@ -53,7 +55,7 @@ export const metadata: Metadata = {
     title: "Sovereign — Build the Life",
     description:
       "An operating system for the woman behind everything. Goals, money, body, vision, language — all in one place.",
-    images: ["/images/landing/hero-lifestyle.webp"],
+    images: ["/images/landing/og-share.jpg"],
   },
 };
 
